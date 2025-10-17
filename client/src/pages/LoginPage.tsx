@@ -32,7 +32,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
@@ -57,7 +57,7 @@ export default function LoginPage() {
                     <Input
                       type="email"
                       placeholder="Alamat email"
-                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                      className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400"
                       {...field}
                       data-testid="input-email"
                     />
@@ -77,7 +77,7 @@ export default function LoginPage() {
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Kata sandi"
-                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
+                        className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
                         {...field}
                         data-testid="input-password"
                       />
@@ -126,21 +126,21 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">ATAU</span>
+              <span className="px-2 bg-[#ffffff] text-gray-500">ATAU</span>
             </div>
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-[#ffffff] hover:bg-gray-50 transition-colors"
             >
               <FaFacebook className="h-5 w-5 text-blue-600" />
               <span className="text-sm text-gray-900">Masuk dengan Facebook</span>
             </button>
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-[#ffffff] hover:bg-gray-50 transition-colors"
             >
               <FaGoogle className="h-5 w-5 text-red-500" />
               <span className="text-sm text-gray-900">Masuk dengan Google</span>
