@@ -15,9 +15,9 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <HeroSection />
+      <HowItWorksSection />
       <FeaturesSection />
       <JobCircularsSection />
-      <HowItWorksSection />
       <AIInnovationSection />
       <StatsSection />
       <TestimonialsSection />
