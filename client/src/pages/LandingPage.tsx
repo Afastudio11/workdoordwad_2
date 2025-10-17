@@ -5,7 +5,6 @@ import JobCircularsSection from "@/components/JobCircularsSection";
 import AIInnovationSection from "@/components/AIInnovationSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import FAQSection from "@/components/FAQSection";
-import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 
 export default function LandingPage() {
@@ -18,7 +17,6 @@ export default function LandingPage() {
       <AIInnovationSection />
       <TestimonialsSection />
       <FAQSection />
-      <CTASection />
       <Footer />
     </div>
   );
