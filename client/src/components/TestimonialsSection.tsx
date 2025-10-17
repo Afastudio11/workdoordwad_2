@@ -39,11 +39,11 @@ export default function TestimonialsSection() {
           </div>
 
           <div className="flex-1 flex items-center justify-center">
-            <div className="relative max-w-lg w-full">
+            <div className="relative max-w-md w-full">
               <img 
                 src={recruitmentImg}
                 alt="Recruitment" 
-                className="w-full h-auto"
+                className="w-full h-auto max-h-96 object-contain"
               />
             </div>
           </div>
