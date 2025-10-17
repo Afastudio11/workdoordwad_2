@@ -24,7 +24,8 @@ export default function Header({ variant = "dark" }: HeaderProps) {
   const textHoverClass = isDark ? "hover:text-white" : "hover:text-gray-900";
   const iconClass = isDark ? "text-white" : "text-gray-900";
   const btnBgClass = isDark ? "bg-primary text-black" : "bg-primary text-black";
-  const btnBorderClass = isDark ? "border-primary text-primary" : "border-primary text-primary";
+  const btnBorderClass = isDark ? "bg-white text-black border-white" : "border-primary text-primary";
+  const btnBorderHoverClass = isDark ? "hover:bg-white/90" : "hover:bg-primary/10";
 
   return (
     <header className={`sticky top-0 z-50 ${bgClass} border-b ${borderClass}`}>
@@ -61,7 +62,7 @@ export default function Header({ variant = "dark" }: HeaderProps) {
               </button>
             </Link>
             <Link href="/login">
-              <button className={`px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full hover:bg-primary/10 transition-colors`} data-testid="button-masuk">
+              <button className={`px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full ${btnBorderHoverClass} transition-colors`} data-testid="button-masuk">
                 Masuk
               </button>
             </Link>
@@ -102,7 +103,7 @@ export default function Header({ variant = "dark" }: HeaderProps) {
                 </button>
               </Link>
               <Link href="/login">
-                <button className={`block w-full px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full text-center`} data-testid="mobile-button-masuk">
+                <button className={`block w-full px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full text-center ${btnBorderHoverClass}`} data-testid="mobile-button-masuk">
                   Masuk
                 </button>
               </Link>
