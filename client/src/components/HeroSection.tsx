@@ -33,12 +33,12 @@ export default function HeroSection() {
       </div>
       
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight leading-tight" data-testid="hero-title">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight" data-testid="hero-title">
             Wujudkan Pekerjaan Impianmu!<br />Cari di Sini Sekarang!
           </h1>
 
-          <div className="max-w-2xl mx-auto mb-6">
+          <div className="max-w-2xl mx-auto mb-5">
             <div className="relative rounded-full p-2 flex items-center gap-3" style={{ backgroundColor: '#484946' }}>
               <input
                 type="text"
@@ -59,7 +59,7 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-4 mb-12">
+          <div className="flex items-center justify-center gap-4 mb-8">
             <span className="text-gray-400 text-sm">Pekerjaan Populer Saat ini:</span>
             <div className="flex gap-2">
               {popularJobs.map((job, index) => (
