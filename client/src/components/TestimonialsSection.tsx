@@ -1,5 +1,5 @@
 import { Calendar, CreditCard } from "lucide-react";
-import recruitmentImg from "@assets/0d231d(4)_1760693392965.png";
+import recruitmentImg from "@assets/0d231d(5)_1760693528303.png";
 
 export default function TestimonialsSection() {
   return (
