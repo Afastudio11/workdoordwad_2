@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import FeaturesSection from "@/components/FeaturesSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import JobCircularsSection from "@/components/JobCircularsSection";
 import AIInnovationSection from "@/components/AIInnovationSection";
@@ -16,7 +15,6 @@ export default function LandingPage() {
       <Header />
       <HeroSection />
       <HowItWorksSection />
-      <FeaturesSection />
       <JobCircularsSection />
       <AIInnovationSection />
       <StatsSection />
