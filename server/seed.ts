@@ -121,6 +121,7 @@ async function seed() {
   const createdCompanies = [];
   
   for (let i = 0; i < 50; i++) {
+    const employeeCounts = ["1 - 10", "2 - 5", "5 - 15", "10 - 50", "50 - 100", "100+", "1", "2", "3", "6", "8"];
     const company = await db.insert(companies).values({
       name: companyNames[i % companyNames.length] + (i >= companyNames.length ? ` ${Math.floor(i / companyNames.length) + 1}` : ''),
       description: `Perusahaan ${randomElement(industries)} terkemuka di Indonesia`,
@@ -128,6 +129,7 @@ async function seed() {
       location: randomElement(locations),
       contactEmail: `hr@company${i}.com`,
       contactPhone: `08${Math.floor(Math.random() * 900000000 + 100000000)}`,
+      employeeCount: randomElement(employeeCounts),
     }).returning();
     
     createdCompanies.push(company[0]);

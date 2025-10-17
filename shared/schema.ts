@@ -34,6 +34,7 @@ export const companies = pgTable("companies", {
   contactEmail: text("contact_email"),
   contactPhone: text("contact_phone"),
   logo: text("logo"),
+  employeeCount: text("employee_count"),
   createdBy: varchar("created_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

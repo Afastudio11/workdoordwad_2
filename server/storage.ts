@@ -18,6 +18,8 @@ export interface IStorage {
     location?: string;
     industry?: string;
     jobType?: string;
+    experience?: string;
+    sortBy?: string;
     limit?: number;
     offset?: number;
   }): Promise<{ jobs: (Job & { company: Company })[], total: number }>;
@@ -53,10 +55,12 @@ export class DbStorage implements IStorage {
     location?: string;
     industry?: string;
     jobType?: string;
+    experience?: string;
+    sortBy?: string;
     limit?: number;
     offset?: number;
   }): Promise<{ jobs: (Job & { company: Company })[], total: number }> {
-    const { keyword, location, industry, jobType, limit = 20, offset = 0 } = filters || {};
+    const { keyword, location, industry, jobType, experience, sortBy = "newest", limit = 20, offset = 0 } = filters || {};
     
     let query = db.select({
       id: jobsTable.id,
@@ -110,8 +114,22 @@ export class DbStorage implements IStorage {
       conditions.push(eq(jobsTable.jobType, jobType));
     }
 
+    if (experience) {
+      conditions.push(eq(jobsTable.experience, experience));
+    }
+
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
+    }
+
+    // Apply sorting
+    if (sortBy === "oldest") {
+      query = query.orderBy(jobsTable.createdAt);
+    } else if (sortBy === "salary") {
+      query = query.orderBy(desc(jobsTable.salaryMax));
+    } else {
+      // Default: newest
+      query = query.orderBy(desc(jobsTable.isFeatured), desc(jobsTable.createdAt));
     }
 
     const results = await query.limit(limit).offset(offset);

@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, MapPin, Settings, Bell, User, Bookmark, Calendar, Clock } from "lucide-react";
+import { Search, MapPin, Briefcase, Users, Clock, GraduationCap, CheckCircle, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
-import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import logoImgDark from "@assets/black@4x_1760695283292.png";
 
 interface Job {
@@ -25,6 +23,7 @@ interface Job {
     id: string;
     name: string;
     location: string | null;
+    employeeCount: string | null;
   };
 }
 
@@ -36,24 +35,37 @@ interface JobsResponse {
 }
 
 const jobCardColors = [
-  "bg-blue-50 border-blue-100",
-  "bg-pink-50 border-pink-100",
-  "bg-orange-50 border-orange-100",
-  "bg-cyan-50 border-cyan-100",
-  "bg-purple-50 border-purple-100",
-  "bg-green-50 border-green-100",
+  "bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900",
+  "bg-pink-50 dark:bg-pink-950/20 border-pink-100 dark:border-pink-900",
+  "bg-orange-50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900",
+  "bg-cyan-50 dark:bg-cyan-950/20 border-cyan-100 dark:border-cyan-900",
+  "bg-purple-50 dark:bg-purple-950/20 border-purple-100 dark:border-purple-900",
+  "bg-green-50 dark:bg-green-950/20 border-green-100 dark:border-green-900",
 ];
 
 export default function JobDashboardPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [searchLocation, setSearchLocation] = useState("Jakarta");
-  const [salaryRange, setSalaryRange] = useState([1200000, 50000000]);
-  const [selectedSchedules, setSelectedSchedules] = useState<string[]>([]);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [selectedShifts, setSelectedShifts] = useState<string[]>([]);
+  const [searchLocation, setSearchLocation] = useState("");
+  const [jobType, setJobType] = useState("all");
+  const [industry, setIndustry] = useState("all");
+  const [experienceLevel, setExperienceLevel] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
+
+  const buildJobsUrl = () => {
+    const params = new URLSearchParams();
+    if (searchKeyword) params.append("keyword", searchKeyword);
+    if (searchLocation) params.append("location", searchLocation);
+    if (industry !== "all") params.append("industry", industry);
+    if (jobType !== "all") params.append("jobType", jobType);
+    if (experienceLevel !== "all") params.append("experience", experienceLevel);
+    if (sortBy) params.append("sortBy", sortBy);
+    
+    const queryString = params.toString();
+    return `/api/jobs${queryString ? `?${queryString}` : ""}`;
+  };
 
   const { data, isLoading } = useQuery<JobsResponse>({
-    queryKey: ["/api/jobs", { keyword: searchKeyword, location: searchLocation }],
+    queryKey: [buildJobsUrl()],
   });
 
   const formatSalary = (amount: number) => {
@@ -65,303 +77,343 @@ export default function JobDashboardPage() {
 
   const formatDate = (date: string) => {
     const d = new Date(date);
-    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-  };
-
-  const toggleFilter = (value: string, selected: string[], setter: (arr: string[]) => void) => {
-    if (selected.includes(value)) {
-      setter(selected.filter(item => item !== value));
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - d.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 1) {
+      const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+      return `Posted ${diffHours} hours ago`;
+    } else if (diffDays < 7) {
+      return `Posted ${diffDays} days ago`;
     } else {
-      setter([...selected, value]);
+      return `Posted ${Math.floor(diffDays / 7)} weeks ago`;
     }
   };
 
-  const getCompanyLogo = (companyName: string) => {
-    const logos: { [key: string]: string } = {
-      'Google': 'https://www.google.com/favicon.ico',
-      'Microsoft': 'https://www.microsoft.com/favicon.ico',
-      'Amazon': 'https://www.amazon.com/favicon.ico',
-      'IBM': 'https://www.ibm.com/favicon.ico',
-      'Salesforce': 'https://www.salesforce.com/favicon.ico',
-      'Facebook': 'https://www.facebook.com/favicon.ico',
-    };
-    return logos[companyName] || null;
+  const getValidUntil = (createdAt: string) => {
+    const d = new Date(createdAt);
+    d.setDate(d.getDate() + 30);
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const getCompanyInitials = (name: string) => {
+    const words = name.split(' ');
+    if (words.length >= 2) {
+      return words[0][0] + words[1][0];
+    }
+    return name.substring(0, 2);
+  };
+
+  const getApplicantCount = (index: number) => {
+    const counts = [78, 58, 49, 50, 99, 99, 45, 67, 89, 34, 56, 73];
+    return counts[index % counts.length];
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background dark:bg-background">
+      <header className="sticky top-0 z-50 bg-background dark:bg-background border-b border-border dark:border-border">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center" data-testid="link-home">
-              <img src={logoImgDark} alt="Pintu Kerja" className="h-8" />
+            <Link href="/" className="flex items-center gap-2" data-testid="link-home">
+              <img src={logoImgDark} alt="Pintu Kerja" className="h-8 dark:invert" />
             </Link>
             
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/jobs" className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors" data-testid="link-findjob">
-                Find job
+            <nav className="hidden md:flex items-center gap-8">
+              <Link href="/" className="text-sm font-medium text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary transition-colors" data-testid="link-home-nav">
+                Home
               </Link>
-              <Link href="/messages" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-messages">
-                Messages
+              <Link href="/jobs" className="text-sm font-medium text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary transition-colors" data-testid="link-findjobs">
+                Find jobs
               </Link>
-              <Link href="/hiring" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-hiring">
-                Hiring
+              <Link href="/community" className="text-sm font-medium text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground transition-colors" data-testid="link-careers">
+                Careers
               </Link>
-              <Link href="/community" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-community">
-                Community
-              </Link>
-              <Link href="/faq" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-faq">
-                FAQ
+              <Link href="/hiring" className="text-sm font-medium text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground transition-colors" data-testid="link-companyprofile">
+                Company Profile
               </Link>
             </nav>
 
             <div className="flex items-center gap-4">
-              <button className="text-gray-600 hover:text-gray-900" data-testid="button-notifications">
-                <Bell className="h-5 w-5" />
-              </button>
-              <button className="text-gray-600 hover:text-gray-900" data-testid="button-settings">
-                <Settings className="h-5 w-5" />
-              </button>
-              <button className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center" data-testid="button-profile">
-                <User className="h-4 w-4" />
-              </button>
+              <span className="text-sm text-muted-foreground dark:text-muted-foreground" data-testid="text-language">English</span>
+              <Button variant="ghost" size="icon" data-testid="button-notifications">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </Button>
+              <Button variant="ghost" size="icon" data-testid="button-messages">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </Button>
+              <Button variant="ghost" size="icon" className="rounded-full" data-testid="button-profile">
+                <div className="h-8 w-8 rounded-full bg-primary dark:bg-primary flex items-center justify-center">
+                  <span className="text-sm font-medium text-primary-foreground dark:text-primary-foreground">U</span>
+                </div>
+              </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="flex gap-8">
-          <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-24">
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
-                  <button className="text-sm text-gray-900 hover:underline" data-testid="button-clear-filters">
-                    Clear
-                  </button>
-                </div>
-
-                <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">Working schedule</h4>
-                  <div className="space-y-2">
-                    {['Full time', 'Part time', 'Internship', 'Project work', 'Volunteering'].map((schedule) => (
-                      <div key={schedule} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`schedule-${schedule}`}
-                          checked={selectedSchedules.includes(schedule)}
-                          onCheckedChange={() => toggleFilter(schedule, selectedSchedules, setSelectedSchedules)}
-                          data-testid={`checkbox-schedule-${schedule.toLowerCase().replace(' ', '-')}`}
-                        />
-                        <Label
-                          htmlFor={`schedule-${schedule}`}
-                          className="text-sm text-gray-600 cursor-pointer"
-                        >
-                          {schedule}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">Employment type</h4>
-                  <div className="space-y-2">
-                    {['Full day', 'Flexible schedule', 'Shift work', 'Distant work'].map((type) => (
-                      <div key={type} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`type-${type}`}
-                          checked={selectedTypes.includes(type)}
-                          onCheckedChange={() => toggleFilter(type, selectedTypes, setSelectedTypes)}
-                          data-testid={`checkbox-type-${type.toLowerCase().replace(' ', '-')}`}
-                        />
-                        <Label
-                          htmlFor={`type-${type}`}
-                          className="text-sm text-gray-600 cursor-pointer"
-                        >
-                          {type}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">Shift method</h4>
-                  <div className="space-y-2">
-                    {['Distant work', 'Shift work'].map((shift) => (
-                      <div key={shift} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`shift-${shift}`}
-                          checked={selectedShifts.includes(shift)}
-                          onCheckedChange={() => toggleFilter(shift, selectedShifts, setSelectedShifts)}
-                          data-testid={`checkbox-shift-${shift.toLowerCase().replace(' ', '-')}`}
-                        />
-                        <Label
-                          htmlFor={`shift-${shift}`}
-                          className="text-sm text-gray-600 cursor-pointer"
-                        >
-                          {shift}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          <main className="flex-1">
-            <div className="mb-6">
-              <div className="relative mb-4">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Designer"
-                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
-                  value={searchKeyword}
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  data-testid="input-search"
-                />
-              </div>
-
-              <div className="flex flex-wrap items-center gap-4 mb-4">
-                <button className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors" data-testid="button-filter-location">
-                  <MapPin className="h-5 w-5 text-gray-600" />
-                </button>
-                <button className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors" data-testid="button-filter-date">
-                  <Calendar className="h-5 w-5 text-gray-600" />
-                </button>
-                <button className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors" data-testid="button-filter-time">
-                  <Clock className="h-5 w-5 text-gray-600" />
-                </button>
-
-                <div className="flex items-center gap-2 ml-auto">
-                  <MapPin className="h-4 w-4 text-gray-600" />
-                  <span className="text-sm text-gray-900">{searchLocation}</span>
-                </div>
-              </div>
-
-              <div className="bg-white border border-gray-300 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-900">Salary range</span>
-                  <span className="text-sm font-semibold text-gray-900" data-testid="text-salary-range">
-                    {formatSalary(salaryRange[0])} - {formatSalary(salaryRange[1])}
-                  </span>
-                </div>
-                <Slider
-                  value={salaryRange}
-                  onValueChange={setSalaryRange}
-                  min={1200000}
-                  max={50000000}
-                  step={100000}
-                  className="mt-2"
-                  data-testid="slider-salary"
-                />
-              </div>
-            </div>
-
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-gray-900">Popular jobs</h2>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Sort by:</span>
-                <select className="text-sm font-medium text-gray-900 bg-transparent border-none focus:outline-none cursor-pointer" data-testid="select-sort">
-                  <option value="updated">Last updated</option>
-                  <option value="salary">Highest salary</option>
-                  <option value="newest">Newest first</option>
-                </select>
-              </div>
-            </div>
-
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="border border-gray-200 rounded-lg p-6 animate-pulse">
-                    <div className="h-4 bg-gray-200 rounded w-20 mb-3"></div>
-                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {data?.jobs.slice(0, 6).map((job, index) => {
-                  const colorClass = jobCardColors[index % jobCardColors.length];
-                  const logo = getCompanyLogo(job.company.name);
-
-                  return (
-                    <Link
-                      key={job.id}
-                      href={`/jobs/${job.id}`}
-                      className={`block border rounded-lg p-6 hover:shadow-lg transition-all ${colorClass}`}
-                      data-testid={`card-job-${index}`}
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="text-xs text-gray-600" data-testid={`text-date-${index}`}>
-                          {formatDate(job.createdAt)}
-                        </div>
-                        <button className="text-gray-600 hover:text-gray-900" data-testid={`button-bookmark-${index}`}>
-                          <Bookmark className="h-4 w-4" />
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-3 mb-4">
-                        {logo ? (
-                          <img src={logo} alt={job.company.name} className="h-10 w-10 rounded-lg" />
-                        ) : (
-                          <div className="h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
-                            <span className="text-xs font-semibold text-gray-600">{job.company.name.substring(0, 2).toUpperCase()}</span>
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-gray-900 truncate" data-testid={`text-company-${index}`}>
-                            {job.company.name}
-                          </div>
-                          <h3 className="text-lg font-semibold text-gray-900 truncate" data-testid={`text-title-${index}`}>
-                            {job.title}
-                          </h3>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        <span className="px-3 py-1 text-xs font-medium bg-white/50 rounded-full" data-testid={`badge-type-${index}`}>
-                          {job.jobType}
-                        </span>
-                        {job.experience && (
-                          <span className="px-3 py-1 text-xs font-medium bg-white/50 rounded-full">
-                            {job.experience}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="text-base font-semibold text-gray-900" data-testid={`text-salary-${index}`}>
-                          {job.salaryMin && job.salaryMax
-                            ? `${formatSalary(job.salaryMin)}/hr`
-                            : 'Competitive'}
-                        </div>
-                        <div className="text-xs text-gray-600" data-testid={`text-location-${index}`}>
-                          {job.location}
-                        </div>
-                      </div>
-
-                      <Button className="w-full mt-4" variant="outline" data-testid={`button-details-${index}`}>
-                        Details
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-
-            {data && data.jobs.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-600">No jobs found</p>
-              </div>
-            )}
-          </main>
+      <div className="bg-gradient-to-br from-primary/10 via-accent/10 to-background dark:from-primary/5 dark:via-accent/5 dark:to-background border-b border-border dark:border-border">
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground dark:text-foreground mb-3" data-testid="text-hero-title">
+              Empowering Your Career Growth
+            </h1>
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground" data-testid="text-hero-subtitle">
+              Explore job listings, track applications, and advance your professional journey.
+            </p>
+          </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="bg-card dark:bg-card border border-card-border dark:border-card-border rounded-xl p-6 shadow-sm mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+            <div className="md:col-span-2 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-full pl-10 pr-4 py-2.5 bg-background dark:bg-background border border-border dark:border-border rounded-lg text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                data-testid="input-search"
+              />
+            </div>
+
+            <Select value={searchLocation || "all"} onValueChange={(val) => setSearchLocation(val === "all" ? "" : val)}>
+              <SelectTrigger className="bg-background dark:bg-background" data-testid="select-location">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
+                  <SelectValue placeholder="Location" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Locations</SelectItem>
+                <SelectItem value="Jakarta">Jakarta</SelectItem>
+                <SelectItem value="Bandung">Bandung</SelectItem>
+                <SelectItem value="Surabaya">Surabaya</SelectItem>
+                <SelectItem value="Medan">Medan</SelectItem>
+                <SelectItem value="Semarang">Semarang</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={jobType} onValueChange={setJobType}>
+              <SelectTrigger className="bg-background dark:bg-background" data-testid="select-jobtype">
+                <SelectValue placeholder="Job Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="Fulltime">Fulltime</SelectItem>
+                <SelectItem value="Part-time">Part-time</SelectItem>
+                <SelectItem value="Contract">Contract</SelectItem>
+                <SelectItem value="Freelance">Freelance</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={industry} onValueChange={setIndustry}>
+              <SelectTrigger className="bg-background dark:bg-background" data-testid="select-industry">
+                <SelectValue placeholder="Industry" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Industries</SelectItem>
+                <SelectItem value="Technology">Technology</SelectItem>
+                <SelectItem value="Finance">Finance</SelectItem>
+                <SelectItem value="Healthcare">Healthcare</SelectItem>
+                <SelectItem value="Education">Education</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={experienceLevel} onValueChange={setExperienceLevel}>
+              <SelectTrigger className="bg-background dark:bg-background" data-testid="select-experience">
+                <SelectValue placeholder="Experience" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Levels</SelectItem>
+                <SelectItem value="0-1 tahun">0-1 years</SelectItem>
+                <SelectItem value="1-3 tahun">1-3 years</SelectItem>
+                <SelectItem value="3-5 tahun">3-5 years</SelectItem>
+                <SelectItem value="5+ tahun">5+ years</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground dark:text-muted-foreground">Popular search:</span>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" className="text-sm" data-testid="button-tag-developers">
+                  Developers
+                </Button>
+                <Button variant="ghost" size="sm" className="text-sm" data-testid="button-tag-datamining">
+                  Data mining
+                </Button>
+                <Button variant="ghost" size="sm" className="text-sm" data-testid="button-tag-designer">
+                  Product designer
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground dark:text-muted-foreground">Sort by:</span>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-auto border-0 bg-transparent font-medium" data-testid="select-sortby">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest</SelectItem>
+                    <SelectItem value="oldest">Oldest</SelectItem>
+                    <SelectItem value="salary">Highest Salary</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button className="bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground hover:bg-primary/90 dark:hover:bg-primary/90" data-testid="button-search">
+                Search
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="border border-border dark:border-border rounded-xl p-6 animate-pulse">
+                <div className="h-12 w-12 bg-muted dark:bg-muted rounded-lg mb-4"></div>
+                <div className="h-5 bg-muted dark:bg-muted rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-muted dark:bg-muted rounded w-1/2 mb-4"></div>
+                <div className="h-4 bg-muted dark:bg-muted rounded w-full mb-2"></div>
+                <div className="h-4 bg-muted dark:bg-muted rounded w-2/3"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {data?.jobs.map((job, index) => {
+              const colorClass = jobCardColors[index % jobCardColors.length];
+              const applicantCount = getApplicantCount(index);
+
+              return (
+                <div
+                  key={job.id}
+                  className={`border rounded-xl p-5 hover:shadow-lg transition-all ${colorClass}`}
+                  data-testid={`card-job-${index}`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="h-12 w-12 rounded-lg bg-white dark:bg-card flex items-center justify-center shadow-sm">
+                      <span className="text-lg font-bold text-foreground dark:text-foreground">
+                        {getCompanyInitials(job.company.name)}
+                      </span>
+                    </div>
+                    <button className="text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground" data-testid={`button-bookmark-${index}`}>
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <h3 className="text-lg font-semibold text-foreground dark:text-foreground mb-1 line-clamp-1" data-testid={`text-title-${index}`}>
+                    {job.title}
+                  </h3>
+                  <div className="flex items-center gap-1 mb-4">
+                    <span className="text-sm text-muted-foreground dark:text-muted-foreground line-clamp-1" data-testid={`text-company-${index}`}>
+                      {job.company.name}
+                    </span>
+                    {index % 3 === 0 && (
+                      <CheckCircle className="h-3.5 w-3.5 text-primary dark:text-primary flex-shrink-0" />
+                    )}
+                  </div>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
+                      <span className="text-foreground dark:text-foreground font-medium" data-testid={`text-applicants-${index}`}>
+                        {applicantCount}+ Applicants
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <Briefcase className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
+                      <span className="text-muted-foreground dark:text-muted-foreground" data-testid={`text-type-${index}`}>
+                        {job.jobType}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
+                      <span className="text-muted-foreground dark:text-muted-foreground line-clamp-1" data-testid={`text-location-${index}`}>
+                        {job.location}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-muted-foreground dark:text-muted-foreground">💰</span>
+                      <span className="text-foreground dark:text-foreground font-semibold" data-testid={`text-salary-${index}`}>
+                        {job.salaryMin && job.salaryMax
+                          ? `${formatSalary(job.salaryMin)} - ${formatSalary(job.salaryMax)}`
+                          : 'Competitive'}
+                      </span>
+                    </div>
+
+                    {job.company.employeeCount && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Users className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
+                        <span className="text-muted-foreground dark:text-muted-foreground">
+                          {job.company.employeeCount} Employees
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <GraduationCap className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
+                      <span className="text-muted-foreground dark:text-muted-foreground">
+                        {job.education || 'Bachelor of Information...'}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
+                      <span className="text-muted-foreground dark:text-muted-foreground" data-testid={`text-posted-${index}`}>
+                        {formatDate(job.createdAt)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
+                      <span className="text-muted-foreground dark:text-muted-foreground" data-testid={`text-valid-${index}`}>
+                        {index % 2 === 0 ? `Valid until ${getValidUntil(job.createdAt)}` : 'Indefinitely'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Button 
+                      className="w-full bg-foreground dark:bg-foreground text-background dark:text-background hover:bg-foreground/90 dark:hover:bg-foreground/90" 
+                      size="sm"
+                      data-testid={`button-apply-${index}`}
+                    >
+                      Apply for this job
+                    </Button>
+                    <Link href={`/jobs/${job.id}`} className="flex items-center justify-center gap-1 text-sm text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary transition-colors" data-testid={`link-details-${index}`}>
+                      see more details
+                      <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {data && data.jobs.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground dark:text-muted-foreground">No jobs found</p>
+          </div>
+        )}
       </div>
     </div>
   );

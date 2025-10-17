@@ -233,7 +233,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Jobs API
   app.get("/api/jobs", async (req, res) => {
     try {
-      const { keyword, location, industry, jobType, page = "1", limit = "20" } = req.query;
+      const { keyword, location, industry, jobType, experience, sortBy, page = "1", limit = "20" } = req.query;
       
       const pageNum = parseInt(page as string);
       const limitNum = parseInt(limit as string);
@@ -244,6 +244,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         location: location as string,
         industry: industry as string,
         jobType: jobType as string,
+        experience: experience as string,
+        sortBy: sortBy as string,
         limit: limitNum,
         offset,
       });
