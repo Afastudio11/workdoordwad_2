@@ -63,7 +63,8 @@ export default function HeroSection() {
               {popularJobs.map((job, index) => (
                 <span 
                   key={index}
-                  className="px-4 py-1.5 bg-gray-800 text-white text-sm rounded-full border border-gray-700 hover:border-primary transition-colors cursor-pointer"
+                  className="px-4 py-1.5 text-white text-sm rounded-full hover:border-primary transition-colors cursor-pointer"
+                  style={{ backgroundColor: '#484946' }}
                 >
                   {job}
                 </span>
