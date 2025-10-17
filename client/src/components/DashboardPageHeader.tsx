@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { MapPin, Settings, Bell, User, LogOut } from "lucide-react";
+import { MapPin, Bell, User, LogOut, Briefcase, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import logoImg from "@assets/as@4x_1760716473766.png";
 import {
@@ -80,68 +80,6 @@ export default function DashboardPageHeader() {
               </Link>
             </div>
 
-            <Link href="/dashboard/profile">
-              <button 
-                className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity"
-                data-testid="button-profile"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
-                  {user?.fullName ? (
-                    <span className="text-sm font-semibold text-white">
-                      {user.fullName.charAt(0).toUpperCase()}
-                    </span>
-                  ) : (
-                    <User className="w-4 h-4 text-white" />
-                  )}
-                </div>
-              </button>
-            </Link>
-
-            {/* Settings Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button 
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                  data-testid="button-settings"
-                >
-                  <Settings className="h-5 w-5 text-white" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 bg-white">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none text-black">Pengaturan</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile">
-                    <User className="h-4 w-4" />
-                    <span>Profil Saya</span>
-                  </Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem asChild>
-                  <Link href="/user/dashboard#settings" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-account-settings">
-                    <Settings className="h-4 w-4" />
-                    <span>Pengaturan Akun</span>
-                  </Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem 
-                  onClick={logout}
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                  data-testid="menu-logout"
-                >
-                  <LogOut className="mr-3 h-4 w-4" />
-                  <span>Keluar</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
             {/* Notifications Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -203,6 +141,71 @@ export default function DashboardPageHeader() {
                   <Link href="/notifications" className="flex items-center justify-center gap-2 cursor-pointer text-primary hover:text-primary/80 py-2">
                     <span className="text-sm font-medium">Lihat Semua Notifikasi</span>
                   </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity"
+                  data-testid="button-profile"
+                >
+                  <div className="w-8 h-8 rounded-full bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
+                    {user?.fullName ? (
+                      <span className="text-sm font-semibold text-white">
+                        {user.fullName.charAt(0).toUpperCase()}
+                      </span>
+                    ) : (
+                      <User className="w-4 h-4 text-white" />
+                    )}
+                  </div>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64 bg-white">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none text-black">{user?.fullName}</p>
+                    <p className="text-xs leading-none text-gray-600">{user?.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                {/* Profil Saya / CV Digital */}
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile-cv">
+                    <User className="h-4 w-4" />
+                    <span>Profil Saya / CV Digital</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                {/* Riwayat Lamaran */}
+                <DropdownMenuItem asChild>
+                  <Link href="/user/dashboard#applications" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-applications">
+                    <Briefcase className="h-4 w-4" />
+                    <span>Riwayat Lamaran</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                {/* Pengaturan Akun */}
+                <DropdownMenuItem asChild>
+                  <Link href="/user/dashboard#settings" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-settings">
+                    <Settings className="h-4 w-4" />
+                    <span>Pengaturan Akun</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                {/* Keluar (Sign Out) */}
+                <DropdownMenuItem 
+                  onClick={logout}
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                  data-testid="menu-logout"
+                >
+                  <LogOut className="mr-3 h-4 w-4" />
+                  <span>Keluar</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
