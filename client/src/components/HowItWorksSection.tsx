@@ -37,11 +37,6 @@ const stats = [
 export default function HowItWorksSection() {
   return (
     <section className="relative py-24 bg-gray-50 dark:bg-gray-100 overflow-hidden">
-      {/* Decorative starburst */}
-      <div className="absolute bottom-32 left-8 w-24 h-24 opacity-60">
-        <img src={starburstImg} alt="" className="w-full h-full" />
-      </div>
-
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-12 mb-20">
@@ -77,18 +72,19 @@ export default function HowItWorksSection() {
 
           {/* Right Side - Image Card */}
           <div className="flex items-center justify-center">
-            <div className="relative">
-              {/* Decorative starburst on image */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 z-10">
-                <img src={starburstImg} alt="" className="w-full h-full" />
-              </div>
-              
-              <div className="relative max-w-md transform rotate-3 hover:rotate-0 transition-transform duration-300">
+            <div className="relative max-w-2xl w-full">
+              <div className="relative">
                 <img 
                   src={cardImg}
                   alt="Upload Resume Card" 
-                  className="w-full h-auto"
+                  className="w-full h-auto rounded-2xl shadow-2xl"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-2xl flex items-end p-8">
+                  <div className="text-white">
+                    <h3 className="text-3xl md:text-4xl font-bold mb-2">Upload Resume Card</h3>
+                    <p className="text-lg opacity-90">Mulai karir impian Anda sekarang</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
