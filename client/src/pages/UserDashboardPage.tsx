@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { User, Briefcase, Heart, LogOut, Menu, X, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import logoImg from "@assets/as@4x_1760716473766.png";
+import DashboardHeader from "@/components/DashboardHeader";
 import ProfilePage from "./dashboard/ProfilePage";
 import ApplicationsPage from "./dashboard/ApplicationsPage";
 import WishlistPage from "./dashboard/WishlistPage";
@@ -47,29 +47,7 @@ export default function UserDashboardPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Simple Dashboard Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="max-w-[1600px] mx-auto px-6 md:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center">
-              <img src={logoImg} alt="PintuKerja" className="h-12" />
-            </Link>
-            
-            <div className="flex items-center gap-4">
-              <Link href="/jobs">
-                <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
-                  Cari Pekerjaan
-                </button>
-              </Link>
-              <Link href="/">
-                <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
-                  Beranda
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader />
       
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">

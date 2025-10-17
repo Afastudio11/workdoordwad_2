@@ -1,0 +1,71 @@
+PROMPT SPESIFIKASI TEKNIS UI/UX DASHBOARD PEKERJA PINTU KERJA
+
+Tujuan: Merancang blueprint Dashboard Pekerja (Kandidat) Pintu Kerja. Fokus utama adalah pada spesifikasi UI/UX, fungsionalitas, dan keterkaitan dengan backend yang scalable (Full-Stack JS/Next.js/Elasticsearch).
+
+1. Desain Visual dan Konsistensi Warna
+
+    Background Utama: Putih (#FFFFFF) untuk seluruh dashboard dan elemen kartu.
+
+    Font Utama: Hitam (#000000) untuk copy dan judul.
+
+    Warna Ornamen/Aksen (Lime Green): Digunakan secara eksklusif untuk semua Call-to-Action (CTA), highlight terpilih, indikator badge, dan elemen merek.
+
+2. Header Bar (Navigasi Utama - Sticky)
+
+Rancang Header Bar dengan fungsionalitas dan pewarnaan berikut:
+
+    Warna Dasar: Background Putih.
+
+    Elemen Wajib:
+
+        Logo Pintu Kerja: Teks Hitam dengan aksen Lime Green (Link ke Feed Utama).
+
+        Kolom Pencarian Global: Selalu terlihat. Tombol search menggunakan warna Lime Green.
+
+        Link Navigasi Utama: "Cari Lowongan" dan "Lowongan Tersimpan".
+
+        Icon Notifikasi: Ikon Hitam. Badge notifikasi baru menggunakan lingkaran kecil Lime Green.
+
+        Icon Profil (Dropdown): Ikon Hitam. Dropdown harus mencakup: Riwayat Lamaran, Profil Saya / CV Digital, dan Keluar.
+
+3. Panel Filter Samping Kiri (Job Filters)
+
+    Desain: Background Putih. Harus mudah diakses (atau collapsible di mobile).
+
+    Pewarnaan: Checkbox dan range slider yang dipilih/aktif harus di-highlight dengan warna Lime Green. Tombol "Terapkan Filter" harus berwarna solid Lime Green (Teks Putih).
+
+    Kategori Filter Wajib (Terhubung ke Elasticsearch):
+
+        Lokasi (Mendukung multi-level dan Radius).
+
+        Tipe Pekerjaan (Full-time, Part-time, Remote, Magang).
+
+        Transparansi Gaji (Filter Range Gaji Bulanan Rp).
+
+        Fitur Spesial (UVP): Filter berdasarkan "Sumber Lowongan" (Opsi: Perekrut Resmi vs. Agregasi AI/Komunitas).
+
+4. Kartu Lowongan (Job Card - Hasil Pencarian)
+
+    Desain: Background Putih dengan shadow lembut. Kontras tinggi (Teks Hitam).
+
+    Pewarnaan:
+
+        Skill Tags (Chip Keterampilan): Border atau teks berwarna Lime Green.
+
+        Ikon Simpan (Bookmark): Berwarna Lime Green ketika lowongan sudah disimpan.
+
+        Tombol "Details": Menggunakan warna Lime Green sebagai CTA.
+
+    Data Wajib: Judul Posisi, Perusahaan & Logo, Lokasi (Kota/Provinsi), Gaji Bulanan (atau "Negosiasi"), Tanggal Posting.
+
+    Label UVP (Wajib): Tambahkan label visual di kartu untuk mengidentifikasi lowongan yang berasal dari agregasi AI (e.g., chip Lime Green kecil bertuliskan "AI Source").
+
+5. Permintaan Output Teknis
+
+Hasilkan blueprint yang spesifik untuk developer, termasuk:
+
+    Daftar Komponen UI Next.js/React yang diperlukan untuk membangun layout ini.
+
+    Struktur Data State untuk filtering di frontend.
+
+    Contoh sintaks query ke Elasticsearch yang dibutuhkan untuk mendukung fitur filter range gaji dan filter lokasi.

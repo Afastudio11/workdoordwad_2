@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Link } from "wouter";
 import { Search, ChevronDown, HelpCircle } from "lucide-react";
-import logoImgDark from "@assets/black@4x_1760695283292.png";
+import DashboardPageHeader from "@/components/DashboardPageHeader";
 import {
   Accordion,
   AccordionContent,
@@ -82,33 +81,7 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center" data-testid="link-home">
-              <img src={logoImgDark} alt="Pintu Kerja" className="h-8" />
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-findjob">
-                Find job
-              </Link>
-              <Link href="/messages" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-messages">
-                Messages
-              </Link>
-              <Link href="/hiring" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-hiring">
-                Hiring
-              </Link>
-              <Link href="/community" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-community">
-                Community
-              </Link>
-              <Link href="/faq" className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors" data-testid="link-faq">
-                FAQ
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <DashboardPageHeader />
 
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-12">

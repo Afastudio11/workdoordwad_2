@@ -5,9 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
 import LandingPage from "@/pages/LandingPage";
-import BrowseJobsPage from "@/pages/BrowseJobsPage";
-import JobDashboardPage from "@/pages/JobDashboardPage";
 import UserDashboardPage from "@/pages/UserDashboardPage";
+import NewJobDashboardPage from "@/pages/NewJobDashboardPage";
 import QuickAccessPage from "@/pages/QuickAccessPage";
 import MessagesPage from "@/pages/MessagesPage";
 import HiringPage from "@/pages/HiringPage";
@@ -22,8 +21,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={LandingPage} />
-      <Route path="/jobs" component={BrowseJobsPage} />
-      <Route path="/dashboard" component={JobDashboardPage} />
+      <Route path="/jobs" component={NewJobDashboardPage} />
       <Route path="/user/dashboard" component={UserDashboardPage} />
       <Route path="/quick-access" component={QuickAccessPage} />
       <Route path="/messages" component={MessagesPage} />
