@@ -1,5 +1,6 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link } from "wouter";
 import logoImg from "@assets/Asset 6@4x_1760692501921.png";
 
 export default function Header() {
@@ -10,9 +11,9 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <a href="/" className="flex items-center">
+            <Link href="/" className="flex items-center">
               <img src={logoImg} alt="PintuKerja" className="h-8" />
-            </a>
+            </Link>
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
@@ -34,12 +35,16 @@ export default function Header() {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <button className="px-6 py-2 bg-primary text-black text-sm font-semibold rounded-full hover:bg-primary/90 transition-colors" data-testid="button-daftar">
-              Daftar Sekarang
-            </button>
-            <button className="px-6 py-2 border border-primary text-primary text-sm font-semibold rounded-full hover:bg-primary/10 transition-colors" data-testid="button-masuk">
-              Masuk
-            </button>
+            <Link href="/register">
+              <button className="px-6 py-2 bg-primary text-black text-sm font-semibold rounded-full hover:bg-primary/90 transition-colors" data-testid="button-daftar">
+                Daftar Sekarang
+              </button>
+            </Link>
+            <Link href="/login">
+              <button className="px-6 py-2 border border-primary text-primary text-sm font-semibold rounded-full hover:bg-primary/10 transition-colors" data-testid="button-masuk">
+                Masuk
+              </button>
+            </Link>
           </div>
 
           <button
@@ -71,12 +76,16 @@ export default function Header() {
               Kontak
             </a>
             <div className="pt-4 space-y-3 border-t border-white/10">
-              <button className="block w-full px-6 py-2 bg-primary text-black text-sm font-semibold rounded-full text-center" data-testid="mobile-button-daftar">
-                Daftar Sekarang
-              </button>
-              <button className="block w-full px-6 py-2 border border-primary text-primary text-sm font-semibold rounded-full text-center" data-testid="mobile-button-masuk">
-                Masuk
-              </button>
+              <Link href="/register">
+                <button className="block w-full px-6 py-2 bg-primary text-black text-sm font-semibold rounded-full text-center" data-testid="mobile-button-daftar">
+                  Daftar Sekarang
+                </button>
+              </Link>
+              <Link href="/login">
+                <button className="block w-full px-6 py-2 border border-primary text-primary text-sm font-semibold rounded-full text-center" data-testid="mobile-button-masuk">
+                  Masuk
+                </button>
+              </Link>
             </div>
           </div>
         </div>
