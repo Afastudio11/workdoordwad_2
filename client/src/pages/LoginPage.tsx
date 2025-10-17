@@ -34,8 +34,8 @@ export default function LoginPage() {
 
   return (
     <>
-      <Header />
-      <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+      <Header variant="light" />
+      <div className="min-h-screen bg-white flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
