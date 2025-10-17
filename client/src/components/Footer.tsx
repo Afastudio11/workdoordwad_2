@@ -1,4 +1,4 @@
-import { Briefcase } from "lucide-react";
+import logoImg from "@assets/Asset 1@4x_1760691467789.png";
 
 const footerLinks = {
   perusahaan: [
@@ -24,9 +24,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div>
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-8 bg-primary rounded-sm"></div>
-              <span className="text-lg font-bold text-white">PintuKerja.com</span>
+            <div className="mb-6">
+              <img src={logoImg} alt="PintuKerja" className="h-8" />
             </div>
             <p className="text-sm text-gray-400">
               Portal lowongan kerja terpercaya di Indonesia

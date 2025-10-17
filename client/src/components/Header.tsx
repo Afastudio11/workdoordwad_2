@@ -1,5 +1,6 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import logoImg from "@assets/Asset 1@4x_1760691467789.png";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -9,10 +10,9 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              <div className="w-6 h-8 bg-primary rounded-sm"></div>
-              <span className="text-lg font-bold text-white" data-testid="logo-text">PintuKerja.com</span>
-            </div>
+            <a href="/" className="flex items-center">
+              <img src={logoImg} alt="PintuKerja" className="h-8" />
+            </a>
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
