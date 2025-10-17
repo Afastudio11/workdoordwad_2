@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, MapPin, Briefcase, Settings, Bell, User, Bookmark, Calendar, Clock } from "lucide-react";
+import { Search, MapPin, Settings, Bell, User, Bookmark, Calendar, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import logoImgDark from "@assets/black@4x_1760695283292.png";
 
 interface Job {
   id: string;
@@ -92,9 +93,8 @@ export default function JobDashboardPage() {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2" data-testid="link-home">
-              <Briefcase className="h-6 w-6 text-gray-900" />
-              <span className="text-lg font-semibold text-gray-900">Pintu Kerja</span>
+            <Link href="/" className="flex items-center" data-testid="link-home">
+              <img src={logoImgDark} alt="Pintu Kerja" className="h-8" />
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
@@ -137,7 +137,7 @@ export default function JobDashboardPage() {
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
-                  <button className="text-sm text-primary hover:underline" data-testid="button-clear-filters">
+                  <button className="text-sm text-blue-600 hover:underline" data-testid="button-clear-filters">
                     Clear
                   </button>
                 </div>
@@ -218,7 +218,7 @@ export default function JobDashboardPage() {
                 <input
                   type="text"
                   placeholder="Designer"
-                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   data-testid="input-search"
@@ -245,7 +245,7 @@ export default function JobDashboardPage() {
               <div className="bg-white border border-gray-300 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-900">Salary range</span>
-                  <span className="text-sm font-semibold text-primary" data-testid="text-salary-range">
+                  <span className="text-sm font-semibold text-blue-600" data-testid="text-salary-range">
                     {formatSalary(salaryRange[0])} - {formatSalary(salaryRange[1])}
                   </span>
                 </div>
@@ -310,8 +310,8 @@ export default function JobDashboardPage() {
                         {logo ? (
                           <img src={logo} alt={job.company.name} className="h-10 w-10 rounded-lg" />
                         ) : (
-                          <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
-                            <Briefcase className="h-5 w-5 text-gray-600" />
+                          <div className="h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                            <span className="text-xs font-semibold text-gray-600">{job.company.name.substring(0, 2).toUpperCase()}</span>
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
