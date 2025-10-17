@@ -88,41 +88,41 @@ export default function JobDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-card border-b border-border">
+    <div className="min-h-screen bg-white">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2" data-testid="link-home">
-              <Briefcase className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold text-foreground">Pintu Kerja</span>
+              <Briefcase className="h-6 w-6 text-gray-900" />
+              <span className="text-lg font-semibold text-gray-900">Pintu Kerja</span>
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/jobs" className="text-sm font-medium text-foreground hover:text-primary transition-colors" data-testid="link-findjob">
+              <Link href="/jobs" className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors" data-testid="link-findjob">
                 Find job
               </Link>
-              <Link href="/messages" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" data-testid="link-messages">
+              <Link href="/messages" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-messages">
                 Messages
               </Link>
-              <Link href="/hiring" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" data-testid="link-hiring">
+              <Link href="/hiring" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-hiring">
                 Hiring
               </Link>
-              <Link href="/community" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" data-testid="link-community">
+              <Link href="/community" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-community">
                 Community
               </Link>
-              <Link href="/faq" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" data-testid="link-faq">
+              <Link href="/faq" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-faq">
                 FAQ
               </Link>
             </nav>
 
             <div className="flex items-center gap-4">
-              <button className="text-muted-foreground hover:text-foreground" data-testid="button-notifications">
+              <button className="text-gray-600 hover:text-gray-900" data-testid="button-notifications">
                 <Bell className="h-5 w-5" />
               </button>
-              <button className="text-muted-foreground hover:text-foreground" data-testid="button-settings">
+              <button className="text-gray-600 hover:text-gray-900" data-testid="button-settings">
                 <Settings className="h-5 w-5" />
               </button>
-              <button className="h-8 w-8 rounded-full bg-muted flex items-center justify-center" data-testid="button-profile">
+              <button className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center" data-testid="button-profile">
                 <User className="h-4 w-4" />
               </button>
             </div>
@@ -136,14 +136,14 @@ export default function JobDashboardPage() {
             <div className="sticky top-24">
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold text-foreground">Filters</h3>
+                  <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
                   <button className="text-sm text-primary hover:underline" data-testid="button-clear-filters">
                     Clear
                   </button>
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-foreground mb-3">Working schedule</h4>
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Working schedule</h4>
                   <div className="space-y-2">
                     {['Full time', 'Part time', 'Internship', 'Project work', 'Volunteering'].map((schedule) => (
                       <div key={schedule} className="flex items-center space-x-2">
@@ -155,7 +155,7 @@ export default function JobDashboardPage() {
                         />
                         <Label
                           htmlFor={`schedule-${schedule}`}
-                          className="text-sm text-muted-foreground cursor-pointer"
+                          className="text-sm text-gray-600 cursor-pointer"
                         >
                           {schedule}
                         </Label>
@@ -165,7 +165,7 @@ export default function JobDashboardPage() {
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-foreground mb-3">Employment type</h4>
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Employment type</h4>
                   <div className="space-y-2">
                     {['Full day', 'Flexible schedule', 'Shift work', 'Distant work'].map((type) => (
                       <div key={type} className="flex items-center space-x-2">
@@ -177,7 +177,7 @@ export default function JobDashboardPage() {
                         />
                         <Label
                           htmlFor={`type-${type}`}
-                          className="text-sm text-muted-foreground cursor-pointer"
+                          className="text-sm text-gray-600 cursor-pointer"
                         >
                           {type}
                         </Label>
@@ -187,7 +187,7 @@ export default function JobDashboardPage() {
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-foreground mb-3">Shift method</h4>
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Shift method</h4>
                   <div className="space-y-2">
                     {['Distant work', 'Shift work'].map((shift) => (
                       <div key={shift} className="flex items-center space-x-2">
@@ -199,7 +199,7 @@ export default function JobDashboardPage() {
                         />
                         <Label
                           htmlFor={`shift-${shift}`}
-                          className="text-sm text-muted-foreground cursor-pointer"
+                          className="text-sm text-gray-600 cursor-pointer"
                         >
                           {shift}
                         </Label>
@@ -214,11 +214,11 @@ export default function JobDashboardPage() {
           <main className="flex-1">
             <div className="mb-6">
               <div className="relative mb-4">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Designer"
-                  className="w-full pl-12 pr-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   data-testid="input-search"
@@ -226,25 +226,25 @@ export default function JobDashboardPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-4 mb-4">
-                <button className="p-2 rounded-lg border border-border hover:bg-muted transition-colors" data-testid="button-filter-location">
-                  <MapPin className="h-5 w-5 text-muted-foreground" />
+                <button className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors" data-testid="button-filter-location">
+                  <MapPin className="h-5 w-5 text-gray-600" />
                 </button>
-                <button className="p-2 rounded-lg border border-border hover:bg-muted transition-colors" data-testid="button-filter-date">
-                  <Calendar className="h-5 w-5 text-muted-foreground" />
+                <button className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors" data-testid="button-filter-date">
+                  <Calendar className="h-5 w-5 text-gray-600" />
                 </button>
-                <button className="p-2 rounded-lg border border-border hover:bg-muted transition-colors" data-testid="button-filter-time">
-                  <Clock className="h-5 w-5 text-muted-foreground" />
+                <button className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors" data-testid="button-filter-time">
+                  <Clock className="h-5 w-5 text-gray-600" />
                 </button>
 
                 <div className="flex items-center gap-2 ml-auto">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">{searchLocation}</span>
+                  <MapPin className="h-4 w-4 text-gray-600" />
+                  <span className="text-sm text-gray-900">{searchLocation}</span>
                 </div>
               </div>
 
-              <div className="bg-card border border-border rounded-lg p-4">
+              <div className="bg-white border border-gray-300 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">Salary range</span>
+                  <span className="text-sm font-medium text-gray-900">Salary range</span>
                   <span className="text-sm font-semibold text-primary" data-testid="text-salary-range">
                     {formatSalary(salaryRange[0])} - {formatSalary(salaryRange[1])}
                   </span>
@@ -262,10 +262,10 @@ export default function JobDashboardPage() {
             </div>
 
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-foreground">Popular jobs</h2>
+              <h2 className="text-2xl font-semibold text-gray-900">Popular jobs</h2>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Sort by:</span>
-                <select className="text-sm font-medium text-foreground bg-transparent border-none focus:outline-none cursor-pointer" data-testid="select-sort">
+                <span className="text-sm text-gray-600">Sort by:</span>
+                <select className="text-sm font-medium text-gray-900 bg-transparent border-none focus:outline-none cursor-pointer" data-testid="select-sort">
                   <option value="updated">Last updated</option>
                   <option value="salary">Highest salary</option>
                   <option value="newest">Newest first</option>
@@ -276,11 +276,11 @@ export default function JobDashboardPage() {
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="border border-border rounded-lg p-6 animate-pulse">
-                    <div className="h-4 bg-muted rounded w-20 mb-3"></div>
-                    <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-muted rounded w-1/2 mb-4"></div>
-                    <div className="h-4 bg-muted rounded w-1/3"></div>
+                  <div key={i} className="border border-gray-200 rounded-lg p-6 animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
                   </div>
                 ))}
               </div>
@@ -298,10 +298,10 @@ export default function JobDashboardPage() {
                       data-testid={`card-job-${index}`}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <div className="text-xs text-muted-foreground" data-testid={`text-date-${index}`}>
+                        <div className="text-xs text-gray-600" data-testid={`text-date-${index}`}>
                           {formatDate(job.createdAt)}
                         </div>
-                        <button className="text-muted-foreground hover:text-foreground" data-testid={`button-bookmark-${index}`}>
+                        <button className="text-gray-600 hover:text-gray-900" data-testid={`button-bookmark-${index}`}>
                           <Bookmark className="h-4 w-4" />
                         </button>
                       </div>
@@ -310,38 +310,38 @@ export default function JobDashboardPage() {
                         {logo ? (
                           <img src={logo} alt={job.company.name} className="h-10 w-10 rounded-lg" />
                         ) : (
-                          <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                            <Briefcase className="h-5 w-5 text-muted-foreground" />
+                          <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
+                            <Briefcase className="h-5 w-5 text-gray-600" />
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-foreground truncate" data-testid={`text-company-${index}`}>
+                          <div className="text-sm font-medium text-gray-900 truncate" data-testid={`text-company-${index}`}>
                             {job.company.name}
                           </div>
-                          <h3 className="text-lg font-semibold text-foreground truncate" data-testid={`text-title-${index}`}>
+                          <h3 className="text-lg font-semibold text-gray-900 truncate" data-testid={`text-title-${index}`}>
                             {job.title}
                           </h3>
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-4">
-                        <span className="px-3 py-1 text-xs font-medium bg-background/50 rounded-full" data-testid={`badge-type-${index}`}>
+                        <span className="px-3 py-1 text-xs font-medium bg-white/50 rounded-full" data-testid={`badge-type-${index}`}>
                           {job.jobType}
                         </span>
                         {job.experience && (
-                          <span className="px-3 py-1 text-xs font-medium bg-background/50 rounded-full">
+                          <span className="px-3 py-1 text-xs font-medium bg-white/50 rounded-full">
                             {job.experience}
                           </span>
                         )}
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="text-base font-semibold text-foreground" data-testid={`text-salary-${index}`}>
+                        <div className="text-base font-semibold text-gray-900" data-testid={`text-salary-${index}`}>
                           {job.salaryMin && job.salaryMax
                             ? `${formatSalary(job.salaryMin)}/hr`
                             : 'Competitive'}
                         </div>
-                        <div className="text-xs text-muted-foreground" data-testid={`text-location-${index}`}>
+                        <div className="text-xs text-gray-600" data-testid={`text-location-${index}`}>
                           {job.location}
                         </div>
                       </div>
@@ -357,7 +357,7 @@ export default function JobDashboardPage() {
 
             {data && data.jobs.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No jobs found</p>
+                <p className="text-gray-600">No jobs found</p>
               </div>
             )}
           </main>
