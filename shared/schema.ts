@@ -12,11 +12,27 @@ export const users = pgTable("users", {
   phone: text("phone"),
   role: text("role").notNull().default("pekerja"), // pekerja | pemberi_kerja | admin
   
+  // Profile fields
+  bio: text("bio"),
+  dateOfBirth: text("date_of_birth"),
+  gender: text("gender"), // male | female | other
+  address: text("address"),
+  city: text("city"),
+  province: text("province"),
+  photoUrl: text("photo_url"),
+  
   // Fields untuk pekerja
   cvUrl: text("cv_url"),
+  cvFileName: text("cv_file_name"),
   education: text("education"), // JSON array
   experience: text("experience"), // JSON array
   skills: text("skills").array(),
+  
+  // Job preferences untuk rekomendasi
+  preferredIndustries: text("preferred_industries").array(),
+  preferredLocations: text("preferred_locations").array(),
+  preferredJobTypes: text("preferred_job_types").array(),
+  expectedSalaryMin: integer("expected_salary_min"),
   
   // Fields untuk pemberi_kerja
   isVerified: boolean("is_verified").default(false),
@@ -174,6 +190,44 @@ export const registerPemberiKerjaSchema = insertUserSchema.extend({
 export const loginSchema = z.object({
   username: z.string().min(1, "Username harus diisi"),
   password: z.string().min(1, "Password harus diisi"),
+});
+
+// Update profile schemas
+export const updateProfileSchema = z.object({
+  fullName: z.string().min(1, "Nama lengkap harus diisi").optional(),
+  email: z.string().email("Email tidak valid").optional(),
+  phone: z.string().optional(),
+  bio: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+  gender: z.enum(["male", "female", "other"]).optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  province: z.string().optional(),
+  photoUrl: z.string().optional(),
+});
+
+export const updateEducationSchema = z.object({
+  education: z.string(), // JSON string
+});
+
+export const updateExperienceSchema = z.object({
+  experience: z.string(), // JSON string
+});
+
+export const updateSkillsSchema = z.object({
+  skills: z.array(z.string()),
+});
+
+export const updatePreferencesSchema = z.object({
+  preferredIndustries: z.array(z.string()).optional(),
+  preferredLocations: z.array(z.string()).optional(),
+  preferredJobTypes: z.array(z.string()).optional(),
+  expectedSalaryMin: z.number().optional(),
+});
+
+export const quickApplySchema = z.object({
+  jobId: z.string(),
+  coverLetter: z.string().optional(),
 });
 
 // Types

@@ -6,6 +6,12 @@ import {
   registerPekerjaSchema, 
   registerPemberiKerjaSchema, 
   loginSchema,
+  updateProfileSchema,
+  updateEducationSchema,
+  updateExperienceSchema,
+  updateSkillsSchema,
+  updatePreferencesSchema,
+  quickApplySchema,
   type User 
 } from "@shared/schema";
 
@@ -233,7 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Jobs API
   app.get("/api/jobs", async (req, res) => {
     try {
-      const { keyword, location, industry, jobType, experience, sortBy, page = "1", limit = "20" } = req.query;
+      const { keyword, location, industry, jobType, experience, salaryMin, salaryMax, sortBy, page = "1", limit = "20" } = req.query;
       
       const pageNum = parseInt(page as string);
       const limitNum = parseInt(limit as string);
@@ -245,6 +251,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         industry: industry as string,
         jobType: jobType as string,
         experience: experience as string,
+        salaryMin: salaryMin ? parseInt(salaryMin as string) : undefined,
+        salaryMax: salaryMax ? parseInt(salaryMax as string) : undefined,
         sortBy: sortBy as string,
         limit: limitNum,
         offset,
@@ -274,6 +282,269 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching job:", error);
       res.status(500).json({ error: "Failed to fetch job" });
+    }
+  });
+
+  // Profile API
+  app.get("/api/profile", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      res.status(500).json({ error: "Failed to fetch profile" });
+    }
+  });
+
+  app.put("/api/profile", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const validatedData = updateProfileSchema.parse(req.body);
+      const updatedUser = await storage.updateUserProfile(req.session.userId, validatedData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Data tidak valid", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
+  app.put("/api/profile/education", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const validatedData = updateEducationSchema.parse(req.body);
+      const updatedUser = await storage.updateUserProfile(req.session.userId, validatedData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Error updating education:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Data tidak valid", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update education" });
+    }
+  });
+
+  app.put("/api/profile/experience", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const validatedData = updateExperienceSchema.parse(req.body);
+      const updatedUser = await storage.updateUserProfile(req.session.userId, validatedData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Error updating experience:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Data tidak valid", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update experience" });
+    }
+  });
+
+  app.put("/api/profile/skills", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const validatedData = updateSkillsSchema.parse(req.body);
+      const updatedUser = await storage.updateUserProfile(req.session.userId, validatedData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Error updating skills:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Data tidak valid", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update skills" });
+    }
+  });
+
+  app.put("/api/profile/preferences", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const validatedData = updatePreferencesSchema.parse(req.body);
+      const updatedUser = await storage.updateUserProfile(req.session.userId, validatedData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Error updating preferences:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Data tidak valid", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update preferences" });
+    }
+  });
+
+  // Applications API (Quick Apply)
+  app.post("/api/applications", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const validatedData = quickApplySchema.parse(req.body);
+      
+      // Check if user already applied
+      const alreadyApplied = await storage.checkApplicationExists(req.session.userId, validatedData.jobId);
+      if (alreadyApplied) {
+        return res.status(400).json({ error: "Anda sudah melamar ke lowongan ini" });
+      }
+
+      // Get user's CV
+      const user = await storage.getUser(req.session.userId);
+      if (!user?.cvUrl) {
+        return res.status(400).json({ error: "Silakan upload CV terlebih dahulu" });
+      }
+
+      const application = await storage.createApplication({
+        jobId: validatedData.jobId,
+        applicantId: req.session.userId,
+        cvUrl: user.cvUrl,
+        coverLetter: validatedData.coverLetter,
+      });
+
+      res.status(201).json(application);
+    } catch (error: any) {
+      console.error("Error creating application:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Data tidak valid", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to submit application" });
+    }
+  });
+
+  app.get("/api/applications", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const applications = await storage.getUserApplications(req.session.userId);
+      res.json(applications);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+      res.status(500).json({ error: "Failed to fetch applications" });
+    }
+  });
+
+  // Recommendations API
+  app.get("/api/recommendations", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const recommendations = await storage.getRecommendedJobs(req.session.userId, limit);
+      res.json(recommendations);
+    } catch (error) {
+      console.error("Error fetching recommendations:", error);
+      res.status(500).json({ error: "Failed to fetch recommendations" });
+    }
+  });
+
+  // Wishlist API
+  app.get("/api/wishlists", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const wishlists = await storage.getUserWishlists(req.session.userId);
+      res.json(wishlists);
+    } catch (error) {
+      console.error("Error fetching wishlists:", error);
+      res.status(500).json({ error: "Failed to fetch wishlists" });
+    }
+  });
+
+  app.post("/api/wishlists", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const { jobId } = req.body;
+      
+      if (!jobId) {
+        return res.status(400).json({ error: "Job ID is required" });
+      }
+
+      // Check if already in wishlist
+      const exists = await storage.checkWishlistExists(req.session.userId, jobId);
+      if (exists) {
+        return res.status(400).json({ error: "Lowongan sudah ada di wishlist" });
+      }
+
+      const wishlist = await storage.addToWishlist(req.session.userId, jobId);
+      res.status(201).json(wishlist);
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+      res.status(500).json({ error: "Failed to add to wishlist" });
+    }
+  });
+
+  app.delete("/api/wishlists/:jobId", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      await storage.removeFromWishlist(req.session.userId, req.params.jobId);
+      res.json({ message: "Removed from wishlist" });
+    } catch (error) {
+      console.error("Error removing from wishlist:", error);
+      res.status(500).json({ error: "Failed to remove from wishlist" });
     }
   });
 

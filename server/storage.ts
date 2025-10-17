@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Job, type Company, type InsertCompany } from "@shared/schema";
+import { type User, type InsertUser, type Job, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // modify the interface with any CRUD methods
@@ -11,6 +11,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   getUsersByRole(role: string): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserProfile(userId: string, updates: Partial<User>): Promise<User | undefined>;
   
   // Jobs
   getJobs(filters?: {
@@ -19,20 +20,34 @@ export interface IStorage {
     industry?: string;
     jobType?: string;
     experience?: string;
+    salaryMin?: number;
+    salaryMax?: number;
     sortBy?: string;
     limit?: number;
     offset?: number;
   }): Promise<{ jobs: (Job & { company: Company })[], total: number }>;
   getJobById(id: string): Promise<(Job & { company: Company }) | undefined>;
+  getRecommendedJobs(userId: string, limit?: number): Promise<(Job & { company: Company })[]>;
   
   // Companies
   getCompanyById(id: string): Promise<Company | undefined>;
   createCompany(company: InsertCompany): Promise<Company>;
+  
+  // Applications
+  createApplication(application: InsertApplication): Promise<Application>;
+  getUserApplications(userId: string): Promise<(Application & { job: Job & { company: Company } })[]>;
+  checkApplicationExists(userId: string, jobId: string): Promise<boolean>;
+  
+  // Wishlists
+  getUserWishlists(userId: string): Promise<(Wishlist & { job: Job & { company: Company } })[]>;
+  addToWishlist(userId: string, jobId: string): Promise<Wishlist>;
+  removeFromWishlist(userId: string, jobId: string): Promise<void>;
+  checkWishlistExists(userId: string, jobId: string): Promise<boolean>;
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable } from "@shared/schema";
-import { eq, and, or, ilike, desc, sql } from "drizzle-orm";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable } from "@shared/schema";
+import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
@@ -56,11 +71,13 @@ export class DbStorage implements IStorage {
     industry?: string;
     jobType?: string;
     experience?: string;
+    salaryMin?: number;
+    salaryMax?: number;
     sortBy?: string;
     limit?: number;
     offset?: number;
   }): Promise<{ jobs: (Job & { company: Company })[], total: number }> {
-    const { keyword, location, industry, jobType, experience, sortBy = "newest", limit = 20, offset = 0 } = filters || {};
+    const { keyword, location, industry, jobType, experience, salaryMin, salaryMax, sortBy = "newest", limit = 20, offset = 0 } = filters || {};
     
     let query = db.select({
       id: jobsTable.id,
@@ -116,6 +133,14 @@ export class DbStorage implements IStorage {
 
     if (experience) {
       conditions.push(eq(jobsTable.experience, experience));
+    }
+
+    if (salaryMin !== undefined) {
+      conditions.push(gte(jobsTable.salaryMax, salaryMin));
+    }
+
+    if (salaryMax !== undefined) {
+      conditions.push(lte(jobsTable.salaryMin, salaryMax));
     }
 
     if (conditions.length > 0) {
@@ -194,6 +219,160 @@ export class DbStorage implements IStorage {
   async getUsersByRole(role: string): Promise<User[]> {
     const users = await db.select().from(usersTable).where(eq(usersTable.role, role));
     return users;
+  }
+
+  async updateUserProfile(userId: string, updates: Partial<User>): Promise<User | undefined> {
+    const [updatedUser] = await db
+      .update(usersTable)
+      .set(updates)
+      .where(eq(usersTable.id, userId))
+      .returning();
+    return updatedUser;
+  }
+
+  async getRecommendedJobs(userId: string, limit: number = 10): Promise<(Job & { company: Company })[]> {
+    const user = await this.getUser(userId);
+    if (!user) return [];
+
+    const conditions = [eq(jobsTable.isActive, true)];
+
+    if (user.preferredIndustries && user.preferredIndustries.length > 0) {
+      conditions.push(inArray(jobsTable.industry, user.preferredIndustries));
+    }
+
+    if (user.preferredLocations && user.preferredLocations.length > 0) {
+      const locationConditions = user.preferredLocations.map(loc => 
+        ilike(jobsTable.location, `%${loc}%`)
+      );
+      if (locationConditions.length > 0) {
+        conditions.push(or(...locationConditions)!);
+      }
+    }
+
+    if (user.preferredJobTypes && user.preferredJobTypes.length > 0) {
+      conditions.push(inArray(jobsTable.jobType, user.preferredJobTypes));
+    }
+
+    if (user.expectedSalaryMin) {
+      conditions.push(gte(jobsTable.salaryMax, user.expectedSalaryMin));
+    }
+
+    const results = await db.select({
+      id: jobsTable.id,
+      companyId: jobsTable.companyId,
+      title: jobsTable.title,
+      description: jobsTable.description,
+      requirements: jobsTable.requirements,
+      location: jobsTable.location,
+      jobType: jobsTable.jobType,
+      industry: jobsTable.industry,
+      salaryMin: jobsTable.salaryMin,
+      salaryMax: jobsTable.salaryMax,
+      education: jobsTable.education,
+      experience: jobsTable.experience,
+      isFeatured: jobsTable.isFeatured,
+      isActive: jobsTable.isActive,
+      source: jobsTable.source,
+      sourceUrl: jobsTable.sourceUrl,
+      postedBy: jobsTable.postedBy,
+      createdAt: jobsTable.createdAt,
+      updatedAt: jobsTable.updatedAt,
+      company: companiesTable,
+    })
+    .from(jobsTable)
+    .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
+    .where(and(...conditions))
+    .orderBy(desc(jobsTable.isFeatured), desc(jobsTable.createdAt))
+    .limit(limit);
+
+    return results as (Job & { company: Company })[];
+  }
+
+  async createApplication(application: InsertApplication): Promise<Application> {
+    const [newApplication] = await db
+      .insert(applicationsTable)
+      .values(application)
+      .returning();
+    return newApplication;
+  }
+
+  async getUserApplications(userId: string): Promise<(Application & { job: Job & { company: Company } })[]> {
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(eq(applicationsTable.applicantId, userId))
+      .orderBy(desc(applicationsTable.createdAt));
+
+    const enrichedApplications = await Promise.all(
+      applications.map(async (app) => {
+        const job = await this.getJobById(app.jobId);
+        return {
+          ...app,
+          job: job!,
+        };
+      })
+    );
+
+    return enrichedApplications as (Application & { job: Job & { company: Company } })[];
+  }
+
+  async checkApplicationExists(userId: string, jobId: string): Promise<boolean> {
+    const [result] = await db
+      .select()
+      .from(applicationsTable)
+      .where(and(
+        eq(applicationsTable.applicantId, userId),
+        eq(applicationsTable.jobId, jobId)
+      ));
+    return !!result;
+  }
+
+  async getUserWishlists(userId: string): Promise<(Wishlist & { job: Job & { company: Company } })[]> {
+    const wishlists = await db
+      .select()
+      .from(wishlistsTable)
+      .where(eq(wishlistsTable.userId, userId))
+      .orderBy(desc(wishlistsTable.createdAt));
+
+    const enrichedWishlists = await Promise.all(
+      wishlists.map(async (wishlist) => {
+        const job = await this.getJobById(wishlist.jobId);
+        return {
+          ...wishlist,
+          job: job!,
+        };
+      })
+    );
+
+    return enrichedWishlists as (Wishlist & { job: Job & { company: Company } })[];
+  }
+
+  async addToWishlist(userId: string, jobId: string): Promise<Wishlist> {
+    const [wishlist] = await db
+      .insert(wishlistsTable)
+      .values({ userId, jobId })
+      .returning();
+    return wishlist;
+  }
+
+  async removeFromWishlist(userId: string, jobId: string): Promise<void> {
+    await db
+      .delete(wishlistsTable)
+      .where(and(
+        eq(wishlistsTable.userId, userId),
+        eq(wishlistsTable.jobId, jobId)
+      ));
+  }
+
+  async checkWishlistExists(userId: string, jobId: string): Promise<boolean> {
+    const [result] = await db
+      .select()
+      .from(wishlistsTable)
+      .where(and(
+        eq(wishlistsTable.userId, userId),
+        eq(wishlistsTable.jobId, jobId)
+      ));
+    return !!result;
   }
 }
 
