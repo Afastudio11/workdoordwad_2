@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Briefcase, MapPin, Calendar, CheckCircle, Clock, XCircle, Eye } from "lucide-react";
+import { Briefcase, MapPin, Calendar, Clock, Eye, CheckCircle, XCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,6 @@ interface Application {
     salaryMax: number | null;
     company: {
       name: string;
-      logo: string | null;
     };
   };
 }
@@ -27,7 +26,7 @@ interface Application {
 const statusConfig = {
   submitted: { label: "Terkirim", color: "bg-primary/20 text-primary", icon: Clock },
   reviewed: { label: "Ditinjau", color: "bg-yellow-500/20 text-yellow-700 dark:text-yellow-400", icon: Eye },
-  shortlisted: { label: "Diundang Wawancara", color: "bg-green-500/20 text-green-700 dark:text-green-400", icon: CheckCircle },
+  shortlisted: { label: "Diundang Interview", color: "bg-green-500/20 text-green-700 dark:text-green-400", icon: CheckCircle },
   rejected: { label: "Ditolak", color: "bg-destructive/20 text-destructive", icon: XCircle },
   accepted: { label: "Diterima", color: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400", icon: CheckCircle },
 };
@@ -56,14 +55,17 @@ export default function ApplicationsPage() {
 
   if (!applications || applications.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-16">
         <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-foreground mb-2">
+        <h3 className="text-xl font-semibold text-foreground mb-2">
           Belum Ada Lamaran
         </h3>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground mb-6">
           Anda belum melamar ke lowongan manapun
         </p>
+        <Button asChild>
+          <a href="/jobs">Cari Lowongan</a>
+        </Button>
       </div>
     );
   }
@@ -72,10 +74,10 @@ export default function ApplicationsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground" data-testid="text-page-title">
-          Riwayat Lamaran
+          Lamaran Saya
         </h1>
         <p className="text-muted-foreground mt-1">
-          Pantau status lamaran pekerjaan Anda
+          {applications.length} lamaran aktif
         </p>
       </div>
 
@@ -87,14 +89,14 @@ export default function ApplicationsPage() {
           return (
             <Card key={application.id} data-testid={`card-application-${index}`}>
               <CardContent className="p-6">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                    <div className="flex items-start gap-4 mb-3">
+                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
                         <Briefcase className="w-6 h-6 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground" data-testid={`text-job-title-${index}`}>
+                        <h3 className="text-lg font-semibold text-foreground mb-1" data-testid={`text-job-title-${index}`}>
                           {application.job.title}
                         </h3>
                         <p className="text-muted-foreground" data-testid={`text-company-${index}`}>
@@ -103,7 +105,7 @@ export default function ApplicationsPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground ml-16">
                       <div className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
                         <span data-testid={`text-location-${index}`}>{application.job.location}</span>
@@ -118,13 +120,13 @@ export default function ApplicationsPage() {
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         <span data-testid={`text-date-${index}`}>
-                          Dilamar {format(new Date(application.createdAt), 'd MMM yyyy', { locale: idLocale })}
+                          {format(new Date(application.createdAt), 'd MMM yyyy', { locale: idLocale })}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-end gap-3">
+                  <div className="flex flex-col items-start md:items-end gap-3 ml-16 md:ml-0">
                     <Badge className={`${status.color} border-0`} data-testid={`badge-status-${index}`}>
                       <StatusIcon className="w-3 h-3 mr-1" />
                       {status.label}

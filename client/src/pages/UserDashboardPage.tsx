@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { User, FileText, Briefcase, Heart, Settings, LogOut, Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User, Briefcase, Heart, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import logoImg from "@assets/Asset 6@4x_1760692501921.png";
-import logoImgDark from "@assets/black@4x_1760695283292.png";
+import Header from "@/components/Header";
 import ProfilePage from "./dashboard/ProfilePage";
 import ApplicationsPage from "./dashboard/ApplicationsPage";
 import WishlistPage from "./dashboard/WishlistPage";
@@ -16,16 +14,18 @@ export default function UserDashboardPage() {
     const hash = window.location.hash.replace('#', '');
     return hash || 'profile';
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     window.location.hash = tab;
+    setMobileMenuOpen(false);
   };
 
   const navItems = [
-    { id: 'profile', label: 'Profil & CV', icon: User },
-    { id: 'applications', label: 'Riwayat Lamaran', icon: Briefcase },
-    { id: 'wishlist', label: 'Lowongan Tersimpan', icon: Heart },
+    { id: 'profile', label: 'Profil Saya', icon: User },
+    { id: 'applications', label: 'Lamaran Saya', icon: Briefcase },
+    { id: 'wishlist', label: 'Wishlist', icon: Heart },
   ];
 
   const renderContent = () => {
@@ -43,81 +43,121 @@ export default function UserDashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 min-h-screen bg-card border-r border-border">
-          <div className="p-6">
-            <Link href="/" data-testid="link-home">
-              <img src={logoImg} alt="PintuKerja" className="h-8 dark:hidden" />
-              <img src={logoImgDark} alt="PintuKerja" className="h-8 hidden dark:block" />
-            </Link>
+      <Header />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+          {/* Sidebar - Desktop */}
+          <aside className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-24 space-y-6">
+              {/* User Info */}
+              <div className="bg-card border border-border rounded-lg p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
+                    <span className="text-2xl font-bold text-primary-foreground">
+                      {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-foreground truncate" data-testid="text-username">
+                      {user?.fullName || 'User'}
+                    </h3>
+                    <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <nav className="bg-card border border-border rounded-lg p-4 space-y-1">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleTabChange(item.id)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-foreground hover:bg-muted'
+                      }`}
+                      data-testid={`button-nav-${item.id}`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.label}</span>
+                    </button>
+                  );
+                })}
+                
+                <div className="pt-4 mt-4 border-t border-border">
+                  <button
+                    onClick={() => logout()}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                    data-testid="button-logout"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span className="font-medium">Keluar</span>
+                  </button>
+                </div>
+              </nav>
+            </div>
+          </aside>
+
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden mb-4">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg"
+              data-testid="button-mobile-menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <span className="font-medium">Menu Dashboard</span>
+            </button>
           </div>
 
-          <div className="px-3">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 px-3 py-2">
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-medium">{user?.fullName?.charAt(0) || 'U'}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate" data-testid="text-username">
-                    {user?.fullName || 'User'}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+          {/* Mobile Navigation */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden mb-6" data-testid="mobile-menu">
+              <div className="bg-card border border-border rounded-lg p-4 space-y-1">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleTabChange(item.id)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-foreground hover:bg-muted'
+                      }`}
+                      data-testid={`button-nav-mobile-${item.id}`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.label}</span>
+                    </button>
+                  );
+                })}
+                
+                <div className="pt-4 mt-4 border-t border-border">
+                  <button
+                    onClick={() => logout()}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                    data-testid="button-logout-mobile"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span className="font-medium">Keluar</span>
+                  </button>
                 </div>
               </div>
             </div>
+          )}
 
-            <nav className="space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleTabChange(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                      isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-foreground hover:bg-muted'
-                    }`}
-                    data-testid={`button-nav-${item.id}`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="text-sm font-medium">{item.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-
-            <div className="mt-6 pt-6 border-t border-border">
-              <Link href="/jobs">
-                <button
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-foreground hover:bg-muted transition-colors"
-                  data-testid="button-browse-jobs"
-                >
-                  <Home className="w-5 h-5" />
-                  <span className="text-sm font-medium">Cari Lowongan</span>
-                </button>
-              </Link>
-              <button
-                onClick={() => logout()}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors mt-1"
-                data-testid="button-logout"
-              >
-                <LogOut className="w-5 h-5" />
-                <span className="text-sm font-medium">Keluar</span>
-              </button>
-            </div>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 overflow-auto">
-          <div className="max-w-6xl mx-auto p-8">
+          {/* Main Content */}
+          <main className="lg:col-span-9">
             {renderContent()}
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   );

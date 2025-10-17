@@ -18,7 +18,6 @@ interface Wishlist {
     salaryMax: number | null;
     company: {
       name: string;
-      logo: string | null;
     };
   };
 }
@@ -54,17 +53,17 @@ export default function WishlistPage() {
 
   const getJobTypeBadge = (type: string) => {
     const normalized = type.toLowerCase().replace(/\s+/g, '-');
-    if (normalized === 'full-time') return "Penuh Waktu";
-    if (normalized === 'part-time') return "Paruh Waktu";
+    if (normalized === 'full-time') return "Full Time";
+    if (normalized === 'part-time') return "Part Time";
     if (normalized === 'contract') return "Kontrak";
     return "Freelance";
   };
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-32 bg-muted rounded-lg animate-pulse"></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-48 bg-muted rounded-lg animate-pulse"></div>
         ))}
       </div>
     );
@@ -72,14 +71,17 @@ export default function WishlistPage() {
 
   if (!wishlists || wishlists.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-16">
         <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-foreground mb-2">
-          Belum Ada Lowongan Tersimpan
+        <h3 className="text-xl font-semibold text-foreground mb-2">
+          Wishlist Kosong
         </h3>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground mb-6">
           Simpan lowongan yang menarik untuk ditinjau kemudian
         </p>
+        <Button asChild>
+          <a href="/jobs">Cari Lowongan</a>
+        </Button>
       </div>
     );
   }
@@ -88,7 +90,7 @@ export default function WishlistPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground" data-testid="text-page-title">
-          Lowongan Tersimpan
+          Wishlist
         </h1>
         <p className="text-muted-foreground mt-1">
           {wishlists.length} lowongan tersimpan
@@ -104,7 +106,7 @@ export default function WishlistPage() {
                   <h3 className="text-lg font-semibold text-foreground mb-1" data-testid={`text-job-title-${index}`}>
                     {wishlist.job.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm" data-testid={`text-company-${index}`}>
+                  <p className="text-sm text-muted-foreground" data-testid={`text-company-${index}`}>
                     {wishlist.job.company.name}
                   </p>
                 </div>
