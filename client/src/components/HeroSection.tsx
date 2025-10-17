@@ -74,11 +74,6 @@ export default function HeroSection() {
 
         {/* Hero Image - Cityscape */}
         <div className="relative max-w-6xl mx-auto">
-          {/* Ornamen starburst di kiri bawah gambar */}
-          <div className="absolute -bottom-16 -left-20 w-48 h-48 opacity-80 z-10">
-            <img src={starburstImg} alt="" className="w-full h-full" />
-          </div>
-          
           <div className="aspect-[21/9] rounded-3xl overflow-hidden">
             <img 
               src={cityscapeImg}
