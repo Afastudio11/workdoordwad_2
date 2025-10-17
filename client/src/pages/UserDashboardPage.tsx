@@ -3,6 +3,8 @@ import { Link, useLocation } from "wouter";
 import { User, FileText, Briefcase, Heart, Settings, LogOut, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import logoImg from "@assets/Asset 6@4x_1760692501921.png";
+import logoImgDark from "@assets/black@4x_1760695283292.png";
 import ProfilePage from "./dashboard/ProfilePage";
 import ApplicationsPage from "./dashboard/ApplicationsPage";
 import WishlistPage from "./dashboard/WishlistPage";
@@ -40,27 +42,28 @@ export default function UserDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <aside className="w-64 min-h-screen bg-card border-r border-border">
           <div className="p-6">
             <Link href="/" data-testid="link-home">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Pintu Kerja</h1>
+              <img src={logoImg} alt="PintuKerja" className="h-8 dark:hidden" />
+              <img src={logoImgDark} alt="PintuKerja" className="h-8 hidden dark:block" />
             </Link>
           </div>
 
           <div className="px-3">
             <div className="mb-6">
               <div className="flex items-center gap-3 px-3 py-2">
-                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
-                  <span className="text-white font-medium">{user?.fullName?.charAt(0) || 'U'}</span>
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                  <span className="text-primary-foreground font-medium">{user?.fullName?.charAt(0) || 'U'}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate" data-testid="text-username">
+                  <p className="text-sm font-medium text-foreground truncate" data-testid="text-username">
                     {user?.fullName || 'User'}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                 </div>
               </div>
             </div>
@@ -75,8 +78,8 @@ export default function UserDashboardPage() {
                     onClick={() => handleTabChange(item.id)}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                       isActive
-                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-foreground hover:bg-muted'
                     }`}
                     data-testid={`button-nav-${item.id}`}
                   >
@@ -87,10 +90,10 @@ export default function UserDashboardPage() {
               })}
             </nav>
 
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-6 pt-6 border-t border-border">
               <Link href="/jobs">
                 <button
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-foreground hover:bg-muted transition-colors"
                   data-testid="button-browse-jobs"
                 >
                   <Home className="w-5 h-5" />
@@ -99,7 +102,7 @@ export default function UserDashboardPage() {
               </Link>
               <button
                 onClick={() => logout()}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors mt-1"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors mt-1"
                 data-testid="button-logout"
               >
                 <LogOut className="w-5 h-5" />

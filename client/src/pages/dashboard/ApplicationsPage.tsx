@@ -25,11 +25,11 @@ interface Application {
 }
 
 const statusConfig = {
-  submitted: { label: "Terkirim", color: "bg-blue-100 text-blue-700", icon: Clock },
-  reviewed: { label: "Ditinjau", color: "bg-yellow-100 text-yellow-700", icon: Eye },
-  shortlisted: { label: "Diundang Wawancara", color: "bg-green-100 text-green-700", icon: CheckCircle },
-  rejected: { label: "Ditolak", color: "bg-red-100 text-red-700", icon: XCircle },
-  accepted: { label: "Diterima", color: "bg-emerald-100 text-emerald-700", icon: CheckCircle },
+  submitted: { label: "Terkirim", color: "bg-primary/20 text-primary", icon: Clock },
+  reviewed: { label: "Ditinjau", color: "bg-yellow-500/20 text-yellow-700 dark:text-yellow-400", icon: Eye },
+  shortlisted: { label: "Diundang Wawancara", color: "bg-green-500/20 text-green-700 dark:text-green-400", icon: CheckCircle },
+  rejected: { label: "Ditolak", color: "bg-destructive/20 text-destructive", icon: XCircle },
+  accepted: { label: "Diterima", color: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400", icon: CheckCircle },
 };
 
 export default function ApplicationsPage() {
@@ -48,7 +48,7 @@ export default function ApplicationsPage() {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-32 bg-gray-200 rounded-lg animate-pulse"></div>
+          <div key={i} className="h-32 bg-muted rounded-lg animate-pulse"></div>
         ))}
       </div>
     );
@@ -57,11 +57,11 @@ export default function ApplicationsPage() {
   if (!applications || applications.length === 0) {
     return (
       <div className="text-center py-12">
-        <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+        <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-foreground mb-2">
           Belum Ada Lamaran
         </h3>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-muted-foreground">
           Anda belum melamar ke lowongan manapun
         </p>
       </div>
@@ -71,10 +71,10 @@ export default function ApplicationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="text-page-title">
+        <h1 className="text-3xl font-bold text-foreground" data-testid="text-page-title">
           Riwayat Lamaran
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
+        <p className="text-muted-foreground mt-1">
           Pantau status lamaran pekerjaan Anda
         </p>
       </div>
@@ -90,20 +90,20 @@ export default function ApplicationsPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                        <Briefcase className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                        <Briefcase className="w-6 h-6 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white" data-testid={`text-job-title-${index}`}>
+                        <h3 className="text-lg font-semibold text-foreground" data-testid={`text-job-title-${index}`}>
                           {application.job.title}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400" data-testid={`text-company-${index}`}>
+                        <p className="text-muted-foreground" data-testid={`text-company-${index}`}>
                           {application.job.company.name}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
                         <span data-testid={`text-location-${index}`}>{application.job.location}</span>

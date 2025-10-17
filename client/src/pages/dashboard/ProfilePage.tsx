@@ -169,18 +169,18 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return <div className="animate-pulse space-y-4">
-      <div className="h-32 bg-gray-200 rounded-lg"></div>
-      <div className="h-64 bg-gray-200 rounded-lg"></div>
+      <div className="h-32 bg-muted rounded-lg"></div>
+      <div className="h-64 bg-muted rounded-lg"></div>
     </div>;
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="text-page-title">
+        <h1 className="text-3xl font-bold text-foreground" data-testid="text-page-title">
           Profil & CV
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
+        <p className="text-muted-foreground mt-1">
           Kelola informasi profil dan CV Anda
         </p>
       </div>
@@ -308,28 +308,28 @@ export default function ProfilePage() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-500">Nama Lengkap</p>
-                  <p className="font-medium" data-testid="text-fullname-display">{profile?.fullName || '-'}</p>
+                  <p className="text-sm text-muted-foreground">Nama Lengkap</p>
+                  <p className="font-medium text-foreground" data-testid="text-fullname-display">{profile?.fullName || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium" data-testid="text-email-display">{profile?.email || '-'}</p>
+                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="font-medium text-foreground" data-testid="text-email-display">{profile?.email || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Nomor Telepon</p>
-                  <p className="font-medium" data-testid="text-phone-display">{profile?.phone || '-'}</p>
+                  <p className="text-sm text-muted-foreground">Nomor Telepon</p>
+                  <p className="font-medium text-foreground" data-testid="text-phone-display">{profile?.phone || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Jenis Kelamin</p>
-                  <p className="font-medium" data-testid="text-gender-display">
+                  <p className="text-sm text-muted-foreground">Jenis Kelamin</p>
+                  <p className="font-medium text-foreground" data-testid="text-gender-display">
                     {profile?.gender === 'male' ? 'Laki-laki' : profile?.gender === 'female' ? 'Perempuan' : '-'}
                   </p>
                 </div>
               </div>
               {profile?.bio && (
                 <div>
-                  <p className="text-sm text-gray-500">Bio</p>
-                  <p className="font-medium" data-testid="text-bio-display">{profile.bio}</p>
+                  <p className="text-sm text-muted-foreground">Bio</p>
+                  <p className="font-medium text-foreground" data-testid="text-bio-display">{profile.bio}</p>
                 </div>
               )}
             </div>
@@ -346,24 +346,24 @@ export default function ProfilePage() {
         <CardContent>
           <div className="flex items-center gap-4">
             {profile?.cvUrl ? (
-              <div className="flex-1 flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Upload className="w-5 h-5 text-white" />
+              <div className="flex-1 flex items-center gap-3 p-4 bg-primary/10 rounded-lg">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <Upload className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900 dark:text-white" data-testid="text-cv-filename">
+                  <p className="font-medium text-foreground" data-testid="text-cv-filename">
                     {profile.cvFileName || 'CV.pdf'}
                   </p>
-                  <p className="text-sm text-gray-500">CV terupload</p>
+                  <p className="text-sm text-muted-foreground">CV terupload</p>
                 </div>
                 <Button variant="outline" size="sm" data-testid="button-download-cv">
                   Download
                 </Button>
               </div>
             ) : (
-              <div className="flex-1 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
-                <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-600 dark:text-gray-400 mb-2">Belum ada CV terupload</p>
+              <div className="flex-1 border-2 border-dashed border-border rounded-lg p-8 text-center">
+                <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground mb-2">Belum ada CV terupload</p>
                 <Button data-testid="button-upload-cv">
                   <Upload className="w-4 h-4 mr-2" />
                   Upload CV
@@ -398,13 +398,13 @@ export default function ProfilePage() {
             {(profile?.skills || skills).map((skill: string, index: number) => (
               <div
                 key={index}
-                className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full flex items-center gap-2"
+                className="px-3 py-1.5 bg-primary/20 text-primary rounded-full flex items-center gap-2"
                 data-testid={`badge-skill-${index}`}
               >
                 <span>{skill}</span>
                 <button
                   onClick={() => handleRemoveSkill(skill)}
-                  className="hover:text-blue-900 dark:hover:text-blue-100"
+                  className="hover:opacity-80"
                   data-testid={`button-remove-skill-${index}`}
                 >
                   <Trash2 className="w-3 h-3" />
