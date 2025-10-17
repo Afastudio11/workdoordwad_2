@@ -36,7 +36,7 @@ const stats = [
 
 export default function HowItWorksSection() {
   return (
-    <section className="relative py-24 bg-gray-50 dark:bg-gray-100 overflow-hidden">
+    <section className="relative py-24 bg-white dark:bg-gray-900 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-12 mb-20">
