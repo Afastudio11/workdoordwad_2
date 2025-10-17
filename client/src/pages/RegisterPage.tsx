@@ -67,7 +67,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setUserType("candidate")}
-              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-md transition-colors ${
+              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-full transition-colors ${
                 userType === "candidate"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-gray-600 hover:bg-[#ffffff]/50"
@@ -79,7 +79,7 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setUserType("employers")}
-              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-md transition-colors ${
+              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-full transition-colors ${
                 userType === "employers"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-gray-600 hover:bg-[#ffffff]/50"
@@ -258,14 +258,14 @@ export default function RegisterPage() {
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-[#ffffff] hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors"
             >
               <FaFacebook className="h-5 w-5 text-blue-600" />
               <span className="text-sm text-gray-900">Daftar dengan Facebook</span>
             </button>
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-[#ffffff] hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors"
             >
               <FaGoogle className="h-5 w-5 text-red-500" />
               <span className="text-sm text-gray-900">Daftar dengan Google</span>
