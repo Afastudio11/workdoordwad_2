@@ -67,26 +67,26 @@ const categories = ["Desainer", "Pengembang Web", "Software Engineer", "Dokter",
 
 export default function JobCircularsSection() {
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
-        <div className="mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-6">
+    <section className="py-12 md:py-20 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-5xl font-bold text-black dark:text-white mb-4 md:mb-6">
             Lowongan Kerja Unggulan
           </h2>
           
           {/* Search Bar */}
-          <div className="flex gap-4 mb-6">
+          <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input 
                 type="text" 
                 placeholder="Cari kebutuhan Anda" 
-                className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full pl-12 pr-4 py-3 md:py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
                 data-testid="input-search"
               />
             </div>
             <select 
-              className="px-6 py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-4 md:px-6 py-3 md:py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
               data-testid="select-category"
             >
               <option>Pengembangan Web</option>
@@ -94,20 +94,21 @@ export default function JobCircularsSection() {
               <option>Marketing</option>
             </select>
             <button 
-              className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors"
+              className="px-6 md:px-8 py-3 md:py-4 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
               data-testid="button-search"
             >
               <Search className="h-5 w-5" />
+              <span className="md:hidden">Cari</span>
             </button>
           </div>
 
           {/* Popular Categories */}
-          <div className="flex gap-2 items-center flex-wrap">
-            <span className="text-gray-600 dark:text-gray-400 font-medium">Kategori Populer:</span>
+          <div className="flex gap-2 items-start md:items-center flex-wrap">
+            <span className="text-gray-600 dark:text-gray-400 text-sm md:text-base font-medium">Kategori Populer:</span>
             {categories.map((cat, index) => (
               <button 
                 key={index}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors ${
                   index === 1 
                     ? 'bg-black dark:bg-white text-white dark:text-black' 
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
@@ -120,7 +121,7 @@ export default function JobCircularsSection() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {jobCirculars.map((job, index) => (
             <div
               key={index}
