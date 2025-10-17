@@ -1,66 +1,41 @@
-import { Briefcase, Mail, Phone, MapPin } from "lucide-react";
+import { Briefcase } from "lucide-react";
 
 const footerLinks = {
   perusahaan: [
-    { label: "Tentang Kami", href: "#" },
-    { label: "Karir", href: "#" },
+    { label: "Tentang", href: "#" },
     { label: "Blog", href: "#" },
     { label: "Kontak", href: "#" }
   ],
   pencariKerja: [
     { label: "Cari Lowongan", href: "#" },
     { label: "Tips Karir", href: "#" },
-    { label: "Panduan CV", href: "#" },
     { label: "FAQ", href: "#" }
   ],
   perekrut: [
     { label: "Posting Lowongan", href: "#" },
     { label: "Harga", href: "#" },
-    { label: "Fitur", href: "#" },
-    { label: "Success Stories", href: "#" }
-  ],
-  legal: [
-    { label: "Syarat & Ketentuan", href: "#" },
-    { label: "Kebijakan Privasi", href: "#" },
-    { label: "Cookie Policy", href: "#" }
+    { label: "Panduan", href: "#" }
   ]
 };
 
 export default function Footer() {
   return (
-    <footer className="bg-muted/30 border-t">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
-          <div className="lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <Briefcase className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold text-foreground">Pintu Kerja</span>
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">
-              Platform rekrutmen dengan AI yang mengagregasi lowongan dari berbagai sumber termasuk media sosial.
-            </p>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                <span>info@pintukerja.id</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <span>+62 812-3456-7890</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                <span>Jakarta, Indonesia</span>
-              </div>
+    <footer className="bg-white border-t border-gray-200">
+      <div className="max-w-6xl mx-auto px-6 md:px-8 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          <div>
+            <div className="flex items-center gap-2 mb-6">
+              <Briefcase className="h-5 w-5 text-gray-900" />
+              <span className="font-semibold text-gray-900">Pintu Kerja</span>
             </div>
           </div>
 
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Perusahaan</h3>
-            <ul className="space-y-2">
+            <h3 className="text-sm font-medium text-gray-900 mb-4">Perusahaan</h3>
+            <ul className="space-y-3">
               {footerLinks.perusahaan.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-muted-foreground hover:text-primary hover-elevate px-2 py-1 -ml-2 rounded-md inline-block">
+                  <a href={link.href} className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -69,11 +44,11 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Pencari Kerja</h3>
-            <ul className="space-y-2">
+            <h3 className="text-sm font-medium text-gray-900 mb-4">Pencari Kerja</h3>
+            <ul className="space-y-3">
               {footerLinks.pencariKerja.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-muted-foreground hover:text-primary hover-elevate px-2 py-1 -ml-2 rounded-md inline-block">
+                  <a href={link.href} className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -82,24 +57,11 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Perekrut</h3>
-            <ul className="space-y-2">
+            <h3 className="text-sm font-medium text-gray-900 mb-4">Perekrut</h3>
+            <ul className="space-y-3">
               {footerLinks.perekrut.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-muted-foreground hover:text-primary hover-elevate px-2 py-1 -ml-2 rounded-md inline-block">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-foreground mb-4">Legal</h3>
-            <ul className="space-y-2">
-              {footerLinks.legal.map((link, index) => (
-                <li key={index}>
-                  <a href={link.href} className="text-sm text-muted-foreground hover:text-primary hover-elevate px-2 py-1 -ml-2 rounded-md inline-block">
+                  <a href={link.href} className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -108,8 +70,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t pt-8">
-          <p className="text-center text-sm text-muted-foreground">
+        <div className="border-t border-gray-200 pt-8">
+          <p className="text-center text-sm text-gray-500">
             © 2025 Pintu Kerja. All rights reserved.
           </p>
         </div>

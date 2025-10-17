@@ -1,73 +1,57 @@
-import { Star } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
 const testimonials = [
   {
     name: "Budi Santoso",
     role: "Staff Gudang",
     company: "PT Logistics Indonesia",
-    content: "Saya dapat pekerjaan dalam 3 hari! Quick Apply sangat memudahkan, tidak perlu isi formulir berkali-kali.",
-    initials: "BS",
-    gradient: "from-blue-500 to-cyan-500"
+    content: "Dapat pekerjaan dalam 3 hari. Quick Apply sangat memudahkan.",
+    initials: "BS"
   },
   {
     name: "Siti Nurhaliza",
     role: "HR Manager",
     company: "CV Maju Bersama",
-    content: "Sebagai UMKM, kami senang bisa posting lowongan gratis. Fitur AI aggregation juga membantu kami menemukan kandidat dari berbagai sumber.",
-    initials: "SN",
-    gradient: "from-purple-500 to-pink-500"
+    content: "Sebagai UMKM, kami senang bisa posting lowongan gratis.",
+    initials: "SN"
   },
   {
     name: "Ahmad Rifai",
     role: "Teknisi AC",
     company: "Freelancer",
-    content: "Platform-nya mobile-friendly, jadi bisa cari lowongan sambil jalan. Notifikasinya juga cepat, lowongan baru langsung muncul.",
-    initials: "AR",
-    gradient: "from-green-500 to-emerald-500"
+    content: "Mobile-friendly, bisa cari lowongan dari mana saja.",
+    initials: "AR"
   }
 ];
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-20 bg-background">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <section className="py-24 bg-white">
+      <div className="max-w-6xl mx-auto px-6 md:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="testimonials-title">
+          <h2 className="text-3xl font-semibold text-gray-900 mb-4" data-testid="testimonials-title">
             Apa Kata Mereka
           </h2>
-          <p className="text-lg text-muted-foreground" data-testid="testimonials-subtitle">
-            Pengalaman nyata dari pencari kerja dan perekrut
-          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <div 
               key={index} 
-              className="bg-card border border-card-border rounded-lg p-6 hover-elevate"
+              className="bg-white border border-gray-200 rounded-md p-8"
               data-testid={`testimonial-${index}`}
             >
-              <div className="flex gap-1 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-chart-3 text-chart-3" />
-                ))}
-              </div>
-              <p className="text-foreground mb-6 italic" data-testid={`testimonial-content-${index}`}>
+              <p className="text-lg text-gray-900 mb-6 leading-relaxed" data-testid={`testimonial-content-${index}`}>
                 "{testimonial.content}"
               </p>
               <div className="flex items-center gap-3">
-                <Avatar>
-                  <AvatarFallback className={`bg-gradient-to-br ${testimonial.gradient} text-white font-semibold`}>
-                    {testimonial.initials}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-blue-600">{testimonial.initials}</span>
+                </div>
                 <div>
-                  <div className="font-semibold text-foreground" data-testid={`testimonial-name-${index}`}>
+                  <div className="font-medium text-gray-900" data-testid={`testimonial-name-${index}`}>
                     {testimonial.name}
                   </div>
-                  <div className="text-sm text-muted-foreground" data-testid={`testimonial-role-${index}`}>
-                    {testimonial.role} • {testimonial.company}
+                  <div className="text-sm text-gray-600" data-testid={`testimonial-role-${index}`}>
+                    {testimonial.role}
                   </div>
                 </div>
               </div>
