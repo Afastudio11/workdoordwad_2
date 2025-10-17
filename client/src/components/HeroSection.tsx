@@ -29,13 +29,13 @@ export default function HeroSection() {
         <img src={starburstImg} alt="" className="w-full h-full" />
       </div>
       
-      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
         <div className="text-center mb-4">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight leading-tight" data-testid="hero-title">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight leading-tight" data-testid="hero-title">
             Wujudkan Pekerjaan Impianmu!<br />Cari di Sini Sekarang!
           </h1>
 
-          <div className="max-w-2xl mx-auto mb-3">
+          <div className="max-w-2xl mx-auto mb-5">
             <div className="relative rounded-full p-2 flex items-center gap-3" style={{ backgroundColor: '#484946' }}>
               <input
                 type="text"
@@ -73,7 +73,7 @@ export default function HeroSection() {
         </div>
 
         {/* Hero Image - Cityscape */}
-        <div className="relative max-w-6xl mx-auto mb-12">
+        <div className="relative max-w-7xl mx-auto mb-12">
           <div className="aspect-[21/9] rounded-3xl overflow-hidden">
             <img 
               src={cityscapeImg}
@@ -84,7 +84,7 @@ export default function HeroSection() {
         </div>
 
         {/* Corporate Clients - Auto Scrolling */}
-        <div className="max-w-6xl mx-auto overflow-hidden">
+        <div className="max-w-7xl mx-auto overflow-hidden">
           <div className="flex items-center gap-8 md:gap-12 py-4">
             <div className="flex items-center gap-2 whitespace-nowrap">
               <span className="text-white font-semibold text-sm">Trusted By 1M+</span>
