@@ -55,7 +55,7 @@ export default function RegisterPage() {
           </h1>
           <p className="text-gray-900">
             Already have account?{" "}
-            <Link href="/login" className="text-gray-900 hover:underline font-medium" data-testid="link-login">
+            <Link href="/login" className="text-gray-900 hover:underline font-bold" data-testid="link-login">
               Log In
             </Link>
           </p>
@@ -225,7 +225,7 @@ export default function RegisterPage() {
                     </FormControl>
                     <label className="text-sm text-gray-900">
                       I've read and agree with your{" "}
-                      <a href="#" className="text-gray-900 hover:underline">
+                      <a href="#" className="text-gray-900 hover:underline font-bold">
                         Terms of Services
                       </a>
                     </label>

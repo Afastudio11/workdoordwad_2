@@ -40,7 +40,7 @@ export default function LoginPage() {
           </h1>
           <p className="text-gray-900">
             Don't have an account?{" "}
-            <Link href="/register" className="text-gray-900 hover:underline font-medium" data-testid="link-register">
+            <Link href="/register" className="text-gray-900 hover:underline font-bold" data-testid="link-register">
               Sign Up
             </Link>
           </p>
