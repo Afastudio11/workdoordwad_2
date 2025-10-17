@@ -240,30 +240,30 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground" data-testid="text-page-title">
+          <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
             Profil Saya
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-gray-600 mt-1">
             Kelola informasi profil dan preferensi Anda
           </p>
         </div>
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="profile">
+        <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+          <TabsTrigger value="profile" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
             <User className="w-4 h-4 mr-2" />
             Profil
           </TabsTrigger>
-          <TabsTrigger value="cv">
+          <TabsTrigger value="cv" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
             <FileText className="w-4 h-4 mr-2" />
             CV
           </TabsTrigger>
-          <TabsTrigger value="skills">
+          <TabsTrigger value="skills" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
             <Award className="w-4 h-4 mr-2" />
             Keahlian
           </TabsTrigger>
-          <TabsTrigger value="preferences">
+          <TabsTrigger value="preferences" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
             <Settings className="w-4 h-4 mr-2" />
             Preferensi
           </TabsTrigger>
@@ -271,12 +271,12 @@ export default function ProfilePage() {
 
         {/* Profile Tab */}
         <TabsContent value="profile" className="space-y-6 mt-6">
-          <Card>
+          <Card className="bg-white border-gray-200">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Informasi Pribadi</CardTitle>
-                  <CardDescription>Data diri dan kontak Anda</CardDescription>
+                  <CardTitle className="text-gray-900">Informasi Pribadi</CardTitle>
+                  <CardDescription className="text-gray-600">Data diri dan kontak Anda</CardDescription>
                 </div>
                 {!isEditingProfile && (
                   <Button
@@ -447,60 +447,60 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-muted-foreground">Nama Lengkap</p>
-                      <p className="font-medium text-foreground mt-1" data-testid="text-fullname-display">
+                      <p className="text-sm text-gray-600">Nama Lengkap</p>
+                      <p className="font-medium text-gray-900 mt-1" data-testid="text-fullname-display">
                         {profile?.fullName || '-'}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Email</p>
-                      <p className="font-medium text-foreground mt-1" data-testid="text-email-display">
+                      <p className="text-sm text-gray-600">Email</p>
+                      <p className="font-medium text-gray-900 mt-1" data-testid="text-email-display">
                         {profile?.email || '-'}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Nomor Telepon</p>
-                      <p className="font-medium text-foreground mt-1" data-testid="text-phone-display">
+                      <p className="text-sm text-gray-600">Nomor Telepon</p>
+                      <p className="font-medium text-gray-900 mt-1" data-testid="text-phone-display">
                         {profile?.phone || '-'}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Tanggal Lahir</p>
-                      <p className="font-medium text-foreground mt-1">
+                      <p className="text-sm text-gray-600">Tanggal Lahir</p>
+                      <p className="font-medium text-gray-900 mt-1">
                         {profile?.dateOfBirth || '-'}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Jenis Kelamin</p>
-                      <p className="font-medium text-foreground mt-1">
+                      <p className="text-sm text-gray-600">Jenis Kelamin</p>
+                      <p className="font-medium text-gray-900 mt-1">
                         {profile?.gender === 'male' ? 'Laki-laki' : profile?.gender === 'female' ? 'Perempuan' : profile?.gender === 'other' ? 'Lainnya' : '-'}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Kota</p>
-                      <p className="font-medium text-foreground mt-1">
+                      <p className="text-sm text-gray-600">Kota</p>
+                      <p className="font-medium text-gray-900 mt-1">
                         {profile?.city || '-'}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Provinsi</p>
-                      <p className="font-medium text-foreground mt-1">
+                      <p className="text-sm text-gray-600">Provinsi</p>
+                      <p className="font-medium text-gray-900 mt-1">
                         {profile?.province || '-'}
                       </p>
                     </div>
                   </div>
                   {profile?.address && (
                     <div>
-                      <p className="text-sm text-muted-foreground">Alamat</p>
-                      <p className="font-medium text-foreground mt-1">
+                      <p className="text-sm text-gray-600">Alamat</p>
+                      <p className="font-medium text-gray-900 mt-1">
                         {profile.address}
                       </p>
                     </div>
                   )}
                   {profile?.bio && (
                     <div>
-                      <p className="text-sm text-muted-foreground">Bio</p>
-                      <p className="font-medium text-foreground mt-1" data-testid="text-bio-display">
+                      <p className="text-sm text-gray-600">Bio</p>
+                      <p className="font-medium text-gray-900 mt-1" data-testid="text-bio-display">
                         {profile.bio}
                       </p>
                     </div>
@@ -513,24 +513,24 @@ export default function ProfilePage() {
 
         {/* CV Tab */}
         <TabsContent value="cv" className="space-y-6 mt-6">
-          <Card>
+          <Card className="bg-white border-gray-200">
             <CardHeader>
-              <CardTitle>CV / Resume</CardTitle>
-              <CardDescription>Unggah CV Anda dalam format PDF atau DOCX (maks 5MB)</CardDescription>
+              <CardTitle className="text-gray-900">CV / Resume</CardTitle>
+              <CardDescription className="text-gray-600">Unggah CV Anda dalam format PDF atau DOCX (maks 5MB)</CardDescription>
             </CardHeader>
             <CardContent>
               {profile?.cvUrl ? (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-primary/10 rounded-lg border border-primary/20">
+                  <div className="flex items-center justify-between p-4 bg-[#D4FF00]/10 rounded-lg border border-[#D4FF00]/30">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                        <FileText className="w-6 h-6 text-primary-foreground" />
+                      <div className="w-12 h-12 bg-[#D4FF00] rounded-lg flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-gray-900" />
                       </div>
                       <div>
-                        <p className="font-medium text-foreground" data-testid="text-cv-filename">
+                        <p className="font-medium text-gray-900" data-testid="text-cv-filename">
                           {profile.cvFileName || 'CV.pdf'}
                         </p>
-                        <p className="text-sm text-muted-foreground">CV terupload</p>
+                        <p className="text-sm text-gray-600">CV terupload</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -542,15 +542,15 @@ export default function ProfilePage() {
                       </Button>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-gray-600">
                     💡 CV Anda akan otomatis dilampirkan saat menggunakan fitur Quick Apply
                   </p>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                  <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground mb-2">Belum ada CV terupload</p>
-                  <p className="text-sm text-muted-foreground mb-6">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                  <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-600 mb-2">Belum ada CV terupload</p>
+                  <p className="text-sm text-gray-600 mb-6">
                     Upload CV Anda untuk menggunakan fitur Quick Apply dan meningkatkan peluang diterima
                   </p>
                   <Button data-testid="button-upload-cv">
@@ -565,12 +565,12 @@ export default function ProfilePage() {
 
         {/* Skills Tab */}
         <TabsContent value="skills" className="space-y-6 mt-6">
-          <Card>
+          <Card className="bg-white border-gray-200">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Keahlian</CardTitle>
-                  <CardDescription>Tambahkan keahlian yang Anda kuasai</CardDescription>
+                  <CardTitle className="text-gray-900">Keahlian</CardTitle>
+                  <CardDescription className="text-gray-600">Tambahkan keahlian yang Anda kuasai</CardDescription>
                 </div>
                 {!isEditingSkills && (
                   <Button
@@ -646,7 +646,7 @@ export default function ProfilePage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground text-center py-8">
+                    <p className="text-gray-600 text-center py-8">
                       Belum ada keahlian ditambahkan
                     </p>
                   )}
@@ -658,12 +658,12 @@ export default function ProfilePage() {
 
         {/* Preferences Tab */}
         <TabsContent value="preferences" className="space-y-6 mt-6">
-          <Card>
+          <Card className="bg-white border-gray-200">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Preferensi Pekerjaan</CardTitle>
-                  <CardDescription>Atur preferensi untuk mendapatkan rekomendasi yang lebih sesuai</CardDescription>
+                  <CardTitle className="text-gray-900">Preferensi Pekerjaan</CardTitle>
+                  <CardDescription className="text-gray-600">Atur preferensi untuk mendapatkan rekomendasi yang lebih sesuai</CardDescription>
                 </div>
                 {!isEditingPreferences && (
                   <Button
@@ -824,7 +824,7 @@ export default function ProfilePage() {
               ) : (
                 <div className="space-y-6">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2">Industri yang Diminati</p>
+                    <p className="text-sm font-medium text-gray-600 mb-2">Industri yang Diminati</p>
                     {profile?.preferredIndustries && profile.preferredIndustries.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {profile.preferredIndustries.map((industry, index) => (
@@ -832,12 +832,12 @@ export default function ProfilePage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-muted-foreground">Belum ada industri dipilih</p>
+                      <p className="text-gray-600">Belum ada industri dipilih</p>
                     )}
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2">Lokasi yang Diminati</p>
+                    <p className="text-sm font-medium text-gray-600 mb-2">Lokasi yang Diminati</p>
                     {profile?.preferredLocations && profile.preferredLocations.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {profile.preferredLocations.map((location, index) => (
@@ -845,12 +845,12 @@ export default function ProfilePage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-muted-foreground">Belum ada lokasi dipilih</p>
+                      <p className="text-gray-600">Belum ada lokasi dipilih</p>
                     )}
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2">Jenis Pekerjaan</p>
+                    <p className="text-sm font-medium text-gray-600 mb-2">Jenis Pekerjaan</p>
                     {profile?.preferredJobTypes && profile.preferredJobTypes.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {profile.preferredJobTypes.map((jobType, index) => (
@@ -860,13 +860,13 @@ export default function ProfilePage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-muted-foreground">Belum ada jenis pekerjaan dipilih</p>
+                      <p className="text-gray-600">Belum ada jenis pekerjaan dipilih</p>
                     )}
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2">Ekspektasi Gaji Minimal</p>
-                    <p className="text-foreground font-medium">
+                    <p className="text-sm font-medium text-gray-600 mb-2">Ekspektasi Gaji Minimal</p>
+                    <p className="text-gray-900 font-medium">
                       {profile?.expectedSalaryMin ? `Rp ${profile.expectedSalaryMin.toLocaleString('id-ID')}` : 'Belum diatur'}
                     </p>
                   </div>

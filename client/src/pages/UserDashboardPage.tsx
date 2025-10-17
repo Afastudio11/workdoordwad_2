@@ -77,24 +77,24 @@ export default function UserDashboardPage() {
           <aside className="hidden lg:block lg:col-span-3">
             <div className="sticky top-24 space-y-6">
               {/* User Info */}
-              <div className="bg-card border border-border rounded-lg p-6">
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-2xl font-bold text-primary-foreground">
+                  <div className="w-16 h-16 rounded-full bg-[#D4FF00] flex items-center justify-center">
+                    <span className="text-2xl font-bold text-gray-900">
                       {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-foreground truncate" data-testid="text-username">
+                    <h3 className="text-lg font-semibold text-gray-900 truncate" data-testid="text-username">
                       {user?.fullName || 'User'}
                     </h3>
-                    <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
+                    <p className="text-sm text-gray-600 truncate">{user?.email}</p>
                   </div>
                 </div>
               </div>
 
               {/* Navigation */}
-              <nav className="bg-card border border-border rounded-lg p-4 space-y-1">
+              <nav className="bg-white border border-gray-200 rounded-lg p-4 space-y-1">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
@@ -104,8 +104,8 @@ export default function UserDashboardPage() {
                       onClick={() => handleTabChange(item.id)}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-foreground hover:bg-muted'
+                          ? 'bg-[#D4FF00] text-gray-900'
+                          : 'text-gray-700 hover:bg-gray-100'
                       }`}
                       data-testid={`button-nav-${item.id}`}
                     >
@@ -115,10 +115,10 @@ export default function UserDashboardPage() {
                   );
                 })}
                 
-                <div className="pt-4 mt-4 border-t border-border">
+                <div className="pt-4 mt-4 border-t border-gray-200">
                   <button
                     onClick={() => logout()}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
                     data-testid="button-logout"
                   >
                     <LogOut className="w-5 h-5" />
@@ -133,7 +133,7 @@ export default function UserDashboardPage() {
           <div className="lg:hidden mb-4">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-900"
               data-testid="button-mobile-menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -144,7 +144,7 @@ export default function UserDashboardPage() {
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <div className="lg:hidden mb-6" data-testid="mobile-menu">
-              <div className="bg-card border border-border rounded-lg p-4 space-y-1">
+              <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-1">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
@@ -154,8 +154,8 @@ export default function UserDashboardPage() {
                       onClick={() => handleTabChange(item.id)}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-foreground hover:bg-muted'
+                          ? 'bg-[#D4FF00] text-gray-900'
+                          : 'text-gray-700 hover:bg-gray-100'
                       }`}
                       data-testid={`button-nav-mobile-${item.id}`}
                     >
@@ -165,10 +165,10 @@ export default function UserDashboardPage() {
                   );
                 })}
                 
-                <div className="pt-4 mt-4 border-t border-border">
+                <div className="pt-4 mt-4 border-t border-gray-200">
                   <button
                     onClick={() => logout()}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
                     data-testid="button-logout-mobile"
                   >
                     <LogOut className="w-5 h-5" />
