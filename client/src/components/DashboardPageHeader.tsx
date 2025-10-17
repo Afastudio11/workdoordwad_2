@@ -97,33 +97,24 @@ export default function DashboardPageHeader() {
               </button>
             </Link>
 
-            <button 
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-              data-testid="button-settings"
-            >
-              <Settings className="h-5 w-5 text-white" />
-            </button>
-
-            {/* Notifications with Profile Settings Dropdown */}
+            {/* Settings Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button 
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
-                  data-testid="button-notifications"
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  data-testid="button-settings"
                 >
-                  <Bell className="h-5 w-5 text-white" />
+                  <Settings className="h-5 w-5 text-white" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64 bg-white">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none text-black">{user?.fullName}</p>
-                    <p className="text-xs leading-none text-gray-600">{user?.email}</p>
+                    <p className="text-sm font-medium leading-none text-black">Pengaturan</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
-                {/* Profile Settings Options */}
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile">
                     <User className="h-4 w-4" />
@@ -132,7 +123,7 @@ export default function DashboardPageHeader() {
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
-                  <Link href="/user/dashboard#settings" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-settings">
+                  <Link href="/user/dashboard#settings" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-account-settings">
                     <Settings className="h-4 w-4" />
                     <span>Pengaturan Akun</span>
                   </Link>
@@ -140,7 +131,6 @@ export default function DashboardPageHeader() {
 
                 <DropdownMenuSeparator />
 
-                {/* Logout */}
                 <DropdownMenuItem 
                   onClick={logout}
                   className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
@@ -148,6 +138,71 @@ export default function DashboardPageHeader() {
                 >
                   <LogOut className="mr-3 h-4 w-4" />
                   <span>Keluar</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Notifications Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
+                  data-testid="button-notifications"
+                >
+                  <Bell className="h-5 w-5 text-white" />
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 bg-white">
+                <DropdownMenuLabel>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-black">Notifikasi</p>
+                    <button className="text-xs text-primary hover:underline">Tandai semua dibaca</button>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                {/* Notification Items */}
+                <div className="max-h-96 overflow-y-auto">
+                  <DropdownMenuItem className="flex flex-col items-start gap-1 p-3 cursor-pointer hover:bg-gray-50">
+                    <div className="flex items-start gap-2 w-full">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-black">Lamaran Anda Ditinjau</p>
+                        <p className="text-xs text-gray-600 mt-1">PT Teknologi Indonesia telah meninjau lamaran Anda untuk posisi Frontend Developer</p>
+                        <p className="text-xs text-gray-400 mt-1">2 jam yang lalu</p>
+                      </div>
+                    </div>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem className="flex flex-col items-start gap-1 p-3 cursor-pointer hover:bg-gray-50">
+                    <div className="flex items-start gap-2 w-full">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-black">Lowongan Baru Sesuai Profil Anda</p>
+                        <p className="text-xs text-gray-600 mt-1">3 lowongan baru untuk posisi UI/UX Designer tersedia</p>
+                        <p className="text-xs text-gray-400 mt-1">5 jam yang lalu</p>
+                      </div>
+                    </div>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem className="flex flex-col items-start gap-1 p-3 cursor-pointer hover:bg-gray-50 opacity-60">
+                    <div className="flex items-start gap-2 w-full">
+                      <div className="w-2 h-2 bg-transparent border border-gray-300 rounded-full mt-1.5"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-black">Pengingat Lengkapi Profil</p>
+                        <p className="text-xs text-gray-600 mt-1">Lengkapi profil Anda untuk meningkatkan peluang diterima</p>
+                        <p className="text-xs text-gray-400 mt-1">1 hari yang lalu</p>
+                      </div>
+                    </div>
+                  </DropdownMenuItem>
+                </div>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/notifications" className="flex items-center justify-center gap-2 cursor-pointer text-primary hover:text-primary/80 py-2">
+                    <span className="text-sm font-medium">Lihat Semua Notifikasi</span>
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
