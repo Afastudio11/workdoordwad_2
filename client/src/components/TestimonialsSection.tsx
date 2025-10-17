@@ -1,13 +1,12 @@
 import { Calendar, CreditCard } from "lucide-react";
-import recruitmentImg from "@assets/0d231d(3)_1760693142805.png";
 
 export default function TestimonialsSection() {
   return (
-    <section className="relative py-16 md:py-32 bg-black overflow-hidden">
+    <section className="relative py-32 bg-black overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1 text-left">
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">
               Siap Mengorganisir<br />Rekrutmen Anda?
             </h2>
 
@@ -35,16 +34,6 @@ export default function TestimonialsSection() {
               >
                 Dapatkan Demo
               </button>
-            </div>
-          </div>
-
-          <div className="flex-1 flex items-center justify-center">
-            <div className="relative max-w-lg w-full">
-              <img 
-                src={recruitmentImg}
-                alt="Recruitment" 
-                className="w-full h-auto"
-              />
             </div>
           </div>
         </div>

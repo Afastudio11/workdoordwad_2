@@ -32,7 +32,7 @@ export default function AIInnovationSection() {
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row justify-between items-start mb-12">
           <div className="mb-8 lg:mb-0">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-6 leading-tight">
+            <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-6 leading-tight">
               Sumber Daya untuk Membantu<br />Anda Merekrut dengan Tepat
             </h2>
             
