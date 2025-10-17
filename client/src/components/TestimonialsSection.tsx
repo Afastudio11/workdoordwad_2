@@ -24,7 +24,8 @@ export default function TestimonialsSection() {
 
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <button 
-                className="px-8 py-4 bg-gray-200 text-black font-semibold rounded-full hover:bg-gray-300 transition-colors min-w-[200px]"
+                className="px-8 py-4 text-white font-semibold rounded-full hover:opacity-90 transition-colors min-w-[200px]"
+                style={{ backgroundColor: '#484946' }}
                 data-testid="button-start-trial"
               >
                 Mulai Trial Gratis
