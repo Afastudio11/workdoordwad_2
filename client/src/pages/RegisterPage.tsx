@@ -13,11 +13,12 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-const registerSchema = z.object({
+const registerPekerjaSchema = z.object({
   fullName: z.string().min(3, "Nama lengkap minimal 3 karakter"),
   username: z.string().min(3, "Username minimal 3 karakter"),
   email: z.string().email("Email tidak valid"),
-  password: z.string().min(8, "Password minimal 8 karakter"),
+  phone: z.string().optional(),
+  password: z.string().min(6, "Password minimal 6 karakter"),
   confirmPassword: z.string(),
   agreeToTerms: z.boolean().refine((val) => val === true, {
     message: "Anda harus menyetujui Terms of Services",
@@ -27,35 +28,61 @@ const registerSchema = z.object({
   path: ["confirmPassword"],
 });
 
-type RegisterForm = z.infer<typeof registerSchema>;
+const registerPemberiKerjaSchema = z.object({
+  fullName: z.string().min(3, "Nama lengkap minimal 3 karakter"),
+  username: z.string().min(3, "Username minimal 3 karakter"),
+  email: z.string().email("Email tidak valid"),
+  phone: z.string().optional(),
+  companyName: z.string().min(3, "Nama perusahaan minimal 3 karakter"),
+  password: z.string().min(6, "Password minimal 6 karakter"),
+  confirmPassword: z.string(),
+  agreeToTerms: z.boolean().refine((val) => val === true, {
+    message: "Anda harus menyetujui Terms of Services",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Password tidak sama",
+  path: ["confirmPassword"],
+});
+
+type RegisterPekerjaForm = z.infer<typeof registerPekerjaSchema>;
+type RegisterPemberiKerjaForm = z.infer<typeof registerPemberiKerjaSchema>;
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [userType, setUserType] = useState<"candidate" | "employers">("employers");
+  const [userType, setUserType] = useState<"pekerja" | "pemberi_kerja">("pekerja");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const form = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema),
+  const schema = userType === "pekerja" ? registerPekerjaSchema : registerPemberiKerjaSchema;
+
+  const form = useForm<RegisterPekerjaForm | RegisterPemberiKerjaForm>({
+    resolver: zodResolver(schema),
     defaultValues: {
       fullName: "",
       username: "",
       email: "",
+      phone: "",
       password: "",
       confirmPassword: "",
       agreeToTerms: false,
+      ...(userType === "pemberi_kerja" && { companyName: "" }),
     },
   });
 
   const registerMutation = useMutation({
-    mutationFn: (data: any) => apiRequest("/api/auth/register", "POST", data),
+    mutationFn: (data: any) => {
+      const endpoint = userType === "pekerja" 
+        ? "/api/auth/register/pekerja" 
+        : "/api/auth/register/pemberi-kerja";
+      return apiRequest(endpoint, "POST", data);
+    },
     onSuccess: () => {
       toast({
         title: "Berhasil mendaftar!",
-        description: "Akun Anda berhasil dibuat. Silakan login.",
+        description: "Akun Anda berhasil dibuat dan Anda sudah login.",
       });
-      setLocation("/login");
+      setLocation("/jobs");
     },
     onError: (error: any) => {
       toast({
@@ -66,11 +93,11 @@ export default function RegisterPage() {
     },
   });
 
-  const onSubmit = (data: RegisterForm) => {
+  const onSubmit = (data: RegisterPekerjaForm | RegisterPemberiKerjaForm) => {
     const { confirmPassword, agreeToTerms, ...registerData } = data;
     registerMutation.mutate({
       ...registerData,
-      role: userType === "candidate" ? "job_seeker" : "recruiter",
+      role: userType,
     });
   };
 
@@ -96,24 +123,49 @@ export default function RegisterPage() {
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => setUserType("candidate")}
+              onClick={() => {
+                setUserType("pekerja");
+                form.reset({
+                  fullName: "",
+                  username: "",
+                  email: "",
+                  phone: "",
+                  password: "",
+                  confirmPassword: "",
+                  agreeToTerms: false,
+                });
+              }}
               className={`flex items-center justify-center gap-2 py-3 px-4 rounded-full transition-colors ${
-                userType === "candidate"
+                userType === "pekerja"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-gray-600 hover:bg-[#ffffff]/50"
               }`}
+              data-testid="button-usertype-pekerja"
             >
               <User className="h-4 w-4" />
-              <span className="font-medium">Kandidat</span>
+              <span className="font-medium">Pekerja</span>
             </button>
             <button
               type="button"
-              onClick={() => setUserType("employers")}
+              onClick={() => {
+                setUserType("pemberi_kerja");
+                form.reset({
+                  fullName: "",
+                  username: "",
+                  email: "",
+                  phone: "",
+                  companyName: "",
+                  password: "",
+                  confirmPassword: "",
+                  agreeToTerms: false,
+                } as any);
+              }}
               className={`flex items-center justify-center gap-2 py-3 px-4 rounded-full transition-colors ${
-                userType === "employers"
+                userType === "pemberi_kerja"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-gray-600 hover:bg-[#ffffff]/50"
               }`}
+              data-testid="button-usertype-pemberi-kerja"
             >
               <Building2 className="h-4 w-4" />
               <span className="font-medium">Pemberi Kerja</span>
@@ -179,6 +231,27 @@ export default function RegisterPage() {
                 </FormItem>
               )}
             />
+
+            {userType === "pemberi_kerja" && (
+              <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Nama Perusahaan"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                        {...field}
+                        data-testid="input-company-name"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}

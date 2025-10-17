@@ -1,8 +1,17 @@
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
 import logoImg from "@assets/Asset 6@4x_1760692501921.png";
 import logoImgDark from "@assets/black@4x_1760695283292.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   variant?: "dark" | "light";
@@ -11,6 +20,7 @@ interface HeaderProps {
 export default function Header({ variant = "dark" }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -56,16 +66,48 @@ export default function Header({ variant = "dark" }: HeaderProps) {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Link href="/register">
-              <button className={`px-6 py-2 ${btnBgClass} text-sm font-semibold rounded-full hover:bg-primary/90 transition-colors`} data-testid="button-daftar">
-                Daftar Sekarang
-              </button>
-            </Link>
-            <Link href="/login">
-              <button className={`px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full ${btnBorderHoverClass} transition-colors`} data-testid="button-masuk">
-                Masuk
-              </button>
-            </Link>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button 
+                    className={`flex items-center gap-2 px-4 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full ${btnBorderHoverClass} transition-colors`}
+                    data-testid="button-user-menu"
+                  >
+                    <User className="h-4 w-4" />
+                    <span>{user?.fullName}</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user?.fullName}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                      <p className="text-xs leading-none text-muted-foreground capitalize">
+                        {user?.role === "pekerja" ? "Pekerja" : user?.role === "pemberi_kerja" ? "Pemberi Kerja" : "Admin"}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout} data-testid="menu-item-logout">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Link href="/register">
+                  <button className={`px-6 py-2 ${btnBgClass} text-sm font-semibold rounded-full hover:bg-primary/90 transition-colors`} data-testid="button-daftar">
+                    Daftar Sekarang
+                  </button>
+                </Link>
+                <Link href="/login">
+                  <button className={`px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full ${btnBorderHoverClass} transition-colors`} data-testid="button-masuk">
+                    Masuk
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
 
           <button
@@ -97,16 +139,37 @@ export default function Header({ variant = "dark" }: HeaderProps) {
               Kontak
             </a>
             <div className={`pt-4 space-y-3 border-t ${borderClass}`}>
-              <Link href="/register">
-                <button className={`block w-full px-6 py-2 ${btnBgClass} text-sm font-semibold rounded-full text-center`} data-testid="mobile-button-daftar">
-                  Daftar Sekarang
-                </button>
-              </Link>
-              <Link href="/login">
-                <button className={`block w-full px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full text-center ${btnBorderHoverClass}`} data-testid="mobile-button-masuk">
-                  Masuk
-                </button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <div className={`px-4 py-3 ${textClass}`}>
+                    <p className="font-medium">{user?.fullName}</p>
+                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {user?.role === "pekerja" ? "Pekerja" : user?.role === "pemberi_kerja" ? "Pemberi Kerja" : "Admin"}
+                    </p>
+                  </div>
+                  <button 
+                    onClick={logout}
+                    className={`block w-full px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full text-center ${btnBorderHoverClass}`}
+                    data-testid="mobile-button-logout"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/register">
+                    <button className={`block w-full px-6 py-2 ${btnBgClass} text-sm font-semibold rounded-full text-center`} data-testid="mobile-button-daftar">
+                      Daftar Sekarang
+                    </button>
+                  </Link>
+                  <Link href="/login">
+                    <button className={`block w-full px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full text-center ${btnBorderHoverClass}`} data-testid="mobile-button-masuk">
+                      Masuk
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
