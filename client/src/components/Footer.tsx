@@ -1,4 +1,4 @@
-import logoImg from "@assets/Asset 6@4x_1760692501921.png";
+import logoImg from "@assets/as@4x_1760716473766.png";
 
 const footerLinks = {
   perusahaan: [
@@ -21,11 +21,11 @@ const footerLinks = {
 export default function Footer() {
   return (
     <footer className="bg-black border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div>
             <div className="mb-6">
-              <img src={logoImg} alt="PintuKerja" className="h-8" />
+              <img src={logoImg} alt="PintuKerja" className="h-12" />
             </div>
             <p className="text-sm text-gray-400">
               Portal lowongan kerja terpercaya di Indonesia

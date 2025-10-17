@@ -29,7 +29,7 @@ export default function HeroSection() {
         <img src={starburstImg} alt="" className="w-full h-full" />
       </div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
+      <div className="relative z-10 max-w-[1600px] mx-auto px-4 md:px-8">
         <div className="text-center mb-4">
           <h1 className="text-3xl md:text-6xl font-bold text-white mb-6 md:mb-8 tracking-tight leading-tight" data-testid="hero-title">
             Wujudkan Pekerjaan Impianmu!<br />Cari di Sini Sekarang!
@@ -73,7 +73,7 @@ export default function HeroSection() {
         </div>
 
         {/* Hero Image - Cityscape */}
-        <div className="relative max-w-7xl mx-auto mb-8 md:mb-12">
+        <div className="relative max-w-[1600px] mx-auto mb-8 md:mb-12">
           <div className="aspect-[16/9] md:aspect-[21/9] rounded-2xl md:rounded-3xl overflow-hidden">
             <img 
               src={cityscapeImg}
@@ -84,7 +84,7 @@ export default function HeroSection() {
         </div>
 
         {/* Corporate Clients - Auto Scrolling */}
-        <div className="max-w-7xl mx-auto overflow-hidden">
+        <div className="max-w-[1600px] mx-auto overflow-hidden">
           <div className="flex items-center gap-4 md:gap-12 py-4">
             <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
               <span className="text-white font-semibold text-xs md:text-sm">Trusted By 1M+</span>

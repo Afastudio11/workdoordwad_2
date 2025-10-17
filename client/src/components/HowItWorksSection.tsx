@@ -39,7 +39,7 @@ export default function HowItWorksSection() {
   const [activeStep, setActiveStep] = useState(0);
   return (
     <section className="relative py-24 bg-white dark:bg-gray-900 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-8">
         {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-12 mb-20">
           {/* Left Side - Steps */}

@@ -2,8 +2,8 @@ import { Menu, X, User, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import logoImg from "@assets/Asset 6@4x_1760692501921.png";
-import logoImgDark from "@assets/black@4x_1760695283292.png";
+import logoImg from "@assets/as@4x_1760716473766.png";
+import logoImgDark from "@assets/as@4x_1760716473766.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,11 +39,11 @@ export default function Header({ variant = "dark" }: HeaderProps) {
 
   return (
     <header className={`sticky top-0 z-50 ${bgClass} border-b ${borderClass}`}>
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center">
-              <img src={logo} alt="PintuKerja" className="h-8" />
+              <img src={logo} alt="PintuKerja" className="h-12" />
             </Link>
           </div>
 

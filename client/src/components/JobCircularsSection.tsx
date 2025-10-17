@@ -68,7 +68,7 @@ const categories = ["Desainer", "Pengembang Web", "Software Engineer", "Dokter",
 export default function JobCircularsSection() {
   return (
     <section className="py-12 md:py-20 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-8">
         <div className="mb-8 md:mb-12">
           <h2 className="text-2xl md:text-5xl font-bold text-black dark:text-white mb-4 md:mb-6">
             Lowongan Kerja Unggulan

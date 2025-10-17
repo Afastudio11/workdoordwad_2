@@ -4,7 +4,7 @@ import recruitmentImg from "@assets/0d231d(5)_1760693528303.png";
 export default function TestimonialsSection() {
   return (
     <section className="relative py-32 bg-black overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
+      <div className="relative z-10 max-w-[1600px] mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1 text-left">
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">

@@ -29,7 +29,7 @@ export default function AIInnovationSection() {
 
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row justify-between items-start mb-12">
           <div className="mb-8 lg:mb-0">
             <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-6 leading-tight">

@@ -31,7 +31,7 @@ const faqs = [
 export default function FAQSection() {
   return (
     <section className="py-24 bg-white">
-      <div className="max-w-3xl mx-auto px-6 md:px-8">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
             Frequently Asked Question
