@@ -76,7 +76,7 @@ export default function HowItWorksSection() {
               <img 
                 src={cardImg}
                 alt="Upload Resume Card" 
-                className="w-full h-auto rounded-2xl shadow-2xl"
+                className="w-full h-auto"
               />
             </div>
           </div>
