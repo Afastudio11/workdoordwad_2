@@ -340,7 +340,7 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base rounded-full"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-sm rounded-full"
               data-testid="button-register"
               disabled={registerMutation.isPending}
             >
