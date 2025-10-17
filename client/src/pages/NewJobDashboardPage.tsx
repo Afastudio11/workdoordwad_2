@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, MapPin, Briefcase, Mail } from "lucide-react";
+import { Search, MapPin, Briefcase } from "lucide-react";
 import JobCard from "@/components/JobCard";
 import FilterSidebar, { type FilterState } from "@/components/FilterSidebar";
 import { Slider } from "@/components/ui/slider";
@@ -87,10 +87,6 @@ export default function NewJobDashboardPage() {
 
             <button className="p-3 bg-card border border-border rounded-xl hover:bg-secondary transition-colors">
               <Briefcase className="h-5 w-5 text-muted-foreground" />
-            </button>
-
-            <button className="p-3 bg-card border border-border rounded-xl hover:bg-secondary transition-colors">
-              <Mail className="h-5 w-5 text-muted-foreground" />
             </button>
 
             <div className="hidden lg:flex items-center gap-3 ml-2">
