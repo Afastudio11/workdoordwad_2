@@ -3,26 +3,8 @@ import { Calendar, CreditCard } from "lucide-react";
 export default function TestimonialsSection() {
   return (
     <section className="relative py-32 bg-gradient-to-br from-gray-900 via-green-950 to-gray-900 overflow-hidden">
-      {/* Floating Icons/Badges */}
-      <div className="absolute top-20 right-20 w-16 h-16 bg-white rounded-full flex items-center justify-center opacity-90">
-        <span className="text-2xl">🌐</span>
-      </div>
-      
-      <div className="absolute top-40 left-32 w-20 h-20 bg-pink-500 rounded-full flex items-center justify-center opacity-80">
-        <span className="text-3xl">🎨</span>
-      </div>
-      
-      <div className="absolute bottom-32 left-20 w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center opacity-90">
-        <span className="text-2xl">💬</span>
-      </div>
-      
-      <div className="absolute top-1/2 right-32 px-6 py-3 bg-transparent border-2 border-primary rounded-full">
-        <span className="text-primary font-semibold">PHP Developer</span>
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-12">
-          {/* Text Content - Left Side */}
           <div className="flex-1 text-left">
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">
               Siap Mengorganisir<br />Rekrutmen Anda?
@@ -52,17 +34,6 @@ export default function TestimonialsSection() {
               >
                 Dapatkan Demo
               </button>
-            </div>
-          </div>
-
-          {/* Image - Right Side */}
-          <div className="flex-1 flex items-center justify-center">
-            <div className="relative w-full max-w-md">
-              <img 
-                src="/attached_assets/generated_images/Indonesian_diverse_workers_hero_image_c9226c11.png" 
-                alt="Profesional Indonesia" 
-                className="w-full h-auto rounded-lg shadow-2xl"
-              />
             </div>
           </div>
         </div>
