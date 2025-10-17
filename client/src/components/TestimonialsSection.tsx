@@ -1,65 +1,54 @@
-const testimonials = [
-  {
-    name: "Budi Santoso",
-    role: "Staff Gudang",
-    company: "PT Logistics Indonesia",
-    content: "Dapat pekerjaan dalam 3 hari. Quick Apply sangat memudahkan.",
-    initials: "BS"
-  },
-  {
-    name: "Siti Nurhaliza",
-    role: "HR Manager",
-    company: "CV Maju Bersama",
-    content: "Sebagai UMKM, kami senang bisa posting lowongan gratis.",
-    initials: "SN"
-  },
-  {
-    name: "Ahmad Rifai",
-    role: "Teknisi AC",
-    company: "Freelancer",
-    content: "Mobile-friendly, bisa cari lowongan dari mana saja.",
-    initials: "AR"
-  }
-];
+import { Calendar, CreditCard } from "lucide-react";
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-24 bg-gray-900">
-      <div className="max-w-6xl mx-auto px-6 md:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" data-testid="testimonials-title">
-            Why teams love Qualery's Board Software
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Apa kata mereka yang sudah menggunakan platform kami
-          </p>
+    <section className="relative py-32 bg-gradient-to-br from-gray-900 via-green-950 to-gray-900 overflow-hidden">
+      {/* Floating Icons/Badges */}
+      <div className="absolute top-20 right-20 w-16 h-16 bg-white rounded-full flex items-center justify-center opacity-90">
+        <span className="text-2xl">🌐</span>
+      </div>
+      
+      <div className="absolute top-40 left-32 w-20 h-20 bg-pink-500 rounded-full flex items-center justify-center opacity-80">
+        <span className="text-3xl">🎨</span>
+      </div>
+      
+      <div className="absolute bottom-32 left-20 w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center opacity-90">
+        <span className="text-2xl">💬</span>
+      </div>
+      
+      <div className="absolute top-1/2 right-32 px-6 py-3 bg-transparent border-2 border-primary rounded-full">
+        <span className="text-primary font-semibold">PHP Developer</span>
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-6 md:px-8 text-center">
+        <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">
+          Siap Mengorganisir<br />Rekrutmen Anda?
+        </h2>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+          <div className="flex items-center gap-2 text-white">
+            <Calendar className="h-5 w-5" />
+            <span>Gratis trial 15 hari</span>
+          </div>
+          <div className="flex items-center gap-2 text-white">
+            <CreditCard className="h-5 w-5" />
+            <span>Tanpa kartu kredit</span>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div 
-              key={index} 
-              className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10"
-              data-testid={`testimonial-${index}`}
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
-                  <span className="text-lg font-bold text-white">{testimonial.initials}</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-white" data-testid={`testimonial-name-${index}`}>
-                    {testimonial.name}
-                  </div>
-                  <div className="text-sm text-gray-400" data-testid={`testimonial-role-${index}`}>
-                    {testimonial.role}
-                  </div>
-                </div>
-              </div>
-              <p className="text-gray-300 leading-relaxed" data-testid={`testimonial-content-${index}`}>
-                "{testimonial.content}"
-              </p>
-            </div>
-          ))}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button 
+            className="px-8 py-4 bg-gray-800 text-white font-semibold rounded-full hover:bg-gray-700 transition-colors min-w-[200px]"
+            data-testid="button-start-trial"
+          >
+            Mulai Trial Gratis
+          </button>
+          <button 
+            className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors min-w-[200px]"
+            data-testid="button-get-demo"
+          >
+            Dapatkan Demo
+          </button>
         </div>
       </div>
     </section>
