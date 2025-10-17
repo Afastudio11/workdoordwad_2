@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { useState, type KeyboardEvent } from "react";
 import { useLocation } from "wouter";
-import cityscapeImg from "@assets/Cari Pekerjaan Kamu Disini,_1760685931944.png";
+import cityscapeImg from "@assets/Cari Pekerjaan Kamu Disini,(1)_1760686523490.png";
 import starburstImg from "@assets/1_1760685924443.png";
 
 const popularJobs = ["Sales Marketing", "Software Engineer", "Web Developer"];
