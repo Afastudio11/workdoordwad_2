@@ -103,7 +103,7 @@ export default function MessagesPage() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardPageHeader />
-
+      
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
         <h1 className="text-3xl font-bold text-foreground mb-6">Messages</h1>
 
