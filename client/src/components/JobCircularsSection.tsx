@@ -4,66 +4,66 @@ const jobCirculars = [
   {
     company: "Apple Inc.",
     position: "Sr. User Interface",
-    location: "London, UK",
-    type: "Full Time",
-    category: "Web Development",
-    salary: "$45k-$55k",
-    postedTime: "05 Hours Ago",
+    location: "Jakarta, Indonesia",
+    type: "Penuh Waktu",
+    category: "Pengembangan Web",
+    salary: "Rp 8jt-Rp 12jt",
+    postedTime: "5 Jam Lalu",
     logo: "🍎"
   },
   {
     company: "Fiverr",
     position: "PHP Developer",
-    location: "London, UK",
-    type: "Full Time",
-    category: "Graphics",
-    salary: "$45k-$65k",
-    postedTime: "05 Hours Ago",
+    location: "Bandung, Indonesia",
+    type: "Penuh Waktu",
+    category: "Grafis",
+    salary: "Rp 10jt-Rp 15jt",
+    postedTime: "5 Jam Lalu",
     logo: "🎯"
   },
   {
     company: "Behance",
     position: "Sr. Software Engineer",
-    location: "London, UK",
-    type: "Full Time",
-    category: "Themeforest",
-    salary: "$45k-$55k",
-    postedTime: "05 Hours Ago",
+    location: "Surabaya, Indonesia",
+    type: "Penuh Waktu",
+    category: "Teknologi",
+    salary: "Rp 12jt-Rp 18jt",
+    postedTime: "5 Jam Lalu",
     logo: "🎨"
   },
   {
     company: "Apple Inc.",
     position: "UX Researcher",
-    location: "London, UK",
-    type: "Full Time",
-    category: "Web Development",
-    salary: "$45k-$55k",
-    postedTime: "05 Hours Ago",
+    location: "Jakarta, Indonesia",
+    type: "Penuh Waktu",
+    category: "Pengembangan Web",
+    salary: "Rp 9jt-Rp 14jt",
+    postedTime: "5 Jam Lalu",
     logo: "🍎"
   },
   {
     company: "Apple Inc.",
     position: "Project Manager",
-    location: "London, UK",
-    type: "Full Time",
-    category: "Web Development",
-    salary: "$25k-$95k",
-    postedTime: "05 Hours Ago",
+    location: "Jakarta, Indonesia",
+    type: "Penuh Waktu",
+    category: "Pengembangan Web",
+    salary: "Rp 15jt-Rp 25jt",
+    postedTime: "5 Jam Lalu",
     logo: "🍎"
   },
   {
     company: "Behance",
     position: "Products Designer",
-    location: "London, UK",
-    type: "Full Time",
-    category: "Themeforest",
-    salary: "$45k-$55k",
-    postedTime: "05 Hours Ago",
+    location: "Yogyakarta, Indonesia",
+    type: "Penuh Waktu",
+    category: "Desain",
+    salary: "Rp 8jt-Rp 13jt",
+    postedTime: "5 Jam Lalu",
     logo: "🎨"
   }
 ];
 
-const categories = ["Designer", "Web Developer", "Software Engineer", "Doctors", "Marketing"];
+const categories = ["Desainer", "Pengembang Web", "Software Engineer", "Dokter", "Marketing"];
 
 export default function JobCircularsSection() {
   return (
@@ -71,7 +71,7 @@ export default function JobCircularsSection() {
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-6">
-            Featured Job Circulars
+            Lowongan Kerja Unggulan
           </h2>
           
           {/* Search Bar */}
@@ -80,7 +80,7 @@ export default function JobCircularsSection() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input 
                 type="text" 
-                placeholder="etc: Search Your Needs" 
+                placeholder="Cari kebutuhan Anda" 
                 className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-400"
                 data-testid="input-search"
               />
@@ -89,8 +89,8 @@ export default function JobCircularsSection() {
               className="px-6 py-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-400"
               data-testid="select-category"
             >
-              <option>Web Devleopment</option>
-              <option>Design</option>
+              <option>Pengembangan Web</option>
+              <option>Desain</option>
               <option>Marketing</option>
             </select>
             <button 
@@ -103,7 +103,7 @@ export default function JobCircularsSection() {
 
           {/* Popular Categories */}
           <div className="flex gap-2 items-center flex-wrap">
-            <span className="text-gray-600 dark:text-gray-400 font-medium">Popular Categories:</span>
+            <span className="text-gray-600 dark:text-gray-400 font-medium">Kategori Populer:</span>
             {categories.map((cat, index) => (
               <button 
                 key={index}
@@ -167,7 +167,7 @@ export default function JobCircularsSection() {
                 className="w-full py-3 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                 data-testid={`button-apply-${index}`}
               >
-                Apply Now
+                Lamar Sekarang
               </button>
             </div>
           ))}
@@ -178,7 +178,7 @@ export default function JobCircularsSection() {
             className="w-full md:w-auto px-12 py-4 bg-lime-400 text-black font-bold rounded-lg hover:bg-lime-500 transition-colors"
             data-testid="button-load-more"
           >
-            Load More
+            Muat Lebih Banyak
           </button>
         </div>
       </div>
