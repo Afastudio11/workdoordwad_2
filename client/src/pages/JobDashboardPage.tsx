@@ -91,7 +91,7 @@ export default function JobDashboardPage() {
   return (
     <div className="min-h-screen bg-white">
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="w-full px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center" data-testid="link-home">
               <img src={logoImgDark} alt="Pintu Kerja" className="h-8" />
@@ -130,7 +130,7 @@ export default function JobDashboardPage() {
         </div>
       </header>
 
-      <div className="w-full px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex gap-8">
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-24">
