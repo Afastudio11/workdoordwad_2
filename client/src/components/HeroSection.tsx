@@ -32,7 +32,7 @@ export default function HeroSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
         <div className="text-center mb-6 md:mb-4">
           <h1 className="text-3xl md:text-6xl font-bold text-white mb-6 md:mb-8 tracking-tight leading-tight px-2" data-testid="hero-title">
-            Wujudkan Pekerjaan Impianmu! Cari di Sini Sekarang!
+            Wujudkan Pekerjaan Impianmu!<br />Cari di Sini Sekarang!
           </h1>
 
           <div className="max-w-2xl mx-auto mb-6 md:mb-5">

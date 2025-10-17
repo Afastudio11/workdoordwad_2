@@ -1,4 +1,5 @@
 import { Calendar, CreditCard } from "lucide-react";
+import recruitmentImg from "@assets/0d231d(3)_1760693142805.png";
 
 export default function TestimonialsSection() {
   return (
@@ -7,7 +8,7 @@ export default function TestimonialsSection() {
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1 text-left">
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">
-              Siap Mengorganisir Rekrutmen Anda?
+              Siap Mengorganisir<br />Rekrutmen Anda?
             </h2>
 
             <div className="flex flex-col sm:flex-row items-start gap-4 mb-8">
@@ -34,6 +35,16 @@ export default function TestimonialsSection() {
               >
                 Dapatkan Demo
               </button>
+            </div>
+          </div>
+
+          <div className="flex-1 flex items-center justify-center">
+            <div className="relative max-w-lg w-full">
+              <img 
+                src={recruitmentImg}
+                alt="Recruitment" 
+                className="w-full h-auto"
+              />
             </div>
           </div>
         </div>
