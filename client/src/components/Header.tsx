@@ -14,7 +14,7 @@ export default function Header() {
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#cari-lowongan" className="text-sm text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-cari-lowongan">
+            <a href="/jobs" className="text-sm text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-cari-lowongan">
               Cari Lowongan
             </a>
             <a href="#untuk-perusahaan" className="text-sm text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-untuk-perusahaan">
@@ -47,7 +47,7 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white" data-testid="mobile-menu">
           <div className="px-6 py-4 space-y-4">
-            <a href="#cari-lowongan" className="block text-base text-gray-700" data-testid="mobile-link-cari-lowongan">
+            <a href="/jobs" className="block text-base text-gray-700" data-testid="mobile-link-cari-lowongan">
               Cari Lowongan
             </a>
             <a href="#untuk-perusahaan" className="block text-base text-gray-700" data-testid="mobile-link-untuk-perusahaan">

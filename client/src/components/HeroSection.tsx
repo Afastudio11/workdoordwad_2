@@ -1,13 +1,18 @@
 import { Search, MapPin } from "lucide-react";
 import { useState } from "react";
+import { useLocation } from "wouter";
 import heroImage from "@assets/generated_images/Indonesian_diverse_workers_hero_image_c9226c11.png";
 
 export default function HeroSection() {
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
+  const [, setLocation2] = useLocation();
 
   const handleSearch = () => {
-    console.log("Search triggered:", { keyword, location });
+    const params = new URLSearchParams();
+    if (keyword) params.append("keyword", keyword);
+    if (location) params.append("location", location);
+    setLocation2(`/jobs${params.toString() ? `?${params.toString()}` : ""}`);
   };
 
   return (
