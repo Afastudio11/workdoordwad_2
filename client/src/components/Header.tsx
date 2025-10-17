@@ -24,8 +24,8 @@ export default function Header({ variant = "dark" }: HeaderProps) {
   const textHoverClass = isDark ? "hover:text-white" : "hover:text-gray-900";
   const iconClass = isDark ? "text-white" : "text-gray-900";
   const btnBgClass = isDark ? "bg-primary text-black" : "bg-primary text-black";
-  const btnBorderClass = isDark ? "bg-white text-black border-white" : "border-primary text-primary";
-  const btnBorderHoverClass = isDark ? "hover:bg-white/90" : "hover:bg-primary/10";
+  const btnBorderClass = isDark ? "border-primary text-primary" : "bg-black text-white border-black";
+  const btnBorderHoverClass = isDark ? "hover:bg-primary/10" : "hover:bg-black/90";
 
   return (
     <header className={`sticky top-0 z-50 ${bgClass} border-b ${borderClass}`}>
