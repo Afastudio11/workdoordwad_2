@@ -42,29 +42,30 @@ export default function HowItWorksSection() {
         <div className="grid lg:grid-cols-2 gap-12 mb-20">
           {/* Left Side - Steps */}
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold text-black mb-6" data-testid="how-it-works-title">
+            <h2 className="text-5xl md:text-6xl font-bold text-black mb-6 leading-tight" data-testid="how-it-works-title">
               Temukan Pekerjaan<br />dengan Mudah
             </h2>
-            <p className="text-gray-600 mb-8 leading-relaxed" data-testid="how-it-works-description">
+            <p className="text-gray-600 mb-12 text-base leading-relaxed" data-testid="how-it-works-description">
               Platform kami memudahkan Anda untuk mencari pekerjaan impian atau menemukan kandidat terbaik dalam tiga langkah sederhana.
             </p>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               {steps.map((step, index) => (
-                <div key={index} className="flex gap-4" data-testid={`step-${index}`}>
-                  <div className="flex-shrink-0">
-                    <span className="text-xl font-bold text-black">{step.number}.</span>
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-lg font-semibold text-black mb-2" data-testid={`step-title-${index}`}>
-                      {step.title}
-                    </h4>
-                    {step.description && (
-                      <p className="text-gray-600 text-sm leading-relaxed" data-testid={`step-description-${index}`}>
+                <div key={index} data-testid={`step-${index}`}>
+                  {index === 0 ? (
+                    <div className="border-l-4 border-lime-400 pl-6 py-2">
+                      <h4 className="text-2xl font-bold text-black mb-4" data-testid={`step-title-${index}`}>
+                        {step.number}. {step.title}
+                      </h4>
+                      <p className="text-gray-600 text-base leading-relaxed" data-testid={`step-description-${index}`}>
                         {step.description}
                       </p>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <h4 className="text-2xl font-bold text-black" data-testid={`step-title-${index}`}>
+                      {step.number}. {step.title}
+                    </h4>
+                  )}
                 </div>
               ))}
             </div>
