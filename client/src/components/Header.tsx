@@ -91,6 +91,12 @@ export default function Header({ variant = "dark" }: HeaderProps) {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/user/dashboard" className="cursor-pointer" data-testid="menu-item-dashboard">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={logout} data-testid="menu-item-logout">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Logout</span>

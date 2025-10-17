@@ -12,7 +12,7 @@ export default function QuickAccessPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Link href="/dashboard" data-testid="link-access-pekerja">
+          <Link href="/user/dashboard" data-testid="link-access-pekerja">
             <div className="bg-card border-2 border-border rounded-xl p-8 hover:border-primary transition-all cursor-pointer group">
               <div className="flex flex-col items-center text-center">
                 <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">

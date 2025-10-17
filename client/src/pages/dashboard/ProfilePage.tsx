@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,8 +25,6 @@ type ProfileForm = z.infer<typeof profileSchema>;
 export default function ProfilePage() {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [skills, setSkills] = useState<string[]>([]);
-  const [newSkill, setNewSkill] = useState("");
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["/api/profile"],
@@ -35,12 +33,23 @@ export default function ProfilePage() {
   const form = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      fullName: profile?.fullName || "",
-      email: profile?.email || "",
-      phone: profile?.phone || "",
-      bio: profile?.bio || "",
+      fullName: "",
+      email: "",
+      phone: "",
+      bio: "",
     },
   });
+
+  useEffect(() => {
+    if (profile) {
+      form.reset({
+        fullName: profile.fullName || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        bio: profile.bio || "",
+      });
+    }
+  }, [profile, form]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileForm) => {
