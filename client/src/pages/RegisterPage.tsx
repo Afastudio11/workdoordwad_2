@@ -3,17 +3,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link } from "wouter";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, User, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import logoImg from "@assets/Asset 6@4x_1760692501921.png";
+import { FaFacebook, FaGoogle } from "react-icons/fa";
 
 const registerSchema = z.object({
   fullName: z.string().min(3, "Nama lengkap minimal 3 karakter"),
+  username: z.string().min(3, "Username minimal 3 karakter"),
   email: z.string().email("Email tidak valid"),
   password: z.string().min(8, "Password minimal 8 karakter"),
-  confirmPassword: z.string()
+  confirmPassword: z.string(),
+  agreeToTerms: z.boolean().refine((val) => val === true, {
+    message: "Anda harus menyetujui Terms of Services",
+  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Password tidak sama",
   path: ["confirmPassword"],
@@ -24,56 +28,81 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [userType, setUserType] = useState<"candidate" | "employers">("employers");
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       fullName: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
+      agreeToTerms: false,
     },
   });
 
   const onSubmit = (data: RegisterForm) => {
-    console.log(data);
+    console.log({ ...data, userType });
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
-      <header className="border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center">
-              <img src={logoImg} alt="PintuKerja" className="h-8" />
+    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
+            Create account.
+          </h1>
+          <p className="text-gray-600">
+            Already have account?{" "}
+            <Link href="/login" className="text-primary hover:underline font-medium" data-testid="link-login">
+              Log In
             </Link>
+          </p>
+        </div>
+
+        <div className="bg-gray-100 rounded-lg p-1 mb-6">
+          <p className="text-xs text-gray-500 text-center mb-2">CREATE ACCOUNT AS A</p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setUserType("candidate")}
+              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-md transition-colors ${
+                userType === "candidate"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "bg-transparent text-gray-600 hover:bg-white/50"
+              }`}
+            >
+              <User className="h-4 w-4" />
+              <span className="font-medium">Candidate</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setUserType("employers")}
+              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-md transition-colors ${
+                userType === "employers"
+                  ? "bg-[#1e3a5f] text-white shadow-sm"
+                  : "bg-transparent text-gray-600 hover:bg-white/50"
+              }`}
+            >
+              <Building2 className="h-4 w-4" />
+              <span className="font-medium">Employers</span>
+            </button>
           </div>
         </div>
-      </header>
 
-      <div className="flex-1 flex items-center justify-center py-12 px-6">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2" data-testid="register-title">
-              Daftar Sekarang
-            </h1>
-            <p className="text-gray-400">
-              Buat akun Anda untuk mulai mencari pekerjaan
-            </p>
-          </div>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-white">Nama Lengkap</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Masukkan nama lengkap"
-                        className="bg-[#484946] border-0 text-white placeholder:text-gray-400 focus-visible:ring-primary"
+                        placeholder="Full Name"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                         {...field}
                         data-testid="input-fullname"
                       />
@@ -85,100 +114,163 @@ export default function RegisterPage() {
 
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-white">Email</FormLabel>
                     <FormControl>
                       <Input
-                        type="email"
-                        placeholder="nama@email.com"
-                        className="bg-[#484946] border-0 text-white placeholder:text-gray-400 focus-visible:ring-primary"
+                        placeholder="Username"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                         {...field}
-                        data-testid="input-email"
+                        data-testid="input-username"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Password</FormLabel>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Email address"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                      {...field}
+                      data-testid="input-email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
+                        {...field}
+                        data-testid="input-password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        data-testid="toggle-password"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm Password"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
+                        {...field}
+                        data-testid="input-confirm-password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        data-testid="toggle-confirm-password"
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="agreeToTerms"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-start gap-2">
                     <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Minimal 8 karakter"
-                          className="bg-[#484946] border-0 text-white placeholder:text-gray-400 focus-visible:ring-primary"
-                          {...field}
-                          data-testid="input-password"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                          data-testid="toggle-password"
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      </div>
+                      <input
+                        type="checkbox"
+                        className="mt-1 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={field.value}
+                        onChange={field.onChange}
+                        data-testid="checkbox-terms"
+                      />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    <label className="text-sm text-gray-600">
+                      I've read and agree with your{" "}
+                      <a href="#" className="text-primary hover:underline">
+                        Terms of Services
+                      </a>
+                    </label>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Konfirmasi Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Ulangi password"
-                          className="bg-[#484946] border-0 text-white placeholder:text-gray-400 focus-visible:ring-primary"
-                          {...field}
-                          data-testid="input-confirm-password"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                          data-testid="toggle-confirm-password"
-                        >
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <Button
+              type="submit"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base"
+              data-testid="button-register"
+            >
+              Create Account →
+            </Button>
+          </form>
+        </Form>
 
-              <Button
-                type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                data-testid="button-register"
-              >
-                Daftar
-              </Button>
-            </form>
-          </Form>
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">OR</span>
+            </div>
+          </div>
 
-          <p className="mt-6 text-center text-sm text-gray-400">
-            Sudah punya akun?{" "}
-            <Link href="/login" className="text-primary font-semibold hover:underline" data-testid="link-login">
-              Masuk di sini
-            </Link>
-          </p>
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
+            >
+              <FaFacebook className="h-5 w-5 text-blue-600" />
+              <span className="text-sm text-gray-700">Sign up with Facebook</span>
+            </button>
+            <button
+              type="button"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
+            >
+              <FaGoogle className="h-5 w-5 text-red-500" />
+              <span className="text-sm text-gray-700">Sign up with Google</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
