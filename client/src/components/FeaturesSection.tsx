@@ -25,8 +25,16 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-24 bg-gray-900">
       <div className="max-w-6xl mx-auto px-6 md:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Get things Done with Minimal Effort
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Platform yang dirancang untuk mempermudah proses rekrutmen dan pencarian kerja
+          </p>
+        </div>
         <div className="grid md:grid-cols-2 gap-12">
           {features.map((feature, index) => (
             <div 
@@ -35,13 +43,13 @@ export default function FeaturesSection() {
               data-testid={`feature-card-${index}`}
             >
               <div className="flex-shrink-0">
-                <feature.icon className="h-8 w-8 text-gray-900" />
+                <feature.icon className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <h3 className="text-xl font-medium text-gray-900 mb-2" data-testid={`feature-title-${index}`}>
+                <h3 className="text-xl font-medium text-white mb-2" data-testid={`feature-title-${index}`}>
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed" data-testid={`feature-description-${index}`}>
+                <p className="text-gray-400 leading-relaxed" data-testid={`feature-description-${index}`}>
                   {feature.description}
                 </p>
               </div>

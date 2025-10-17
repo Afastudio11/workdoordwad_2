@@ -24,37 +24,40 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-gray-900">
       <div className="max-w-6xl mx-auto px-6 md:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-semibold text-gray-900 mb-4" data-testid="testimonials-title">
-            Apa Kata Mereka
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" data-testid="testimonials-title">
+            Why teams love Qualery's Board Software
           </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Apa kata mereka yang sudah menggunakan platform kami
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <div 
               key={index} 
-              className="bg-white border border-gray-200 rounded-md p-8"
+              className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10"
               data-testid={`testimonial-${index}`}
             >
-              <p className="text-lg text-gray-900 mb-6 leading-relaxed" data-testid={`testimonial-content-${index}`}>
-                "{testimonial.content}"
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="text-sm font-semibold text-blue-600">{testimonial.initials}</span>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
+                  <span className="text-lg font-bold text-white">{testimonial.initials}</span>
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900" data-testid={`testimonial-name-${index}`}>
+                  <div className="font-semibold text-white" data-testid={`testimonial-name-${index}`}>
                     {testimonial.name}
                   </div>
-                  <div className="text-sm text-gray-600" data-testid={`testimonial-role-${index}`}>
+                  <div className="text-sm text-gray-400" data-testid={`testimonial-role-${index}`}>
                     {testimonial.role}
                   </div>
                 </div>
               </div>
+              <p className="text-gray-300 leading-relaxed" data-testid={`testimonial-content-${index}`}>
+                "{testimonial.content}"
+              </p>
             </div>
           ))}
         </div>

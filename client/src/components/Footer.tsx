@@ -20,22 +20,27 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-200">
+    <footer className="bg-black border-t border-white/10">
       <div className="max-w-6xl mx-auto px-6 md:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-6">
-              <Briefcase className="h-5 w-5 text-gray-900" />
-              <span className="font-semibold text-gray-900">Pintu Kerja</span>
+              <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+                <Briefcase className="h-5 w-5 text-black" />
+              </div>
+              <span className="font-bold text-white">Qualery</span>
             </div>
+            <p className="text-sm text-gray-400">
+              Platform rekrutmen untuk Indonesia
+            </p>
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-900 mb-4">Perusahaan</h3>
+            <h3 className="text-sm font-semibold text-white mb-4">Perusahaan</h3>
             <ul className="space-y-3">
               {footerLinks.perusahaan.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -44,11 +49,11 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-900 mb-4">Pencari Kerja</h3>
+            <h3 className="text-sm font-semibold text-white mb-4">Pencari Kerja</h3>
             <ul className="space-y-3">
               {footerLinks.pencariKerja.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -57,11 +62,11 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-900 mb-4">Perekrut</h3>
+            <h3 className="text-sm font-semibold text-white mb-4">Perekrut</h3>
             <ul className="space-y-3">
               {footerLinks.perekrut.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -70,10 +75,18 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 pt-8">
-          <p className="text-center text-sm text-gray-500">
-            © 2025 Pintu Kerja. All rights reserved.
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-gray-400">
+            © 2025 Qualery. All rights reserved.
           </p>
+          <div className="flex items-center gap-6">
+            <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
+              Privacy Policy
+            </a>
+            <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
+              Terms of Service
+            </a>
+          </div>
         </div>
       </div>
     </footer>
