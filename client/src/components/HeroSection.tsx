@@ -73,13 +73,120 @@ export default function HeroSection() {
         </div>
 
         {/* Hero Image - Cityscape */}
-        <div className="relative max-w-6xl mx-auto">
+        <div className="relative max-w-6xl mx-auto mb-12">
           <div className="aspect-[21/9] rounded-3xl overflow-hidden">
             <img 
               src={cityscapeImg}
               alt="Cityscape" 
               className="w-full h-full object-cover"
             />
+          </div>
+        </div>
+
+        {/* Corporate Clients - Auto Scrolling */}
+        <div className="max-w-6xl mx-auto overflow-hidden">
+          <div className="flex items-center gap-8 md:gap-12 py-4">
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <span className="text-white font-semibold text-sm">Trusted By 1M+</span>
+              <span className="text-white font-semibold text-sm">Business</span>
+            </div>
+            
+            <div className="h-6 w-px bg-gray-600"></div>
+            
+            <div className="flex-1 overflow-hidden">
+              <div className="flex animate-marquee gap-8 md:gap-12">
+                <div className="flex items-center gap-8 md:gap-12 shrink-0">
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+                    </svg>
+                    <span>Luminous</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                    <span>Lightbox</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="12" cy="12" r="3"/>
+                      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span>FocalPoint</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    <span>Polymath</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 12h8M13 12h8M3 6h18M3 18h18"/>
+                    </svg>
+                    <span>Alt+Shift</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    <span>Nice</span>
+                  </div>
+                </div>
+                
+                {/* Duplicate for seamless loop */}
+                <div className="flex items-center gap-8 md:gap-12 shrink-0">
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+                    </svg>
+                    <span>Luminous</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                    <span>Lightbox</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="12" cy="12" r="3"/>
+                      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span>FocalPoint</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    <span>Polymath</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 12h8M13 12h8M3 6h18M3 18h18"/>
+                    </svg>
+                    <span>Alt+Shift</span>
+                  </div>
+                  
+                  <div className="text-gray-400 font-medium text-lg flex items-center gap-2">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    <span>Nice</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
