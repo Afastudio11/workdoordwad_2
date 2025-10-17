@@ -65,23 +65,34 @@ export default function DashboardPageHeader() {
               <span>New York, NY</span>
             </div>
 
-            <button className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center overflow-hidden">
-                {user?.fullName ? (
-                  <span className="text-sm font-semibold text-foreground">
-                    {user.fullName.charAt(0).toUpperCase()}
-                  </span>
-                ) : (
-                  <User className="w-4 h-4 text-foreground" />
-                )}
-              </div>
-            </button>
+            <Link href="/dashboard/profile">
+              <button 
+                className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity"
+                data-testid="button-profile"
+              >
+                <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center overflow-hidden">
+                  {user?.fullName ? (
+                    <span className="text-sm font-semibold text-foreground">
+                      {user.fullName.charAt(0).toUpperCase()}
+                    </span>
+                  ) : (
+                    <User className="w-4 h-4 text-foreground" />
+                  )}
+                </div>
+              </button>
+            </Link>
 
-            <button className="p-2 hover:bg-secondary rounded-lg transition-colors">
+            <button 
+              className="p-2 hover:bg-secondary rounded-lg transition-colors"
+              data-testid="button-settings"
+            >
               <Settings className="h-5 w-5 text-muted-foreground" />
             </button>
 
-            <button className="p-2 hover:bg-secondary rounded-lg transition-colors">
+            <button 
+              className="p-2 hover:bg-secondary rounded-lg transition-colors relative"
+              data-testid="button-notifications"
+            >
               <Bell className="h-5 w-5 text-muted-foreground" />
             </button>
           </div>
