@@ -3,7 +3,6 @@ import HeroSection from "@/components/HeroSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import JobCircularsSection from "@/components/JobCircularsSection";
 import AIInnovationSection from "@/components/AIInnovationSection";
-import StatsSection from "@/components/StatsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import FAQSection from "@/components/FAQSection";
 import CTASection from "@/components/CTASection";
@@ -17,7 +16,6 @@ export default function LandingPage() {
       <HowItWorksSection />
       <JobCircularsSection />
       <AIInnovationSection />
-      <StatsSection />
       <TestimonialsSection />
       <FAQSection />
       <CTASection />
