@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
+import logoImage from "@assets/black@4x_1760695283292.png";
 
 const loginSchema = z.object({
   email: z.string().email("Email tidak valid"),
@@ -35,6 +36,9 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <div className="mb-8">
+          <Link href="/" className="inline-block mb-6" data-testid="link-home">
+            <img src={logoImage} alt="Pintu Kerja" className="h-8" />
+          </Link>
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
             Selamat Datang Kembali.
           </h1>
@@ -112,7 +116,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base rounded-full"
               data-testid="button-login"
             >
               Masuk →
@@ -133,14 +137,14 @@ export default function LoginPage() {
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-[#ffffff] hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors"
             >
               <FaFacebook className="h-5 w-5 text-blue-600" />
               <span className="text-sm text-gray-900">Masuk dengan Facebook</span>
             </button>
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-[#ffffff] hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors"
             >
               <FaGoogle className="h-5 w-5 text-red-500" />
               <span className="text-sm text-gray-900">Masuk dengan Google</span>

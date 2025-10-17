@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
+import logoImage from "@assets/black@4x_1760695283292.png";
 
 const registerSchema = z.object({
   fullName: z.string().min(3, "Nama lengkap minimal 3 karakter"),
@@ -50,6 +51,9 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <div className="mb-8">
+          <Link href="/" className="inline-block mb-6" data-testid="link-home">
+            <img src={logoImage} alt="Pintu Kerja" className="h-8" />
+          </Link>
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
             Buat akun.
           </h1>
