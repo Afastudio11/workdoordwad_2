@@ -38,9 +38,14 @@ export default function ApplicationsPage() {
 
   const formatSalary = (amount: number) => {
     if (amount >= 1000000) {
-      return `Rp ${(amount / 1000000).toFixed(1)} jt`;
+      const juta = (amount / 1000000).toFixed(amount % 1000000 === 0 ? 0 : 1);
+      return `Rp ${juta} juta`;
     }
-    return `Rp ${(amount / 1000).toFixed(0)} rb`;
+    if (amount >= 1000) {
+      const ribu = (amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1);
+      return `Rp ${ribu} ribu`;
+    }
+    return `Rp ${amount.toLocaleString('id-ID')}`;
   };
 
   if (isLoading) {

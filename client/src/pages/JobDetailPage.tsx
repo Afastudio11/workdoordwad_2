@@ -40,11 +40,24 @@ export default function JobDetailPage() {
 
   const formatSalary = (min: number | null, max: number | null) => {
     if (!min && !max) return "Negosiasi";
+    
+    const format = (amount: number) => {
+      if (amount >= 1000000) {
+        const juta = (amount / 1000000).toFixed(amount % 1000000 === 0 ? 0 : 1);
+        return `${juta} juta`;
+      }
+      if (amount >= 1000) {
+        const ribu = (amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1);
+        return `${ribu} ribu`;
+      }
+      return amount.toLocaleString('id-ID');
+    };
+    
     if (min && max) {
-      return `Rp ${(min / 1000000).toFixed(1)} - ${(max / 1000000).toFixed(1)} juta`;
+      return `Rp ${format(min)} - ${format(max)}`;
     }
-    if (min) return `Rp ${(min / 1000000).toFixed(1)} juta`;
-    return `Rp ${(max! / 1000000).toFixed(1)} juta`;
+    if (min) return `Rp ${format(min)}`;
+    return `Rp ${format(max!)}`;
   };
 
   const formatDate = (date: string) => {

@@ -1,10 +1,10 @@
 import { Link, useLocation } from "wouter";
-import { MapPin, Settings, Bell, User } from "lucide-react";
+import { MapPin, Settings, Bell, User, Briefcase, Mail } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import logoImg from "@assets/as@4x_1760716473766.png";
 
 export default function DashboardPageHeader() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user } = useAuth();
 
   const isActive = (path: string) => location === path;
@@ -60,9 +60,34 @@ export default function DashboardPageHeader() {
 
           {/* Right side */}
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 text-sm text-white">
-              <MapPin className="h-4 w-4" />
-              <span>New York, NY</span>
+            <div className="hidden md:flex items-center gap-3">
+              <Link href="/jobs">
+                <button 
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  data-testid="button-location"
+                  title="Find Jobs by Location"
+                >
+                  <MapPin className="h-5 w-5 text-white" />
+                </button>
+              </Link>
+              <Link href="/jobs">
+                <button 
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  data-testid="button-jobs"
+                  title="Browse All Jobs"
+                >
+                  <Briefcase className="h-5 w-5 text-white" />
+                </button>
+              </Link>
+              <Link href="/messages">
+                <button 
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  data-testid="button-mail"
+                  title="View Messages"
+                >
+                  <Mail className="h-5 w-5 text-white" />
+                </button>
+              </Link>
             </div>
 
             <Link href="/dashboard/profile">
