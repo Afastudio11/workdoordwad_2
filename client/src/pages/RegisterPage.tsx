@@ -51,8 +51,8 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <div className="mb-8">
-          <Link href="/" className="inline-block mb-6" data-testid="link-home">
-            <img src={logoImage} alt="Pintu Kerja" className="h-8" />
+          <Link href="/" className="block mb-6 text-center" data-testid="link-home">
+            <img src={logoImage} alt="Pintu Kerja" className="h-8 inline-block" />
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
             Buat akun.
