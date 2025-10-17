@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function QuickAccessPage() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+    <div className="min-h-screen bg-white flex items-center justify-center p-6">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4">Quick Access</h1>
