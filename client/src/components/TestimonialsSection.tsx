@@ -3,20 +3,20 @@ import recruitmentImg from "@assets/0d231d(5)_1760693528303.png";
 
 export default function TestimonialsSection() {
   return (
-    <section className="relative py-32 bg-black overflow-hidden">
+    <section className="relative py-32 bg-gray-50 dark:bg-gray-900 overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1 text-left">
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">
+            <h2 className="text-4xl md:text-6xl font-bold text-black dark:text-white mb-8 leading-tight" data-testid="cta-title">
               Siap Mengorganisir<br />Rekrutmen Anda?
             </h2>
 
             <div className="flex flex-col sm:flex-row items-start gap-4 mb-8">
-              <div className="flex items-center gap-2 text-white">
+              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                 <Calendar className="h-5 w-5" />
                 <span>Gratis trial 15 hari</span>
               </div>
-              <div className="flex items-center gap-2 text-white">
+              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                 <CreditCard className="h-5 w-5" />
                 <span>Tanpa kartu kredit</span>
               </div>
