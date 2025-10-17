@@ -15,6 +15,7 @@ import FAQPage from "@/pages/FAQPage";
 import JobDetailPage from "@/pages/JobDetailPage";
 import RegisterPage from "@/pages/RegisterPage";
 import LoginPage from "@/pages/LoginPage";
+import ProfilePage from "@/pages/dashboard/ProfilePage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/" component={LandingPage} />
       <Route path="/jobs" component={NewJobDashboardPage} />
       <Route path="/user/dashboard" component={UserDashboardPage} />
+      <Route path="/dashboard/profile" component={ProfilePage} />
       <Route path="/quick-access" component={QuickAccessPage} />
       <Route path="/messages" component={MessagesPage} />
       <Route path="/hiring" component={HiringPage} />
