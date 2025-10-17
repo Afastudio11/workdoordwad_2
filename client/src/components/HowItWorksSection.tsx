@@ -78,12 +78,6 @@ export default function HowItWorksSection() {
                 alt="Upload Resume Card" 
                 className="w-full h-auto rounded-2xl shadow-2xl"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent rounded-2xl flex items-end p-6 md:p-8">
-                <div className="text-white">
-                  <h3 className="text-2xl md:text-3xl font-bold mb-2">Upload Resume Card</h3>
-                  <p className="text-sm md:text-base opacity-90">Mulai karir impian Anda sekarang</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
