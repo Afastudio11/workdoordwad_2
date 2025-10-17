@@ -38,9 +38,9 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
             Welcome back.
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-900">
             Don't have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline font-medium" data-testid="link-register">
+            <Link href="/register" className="text-gray-900 hover:underline font-medium" data-testid="link-register">
               Sign Up
             </Link>
           </p>
@@ -103,7 +103,7 @@ export default function LoginPage() {
                   className="rounded border-gray-300 text-primary focus:ring-primary"
                   data-testid="checkbox-remember"
                 />
-                <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                <span className="ml-2 text-sm text-gray-900">Remember me</span>
               </label>
               <a href="#" className="text-sm text-primary hover:underline" data-testid="link-forgot-password">
                 Forgot password?
@@ -136,14 +136,14 @@ export default function LoginPage() {
               className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
             >
               <FaFacebook className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-gray-700">Log in with Facebook</span>
+              <span className="text-sm text-gray-900">Log in with Facebook</span>
             </button>
             <button
               type="button"
               className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
             >
               <FaGoogle className="h-5 w-5 text-red-500" />
-              <span className="text-sm text-gray-700">Log in with Google</span>
+              <span className="text-sm text-gray-900">Log in with Google</span>
             </button>
           </div>
         </div>

@@ -53,9 +53,9 @@ export default function RegisterPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
             Create account.
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-900">
             Already have account?{" "}
-            <Link href="/login" className="text-primary hover:underline font-medium" data-testid="link-login">
+            <Link href="/login" className="text-gray-900 hover:underline font-medium" data-testid="link-login">
               Log In
             </Link>
           </p>
@@ -81,7 +81,7 @@ export default function RegisterPage() {
               onClick={() => setUserType("employers")}
               className={`flex items-center justify-center gap-2 py-3 px-4 rounded-md transition-colors ${
                 userType === "employers"
-                  ? "bg-[#1e3a5f] text-white shadow-sm"
+                  ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-gray-600 hover:bg-white/50"
               }`}
             >
@@ -223,9 +223,9 @@ export default function RegisterPage() {
                         data-testid="checkbox-terms"
                       />
                     </FormControl>
-                    <label className="text-sm text-gray-600">
+                    <label className="text-sm text-gray-900">
                       I've read and agree with your{" "}
-                      <a href="#" className="text-primary hover:underline">
+                      <a href="#" className="text-gray-900 hover:underline">
                         Terms of Services
                       </a>
                     </label>
@@ -261,14 +261,14 @@ export default function RegisterPage() {
               className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
             >
               <FaFacebook className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-gray-700">Sign up with Facebook</span>
+              <span className="text-sm text-gray-900">Sign up with Facebook</span>
             </button>
             <button
               type="button"
               className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
             >
               <FaGoogle className="h-5 w-5 text-red-500" />
-              <span className="text-sm text-gray-700">Sign up with Google</span>
+              <span className="text-sm text-gray-900">Sign up with Google</span>
             </button>
           </div>
         </div>
