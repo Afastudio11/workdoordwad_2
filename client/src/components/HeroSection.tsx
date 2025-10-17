@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 import { useState, type KeyboardEvent } from "react";
 import { useLocation } from "wouter";
 import cityscapeImg from "@assets/Cari Pekerjaan Kamu Disini,(1)_1760686523490.png";
-import starburstImg from "@assets/1_1760685924443.png";
+import starburstImg from "@assets/0d231d(1)_1760687086089.png";
 
 const popularJobs = ["Sales Marketing", "Software Engineer", "Web Developer"];
 
@@ -25,7 +25,7 @@ export default function HeroSection() {
   return (
     <section className="relative py-20 md:py-32 bg-black overflow-hidden">
       {/* Decorative starburst shapes */}
-      <div className="absolute top-20 right-16 w-48 h-48 opacity-80">
+      <div className="absolute top-20 right-16 w-48 h-48">
         <img src={starburstImg} alt="" className="w-full h-full" />
       </div>
       
