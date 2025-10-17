@@ -1,4 +1,5 @@
 import { Calendar, CreditCard } from "lucide-react";
+import recruitmentImg from "@assets/0d231d(4)_1760693392965.png";
 
 export default function TestimonialsSection() {
   return (
@@ -34,6 +35,16 @@ export default function TestimonialsSection() {
               >
                 Dapatkan Demo
               </button>
+            </div>
+          </div>
+
+          <div className="flex-1 flex items-center justify-center">
+            <div className="relative max-w-lg w-full">
+              <img 
+                src={recruitmentImg}
+                alt="Recruitment" 
+                className="w-full h-auto"
+              />
             </div>
           </div>
         </div>
