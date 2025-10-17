@@ -164,7 +164,7 @@ export default function JobCircularsSection() {
               </div>
 
               <button 
-                className="w-full py-3 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                className="w-full py-3 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-full hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                 data-testid={`button-apply-${index}`}
               >
                 Lamar Sekarang
@@ -175,7 +175,7 @@ export default function JobCircularsSection() {
 
         <div className="text-center mt-12">
           <button 
-            className="w-full md:w-auto px-12 py-4 bg-lime-400 text-black font-bold rounded-lg hover:bg-lime-500 transition-colors"
+            className="w-full md:w-auto px-12 py-4 bg-lime-400 text-black font-bold rounded-full hover:bg-lime-500 transition-colors"
             data-testid="button-load-more"
           >
             Muat Lebih Banyak
