@@ -7,10 +7,20 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
-  email: text("email"),
-  fullName: text("full_name"),
+  email: text("email").notNull(),
+  fullName: text("full_name").notNull(),
   phone: text("phone"),
-  role: text("role").notNull().default("job_seeker"), // job_seeker | recruiter | admin
+  role: text("role").notNull().default("pekerja"), // pekerja | pemberi_kerja | admin
+  
+  // Fields untuk pekerja
+  cvUrl: text("cv_url"),
+  education: text("education"), // JSON array
+  experience: text("experience"), // JSON array
+  skills: text("skills").array(),
+  
+  // Fields untuk pemberi_kerja
+  isVerified: boolean("is_verified").default(false),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -82,6 +92,23 @@ export const applications = pgTable("applications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const wishlists = pgTable("wishlists", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  jobId: varchar("job_id").references(() => jobs.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const premiumTransactions = pgTable("premium_transactions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  jobId: varchar("job_id").references(() => jobs.id),
+  type: text("type").notNull(), // job_booster | slot_package
+  amount: integer("amount").notNull(),
+  status: text("status").default("pending").notNull(), // pending | completed | failed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -109,6 +136,45 @@ export const insertApplicationSchema = createInsertSchema(applications).omit({
   createdAt: true,
 });
 
+export const insertWishlistSchema = createInsertSchema(wishlists).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertPremiumTransactionSchema = createInsertSchema(premiumTransactions).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Register schemas dengan validasi tambahan
+export const registerPekerjaSchema = insertUserSchema.extend({
+  role: z.literal("pekerja"),
+  password: z.string().min(6, "Password minimal 6 karakter"),
+}).omit({
+  isVerified: true,
+  cvUrl: true,
+  education: true,
+  experience: true,
+  skills: true,
+});
+
+export const registerPemberiKerjaSchema = insertUserSchema.extend({
+  role: z.literal("pemberi_kerja"),
+  password: z.string().min(6, "Password minimal 6 karakter"),
+  companyName: z.string().min(1, "Nama perusahaan harus diisi"),
+}).omit({
+  isVerified: true,
+  cvUrl: true,
+  education: true,
+  experience: true,
+  skills: true,
+});
+
+export const loginSchema = z.object({
+  username: z.string().min(1, "Username harus diisi"),
+  password: z.string().min(1, "Password harus diisi"),
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -124,3 +190,13 @@ export type AggregatedJob = typeof aggregatedJobs.$inferSelect;
 
 export type InsertApplication = z.infer<typeof insertApplicationSchema>;
 export type Application = typeof applications.$inferSelect;
+
+export type InsertWishlist = z.infer<typeof insertWishlistSchema>;
+export type Wishlist = typeof wishlists.$inferSelect;
+
+export type InsertPremiumTransaction = z.infer<typeof insertPremiumTransactionSchema>;
+export type PremiumTransaction = typeof premiumTransactions.$inferSelect;
+
+export type RegisterPekerja = z.infer<typeof registerPekerjaSchema>;
+export type RegisterPemberiKerja = z.infer<typeof registerPemberiKerjaSchema>;
+export type Login = z.infer<typeof loginSchema>;
