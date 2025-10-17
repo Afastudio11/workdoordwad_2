@@ -51,18 +51,18 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
-            Create account.
+            Buat akun.
           </h1>
           <p className="text-gray-900">
-            Already have account?{" "}
+            Sudah punya akun?{" "}
             <Link href="/login" className="text-gray-900 hover:underline font-bold" data-testid="link-login">
-              Log In
+              Masuk
             </Link>
           </p>
         </div>
 
         <div className="bg-gray-100 rounded-lg p-1 mb-6">
-          <p className="text-xs text-gray-500 text-center mb-2">CREATE ACCOUNT AS A</p>
+          <p className="text-xs text-gray-500 text-center mb-2">BUAT AKUN SEBAGAI</p>
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
@@ -74,7 +74,7 @@ export default function RegisterPage() {
               }`}
             >
               <User className="h-4 w-4" />
-              <span className="font-medium">Candidate</span>
+              <span className="font-medium">Kandidat</span>
             </button>
             <button
               type="button"
@@ -86,7 +86,7 @@ export default function RegisterPage() {
               }`}
             >
               <Building2 className="h-4 w-4" />
-              <span className="font-medium">Employers</span>
+              <span className="font-medium">Pemberi Kerja</span>
             </button>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormControl>
                       <Input
-                        placeholder="Full Name"
+                        placeholder="Nama Lengkap"
                         className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                         {...field}
                         data-testid="input-fullname"
@@ -119,7 +119,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormControl>
                       <Input
-                        placeholder="Username"
+                        placeholder="Nama Pengguna"
                         className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                         {...field}
                         data-testid="input-username"
@@ -139,7 +139,7 @@ export default function RegisterPage() {
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="Email address"
+                      placeholder="Alamat email"
                       className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                       {...field}
                       data-testid="input-email"
@@ -159,7 +159,7 @@ export default function RegisterPage() {
                     <div className="relative">
                       <Input
                         type={showPassword ? "text" : "password"}
-                        placeholder="Password"
+                        placeholder="Kata sandi"
                         className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
                         {...field}
                         data-testid="input-password"
@@ -188,7 +188,7 @@ export default function RegisterPage() {
                     <div className="relative">
                       <Input
                         type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm Password"
+                        placeholder="Konfirmasi Kata Sandi"
                         className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
                         {...field}
                         data-testid="input-confirm-password"
@@ -224,9 +224,9 @@ export default function RegisterPage() {
                       />
                     </FormControl>
                     <label className="text-sm text-gray-900">
-                      I've read and agree with your{" "}
+                      Saya telah membaca dan menyetujui{" "}
                       <a href="#" className="text-gray-900 hover:underline font-bold">
-                        Terms of Services
+                        Ketentuan Layanan
                       </a>
                     </label>
                   </div>
@@ -240,7 +240,7 @@ export default function RegisterPage() {
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base"
               data-testid="button-register"
             >
-              Create Account →
+              Buat Akun →
             </Button>
           </form>
         </Form>
@@ -251,7 +251,7 @@ export default function RegisterPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">OR</span>
+              <span className="px-2 bg-white text-gray-500">ATAU</span>
             </div>
           </div>
 
@@ -261,14 +261,14 @@ export default function RegisterPage() {
               className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
             >
               <FaFacebook className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-gray-900">Sign up with Facebook</span>
+              <span className="text-sm text-gray-900">Daftar dengan Facebook</span>
             </button>
             <button
               type="button"
               className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
             >
               <FaGoogle className="h-5 w-5 text-red-500" />
-              <span className="text-sm text-gray-900">Sign up with Google</span>
+              <span className="text-sm text-gray-900">Daftar dengan Google</span>
             </button>
           </div>
         </div>

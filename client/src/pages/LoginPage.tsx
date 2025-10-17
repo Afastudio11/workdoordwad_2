@@ -36,12 +36,12 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
-            Welcome back.
+            Selamat Datang Kembali.
           </h1>
           <p className="text-gray-900">
-            Don't have an account?{" "}
+            Belum punya akun?{" "}
             <Link href="/register" className="text-gray-900 hover:underline font-bold" data-testid="link-register">
-              Sign Up
+              Daftar
             </Link>
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function LoginPage() {
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="Email address"
+                      placeholder="Alamat email"
                       className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                       {...field}
                       data-testid="input-email"
@@ -76,7 +76,7 @@ export default function LoginPage() {
                     <div className="relative">
                       <Input
                         type={showPassword ? "text" : "password"}
-                        placeholder="Password"
+                        placeholder="Kata sandi"
                         className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
                         {...field}
                         data-testid="input-password"
@@ -103,10 +103,10 @@ export default function LoginPage() {
                   className="rounded border-gray-300 text-primary focus:ring-primary"
                   data-testid="checkbox-remember"
                 />
-                <span className="ml-2 text-sm text-gray-900">Remember me</span>
+                <span className="ml-2 text-sm text-gray-900">Ingat saya</span>
               </label>
-              <a href="#" className="text-sm text-primary hover:underline" data-testid="link-forgot-password">
-                Forgot password?
+              <a href="#" className="text-sm text-gray-900 hover:underline font-bold" data-testid="link-forgot-password">
+                Lupa kata sandi?
               </a>
             </div>
 
@@ -115,7 +115,7 @@ export default function LoginPage() {
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base"
               data-testid="button-login"
             >
-              Log In →
+              Masuk →
             </Button>
           </form>
         </Form>
@@ -126,7 +126,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">OR</span>
+              <span className="px-2 bg-white text-gray-500">ATAU</span>
             </div>
           </div>
 
@@ -136,14 +136,14 @@ export default function LoginPage() {
               className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
             >
               <FaFacebook className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-gray-900">Log in with Facebook</span>
+              <span className="text-sm text-gray-900">Masuk dengan Facebook</span>
             </button>
             <button
               type="button"
               className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
             >
               <FaGoogle className="h-5 w-5 text-red-500" />
-              <span className="text-sm text-gray-900">Log in with Google</span>
+              <span className="text-sm text-gray-900">Masuk dengan Google</span>
             </button>
           </div>
         </div>
