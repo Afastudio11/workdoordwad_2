@@ -69,7 +69,7 @@ export default function RegisterPage() {
               onClick={() => setUserType("candidate")}
               className={`flex items-center justify-center gap-2 py-3 px-4 rounded-md transition-colors ${
                 userType === "candidate"
-                  ? "bg-[#ffffff] text-gray-900 shadow-sm"
+                  ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-gray-600 hover:bg-[#ffffff]/50"
               }`}
             >
