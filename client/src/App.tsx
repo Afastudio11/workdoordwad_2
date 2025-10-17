@@ -8,6 +8,10 @@ import LandingPage from "@/pages/LandingPage";
 import BrowseJobsPage from "@/pages/BrowseJobsPage";
 import JobDashboardPage from "@/pages/JobDashboardPage";
 import QuickAccessPage from "@/pages/QuickAccessPage";
+import MessagesPage from "@/pages/MessagesPage";
+import HiringPage from "@/pages/HiringPage";
+import CommunityPage from "@/pages/CommunityPage";
+import FAQPage from "@/pages/FAQPage";
 import JobDetailPage from "@/pages/JobDetailPage";
 import RegisterPage from "@/pages/RegisterPage";
 import LoginPage from "@/pages/LoginPage";
@@ -20,6 +24,10 @@ function Router() {
       <Route path="/jobs" component={BrowseJobsPage} />
       <Route path="/dashboard" component={JobDashboardPage} />
       <Route path="/quick-access" component={QuickAccessPage} />
+      <Route path="/messages" component={MessagesPage} />
+      <Route path="/hiring" component={HiringPage} />
+      <Route path="/community" component={CommunityPage} />
+      <Route path="/faq" component={FAQPage} />
       <Route path="/jobs/:id" component={JobDetailPage} />
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />
