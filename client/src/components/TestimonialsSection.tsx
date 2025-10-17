@@ -2,12 +2,12 @@ import { Calendar, CreditCard } from "lucide-react";
 
 export default function TestimonialsSection() {
   return (
-    <section className="relative py-32 bg-black overflow-hidden">
+    <section className="relative py-16 md:py-32 bg-black overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1 text-left">
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">
-              Siap Mengorganisir<br />Rekrutmen Anda?
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight" data-testid="cta-title">
+              Siap Mengorganisir Rekrutmen Anda?
             </h2>
 
             <div className="flex flex-col sm:flex-row items-start gap-4 mb-8">

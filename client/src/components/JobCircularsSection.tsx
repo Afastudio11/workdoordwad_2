@@ -75,18 +75,18 @@ export default function JobCircularsSection() {
           </h2>
           
           {/* Search Bar */}
-          <div className="flex gap-4 mb-6">
+          <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input 
                 type="text" 
                 placeholder="Cari kebutuhan Anda" 
-                className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full pl-12 pr-4 py-3 md:py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
                 data-testid="input-search"
               />
             </div>
             <select 
-              className="px-6 py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-4 md:px-6 py-3 md:py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
               data-testid="select-category"
             >
               <option>Pengembangan Web</option>
@@ -94,7 +94,7 @@ export default function JobCircularsSection() {
               <option>Marketing</option>
             </select>
             <button 
-              className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors"
+              className="px-8 py-3 md:py-4 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors"
               data-testid="button-search"
             >
               <Search className="h-5 w-5" />

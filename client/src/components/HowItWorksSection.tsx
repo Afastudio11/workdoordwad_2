@@ -44,10 +44,10 @@ export default function HowItWorksSection() {
         <div className="grid lg:grid-cols-2 gap-12 mb-20">
           {/* Left Side - Steps */}
           <div>
-            <h2 className="text-5xl md:text-6xl font-bold text-black mb-6 leading-tight" data-testid="how-it-works-title">
-              Temukan Pekerjaan<br />dengan Mudah
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-black mb-6 leading-tight" data-testid="how-it-works-title">
+              Temukan Pekerjaan dengan Mudah
             </h2>
-            <p className="text-gray-600 mb-12 text-base leading-relaxed" data-testid="how-it-works-description">
+            <p className="text-gray-600 mb-8 md:mb-12 text-base leading-relaxed" data-testid="how-it-works-description">
               Platform kami memudahkan Anda untuk mencari pekerjaan impian atau menemukan kandidat terbaik dalam tiga langkah sederhana.
             </p>
 
