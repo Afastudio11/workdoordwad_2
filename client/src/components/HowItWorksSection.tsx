@@ -55,7 +55,7 @@ export default function HowItWorksSection() {
               {steps.map((step, index) => (
                 <div key={index} data-testid={`step-${index}`}>
                   {activeStep === index ? (
-                    <div className="border-l-4 border-lime-400 pl-6 py-2">
+                    <div className="border-l-4 border-primary pl-6 py-2">
                       <h4 
                         className="text-2xl font-bold text-black mb-4 cursor-pointer" 
                         data-testid={`step-title-${index}`}
@@ -69,7 +69,7 @@ export default function HowItWorksSection() {
                     </div>
                   ) : (
                     <h4 
-                      className="text-2xl font-bold text-black cursor-pointer hover:text-lime-600 transition-colors" 
+                      className="text-2xl font-bold text-black cursor-pointer hover:text-primary transition-colors" 
                       data-testid={`step-title-${index}`}
                       onClick={() => setActiveStep(index)}
                     >

@@ -81,12 +81,12 @@ export default function JobCircularsSection() {
               <input 
                 type="text" 
                 placeholder="Cari kebutuhan Anda" 
-                className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-400"
+                className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
                 data-testid="input-search"
               />
             </div>
             <select 
-              className="px-6 py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-400"
+              className="px-6 py-4 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
               data-testid="select-category"
             >
               <option>Pengembangan Web</option>
@@ -94,7 +94,7 @@ export default function JobCircularsSection() {
               <option>Marketing</option>
             </select>
             <button 
-              className="px-8 py-4 bg-lime-400 text-black font-semibold rounded-full hover:bg-lime-500 transition-colors"
+              className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors"
               data-testid="button-search"
             >
               <Search className="h-5 w-5" />
@@ -175,7 +175,7 @@ export default function JobCircularsSection() {
 
         <div className="text-center mt-12">
           <button 
-            className="w-full md:w-auto px-12 py-4 bg-lime-400 text-black font-bold rounded-full hover:bg-lime-500 transition-colors"
+            className="w-full md:w-auto px-12 py-4 bg-primary text-primary-foreground font-bold rounded-full hover:bg-primary/90 transition-colors"
             data-testid="button-load-more"
           >
             Muat Lebih Banyak
