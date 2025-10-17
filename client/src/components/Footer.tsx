@@ -1,4 +1,4 @@
-import logoImg from "@assets/Asset 1@4x_1760691467789.png";
+import logoImg from "@assets/Asset 6@4x_1760692501921.png";
 
 const footerLinks = {
   perusahaan: [
