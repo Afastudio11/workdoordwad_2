@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
-import logoImage from "@assets/black@4x_1760695283292.png";
+import Header from "@/components/Header";
 
 const loginSchema = z.object({
   email: z.string().email("Email tidak valid"),
@@ -33,22 +33,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
-        <div className="mb-8">
-          <Link href="/" className="block mb-6 text-center" data-testid="link-home">
-            <img src={logoImage} alt="Pintu Kerja" className="h-8 inline-block" />
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
-            Selamat Datang Kembali.
-          </h1>
-          <p className="text-gray-900">
-            Belum punya akun?{" "}
-            <Link href="/register" className="text-gray-900 hover:underline font-bold" data-testid="link-register">
-              Daftar
-            </Link>
-          </p>
-        </div>
+    <>
+      <Header />
+      <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
+              Selamat Datang Kembali.
+            </h1>
+            <p className="text-gray-900">
+              Belum punya akun?{" "}
+              <Link href="/register" className="text-gray-900 hover:underline font-bold" data-testid="link-register">
+                Daftar
+              </Link>
+            </p>
+          </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -153,5 +152,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

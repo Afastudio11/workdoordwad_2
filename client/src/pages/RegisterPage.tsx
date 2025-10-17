@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
-import logoImage from "@assets/black@4x_1760695283292.png";
+import Header from "@/components/Header";
 
 const registerSchema = z.object({
   fullName: z.string().min(3, "Nama lengkap minimal 3 karakter"),
@@ -48,22 +48,21 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
-        <div className="mb-8">
-          <Link href="/" className="block mb-6 text-center" data-testid="link-home">
-            <img src={logoImage} alt="Pintu Kerja" className="h-8 inline-block" />
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
-            Buat akun.
-          </h1>
-          <p className="text-gray-900">
-            Sudah punya akun?{" "}
-            <Link href="/login" className="text-gray-900 hover:underline font-bold" data-testid="link-login">
-              Masuk
-            </Link>
-          </p>
-        </div>
+    <>
+      <Header />
+      <div className="min-h-screen bg-[#ffffff] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
+              Buat akun.
+            </h1>
+            <p className="text-gray-900">
+              Sudah punya akun?{" "}
+              <Link href="/login" className="text-gray-900 hover:underline font-bold" data-testid="link-login">
+                Masuk
+              </Link>
+            </p>
+          </div>
 
         <div className="bg-gray-100 rounded-lg p-1 mb-6">
           <p className="text-xs text-gray-500 text-center mb-2">BUAT AKUN SEBAGAI</p>
@@ -278,5 +277,6 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
