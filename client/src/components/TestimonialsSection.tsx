@@ -2,7 +2,7 @@ import { Calendar, CreditCard } from "lucide-react";
 
 export default function TestimonialsSection() {
   return (
-    <section className="relative py-32 bg-gradient-to-br from-gray-900 via-green-950 to-gray-900 overflow-hidden">
+    <section className="relative py-32 bg-black overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1 text-left">
