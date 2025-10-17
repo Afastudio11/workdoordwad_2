@@ -243,7 +243,7 @@ export default function RegisterPage() {
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base rounded-full"
               data-testid="button-register"
             >
-              Buat Akun →
+              Buat Akun
             </Button>
           </form>
         </Form>

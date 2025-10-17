@@ -118,7 +118,7 @@ export default function LoginPage() {
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base rounded-full"
               data-testid="button-login"
             >
-              Masuk →
+              Masuk
             </Button>
           </form>
         </Form>
