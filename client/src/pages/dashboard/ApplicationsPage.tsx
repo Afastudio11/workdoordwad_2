@@ -56,11 +56,11 @@ export default function ApplicationsPage() {
   if (!applications || applications.length === 0) {
     return (
       <div className="text-center py-16">
-        <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-foreground mb-2">
+        <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">
           Belum Ada Lamaran
         </h3>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-gray-900 mb-6">
           Anda belum melamar ke lowongan manapun
         </p>
         <Button asChild>
@@ -73,10 +73,10 @@ export default function ApplicationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground" data-testid="text-page-title">
+        <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
           Lamaran Saya
         </h1>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-gray-900 mt-1">
           {applications.length} lamaran aktif
         </p>
       </div>
@@ -96,16 +96,16 @@ export default function ApplicationsPage() {
                         <Briefcase className="w-6 h-6 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground mb-1" data-testid={`text-job-title-${index}`}>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1" data-testid={`text-job-title-${index}`}>
                           {application.job.title}
                         </h3>
-                        <p className="text-muted-foreground" data-testid={`text-company-${index}`}>
+                        <p className="text-gray-900" data-testid={`text-company-${index}`}>
                           {application.job.company.name}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground ml-16">
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-900 ml-16">
                       <div className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
                         <span data-testid={`text-location-${index}`}>{application.job.location}</span>

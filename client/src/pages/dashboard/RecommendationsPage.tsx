@@ -83,21 +83,21 @@ export default function RecommendationsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-2" data-testid="text-page-title">
-            <Sparkles className="h-8 w-8 text-primary" />
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2" data-testid="text-page-title">
+            <Sparkles className="h-8 w-8 text-[#D4FF00]" />
             Rekomendasi Untuk Anda
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-gray-900 mt-1">
             Lowongan yang sesuai dengan profil dan preferensi Anda
           </p>
         </div>
 
         <div className="text-center py-16 bg-gray-50 rounded-xl">
           <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-foreground mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Belum Ada Rekomendasi
           </h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+          <p className="text-gray-900 mb-6 max-w-md mx-auto">
             Lengkapi profil Anda (keahlian, preferensi industri, dan lokasi) untuk mendapatkan rekomendasi pekerjaan yang lebih sesuai
           </p>
           <div className="flex gap-4 justify-center">
@@ -120,11 +120,11 @@ export default function RecommendationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-2" data-testid="text-page-title">
-          <Sparkles className="h-8 w-8 text-primary" />
+        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2" data-testid="text-page-title">
+          <Sparkles className="h-8 w-8 text-[#D4FF00]" />
           Rekomendasi Untuk Anda
         </h1>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-gray-900 mt-1">
           {recommendations.length} lowongan yang cocok dengan profil Anda
         </p>
       </div>
@@ -144,16 +144,16 @@ export default function RecommendationsPage() {
                       <Briefcase className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-foreground mb-1 hover:text-primary transition-colors" data-testid={`recommendation-title-${index}`}>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1 hover:text-gray-700 transition-colors" data-testid={`recommendation-title-${index}`}>
                         {job.title}
                       </h3>
-                      <p className="text-muted-foreground" data-testid={`recommendation-company-${index}`}>
+                      <p className="text-gray-900" data-testid={`recommendation-company-${index}`}>
                         {job.company.name}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-900">
                     <div className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
                       <span data-testid={`recommendation-location-${index}`}>{job.location}</span>
@@ -163,7 +163,7 @@ export default function RecommendationsPage() {
                       <span>{job.jobType}</span>
                     </div>
                     {job.salaryMin && job.salaryMax && (
-                      <div className="flex items-center gap-1 font-semibold text-foreground">
+                      <div className="flex items-center gap-1 font-semibold text-gray-900">
                         <DollarSign className="w-4 h-4" />
                         <span data-testid={`recommendation-salary-${index}`}>
                           {formatSalary(job.salaryMin)} - {formatSalary(job.salaryMax)}
