@@ -1,10 +1,15 @@
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
-import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
 import logoImg from "@assets/Asset 6@4x_1760692501921.png";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [location] = useLocation();
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location]);
 
   return (
     <header className="sticky top-0 z-50 bg-black border-b border-white/10">
@@ -60,19 +65,19 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-white/10 bg-black" data-testid="mobile-menu">
           <div className="px-6 py-4 space-y-4">
-            <a href="/" className="block text-base text-gray-300" data-testid="mobile-link-beranda">
+            <a href="/" className="block text-base text-gray-300" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-beranda">
               Beranda
             </a>
-            <a href="/jobs" className="block text-base text-gray-300" data-testid="mobile-link-cari-pekerjaan">
+            <a href="/jobs" className="block text-base text-gray-300" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-cari-pekerjaan">
               Cari Pekerjaan
             </a>
-            <a href="#cari-kandidat" className="block text-base text-gray-300" data-testid="mobile-link-cari-kandidat">
+            <a href="#cari-kandidat" className="block text-base text-gray-300" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-cari-kandidat">
               Cari Kandidat
             </a>
-            <a href="#blog" className="block text-base text-gray-300" data-testid="mobile-link-blog">
+            <a href="#blog" className="block text-base text-gray-300" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-blog">
               Blog
             </a>
-            <a href="#kontak" className="block text-base text-gray-300" data-testid="mobile-link-kontak">
+            <a href="#kontak" className="block text-base text-gray-300" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-kontak">
               Kontak
             </a>
             <div className="pt-4 space-y-3 border-t border-white/10">
