@@ -25,20 +25,17 @@ export default function HeroSection() {
   return (
     <section className="relative py-20 md:py-32 bg-black overflow-hidden">
       {/* Decorative starburst shapes */}
-      <div className="absolute top-20 left-12 w-32 h-32 opacity-80">
-        <img src={starburstImg} alt="" className="w-full h-full" />
-      </div>
-      <div className="absolute top-32 right-16 w-48 h-48 opacity-80">
+      <div className="absolute top-20 right-16 w-48 h-48 opacity-80">
         <img src={starburstImg} alt="" className="w-full h-full" />
       </div>
       
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight" data-testid="hero-title">
+        <div className="text-center mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight leading-tight" data-testid="hero-title">
             Wujudkan Pekerjaan Impianmu!<br />Cari di Sini Sekarang!
           </h1>
 
-          <div className="max-w-2xl mx-auto mb-5">
+          <div className="max-w-2xl mx-auto mb-3">
             <div className="relative rounded-full p-2 flex items-center gap-3" style={{ backgroundColor: '#484946' }}>
               <input
                 type="text"
@@ -59,7 +56,7 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-4 mb-8">
+          <div className="flex items-center justify-center gap-4 mb-4">
             <span className="text-gray-400 text-sm">Pekerjaan Populer Saat ini:</span>
             <div className="flex gap-2">
               {popularJobs.map((job, index) => (
@@ -77,6 +74,11 @@ export default function HeroSection() {
 
         {/* Hero Image - Cityscape */}
         <div className="relative max-w-6xl mx-auto">
+          {/* Ornamen starburst di kiri bawah gambar */}
+          <div className="absolute -bottom-16 -left-20 w-48 h-48 opacity-80 z-10">
+            <img src={starburstImg} alt="" className="w-full h-full" />
+          </div>
+          
           <div className="aspect-[21/9] rounded-3xl overflow-hidden">
             <img 
               src={cityscapeImg}
