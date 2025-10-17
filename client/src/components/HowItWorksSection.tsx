@@ -1,5 +1,5 @@
 import starburstImg from "@assets/0d231d(1)_1760687086089.png";
-import cardImg from "@assets/b5000e60-d453-4e7f-9f37-bda9504555b7_1760687707154.png";
+import cardImg from "@assets/0d231d(2)_1760688190358.png";
 
 const steps = [
   {
