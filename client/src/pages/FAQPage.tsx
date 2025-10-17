@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, ChevronDown, HelpCircle } from "lucide-react";
+import { Link } from "wouter";
 import DashboardPageHeader from "@/components/DashboardPageHeader";
 import {
   Accordion,
@@ -80,25 +81,25 @@ export default function FAQPage() {
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <DashboardPageHeader />
 
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 mb-4">
-            <HelpCircle className="h-8 w-8 text-gray-900" />
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
+            <HelpCircle className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
-          <p className="text-lg text-gray-600">Temukan jawaban untuk pertanyaan yang sering diajukan</p>
+          <h1 className="text-4xl font-bold text-foreground mb-4">Frequently Asked Questions</h1>
+          <p className="text-lg text-muted-foreground">Temukan jawaban untuk pertanyaan yang sering diajukan</p>
         </div>
 
         <div className="mb-8">
           <div className="relative mb-6">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <input
               type="text"
               placeholder="Cari pertanyaan..."
-              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="w-full pl-12 pr-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               data-testid="input-search-faq"
@@ -112,8 +113,8 @@ export default function FAQPage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
                   selectedCategory === category
-                    ? "bg-gray-900 text-white"
-                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-foreground border border-border hover:bg-secondary"
                 }`}
                 data-testid={`category-${category.toLowerCase()}`}
               >
@@ -123,18 +124,18 @@ export default function FAQPage() {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
           <Accordion type="single" collapsible className="w-full">
             {filteredFaqs.map((faq, index) => (
-              <AccordionItem key={faq.id} value={faq.id} className="border-b border-gray-200 last:border-0" data-testid={`faq-${faq.id}`}>
-                <AccordionTrigger className="px-6 py-4 hover:bg-gray-50 text-left">
+              <AccordionItem key={faq.id} value={faq.id} className="border-b border-border last:border-0" data-testid={`faq-${faq.id}`}>
+                <AccordionTrigger className="px-6 py-4 hover:bg-secondary text-left">
                   <div className="flex items-start gap-3 pr-4">
-                    <span className="text-sm font-medium text-gray-500 flex-shrink-0">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="text-base font-medium text-gray-900">{faq.question}</span>
+                    <span className="text-sm font-medium text-muted-foreground flex-shrink-0">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="text-base font-medium text-foreground">{faq.question}</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
-                  <div className="pl-9 text-gray-600">
+                  <div className="pl-9 text-muted-foreground">
                     {faq.answer}
                   </div>
                 </AccordionContent>
@@ -145,14 +146,14 @@ export default function FAQPage() {
 
         {filteredFaqs.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">Tidak ada pertanyaan yang ditemukan</p>
+            <p className="text-muted-foreground">Tidak ada pertanyaan yang ditemukan</p>
           </div>
         )}
 
         <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">Tidak menemukan jawaban yang Anda cari?</p>
+          <p className="text-muted-foreground mb-4">Tidak menemukan jawaban yang Anda cari?</p>
           <Link href="/contact">
-            <button className="px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors" data-testid="button-contact">
+            <button className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:opacity-90 transition-opacity" data-testid="button-contact">
               Hubungi Kami
             </button>
           </Link>

@@ -31,9 +31,7 @@ export default function WishlistPage() {
 
   const removeFromWishlistMutation = useMutation({
     mutationFn: async (jobId: string) => {
-      return await apiRequest(`/api/wishlists/${jobId}`, {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", `/api/wishlists/${jobId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/wishlists"] });
