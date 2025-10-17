@@ -1,6 +1,8 @@
 import { Search } from "lucide-react";
 import { useState, type KeyboardEvent } from "react";
 import { useLocation } from "wouter";
+import cityscapeImg from "@assets/Cari Pekerjaan Kamu Disini,_1760685931944.png";
+import starburstImg from "@assets/1_1760685924443.png";
 
 const popularJobs = ["Sales Marketing", "Software Engineer", "Web Developer"];
 
@@ -24,10 +26,10 @@ export default function HeroSection() {
     <section className="relative py-20 md:py-32 bg-black overflow-hidden">
       {/* Decorative starburst shapes */}
       <div className="absolute top-20 left-12 w-32 h-32 opacity-80">
-        <img src="/attached_assets/1_1760685403212.png" alt="" className="w-full h-full" />
+        <img src={starburstImg} alt="" className="w-full h-full" />
       </div>
       <div className="absolute top-32 right-16 w-48 h-48 opacity-80">
-        <img src="/attached_assets/1_1760685403212.png" alt="" className="w-full h-full" />
+        <img src={starburstImg} alt="" className="w-full h-full" />
       </div>
       
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8">
@@ -74,10 +76,10 @@ export default function HeroSection() {
         </div>
 
         {/* Hero Image - Cityscape */}
-        <div className="relative max-w-5xl mx-auto">
-          <div className="aspect-[21/9] bg-gray-800 rounded-3xl overflow-hidden">
+        <div className="relative max-w-6xl mx-auto">
+          <div className="aspect-[21/9] rounded-3xl overflow-hidden">
             <img 
-              src="/attached_assets/Cari Pekerjaan Kamu Disini,_1760685412356.png"
+              src={cityscapeImg}
               alt="Cityscape" 
               className="w-full h-full object-cover"
             />

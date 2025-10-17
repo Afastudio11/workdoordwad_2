@@ -37,7 +37,7 @@ export default function Header() {
             <button className="px-6 py-2 bg-primary text-black text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors" data-testid="button-daftar">
               Daftar Sekarang
             </button>
-            <button className="px-6 py-2 bg-primary text-black text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors" data-testid="button-masuk">
+            <button className="px-6 py-2 border border-primary text-primary text-sm font-semibold rounded-lg hover:bg-primary/10 transition-colors" data-testid="button-masuk">
               Masuk
             </button>
           </div>
@@ -74,7 +74,7 @@ export default function Header() {
               <button className="block w-full px-6 py-2 bg-primary text-black text-sm font-semibold rounded-lg text-center" data-testid="mobile-button-daftar">
                 Daftar Sekarang
               </button>
-              <button className="block w-full px-6 py-2 bg-primary text-black text-sm font-semibold rounded-lg text-center" data-testid="mobile-button-masuk">
+              <button className="block w-full px-6 py-2 border border-primary text-primary text-sm font-semibold rounded-lg text-center" data-testid="mobile-button-masuk">
                 Masuk
               </button>
             </div>
