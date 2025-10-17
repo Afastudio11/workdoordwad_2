@@ -91,7 +91,7 @@ export default function JobDashboardPage() {
   return (
     <div className="min-h-screen bg-white">
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="w-full px-6">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center" data-testid="link-home">
               <img src={logoImgDark} alt="Pintu Kerja" className="h-8" />
@@ -130,14 +130,14 @@ export default function JobDashboardPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="w-full px-6 py-8">
         <div className="flex gap-8">
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-24">
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
-                  <button className="text-sm text-blue-600 hover:underline" data-testid="button-clear-filters">
+                  <button className="text-sm text-gray-900 hover:underline" data-testid="button-clear-filters">
                     Clear
                   </button>
                 </div>
@@ -218,7 +218,7 @@ export default function JobDashboardPage() {
                 <input
                   type="text"
                   placeholder="Designer"
-                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   data-testid="input-search"
@@ -245,7 +245,7 @@ export default function JobDashboardPage() {
               <div className="bg-white border border-gray-300 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-900">Salary range</span>
-                  <span className="text-sm font-semibold text-blue-600" data-testid="text-salary-range">
+                  <span className="text-sm font-semibold text-gray-900" data-testid="text-salary-range">
                     {formatSalary(salaryRange[0])} - {formatSalary(salaryRange[1])}
                   </span>
                 </div>
