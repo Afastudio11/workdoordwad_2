@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import DashboardPageHeader from "@/components/DashboardPageHeader";
 
 const profileSchema = z.object({
   fullName: z.string().min(1, "Nama lengkap harus diisi"),
@@ -237,40 +238,43 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-            Profil Saya
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Kelola informasi profil dan preferensi Anda
-          </p>
+    <div className="min-h-screen bg-white">
+      <DashboardPageHeader />
+      
+      <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
+              Profil Saya
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Kelola informasi profil dan preferensi Anda
+            </p>
+          </div>
         </div>
-      </div>
 
-      <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
-          <TabsTrigger value="profile" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
-            <User className="w-4 h-4 mr-2" />
-            Profil
-          </TabsTrigger>
-          <TabsTrigger value="cv" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
-            <FileText className="w-4 h-4 mr-2" />
-            CV
-          </TabsTrigger>
-          <TabsTrigger value="skills" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
-            <Award className="w-4 h-4 mr-2" />
-            Keahlian
-          </TabsTrigger>
-          <TabsTrigger value="preferences" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
-            <Settings className="w-4 h-4 mr-2" />
-            Preferensi
-          </TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+            <TabsTrigger value="profile" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
+              <User className="w-4 h-4 mr-2" />
+              Profil
+            </TabsTrigger>
+            <TabsTrigger value="cv" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
+              <FileText className="w-4 h-4 mr-2" />
+              CV
+            </TabsTrigger>
+            <TabsTrigger value="skills" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
+              <Award className="w-4 h-4 mr-2" />
+              Keahlian
+            </TabsTrigger>
+            <TabsTrigger value="preferences" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
+              <Settings className="w-4 h-4 mr-2" />
+              Preferensi
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Profile Tab */}
-        <TabsContent value="profile" className="space-y-6 mt-6">
+          {/* Profile Tab */}
+          <TabsContent value="profile" className="space-y-6 mt-6">
           <Card className="bg-white border-gray-200">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -874,8 +878,9 @@ export default function ProfilePage() {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
