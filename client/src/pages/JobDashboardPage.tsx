@@ -111,31 +111,31 @@ export default function JobDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background dark:bg-background">
-      <header className="sticky top-0 z-50 bg-background dark:bg-background border-b border-border dark:border-border">
+    <div className="min-h-screen bg-white">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2" data-testid="link-home">
-              <img src={logoImgDark} alt="Pintu Kerja" className="h-8 dark:invert" />
+              <img src={logoImgDark} alt="Pintu Kerja" className="h-8" />
             </Link>
             
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-sm font-medium text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary transition-colors" data-testid="link-home-nav">
+              <Link href="/" className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors" data-testid="link-home-nav">
                 Home
               </Link>
-              <Link href="/jobs" className="text-sm font-medium text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary transition-colors" data-testid="link-findjobs">
+              <Link href="/jobs" className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors" data-testid="link-findjobs">
                 Find jobs
               </Link>
-              <Link href="/community" className="text-sm font-medium text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground transition-colors" data-testid="link-careers">
+              <Link href="/community" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-careers">
                 Careers
               </Link>
-              <Link href="/hiring" className="text-sm font-medium text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground transition-colors" data-testid="link-companyprofile">
+              <Link href="/hiring" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-companyprofile">
                 Company Profile
               </Link>
             </nav>
 
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground dark:text-muted-foreground" data-testid="text-language">English</span>
+              <span className="text-sm text-gray-600" data-testid="text-language">English</span>
               <Button variant="ghost" size="icon" data-testid="button-notifications">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -147,8 +147,8 @@ export default function JobDashboardPage() {
                 </svg>
               </Button>
               <Button variant="ghost" size="icon" className="rounded-full" data-testid="button-profile">
-                <div className="h-8 w-8 rounded-full bg-primary dark:bg-primary flex items-center justify-center">
-                  <span className="text-sm font-medium text-primary-foreground dark:text-primary-foreground">U</span>
+                <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                  <span className="text-sm font-medium text-white">U</span>
                 </div>
               </Button>
             </div>
@@ -156,28 +156,15 @@ export default function JobDashboardPage() {
         </div>
       </header>
 
-      <div className="bg-gradient-to-br from-primary/10 via-accent/10 to-background dark:from-primary/5 dark:via-accent/5 dark:to-background border-b border-border dark:border-border">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground dark:text-foreground mb-3" data-testid="text-hero-title">
-              Empowering Your Career Growth
-            </h1>
-            <p className="text-lg text-muted-foreground dark:text-muted-foreground" data-testid="text-hero-subtitle">
-              Explore job listings, track applications, and advance your professional journey.
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="bg-card dark:bg-card border border-card-border dark:border-card-border rounded-xl p-6 shadow-sm mb-8">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-8">
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
             <div className="md:col-span-2 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search"
-                className="w-full pl-10 pr-4 py-2.5 bg-background dark:bg-background border border-border dark:border-border rounded-lg text-foreground dark:text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 data-testid="input-search"
@@ -185,9 +172,9 @@ export default function JobDashboardPage() {
             </div>
 
             <Select value={searchLocation || "all"} onValueChange={(val) => setSearchLocation(val === "all" ? "" : val)}>
-              <SelectTrigger className="bg-background dark:bg-background" data-testid="select-location">
+              <SelectTrigger className="bg-gray-50" data-testid="select-location">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
+                  <MapPin className="h-4 w-4 text-gray-400" />
                   <SelectValue placeholder="Location" />
                 </div>
               </SelectTrigger>
@@ -202,33 +189,33 @@ export default function JobDashboardPage() {
             </Select>
 
             <Select value={jobType} onValueChange={setJobType}>
-              <SelectTrigger className="bg-background dark:bg-background" data-testid="select-jobtype">
+              <SelectTrigger className="bg-gray-50" data-testid="select-jobtype">
                 <SelectValue placeholder="Job Type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Fulltime">Fulltime</SelectItem>
-                <SelectItem value="Part-time">Part-time</SelectItem>
-                <SelectItem value="Contract">Contract</SelectItem>
-                <SelectItem value="Freelance">Freelance</SelectItem>
+                <SelectItem value="full-time">Fulltime</SelectItem>
+                <SelectItem value="part-time">Part-time</SelectItem>
+                <SelectItem value="contract">Contract</SelectItem>
+                <SelectItem value="freelance">Freelance</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={industry} onValueChange={setIndustry}>
-              <SelectTrigger className="bg-background dark:bg-background" data-testid="select-industry">
+              <SelectTrigger className="bg-gray-50" data-testid="select-industry">
                 <SelectValue placeholder="Industry" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Industries</SelectItem>
-                <SelectItem value="Technology">Technology</SelectItem>
-                <SelectItem value="Finance">Finance</SelectItem>
-                <SelectItem value="Healthcare">Healthcare</SelectItem>
-                <SelectItem value="Education">Education</SelectItem>
+                <SelectItem value="Teknologi">Teknologi</SelectItem>
+                <SelectItem value="Retail">Retail</SelectItem>
+                <SelectItem value="F&B">F&B</SelectItem>
+                <SelectItem value="Kesehatan">Kesehatan</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={experienceLevel} onValueChange={setExperienceLevel}>
-              <SelectTrigger className="bg-background dark:bg-background" data-testid="select-experience">
+              <SelectTrigger className="bg-gray-50" data-testid="select-experience">
                 <SelectValue placeholder="Experience" />
               </SelectTrigger>
               <SelectContent>
@@ -243,7 +230,7 @@ export default function JobDashboardPage() {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground dark:text-muted-foreground">Popular search:</span>
+              <span className="text-sm text-gray-600">Popular search:</span>
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm" className="text-sm" data-testid="button-tag-developers">
                   Developers
@@ -259,7 +246,7 @@ export default function JobDashboardPage() {
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground dark:text-muted-foreground">Sort by:</span>
+                <span className="text-sm text-gray-600">Sort by:</span>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-auto border-0 bg-transparent font-medium" data-testid="select-sortby">
                     <SelectValue />
@@ -272,7 +259,7 @@ export default function JobDashboardPage() {
                 </Select>
               </div>
 
-              <Button className="bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground hover:bg-primary/90 dark:hover:bg-primary/90" data-testid="button-search">
+              <Button className="bg-blue-600 text-white hover:bg-blue-700" data-testid="button-search">
                 Search
               </Button>
             </div>
@@ -280,129 +267,88 @@ export default function JobDashboardPage() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="border border-border dark:border-border rounded-xl p-6 animate-pulse">
-                <div className="h-12 w-12 bg-muted dark:bg-muted rounded-lg mb-4"></div>
-                <div className="h-5 bg-muted dark:bg-muted rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-muted dark:bg-muted rounded w-1/2 mb-4"></div>
-                <div className="h-4 bg-muted dark:bg-muted rounded w-full mb-2"></div>
-                <div className="h-4 bg-muted dark:bg-muted rounded w-2/3"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="border border-gray-200 rounded-2xl p-6 animate-pulse">
+                <div className="h-12 w-12 bg-gray-200 rounded-lg mb-4"></div>
+                <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data?.jobs.map((job, index) => {
-              const colorClass = jobCardColors[index % jobCardColors.length];
-              const applicantCount = getApplicantCount(index);
+              const icons = ["🍎", "🎨", "💼", "🚀", "💻", "📱", "🎯", "⚡", "🔧", "📊"];
+              const jobIcon = icons[index % icons.length];
+
+              const getJobTypeBadge = (type: string) => {
+                const normalized = type.toLowerCase().replace(/\s+/g, '-');
+                if (normalized === 'full-time' || type === 'Fulltime') return "Penuh Waktu";
+                if (normalized === 'part-time') return "Paruh Waktu";
+                if (normalized === 'contract') return "Kontrak";
+                return "Freelance";
+              };
 
               return (
                 <div
                   key={job.id}
-                  className={`border rounded-xl p-5 hover:shadow-lg transition-all ${colorClass}`}
+                  className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all"
                   data-testid={`card-job-${index}`}
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="h-12 w-12 rounded-lg bg-white dark:bg-card flex items-center justify-center shadow-sm">
-                      <span className="text-lg font-bold text-foreground dark:text-foreground">
-                        {getCompanyInitials(job.company.name)}
-                      </span>
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl flex-shrink-0">
+                      {jobIcon}
                     </div>
-                    <button className="text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground" data-testid={`button-bookmark-${index}`}>
-                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <h3 className="text-lg font-semibold text-foreground dark:text-foreground mb-1 line-clamp-1" data-testid={`text-title-${index}`}>
-                    {job.title}
-                  </h3>
-                  <div className="flex items-center gap-1 mb-4">
-                    <span className="text-sm text-muted-foreground dark:text-muted-foreground line-clamp-1" data-testid={`text-company-${index}`}>
-                      {job.company.name}
-                    </span>
-                    {index % 3 === 0 && (
-                      <CheckCircle className="h-3.5 w-3.5 text-primary dark:text-primary flex-shrink-0" />
-                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2" data-testid={`text-title-${index}`}>
+                        {job.title}
+                      </h3>
+                    </div>
                   </div>
 
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
-                      <span className="text-foreground dark:text-foreground font-medium" data-testid={`text-applicants-${index}`}>
-                        {applicantCount}+ Applicants
-                      </span>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <MapPin className="h-4 w-4 flex-shrink-0" />
+                      <span className="line-clamp-1" data-testid={`text-location-${index}`}>{job.location}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Briefcase className="h-4 w-4 flex-shrink-0" />
+                      <span className="line-clamp-1" data-testid={`text-company-${index}`}>{job.company.name}</span>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm">
-                      <Briefcase className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground dark:text-muted-foreground" data-testid={`text-type-${index}`}>
-                        {job.jobType}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground dark:text-muted-foreground line-clamp-1" data-testid={`text-location-${index}`}>
-                        {job.location}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-muted-foreground dark:text-muted-foreground">💰</span>
-                      <span className="text-foreground dark:text-foreground font-semibold" data-testid={`text-salary-${index}`}>
-                        {job.salaryMin && job.salaryMax
-                          ? `${formatSalary(job.salaryMin)} - ${formatSalary(job.salaryMax)}`
-                          : 'Competitive'}
-                      </span>
-                    </div>
-
-                    {job.company.employeeCount && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Users className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
-                        <span className="text-muted-foreground dark:text-muted-foreground">
-                          {job.company.employeeCount} Employees
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-2 text-sm">
-                      <GraduationCap className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground dark:text-muted-foreground">
-                        {job.education || 'Bachelor of Information...'}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground dark:text-muted-foreground" data-testid={`text-posted-${index}`}>
+                      <Clock className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-600" data-testid={`text-posted-${index}`}>
                         {formatDate(job.createdAt)}
                       </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-4 w-4 text-muted-foreground dark:text-muted-foreground flex-shrink-0" />
-                      <span className="text-muted-foreground dark:text-muted-foreground" data-testid={`text-valid-${index}`}>
-                        {index % 2 === 0 ? `Valid until ${getValidUntil(job.createdAt)}` : 'Indefinitely'}
+                      <span className="ml-auto px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-md" data-testid={`badge-type-${index}`}>
+                        {getJobTypeBadge(job.jobType)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Button 
-                      className="w-full bg-foreground dark:bg-foreground text-background dark:text-background hover:bg-foreground/90 dark:hover:bg-foreground/90" 
-                      size="sm"
-                      data-testid={`button-apply-${index}`}
-                    >
-                      Apply for this job
-                    </Button>
-                    <Link href={`/jobs/${job.id}`} className="flex items-center justify-center gap-1 text-sm text-foreground dark:text-foreground hover:text-primary dark:hover:text-primary transition-colors" data-testid={`link-details-${index}`}>
-                      see more details
-                      <ExternalLink className="h-3 w-3" />
-                    </Link>
+                  <div className="flex items-center gap-2 mb-4 text-sm">
+                    <span className="text-gray-600">
+                      {job.industry || "General"}
+                    </span>
+                    <span className="text-gray-400">•</span>
+                    <span className="font-semibold text-gray-900" data-testid={`text-salary-${index}`}>
+                      {job.salaryMin && job.salaryMax
+                        ? `Rp ${formatSalary(job.salaryMin)}-${formatSalary(job.salaryMax)}`
+                        : 'Gratis'}
+                    </span>
                   </div>
+
+                  <Button 
+                    className="w-full bg-black text-white hover:bg-gray-800 rounded-full font-medium" 
+                    data-testid={`button-apply-${index}`}
+                  >
+                    Lamar Sekarang
+                  </Button>
                 </div>
               );
             })}
@@ -411,7 +357,7 @@ export default function JobDashboardPage() {
 
         {data && data.jobs.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground dark:text-muted-foreground">No jobs found</p>
+            <p className="text-gray-600">No jobs found</p>
           </div>
         )}
       </div>
