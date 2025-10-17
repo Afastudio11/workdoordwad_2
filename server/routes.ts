@@ -1,10 +1,33 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
-import { insertUserSchema } from "@shared/schema";
+import { insertUserSchema, type User } from "@shared/schema";
+
+// Extend session type
+declare module "express-session" {
+  interface SessionData {
+    userId: string;
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Get current user
+  app.get("/api/auth/me", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const user = await storage.getUser(req.session.userId);
+    if (!user) {
+      req.session.destroy(() => {});
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    const { password, ...userWithoutPassword } = user;
+    res.json(userWithoutPassword);
+  });
+
   // Authentication API
   app.post("/api/auth/register", async (req, res) => {
     try {
@@ -56,6 +79,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Username atau password salah" });
       }
 
+      // Store user ID in session
+      req.session.userId = user.id;
+
       // Remove password from response
       const { password: _, ...userWithoutPassword } = user;
       
@@ -64,6 +90,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error logging in:", error);
       res.status(500).json({ error: "Gagal login" });
     }
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Gagal logout" });
+      }
+      res.clearCookie("connect.sid");
+      res.json({ message: "Berhasil logout" });
+    });
   });
 
   // Jobs API

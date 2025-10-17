@@ -2,13 +2,16 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Eye, EyeOff, User, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import Header from "@/components/Header";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const registerSchema = z.object({
   fullName: z.string().min(3, "Nama lengkap minimal 3 karakter"),
@@ -30,6 +33,8 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [userType, setUserType] = useState<"candidate" | "employers">("employers");
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
@@ -43,8 +48,30 @@ export default function RegisterPage() {
     },
   });
 
+  const registerMutation = useMutation({
+    mutationFn: (data: any) => apiRequest("/api/auth/register", "POST", data),
+    onSuccess: () => {
+      toast({
+        title: "Berhasil mendaftar!",
+        description: "Akun Anda berhasil dibuat. Silakan login.",
+      });
+      setLocation("/login");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Gagal mendaftar",
+        description: error.message || "Terjadi kesalahan saat mendaftar",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: RegisterForm) => {
-    console.log({ ...data, userType });
+    const { confirmPassword, agreeToTerms, ...registerData } = data;
+    registerMutation.mutate({
+      ...registerData,
+      role: userType === "candidate" ? "job_seeker" : "recruiter",
+    });
   };
 
   return (
@@ -105,7 +132,7 @@ export default function RegisterPage() {
                     <FormControl>
                       <Input
                         placeholder="Nama Lengkap"
-                        className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                         {...field}
                         data-testid="input-fullname"
                       />
@@ -123,7 +150,7 @@ export default function RegisterPage() {
                     <FormControl>
                       <Input
                         placeholder="Nama Pengguna"
-                        className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                         {...field}
                         data-testid="input-username"
                       />
@@ -143,7 +170,7 @@ export default function RegisterPage() {
                     <Input
                       type="email"
                       placeholder="Alamat email"
-                      className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                       {...field}
                       data-testid="input-email"
                     />
@@ -163,7 +190,7 @@ export default function RegisterPage() {
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Kata sandi"
-                        className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
                         {...field}
                         data-testid="input-password"
                       />
@@ -192,7 +219,7 @@ export default function RegisterPage() {
                       <Input
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="Konfirmasi Kata Sandi"
-                        className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
                         {...field}
                         data-testid="input-confirm-password"
                       />
@@ -242,8 +269,9 @@ export default function RegisterPage() {
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base rounded-full"
               data-testid="button-register"
+              disabled={registerMutation.isPending}
             >
-              Buat Akun
+              {registerMutation.isPending ? "Memproses..." : "Buat Akun"}
             </Button>
           </form>
         </Form>

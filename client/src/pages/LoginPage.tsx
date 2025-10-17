@@ -2,16 +2,19 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import Header from "@/components/Header";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
-  email: z.string().email("Email tidak valid"),
+  username: z.string().min(1, "Username wajib diisi"),
   password: z.string().min(1, "Password wajib diisi"),
 });
 
@@ -19,17 +22,39 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
 
+  const loginMutation = useMutation({
+    mutationFn: (data: LoginForm) => apiRequest("/api/auth/login", "POST", data),
+    onSuccess: async () => {
+      toast({
+        title: "Berhasil masuk!",
+        description: "Anda berhasil login ke akun Anda",
+      });
+      // Small delay to ensure session is set
+      await new Promise(resolve => setTimeout(resolve, 100));
+      setLocation("/jobs");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Gagal masuk",
+        description: error.message || "Username atau password salah",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: LoginForm) => {
-    console.log(data);
+    loginMutation.mutate(data);
   };
 
   return (
@@ -53,16 +78,16 @@ export default function LoginPage() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="email"
+              name="username"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      type="email"
-                      placeholder="Alamat email"
-                      className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400"
+                      type="text"
+                      placeholder="Username"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                       {...field}
-                      data-testid="input-email"
+                      data-testid="input-username"
                     />
                   </FormControl>
                   <FormMessage />
@@ -80,7 +105,7 @@ export default function LoginPage() {
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Kata sandi"
-                        className="bg-[#ffffff] border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
+                        className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 pr-10"
                         {...field}
                         data-testid="input-password"
                       />
@@ -117,8 +142,9 @@ export default function LoginPage() {
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base rounded-full"
               data-testid="button-login"
+              disabled={loginMutation.isPending}
             >
-              Masuk
+              {loginMutation.isPending ? "Memproses..." : "Masuk"}
             </Button>
           </form>
         </Form>
