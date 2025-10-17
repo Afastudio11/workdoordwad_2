@@ -54,6 +54,9 @@ export default function Header({ variant = "dark" }: HeaderProps) {
             <a href="/jobs" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-pekerjaan">
               Cari Pekerjaan
             </a>
+            <a href="/quick-access" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-quick-access">
+              Quick Access
+            </a>
             <a href="#cari-kandidat" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-kandidat">
               Cari Kandidat
             </a>
@@ -128,6 +131,9 @@ export default function Header({ variant = "dark" }: HeaderProps) {
             </a>
             <a href="/jobs" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-cari-pekerjaan">
               Cari Pekerjaan
+            </a>
+            <a href="/quick-access" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-quick-access">
+              Quick Access
             </a>
             <a href="#cari-kandidat" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-cari-kandidat">
               Cari Kandidat
