@@ -1,12 +1,14 @@
-import { type User, type InsertUser, type Job, type Company } from "@shared/schema";
+import { type User, type InsertUser, type Job, type Company, type InsertCompany } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // modify the interface with any CRUD methods
 // you might need
 
 export interface IStorage {
+  // Users & Auth
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
   // Jobs
@@ -22,6 +24,7 @@ export interface IStorage {
   
   // Companies
   getCompanyById(id: string): Promise<Company | undefined>;
+  createCompany(company: InsertCompany): Promise<Company>;
 }
 
 import { db } from "./db";
@@ -156,6 +159,16 @@ export class DbStorage implements IStorage {
 
   async getCompanyById(id: string): Promise<Company | undefined> {
     const [company] = await db.select().from(companiesTable).where(eq(companiesTable.id, id));
+    return company;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+    return user;
+  }
+
+  async createCompany(insertCompany: InsertCompany): Promise<Company> {
+    const [company] = await db.insert(companiesTable).values(insertCompany).returning();
     return company;
   }
 }
