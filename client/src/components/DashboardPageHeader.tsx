@@ -1,11 +1,19 @@
 import { Link, useLocation } from "wouter";
-import { MapPin, Settings, Bell, User, Briefcase, Mail } from "lucide-react";
+import { MapPin, Settings, Bell, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import logoImg from "@assets/as@4x_1760716473766.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function DashboardPageHeader() {
   const [location, setLocation] = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const isActive = (path: string) => location === path;
 
@@ -70,24 +78,6 @@ export default function DashboardPageHeader() {
                   <MapPin className="h-5 w-5 text-white" />
                 </button>
               </Link>
-              <Link href="/jobs">
-                <button 
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                  data-testid="button-jobs"
-                  title="Browse All Jobs"
-                >
-                  <Briefcase className="h-5 w-5 text-white" />
-                </button>
-              </Link>
-              <Link href="/messages">
-                <button 
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                  data-testid="button-mail"
-                  title="View Messages"
-                >
-                  <Mail className="h-5 w-5 text-white" />
-                </button>
-              </Link>
             </div>
 
             <Link href="/dashboard/profile">
@@ -114,12 +104,53 @@ export default function DashboardPageHeader() {
               <Settings className="h-5 w-5 text-white" />
             </button>
 
-            <button 
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
-              data-testid="button-notifications"
-            >
-              <Bell className="h-5 w-5 text-white" />
-            </button>
+            {/* Notifications with Profile Settings Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
+                  data-testid="button-notifications"
+                >
+                  <Bell className="h-5 w-5 text-white" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64 bg-white">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none text-black">{user?.fullName}</p>
+                    <p className="text-xs leading-none text-gray-600">{user?.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                {/* Profile Settings Options */}
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile">
+                    <User className="h-4 w-4" />
+                    <span>Profil Saya</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <Link href="/user/dashboard#settings" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-settings">
+                    <Settings className="h-4 w-4" />
+                    <span>Pengaturan Akun</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                {/* Logout */}
+                <DropdownMenuItem 
+                  onClick={logout}
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                  data-testid="menu-logout"
+                >
+                  <LogOut className="mr-3 h-4 w-4" />
+                  <span>Keluar</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
