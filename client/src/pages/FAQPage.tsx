@@ -39,7 +39,7 @@ export default function FAQPage() {
       id: "3",
       category: "Pekerja",
       question: "Bagaimana cara mengupdate CV saya?",
-      answer: "Anda dapat mengupdate CV dengan masuk ke profil Anda, klik menu 'Edit Profile', lalu upload CV terbaru Anda di bagian 'Upload CV'.",
+      answer: "Anda dapat mengupdate CV dengan masuk ke profil Anda, klik menu 'Ubah Profil', lalu unggah CV terbaru Anda di bagian 'Unggah CV'.",
     },
     {
       id: "4",

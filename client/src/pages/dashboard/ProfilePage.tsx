@@ -117,7 +117,7 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-          Profile
+          Profil
         </h1>
         <p className="text-gray-600 mt-1">
           Kelola CV dan riwayat lamaran Anda
@@ -172,7 +172,7 @@ export default function ProfilePage() {
                       </div>
                     </div>
                     <p className="text-sm text-gray-600">
-                      💡 CV Anda akan otomatis dilampirkan saat menggunakan fitur Quick Apply
+                      💡 CV Anda akan otomatis dilampirkan saat menggunakan fitur Lamar Cepat
                     </p>
                   </div>
                 ) : (
@@ -180,11 +180,11 @@ export default function ProfilePage() {
                     <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-600 mb-2">Belum ada CV terupload</p>
                     <p className="text-sm text-gray-600 mb-6">
-                      Upload CV Anda untuk menggunakan fitur Quick Apply dan meningkatkan peluang diterima
+                      Unggah CV Anda untuk menggunakan fitur Lamar Cepat dan meningkatkan peluang diterima
                     </p>
                     <Button data-testid="button-upload-cv">
                       <Upload className="w-4 h-4 mr-2" />
-                      Upload CV
+                      Unggah CV
                     </Button>
                   </div>
                 )}
@@ -209,7 +209,7 @@ export default function ProfilePage() {
                       data-testid="button-edit-skills"
                     >
                       <Edit2 className="w-4 h-4 mr-2" />
-                      Edit
+                      Ubah
                     </Button>
                   )}
                 </div>

@@ -167,7 +167,7 @@ export default function SettingsPage() {
                     data-testid="button-edit-account"
                   >
                     <Edit2 className="w-4 h-4 mr-2" />
-                    Edit
+                    Ubah
                   </Button>
                 )}
               </div>
