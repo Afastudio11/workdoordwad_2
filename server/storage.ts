@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Job, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist } from "@shared/schema";
+import { type User, type InsertUser, type Job, type InsertJob, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // modify the interface with any CRUD methods
