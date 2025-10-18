@@ -34,7 +34,7 @@ export default function DashboardHeader() {
                   isActive("/jobs") ? "text-white font-medium" : "text-white/80 hover:text-white"
                 }`}
               >
-                Find job
+                Cari Pekerjaan
               </span>
             </Link>
             <Link href="/messages">
@@ -43,7 +43,7 @@ export default function DashboardHeader() {
                   isActive("/messages") ? "text-white font-medium" : "text-white/80 hover:text-white"
                 }`}
               >
-                Messages
+                Pesan
               </span>
             </Link>
             <Link href="/community">
@@ -52,7 +52,7 @@ export default function DashboardHeader() {
                   isActive("/community") ? "text-white font-medium" : "text-white/80 hover:text-white"
                 }`}
               >
-                Community
+                Komunitas
               </span>
             </Link>
             <Link href="/faq">
@@ -73,7 +73,7 @@ export default function DashboardHeader() {
                 <button 
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                   data-testid="button-location"
-                  title="Find Jobs by Location"
+                  title="Cari Pekerjaan Berdasarkan Lokasi"
                 >
                   <MapPin className="h-5 w-5 text-white" />
                 </button>
@@ -167,7 +167,7 @@ export default function DashboardHeader() {
                 <DropdownMenuItem asChild>
                   <Link href="/user/dashboard#profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile-cv">
                     <User className="h-4 w-4" />
-                    <span>Profile</span>
+                    <span>Profil</span>
                   </Link>
                 </DropdownMenuItem>
 

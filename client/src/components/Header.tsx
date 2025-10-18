@@ -55,7 +55,7 @@ export default function Header({ variant = "dark" }: HeaderProps) {
               Cari Pekerjaan
             </a>
             <a href="/quick-access" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-quick-access">
-              Quick Access
+              Akses Cepat
             </a>
             <a href="#cari-kandidat" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-kandidat">
               Cari Kandidat
@@ -99,7 +99,7 @@ export default function Header({ variant = "dark" }: HeaderProps) {
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={logout} data-testid="menu-item-logout">
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Logout</span>
+                    <span>Keluar</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -139,7 +139,7 @@ export default function Header({ variant = "dark" }: HeaderProps) {
               Cari Pekerjaan
             </a>
             <a href="/quick-access" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-quick-access">
-              Quick Access
+              Akses Cepat
             </a>
             <a href="#cari-kandidat" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-cari-kandidat">
               Cari Kandidat
@@ -165,7 +165,7 @@ export default function Header({ variant = "dark" }: HeaderProps) {
                     className={`block w-full px-6 py-2 border ${btnBorderClass} text-sm font-semibold rounded-full text-center ${btnBorderHoverClass}`}
                     data-testid="mobile-button-logout"
                   >
-                    Logout
+                    Keluar
                   </button>
                 </>
               ) : (

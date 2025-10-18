@@ -75,7 +75,7 @@ export default function JobCard({
         </div>
         <Link href={`/jobs/${id}`}>
           <Button className="bg-black text-white hover:bg-gray-800 rounded-full px-6">
-            Details
+            Detail
           </Button>
         </Link>
       </div>

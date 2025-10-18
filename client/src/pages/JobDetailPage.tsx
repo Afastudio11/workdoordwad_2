@@ -131,7 +131,7 @@ export default function JobDetailPage() {
         <div className="mb-8">
           {job.isFeatured && (
             <span className="inline-block px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded mb-3">
-              Featured
+              Unggulan
             </span>
           )}
           
