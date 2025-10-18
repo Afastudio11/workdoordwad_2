@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import DashboardPageHeader from "@/components/DashboardPageHeader";
 
 const accountSchema = z.object({
   fullName: z.string().min(1, "Nama lengkap harus diisi"),

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search, ChevronDown, HelpCircle } from "lucide-react";
 import { Link } from "wouter";
-import DashboardPageHeader from "@/components/DashboardPageHeader";
+import DashboardHeader from "@/components/DashboardHeader";
 import {
   Accordion,
   AccordionContent,
@@ -82,7 +82,7 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardPageHeader />
+      <DashboardHeader />
 
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-12">

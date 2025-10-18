@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search, MessageCircle, ThumbsUp, Share2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import DashboardPageHeader from "@/components/DashboardPageHeader";
+import DashboardHeader from "@/components/DashboardHeader";
 
 interface Post {
   id: string;
@@ -70,7 +70,7 @@ export default function CommunityPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardPageHeader />
+      <DashboardHeader />
 
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
         <div className="flex items-center justify-between mb-6">

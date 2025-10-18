@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Send, MoreVertical, Phone, Video, Paperclip, Smile } from "lucide-react";
-import DashboardPageHeader from "@/components/DashboardPageHeader";
+import DashboardHeader from "@/components/DashboardHeader";
 
 interface Conversation {
   id: string;
@@ -102,7 +102,7 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardPageHeader />
+      <DashboardHeader />
       
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
         <h1 className="text-3xl font-bold text-foreground mb-6">Messages</h1>

@@ -4,7 +4,7 @@ import JobCard from "@/components/JobCard";
 import FilterSidebar, { type FilterState } from "@/components/FilterSidebar";
 import { Slider } from "@/components/ui/slider";
 import { useQuery } from "@tanstack/react-query";
-import DashboardPageHeader from "@/components/DashboardPageHeader";
+import DashboardHeader from "@/components/DashboardHeader";
 
 interface Job {
   id: string;
@@ -64,7 +64,7 @@ export default function NewJobDashboardPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <DashboardPageHeader />
+      <DashboardHeader />
 
       {/* Search Section */}
       <div className="bg-background text-foreground pb-8 border-b border-border">
