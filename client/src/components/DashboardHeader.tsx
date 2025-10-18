@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
-import { MapPin, Bell, User, LogOut, Briefcase, Settings } from "lucide-react";
+import { MapPin, Bell, User, LogOut, Briefcase, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useState } from "react";
 import logoImg from "@assets/as@4x_1760716473766.png";
 import {
   DropdownMenu,
@@ -11,9 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const cities = ["Jakarta", "Bandung", "Surabaya", "Yogyakarta", "Semarang", "Bali", "Medan"];
+
 export default function DashboardHeader() {
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
+  const [selectedCity, setSelectedCity] = useState("Jakarta");
 
   const isActive = (path: string) => location === path;
 
@@ -69,15 +73,34 @@ export default function DashboardHeader() {
           {/* Right side */}
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-3">
-              <Link href="/jobs">
-                <button 
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                  data-testid="button-location"
-                  title="Cari Pekerjaan Berdasarkan Lokasi"
-                >
-                  <MapPin className="h-5 w-5 text-white" />
-                </button>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button 
+                    className="flex items-center gap-2 px-3 py-2 hover:bg-white/10 rounded-lg transition-colors"
+                    data-testid="button-location"
+                  >
+                    <MapPin className="h-5 w-5 text-white" />
+                    <span className="text-sm text-white font-medium">{selectedCity}</span>
+                    <ChevronDown className="h-4 w-4 text-white/70" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-white">
+                  <DropdownMenuLabel className="text-black">Pilih Lokasi</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {cities.map((city) => (
+                    <DropdownMenuItem
+                      key={city}
+                      onClick={() => setSelectedCity(city)}
+                      className={`cursor-pointer ${
+                        selectedCity === city ? "bg-gray-100 font-medium" : ""
+                      } text-black hover:bg-gray-50`}
+                    >
+                      <MapPin className="h-4 w-4 mr-2 text-gray-600" />
+                      {city}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Notifications Dropdown */}
