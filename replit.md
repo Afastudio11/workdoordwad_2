@@ -10,6 +10,43 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Updates (October 18, 2025)
 
+### Employer Dashboard Implementation
+Implemented comprehensive employer (pemberi_kerja) dashboard with full recruitment workflow management:
+
+**Dashboard Pages:**
+1. **Overview (Ringkasan)**: Statistics dashboard showing total jobs, active jobs, new applicants this week, and total applicants
+2. **Manage Jobs (Kelola Lowongan)**: Job posting management with create, edit, delete, and toggle active/inactive status
+3. **Manage Applicants (Kelola Pelamar)**: ATS Lite (Applicant Tracking System) with application status workflow (submitted → reviewed → shortlisted → accepted/rejected)
+4. **Company Profile (Profil Perusahaan)**: Company information management with editable fields (name, description, industry, location, website, contact details)
+
+**Backend Implementation:**
+- Storage methods: `getEmployerStats()`, `getEmployerApplications()`, `updateCompanyProfile()`
+- API endpoints: `/api/employer/stats`, `/api/employer/applications`, `/api/employer/company`, `/api/employer/jobs`
+- Application status management: `PUT /api/applications/:id/status` with workflow states
+- Authentication checks on all employer endpoints (requires `req.session.userId`)
+
+**Frontend Features:**
+- Sidebar navigation matching worker dashboard UX pattern
+- Consistent design: white background, black text, lime green (#D4FF00) for CTAs
+- Search and filter functionality for jobs and applicants
+- Real-time status updates with optimistic UI updates via TanStack Query
+- Comprehensive data-testid attributes for E2E testing
+- Indonesian language throughout (labels, messages, tips)
+
+**Recruitment Workflow:**
+- Post new job → Review incoming applications → Update status → Hire candidates
+- Status tracking: Baru (submitted) → Ditinjau (reviewed) → Shortlist → Diterima/Ditolak (accepted/rejected)
+- Quick actions on overview page for common tasks
+
+**Technical Stack:**
+- React Query for state management and cache invalidation
+- Wouter for nested routing within dashboard
+- Shadcn/ui components (Card, Button, Select, Dropdown Menu, etc.)
+- date-fns with Indonesian locale for relative timestamps
+- TypeScript types shared between frontend and backend via `@shared/schema`
+
+**Access Route:** `/employer/dashboard` (requires authentication with pemberi_kerja role)
+
 ### UI/UX Color Accessibility Improvements
 Completed comprehensive audit and fixes for color contrast and readability issues throughout the application:
 
