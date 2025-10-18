@@ -114,8 +114,7 @@ export default function RecommendationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2" data-testid="text-page-title">
-          <Sparkles className="h-8 w-8 text-[#D4FF00]" />
+        <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
           Rekomendasi Untuk Anda
         </h1>
         <p className="text-gray-900 mt-1">
