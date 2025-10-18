@@ -16,6 +16,7 @@ import JobDetailPage from "@/pages/JobDetailPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import RegisterPage from "@/pages/RegisterPage";
 import LoginPage from "@/pages/LoginPage";
+import JobCardsDemo from "@/pages/JobCardsDemo";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
     <Switch>
       <Route path="/" component={LandingPage} />
       <Route path="/jobs" component={NewJobDashboardPage} />
+      <Route path="/demo" component={JobCardsDemo} />
       <Route path="/user/dashboard" component={UserDashboardPage} />
       <Route path="/quick-access" component={QuickAccessPage} />
       <Route path="/messages" component={MessagesPage} />
