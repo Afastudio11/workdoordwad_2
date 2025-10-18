@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { formatSalary } from "@/lib/formatters";
 
 interface Wishlist {
   id: string;
@@ -42,18 +43,6 @@ export default function WishlistPage() {
       toast({ title: "Gagal menghapus dari wishlist", variant: "destructive" });
     },
   });
-
-  const formatSalary = (amount: number) => {
-    if (amount >= 1000000) {
-      const juta = (amount / 1000000).toFixed(amount % 1000000 === 0 ? 0 : 1);
-      return `Rp ${juta} juta`;
-    }
-    if (amount >= 1000) {
-      const ribu = (amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1);
-      return `Rp ${ribu} ribu`;
-    }
-    return `Rp ${amount.toLocaleString('id-ID')}`;
-  };
 
   const getJobTypeBadge = (type: string) => {
     const normalized = type.toLowerCase().replace(/\s+/g, '-');

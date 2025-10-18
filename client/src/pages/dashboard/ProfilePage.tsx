@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { formatSalary } from "@/lib/formatters";
 
 interface Application {
   id: string;
@@ -95,18 +96,6 @@ export default function ProfilePage() {
       toast({ title: "Gagal memperbarui keahlian", variant: "destructive" });
     },
   });
-
-  const formatSalary = (amount: number) => {
-    if (amount >= 1000000) {
-      const juta = (amount / 1000000).toFixed(amount % 1000000 === 0 ? 0 : 1);
-      return `Rp ${juta} juta`;
-    }
-    if (amount >= 1000) {
-      const ribu = (amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1);
-      return `Rp ${ribu} ribu`;
-    }
-    return `Rp ${amount.toLocaleString('id-ID')}`;
-  };
 
   const addSkill = () => {
     if (newSkill.trim() && !skills.includes(newSkill.trim())) {

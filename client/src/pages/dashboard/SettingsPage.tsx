@@ -542,6 +542,264 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Job Preferences */}
+          <Card className="bg-white border-gray-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-gray-900 flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    Preferensi Pekerjaan
+                  </CardTitle>
+                  <CardDescription className="text-gray-600">
+                    Atur preferensi untuk mendapatkan rekomendasi lowongan yang sesuai
+                  </CardDescription>
+                </div>
+                {!isEditingPreferences && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setIsEditingPreferences(true);
+                      const p = profile as any;
+                      setSelectedIndustries(p?.preferredIndustries || []);
+                      setSelectedLocations(p?.preferredLocations || []);
+                      setSelectedJobTypes(p?.preferredJobTypes || []);
+                      setMinSalary(p?.expectedSalaryMin || 0);
+                    }}
+                    data-testid="button-edit-preferences"
+                  >
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Ubah
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isEditingPreferences ? (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Industri yang Diminati
+                    </label>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {['Teknologi', 'Keuangan', 'Kesehatan', 'Pendidikan', 'Retail', 'Manufaktur', 'Pariwisata', 'Media'].map((industry) => (
+                        <button
+                          key={industry}
+                          type="button"
+                          onClick={() => {
+                            if (selectedIndustries.includes(industry)) {
+                              setSelectedIndustries(selectedIndustries.filter(i => i !== industry));
+                            } else {
+                              setSelectedIndustries([...selectedIndustries, industry]);
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                            selectedIndustries.includes(industry)
+                              ? 'bg-[#D4FF00] text-gray-900 border-2 border-[#D4FF00]'
+                              : 'bg-white text-gray-700 border border-gray-300 hover:border-gray-400'
+                          }`}
+                          data-testid={`button-industry-${industry.toLowerCase()}`}
+                        >
+                          {industry}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Lokasi yang Diminati
+                    </label>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {['Jakarta', 'Bandung', 'Surabaya', 'Yogyakarta', 'Bali', 'Semarang', 'Medan', 'Remote'].map((location) => (
+                        <button
+                          key={location}
+                          type="button"
+                          onClick={() => {
+                            if (selectedLocations.includes(location)) {
+                              setSelectedLocations(selectedLocations.filter(l => l !== location));
+                            } else {
+                              setSelectedLocations([...selectedLocations, location]);
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                            selectedLocations.includes(location)
+                              ? 'bg-[#D4FF00] text-gray-900 border-2 border-[#D4FF00]'
+                              : 'bg-white text-gray-700 border border-gray-300 hover:border-gray-400'
+                          }`}
+                          data-testid={`button-location-${location.toLowerCase()}`}
+                        >
+                          {location}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Tipe Pekerjaan
+                    </label>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {['Full Time', 'Part Time', 'Contract', 'Freelance'].map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => {
+                            if (selectedJobTypes.includes(type)) {
+                              setSelectedJobTypes(selectedJobTypes.filter(t => t !== type));
+                            } else {
+                              setSelectedJobTypes([...selectedJobTypes, type]);
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                            selectedJobTypes.includes(type)
+                              ? 'bg-[#D4FF00] text-gray-900 border-2 border-[#D4FF00]'
+                              : 'bg-white text-gray-700 border border-gray-300 hover:border-gray-400'
+                          }`}
+                          data-testid={`button-jobtype-${type.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="min-salary" className="block text-sm font-medium text-gray-900 mb-2">
+                      Gaji Minimum yang Diharapkan (Rp)
+                    </label>
+                    <Input
+                      id="min-salary"
+                      type="number"
+                      value={minSalary}
+                      onChange={(e) => setMinSalary(Number(e.target.value))}
+                      placeholder="Contoh: 5000000"
+                      min="0"
+                      step="500000"
+                      data-testid="input-min-salary"
+                    />
+                  </div>
+
+                  <div className="flex gap-2 justify-end pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setIsEditingPreferences(false);
+                        setSelectedIndustries([]);
+                        setSelectedLocations([]);
+                        setSelectedJobTypes([]);
+                        setMinSalary(0);
+                      }}
+                      data-testid="button-cancel-preferences"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Batal
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          const res = await apiRequest("/api/profile/preferences", "PUT", {
+                            preferredIndustries: selectedIndustries,
+                            preferredLocations: selectedLocations,
+                            preferredJobTypes: selectedJobTypes,
+                            expectedSalaryMin: minSalary,
+                          });
+                          await res.json();
+                          queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+                          queryClient.invalidateQueries({ queryKey: ["/api/recommendations"] });
+                          toast({ title: "Preferensi pekerjaan berhasil diperbarui" });
+                          setIsEditingPreferences(false);
+                        } catch (error) {
+                          toast({ title: "Gagal memperbarui preferensi", variant: "destructive" });
+                        }
+                      }}
+                      data-testid="button-save-preferences"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Simpan Preferensi
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-sm text-gray-600 mb-2">Industri yang Diminati</p>
+                    {(profile as any)?.preferredIndustries && (profile as any).preferredIndustries.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {(profile as any).preferredIndustries.map((industry: string, index: number) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 bg-[#D4FF00]/20 text-gray-900 rounded-full text-sm border border-[#D4FF00]/30"
+                            data-testid={`text-industry-${index}`}
+                          >
+                            {industry}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 italic">Belum diatur</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-600 mb-2">Lokasi yang Diminati</p>
+                    {(profile as any)?.preferredLocations && (profile as any).preferredLocations.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {(profile as any).preferredLocations.map((location: string, index: number) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 bg-[#D4FF00]/20 text-gray-900 rounded-full text-sm border border-[#D4FF00]/30"
+                            data-testid={`text-location-pref-${index}`}
+                          >
+                            {location}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 italic">Belum diatur</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-600 mb-2">Tipe Pekerjaan</p>
+                    {(profile as any)?.preferredJobTypes && (profile as any).preferredJobTypes.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {(profile as any).preferredJobTypes.map((type: string, index: number) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 bg-[#D4FF00]/20 text-gray-900 rounded-full text-sm border border-[#D4FF00]/30"
+                            data-testid={`text-jobtype-${index}`}
+                          >
+                            {type}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 italic">Belum diatur</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-600 mb-2">Gaji Minimum yang Diharapkan</p>
+                    <p className="font-medium text-gray-900" data-testid="text-min-salary-display">
+                      {(profile as any)?.expectedSalaryMin
+                        ? `Rp ${((profile as any).expectedSalaryMin / 1000000).toFixed(1)} juta`
+                        : 'Belum diatur'}
+                    </p>
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-900">
+                      💡 <strong>Tips:</strong> Lengkapi preferensi Anda untuk mendapatkan rekomendasi lowongan yang lebih sesuai dengan keinginan Anda.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
       </div>
     </div>
   );

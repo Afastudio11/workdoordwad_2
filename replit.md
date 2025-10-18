@@ -8,6 +8,27 @@ Pintu Kerja is a freemium job classifieds platform targeting UMKM (small-medium 
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Updates (October 18, 2025)
+
+### Job Preferences Feature
+Added comprehensive job preferences system allowing users to set their preferences for better job recommendations:
+- **Industries**: Users can select from 8 predefined industries (Teknologi, Keuangan, Kesehatan, Pendidikan, Retail, Manufaktur, Pariwisata, Media)
+- **Locations**: Users can select preferred job locations (Jakarta, Bandung, Surabaya, Yogyakarta, Bali, Semarang, Medan, Remote)
+- **Job Types**: Users can select preferred employment types (Full Time, Part Time, Contract, Freelance)
+- **Minimum Salary**: Users can set their expected minimum salary
+
+**Implementation Details:**
+- Preferences form located in Settings page (`/user/dashboard/settings`)
+- Backend API endpoint: `PUT /api/profile/preferences`
+- Recommendations endpoint uses these preferences to filter jobs
+- All interactive elements have proper data-testid attributes for testing
+- Code refactored to use shared utility functions (`client/src/lib/formatters.ts`) for salary formatting
+
+**Code Quality Improvements:**
+- Extracted duplicate `formatSalary` function into shared utility
+- Added comprehensive test IDs across all dashboard pages
+- Consistent UI/UX patterns following existing design system
+
 ## System Architecture
 
 ### Frontend Architecture

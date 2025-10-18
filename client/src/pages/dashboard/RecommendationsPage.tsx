@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { formatSalary } from "@/lib/formatters";
 
 interface Job {
   id: string;
@@ -61,18 +62,6 @@ export default function RecommendationsPage() {
       });
     },
   });
-
-  const formatSalary = (amount: number) => {
-    if (amount >= 1000000) {
-      const juta = (amount / 1000000).toFixed(amount % 1000000 === 0 ? 0 : 1);
-      return `Rp ${juta} juta`;
-    }
-    if (amount >= 1000) {
-      const ribu = (amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1);
-      return `Rp ${ribu} ribu`;
-    }
-    return `Rp ${amount.toLocaleString('id-ID')}`;
-  };
 
   if (isLoading) {
     return (
