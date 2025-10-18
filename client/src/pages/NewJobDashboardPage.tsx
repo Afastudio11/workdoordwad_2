@@ -27,8 +27,8 @@ interface JobsResponse {
 }
 
 export default function NewJobDashboardPage() {
-  const [searchKeyword, setSearchKeyword] = useState("Designer");
-  const [salaryRange, setSalaryRange] = useState([1200, 50000]);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [salaryRange, setSalaryRange] = useState([2000000, 20000000]);
   const [filters, setFilters] = useState<FilterState>({
     workingSchedule: [],
     employmentType: [],
@@ -95,14 +95,14 @@ export default function NewJobDashboardPage() {
                 <Slider
                   value={salaryRange}
                   onValueChange={setSalaryRange}
-                  min={1000}
-                  max={100000}
-                  step={1000}
+                  min={1000000}
+                  max={25000000}
+                  step={500000}
                   className="cursor-pointer"
                 />
               </div>
               <span className="text-sm font-medium whitespace-nowrap">
-                ${salaryRange[0]}-${salaryRange[1]}
+                Rp{(salaryRange[0]/1000000).toFixed(1)}-{(salaryRange[1]/1000000).toFixed(1)}jt
               </span>
             </div>
           </div>
