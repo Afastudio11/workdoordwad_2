@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import LandingPage from "@/pages/LandingPage";
 import UserDashboardPage from "@/pages/UserDashboardPage";
+import EmployerDashboardPage from "@/pages/EmployerDashboardPage";
 import NewJobDashboardPage from "@/pages/NewJobDashboardPage";
 import QuickAccessPage from "@/pages/QuickAccessPage";
 import MessagesPage from "@/pages/MessagesPage";
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/jobs" component={NewJobDashboardPage} />
       <Route path="/demo" component={JobCardsDemo} />
       <Route path="/user/dashboard" component={UserDashboardPage} />
+      <Route path="/employer/dashboard" component={EmployerDashboardPage} />
       <Route path="/quick-access" component={QuickAccessPage} />
       <Route path="/messages" component={MessagesPage} />
       <Route path="/hiring" component={HiringPage} />
