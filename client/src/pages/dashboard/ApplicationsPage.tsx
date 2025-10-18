@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Briefcase, MapPin, Calendar, Clock, Eye, CheckCircle, XCircle } from "lucide-react";
+import { Briefcase, MapPin, Calendar, Clock, Eye, CheckCircle, XCircle, AlertCircle, RefreshCw } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { queryClient } from "@/lib/queryClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,7 +35,7 @@ const statusConfig = {
 };
 
 export default function ApplicationsPage() {
-  const { data: applications, isLoading } = useQuery<Application[]>({
+  const { data: applications, isLoading, isError, error } = useQuery<Application[]>({
     queryKey: ["/api/applications"],
   });
 
@@ -43,6 +45,41 @@ export default function ApplicationsPage() {
         {[...Array(3)].map((_, i) => (
           <div key={i} className="h-32 bg-muted rounded-lg animate-pulse"></div>
         ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
+            Lamaran Saya
+          </h1>
+          <p className="text-gray-900 mt-1">
+            Riwayat lamaran pekerjaan Anda
+          </p>
+        </div>
+
+        <Alert variant="destructive" data-testid="error-alert">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Terjadi Kesalahan</AlertTitle>
+          <AlertDescription className="mt-2 space-y-3">
+            <p>{(error as any)?.message || "Gagal memuat daftar lamaran. Silakan coba lagi."}</p>
+            <div className="flex flex-col sm:flex-row gap-2 mt-4">
+              <Button
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/applications"] })}
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto"
+                data-testid="button-retry"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Coba Lagi
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }

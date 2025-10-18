@@ -21,11 +21,11 @@ const footerLinks = {
 export default function Footer() {
   return (
     <footer className="bg-black border-t border-white/10">
-      <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          <div>
-            <div className="mb-6">
-              <img src={logoImg} alt="PintuKerja" className="h-12" />
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
+          <div className="sm:col-span-2 md:col-span-1">
+            <div className="mb-4 md:mb-6">
+              <img src={logoImg} alt="PintuKerja" className="h-10 md:h-12" />
             </div>
             <p className="text-sm text-gray-400">
               Portal lowongan kerja terpercaya di Indonesia
@@ -33,7 +33,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4">Perusahaan</h3>
+            <h3 className="text-sm font-semibold text-white mb-3 md:mb-4">Perusahaan</h3>
             <ul className="space-y-3">
               {footerLinks.perusahaan.map((link, index) => (
                 <li key={index}>
@@ -46,8 +46,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4">Pencari Kerja</h3>
-            <ul className="space-y-3">
+            <h3 className="text-sm font-semibold text-white mb-3 md:mb-4">Pencari Kerja</h3>
+            <ul className="space-y-2 md:space-y-3">
               {footerLinks.pencariKerja.map((link, index) => (
                 <li key={index}>
                   <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
@@ -59,8 +59,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4">Perekrut</h3>
-            <ul className="space-y-3">
+            <h3 className="text-sm font-semibold text-white mb-3 md:mb-4">Perekrut</h3>
+            <ul className="space-y-2 md:space-y-3">
               {footerLinks.perekrut.map((link, index) => (
                 <li key={index}>
                   <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">

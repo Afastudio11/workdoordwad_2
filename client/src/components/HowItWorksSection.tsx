@@ -38,38 +38,39 @@ const stats = [
 export default function HowItWorksSection() {
   const [activeStep, setActiveStep] = useState(0);
   return (
-    <section className="relative py-24 bg-white dark:bg-gray-900 overflow-hidden">
-      <div className="max-w-[1600px] mx-auto px-6 md:px-8">
+    <section className="relative py-12 md:py-24 bg-white dark:bg-gray-900 overflow-hidden">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
         {/* Main Content */}
-        <div className="grid lg:grid-cols-2 gap-12 mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-12 md:mb-20">
           {/* Left Side - Steps */}
           <div>
-            <h2 className="text-5xl md:text-6xl font-bold text-black mb-6 leading-tight" data-testid="how-it-works-title">
-              Temukan Pekerjaan<br />dengan Mudah
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-4 md:mb-6 leading-tight" data-testid="how-it-works-title">
+              Temukan Pekerjaan<br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>dengan Mudah
             </h2>
-            <p className="text-gray-600 mb-12 text-base leading-relaxed" data-testid="how-it-works-description">
+            <p className="text-gray-600 mb-8 md:mb-12 text-sm sm:text-base leading-relaxed" data-testid="how-it-works-description">
               Platform kami memudahkan Anda untuk mencari pekerjaan impian atau menemukan kandidat terbaik dalam tiga langkah sederhana.
             </p>
 
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               {steps.map((step, index) => (
                 <div key={index} data-testid={`step-${index}`}>
                   {activeStep === index ? (
-                    <div className="border-l-4 border-primary pl-6 py-2">
+                    <div className="border-l-4 border-primary pl-4 md:pl-6 py-2">
                       <h4 
-                        className="text-2xl font-bold text-black mb-4 cursor-pointer" 
+                        className="text-lg sm:text-xl md:text-2xl font-bold text-black mb-3 md:mb-4 cursor-pointer" 
                         data-testid={`step-title-${index}`}
                         onClick={() => setActiveStep(index)}
                       >
                         {step.number}. {step.title}
                       </h4>
-                      <p className="text-gray-600 text-base leading-relaxed" data-testid={`step-description-${index}`}>
+                      <p className="text-gray-600 text-sm sm:text-base leading-relaxed" data-testid={`step-description-${index}`}>
                         {step.description}
                       </p>
                     </div>
                   ) : (
                     <h4 
-                      className="text-2xl font-bold text-black cursor-pointer hover:text-primary transition-colors" 
+                      className="text-lg sm:text-xl md:text-2xl font-bold text-black cursor-pointer hover:text-primary transition-colors" 
                       data-testid={`step-title-${index}`}
                       onClick={() => setActiveStep(index)}
                     >
@@ -94,13 +95,13 @@ export default function HowItWorksSection() {
         </div>
 
         {/* Statistics */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {stats.map((stat, index) => (
             <div key={index} className="text-center md:text-left" data-testid={`stat-${index}`}>
-              <h3 className="text-4xl md:text-5xl font-bold text-black mb-4" data-testid={`stat-value-${index}`}>
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-3 md:mb-4" data-testid={`stat-value-${index}`}>
                 {stat.value}
               </h3>
-              <p className="text-gray-600 leading-relaxed" data-testid={`stat-description-${index}`}>
+              <p className="text-gray-600 text-sm sm:text-base leading-relaxed" data-testid={`stat-description-${index}`}>
                 {stat.description}
               </p>
             </div>

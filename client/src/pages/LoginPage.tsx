@@ -60,10 +60,10 @@ export default function LoginPage() {
   return (
     <>
       <Header variant="dark" />
-      <div className="min-h-screen bg-white flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-white flex items-center justify-center py-8 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
+          <div className="mb-6 md:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2" data-testid="login-title">
               Selamat Datang Kembali.
             </h1>
             <p className="text-gray-900">
@@ -140,7 +140,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-sm rounded-full"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-sm rounded-full min-h-[44px]"
               data-testid="button-login"
               disabled={loginMutation.isPending}
             >
@@ -159,20 +159,22 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors min-h-[44px]"
+              data-testid="button-facebook-login"
             >
-              <FaFacebook className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-gray-900">Masuk dengan Facebook</span>
+              <FaFacebook className="h-5 w-5 text-blue-600 flex-shrink-0" />
+              <span className="text-sm text-gray-900 truncate">Masuk dengan Facebook</span>
             </button>
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors min-h-[44px]"
+              data-testid="button-google-login"
             >
-              <FaGoogle className="h-5 w-5 text-red-500" />
-              <span className="text-sm text-gray-900">Masuk dengan Google</span>
+              <FaGoogle className="h-5 w-5 text-red-500 flex-shrink-0" />
+              <span className="text-sm text-gray-900 truncate">Masuk dengan Google</span>
             </button>
           </div>
         </div>

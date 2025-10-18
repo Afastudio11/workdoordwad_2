@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Briefcase, MapPin, Calendar, Clock, Eye, CheckCircle, XCircle, Upload, FileText, Award, Plus, Trash2, Edit2, Save, X } from "lucide-react";
+import { Briefcase, MapPin, Calendar, Clock, Eye, CheckCircle, XCircle, Upload, FileText, Award, Plus, Trash2, Edit2, Save, X, AlertCircle, RefreshCw } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -45,11 +46,11 @@ export default function ProfilePage() {
   const [skills, setSkills] = useState<string[]>([]);
   const [isUploadingCV, setIsUploadingCV] = useState(false);
 
-  const { data: applications, isLoading: isLoadingApplications } = useQuery<Application[]>({
+  const { data: applications, isLoading: isLoadingApplications, isError: isErrorApplications, error: errorApplications } = useQuery<Application[]>({
     queryKey: ["/api/applications"],
   });
 
-  const { data: profile, isLoading: isLoadingProfile } = useQuery({
+  const { data: profile, isLoading: isLoadingProfile, isError: isErrorProfile, error: errorProfile } = useQuery({
     queryKey: ["/api/profile"],
   });
 
@@ -144,30 +145,75 @@ export default function ProfilePage() {
     );
   }
 
+  if (isErrorProfile || isErrorApplications) {
+    return (
+      <div className="space-y-4 md:space-y-6">
+        <div className="mb-4 md:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900" data-testid="text-page-title">
+            Profil
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">
+            Kelola CV dan riwayat lamaran Anda
+          </p>
+        </div>
+
+        <Alert variant="destructive" data-testid="error-alert">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Terjadi Kesalahan</AlertTitle>
+          <AlertDescription className="mt-2 space-y-3">
+            <p>
+              {isErrorProfile 
+                ? ((errorProfile as any)?.message || "Gagal memuat profil. Silakan coba lagi.")
+                : ((errorApplications as any)?.message || "Gagal memuat data lamaran. Silakan coba lagi.")}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 mt-4">
+              <Button
+                onClick={() => {
+                  queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+                  queryClient.invalidateQueries({ queryKey: ["/api/applications"] });
+                }}
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto"
+                data-testid="button-retry"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Coba Lagi
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
+    <div className="space-y-4 md:space-y-6">
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900" data-testid="text-page-title">
           Profil
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-sm sm:text-base text-gray-600 mt-1">
           Kelola CV dan riwayat lamaran Anda
         </p>
       </div>
 
       <Tabs defaultValue="cv" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200">
-            <TabsTrigger value="cv" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
-              <FileText className="w-4 h-4 mr-2" />
-              CV
+          <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200 h-auto">
+            <TabsTrigger value="cv" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900 text-xs sm:text-sm py-2 sm:py-3">
+              <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden xs:inline">CV</span>
+              <span className="xs:hidden">CV</span>
             </TabsTrigger>
-            <TabsTrigger value="skills" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
-              <Award className="w-4 h-4 mr-2" />
-              Keahlian
+            <TabsTrigger value="skills" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900 text-xs sm:text-sm py-2 sm:py-3">
+              <Award className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden xs:inline">Keahlian</span>
+              <span className="xs:hidden">Skill</span>
             </TabsTrigger>
-            <TabsTrigger value="applications" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
-              <Briefcase className="w-4 h-4 mr-2" />
-              Riwayat Lamaran
+            <TabsTrigger value="applications" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900 text-xs sm:text-sm py-2 sm:py-3">
+              <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Riwayat Lamaran</span>
+              <span className="sm:hidden">Lamaran</span>
             </TabsTrigger>
           </TabsList>
 

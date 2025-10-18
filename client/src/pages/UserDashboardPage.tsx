@@ -53,7 +53,7 @@ export default function UserDashboardPage() {
     <div className="min-h-screen bg-white">
       <DashboardHeader />
       
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           {/* Sidebar - Desktop */}
           <aside className="hidden lg:block lg:col-span-3">
@@ -115,11 +115,11 @@ export default function UserDashboardPage() {
           <div className="lg:hidden mb-4">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-900"
+              className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 min-h-[44px]"
               data-testid="button-mobile-menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              <span className="font-medium">Menu Dashboard</span>
+              <span className="font-medium text-sm sm:text-base">Menu Dashboard</span>
             </button>
           </div>
 

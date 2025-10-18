@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Heart, MapPin, Briefcase, Trash2 } from "lucide-react";
+import { Heart, MapPin, Briefcase, Trash2, AlertCircle, RefreshCw } from "lucide-react";
 import { Link } from "wouter";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -26,7 +27,7 @@ interface Wishlist {
 export default function WishlistPage() {
   const { toast } = useToast();
   
-  const { data: wishlists, isLoading } = useQuery<Wishlist[]>({
+  const { data: wishlists, isLoading, isError, error } = useQuery<Wishlist[]>({
     queryKey: ["/api/wishlists"],
   });
 
@@ -58,6 +59,41 @@ export default function WishlistPage() {
         {[...Array(4)].map((_, i) => (
           <div key={i} className="h-48 bg-muted rounded-lg animate-pulse"></div>
         ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
+            Wishlist
+          </h1>
+          <p className="text-gray-900 mt-1">
+            Lowongan yang Anda simpan
+          </p>
+        </div>
+
+        <Alert variant="destructive" data-testid="error-alert">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Terjadi Kesalahan</AlertTitle>
+          <AlertDescription className="mt-2 space-y-3">
+            <p>{(error as any)?.message || "Gagal memuat wishlist. Silakan coba lagi."}</p>
+            <div className="flex flex-col sm:flex-row gap-2 mt-4">
+              <Button
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/wishlists"] })}
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto"
+                data-testid="button-retry"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Coba Lagi
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }

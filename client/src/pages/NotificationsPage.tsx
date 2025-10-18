@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Bell, Briefcase, Heart, MessageCircle, CheckCircle, Trash2, Check } from "lucide-react";
+import { Bell, Briefcase, Heart, MessageCircle, CheckCircle, Trash2, Check, AlertCircle, RefreshCw } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,7 +39,7 @@ export default function NotificationsPage() {
   const { toast } = useToast();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
-  const { data: notifications, isLoading } = useQuery<Notification[]>({
+  const { data: notifications, isLoading, isError, error } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
   });
 
@@ -87,6 +88,42 @@ export default function NotificationsPage() {
               <div key={i} className="h-24 bg-muted rounded-lg animate-pulse"></div>
             ))}
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-background">
+        <DashboardHeader />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-foreground flex items-center gap-3" data-testid="text-page-title">
+              <Bell className="h-8 w-8" />
+              Notifikasi
+            </h1>
+          </div>
+
+          <Alert variant="destructive" data-testid="error-alert">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Terjadi Kesalahan</AlertTitle>
+            <AlertDescription className="mt-2 space-y-3">
+              <p>{(error as any)?.message || "Gagal memuat notifikasi. Silakan coba lagi."}</p>
+              <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                <Button
+                  onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/notifications"] })}
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                  data-testid="button-retry"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Coba Lagi
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
         </div>
       </div>
     );

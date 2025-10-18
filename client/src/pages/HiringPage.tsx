@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Plus, Search, MoreVertical, Users, Eye, FileText, Loader2 } from "lucide-react";
+import { Plus, Search, MoreVertical, Users, Eye, FileText, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import logoImgDark from "@assets/black@4x_1760695283292.png";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useQuery } from "@tanstack/react-query";
 import type { Job, Company } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { queryClient } from "@/lib/queryClient";
 
 export default function HiringPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "active" | "closed">("all");
 
-  const { data: jobs = [], isLoading } = useQuery<(Job & { company: Company })[]>({
+  const { data: jobs = [], isLoading, isError, error } = useQuery<(Job & { company: Company })[]>({
     queryKey: ["/api/employer/jobs"],
   });
 
@@ -168,6 +170,26 @@ export default function HiringPage() {
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
+        ) : isError ? (
+          <Alert variant="destructive" data-testid="error-alert">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Terjadi Kesalahan</AlertTitle>
+            <AlertDescription className="mt-2 space-y-3">
+              <p>{(error as any)?.message || "Gagal memuat daftar lowongan. Silakan coba lagi."}</p>
+              <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                <Button
+                  onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/employer/jobs"] })}
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                  data-testid="button-retry"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Coba Lagi
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
         ) : (
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
             <div className="overflow-x-auto">

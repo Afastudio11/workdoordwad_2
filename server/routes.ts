@@ -26,28 +26,49 @@ declare module "express-session" {
   }
 }
 
-// Configure multer for CV uploads
+// Configure multer for CV uploads with enhanced security
 const cvStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/cv");
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${randomUUID()}${path.extname(file.originalname)}`;
+    // Sanitize extension by removing any path traversal attempts
+    let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+    
+    // Ensure extension is one of the allowed types
+    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    if (!allowedExtensions.includes(ext)) {
+      ext = '.pdf'; // Default to .pdf if extension is invalid
+    }
+    
+    // Generate secure filename with sanitized extension
+    const uniqueName = `${randomUUID()}${ext}`;
     cb(null, uniqueName);
   },
 });
 
 const uploadCV = multer({
   storage: cvStorage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { 
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+    files: 1 // Only allow one file per upload
+  },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = /pdf|doc|docx/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-    if (extname && mimetype) {
+    // Strict MIME type validation
+    const allowedMimeTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    
+    // Validate both extension and MIME type
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    
+    if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
       cb(null, true);
     } else {
-      cb(new Error("Only PDF, DOC, and DOCX files are allowed"));
+      cb(new Error("Hanya file PDF, DOC, dan DOCX yang diperbolehkan"));
     }
   },
 });

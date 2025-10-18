@@ -150,27 +150,27 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
+    <div className="space-y-4 md:space-y-6">
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900" data-testid="text-page-title">
           Pengaturan Akun
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-sm sm:text-base text-gray-600 mt-1">
           Kelola informasi akun dan preferensi keamanan Anda
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
           {/* Account Information */}
           <Card className="bg-white border-gray-200">
-            <CardHeader>
-              <div className="flex items-center justify-between">
+            <CardHeader className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                  <CardTitle className="text-gray-900 flex items-center gap-2">
-                    <User className="w-5 h-5" />
+                  <CardTitle className="text-base sm:text-lg text-gray-900 flex items-center gap-2">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5" />
                     Informasi Akun
                   </CardTitle>
-                  <CardDescription className="text-gray-600">Data pribadi dan kontak Anda</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm text-gray-600">Data pribadi dan kontak Anda</CardDescription>
                 </div>
                 {!isEditingAccount && (
                   <Button

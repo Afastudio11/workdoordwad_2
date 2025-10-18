@@ -104,10 +104,10 @@ export default function RegisterPage() {
   return (
     <>
       <Header variant="dark" />
-      <div className="min-h-screen bg-white flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-white flex items-center justify-center py-8 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
+          <div className="mb-6 md:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2" data-testid="register-title">
               Buat akun.
             </h1>
             <p className="text-gray-900">
@@ -135,15 +135,15 @@ export default function RegisterPage() {
                   agreeToTerms: false,
                 });
               }}
-              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-full transition-colors ${
+              className={`flex items-center justify-center gap-2 py-3 px-3 sm:px-4 rounded-full transition-colors min-h-[44px] ${
                 userType === "pekerja"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-gray-600 hover:bg-[#ffffff]/50"
               }`}
               data-testid="button-usertype-pekerja"
             >
-              <User className="h-4 w-4" />
-              <span className="font-medium">Pekerja</span>
+              <User className="h-4 w-4 flex-shrink-0" />
+              <span className="font-medium text-sm sm:text-base">Pekerja</span>
             </button>
             <button
               type="button"
@@ -160,15 +160,15 @@ export default function RegisterPage() {
                   agreeToTerms: false,
                 } as any);
               }}
-              className={`flex items-center justify-center gap-2 py-3 px-4 rounded-full transition-colors ${
+              className={`flex items-center justify-center gap-2 py-3 px-3 sm:px-4 rounded-full transition-colors min-h-[44px] ${
                 userType === "pemberi_kerja"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-transparent text-gray-600 hover:bg-[#ffffff]/50"
               }`}
               data-testid="button-usertype-pemberi-kerja"
             >
-              <Building2 className="h-4 w-4" />
-              <span className="font-medium">Pemberi Kerja</span>
+              <Building2 className="h-4 w-4 flex-shrink-0" />
+              <span className="font-medium text-sm sm:text-base whitespace-nowrap">Pemberi Kerja</span>
             </button>
           </div>
         </div>
@@ -340,7 +340,7 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-sm rounded-full"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 text-sm rounded-full min-h-[44px]"
               data-testid="button-register"
               disabled={registerMutation.isPending}
             >
@@ -359,20 +359,22 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors min-h-[44px]"
+              data-testid="button-facebook-register"
             >
-              <FaFacebook className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-gray-900">Daftar dengan Facebook</span>
+              <FaFacebook className="h-5 w-5 text-blue-600 flex-shrink-0" />
+              <span className="text-sm text-gray-900 truncate">Daftar dengan Facebook</span>
             </button>
             <button
               type="button"
-              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-full bg-[#ffffff] hover:bg-gray-50 transition-colors min-h-[44px]"
+              data-testid="button-google-register"
             >
-              <FaGoogle className="h-5 w-5 text-red-500" />
-              <span className="text-sm text-gray-900">Daftar dengan Google</span>
+              <FaGoogle className="h-5 w-5 text-red-500 flex-shrink-0" />
+              <span className="text-sm text-gray-900 truncate">Daftar dengan Google</span>
             </button>
           </div>
         </div>

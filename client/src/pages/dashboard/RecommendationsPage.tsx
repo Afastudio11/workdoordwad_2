@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Briefcase, MapPin, Heart, Zap, Sparkles, DollarSign } from "lucide-react";
+import { Briefcase, MapPin, Heart, Zap, Sparkles, DollarSign, AlertCircle, RefreshCw } from "lucide-react";
 import { Link } from "wouter";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +24,7 @@ interface Job {
 export default function RecommendationsPage() {
   const { toast } = useToast();
   
-  const { data: recommendations, isLoading } = useQuery<Job[]>({
+  const { data: recommendations, isLoading, isError, error } = useQuery<Job[]>({
     queryKey: ["/api/recommendations"],
   });
 
@@ -69,6 +70,46 @@ export default function RecommendationsPage() {
         {[...Array(3)].map((_, i) => (
           <div key={i} className="h-40 bg-muted rounded-lg animate-pulse"></div>
         ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
+            Rekomendasi Untuk Anda
+          </h1>
+          <p className="text-gray-900 mt-1">
+            Lowongan yang sesuai dengan profil dan preferensi Anda
+          </p>
+        </div>
+
+        <Alert variant="destructive" data-testid="error-alert">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Terjadi Kesalahan</AlertTitle>
+          <AlertDescription className="mt-2 space-y-3">
+            <p>{(error as any)?.message || "Gagal memuat rekomendasi lowongan. Silakan coba lagi."}</p>
+            <div className="flex flex-col sm:flex-row gap-2 mt-4">
+              <Button
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/recommendations"] })}
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto"
+                data-testid="button-retry"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Coba Lagi
+              </Button>
+              <Link href="/jobs">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto" data-testid="button-browse-jobs">
+                  Jelajahi Semua Lowongan
+                </Button>
+              </Link>
+            </div>
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }

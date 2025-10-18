@@ -67,26 +67,35 @@ export default function NewJobDashboardPage() {
       <DashboardHeader />
 
       {/* Search Section */}
-      <div className="bg-background text-foreground pb-8 border-b border-border">
-        <div className="max-w-[1600px] mx-auto px-6 md:px-8 pt-6">
-          <div className="flex items-center gap-4">
+      <div className="bg-background text-foreground pb-6 md:pb-8 border-b border-border">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 pt-4 md:pt-6">
+          <div className="flex items-center gap-2 md:gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Designer"
-                className="w-full pl-12 pr-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Cari pekerjaan..."
+                className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2.5 md:py-3 text-sm md:text-base bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
+                data-testid="input-search-jobs"
               />
             </div>
 
-            <button className="p-3 bg-card border border-border rounded-xl hover:bg-secondary transition-colors">
-              <MapPin className="h-5 w-5 text-muted-foreground" />
+            <button 
+              className="p-2.5 md:p-3 bg-card border border-border rounded-xl hover:bg-secondary transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              data-testid="button-filter-location"
+              aria-label="Filter lokasi"
+            >
+              <MapPin className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
             </button>
 
-            <button className="p-3 bg-card border border-border rounded-xl hover:bg-secondary transition-colors">
-              <Briefcase className="h-5 w-5 text-muted-foreground" />
+            <button 
+              className="p-2.5 md:p-3 bg-card border border-border rounded-xl hover:bg-secondary transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              data-testid="button-filter-type"
+              aria-label="Filter jenis pekerjaan"
+            >
+              <Briefcase className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
             </button>
 
             <div className="hidden lg:flex items-center gap-3 ml-2">
@@ -106,27 +115,46 @@ export default function NewJobDashboardPage() {
               </span>
             </div>
           </div>
+
+          {/* Mobile Salary Range */}
+          <div className="lg:hidden mt-4 pt-4 border-t border-border">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs sm:text-sm text-muted-foreground">Rentang Gaji</span>
+              <span className="text-xs sm:text-sm font-medium">
+                Rp{(salaryRange[0]/1000000).toFixed(1)}-{(salaryRange[1]/1000000).toFixed(1)}jt
+              </span>
+            </div>
+            <Slider
+              value={salaryRange}
+              onValueChange={setSalaryRange}
+              min={1000000}
+              max={25000000}
+              step={500000}
+              className="cursor-pointer"
+            />
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
           {/* Sidebar */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 space-y-4 md:space-y-6">
             <FilterSidebar onFilterChange={setFilters} />
           </div>
 
           {/* Job Listings */}
           <div className="lg:col-span-9">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-black">Pekerjaan Populer</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-black">Pekerjaan Populer</h2>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Urutkan:</span>
+                <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">Urutkan:</span>
                 <select 
-                  className="text-sm border-none bg-transparent font-medium text-black focus:outline-none cursor-pointer"
+                  className="text-xs sm:text-sm border border-border rounded-lg px-2 py-1 bg-card font-medium text-black focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
+                  data-testid="select-sort"
                 >
                   <option value="last_updated">Terakhir diperbarui</option>
                   <option value="salary_high">Gaji tertinggi</option>
@@ -136,7 +164,7 @@ export default function NewJobDashboardPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
               {data?.jobs.slice(0, 6).map((job, index) => {
                 const formatSalary = (min: number | null, max: number | null) => {
                   if (!min || !max) return "Kompetitif";

@@ -28,18 +28,19 @@ export default function AIInnovationSection() {
   const [activeTab, setActiveTab] = useState("articles");
 
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-[1600px] mx-auto px-6 md:px-8">
-        <div className="flex flex-col lg:flex-row justify-between items-start mb-12">
-          <div className="mb-8 lg:mb-0">
-            <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-6 leading-tight">
-              Sumber Daya untuk Membantu<br />Anda Merekrut dengan Tepat
+    <section className="py-12 md:py-20 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
+        <div className="flex flex-col lg:flex-row justify-between items-start mb-8 md:mb-12">
+          <div className="mb-6 md:mb-8 lg:mb-0">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 md:mb-6 leading-tight">
+              Sumber Daya untuk Membantu<br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>Anda Merekrut dengan Tepat
             </h2>
             
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3 flex-wrap">
               <button
                 onClick={() => setActiveTab("guides")}
-                className={`px-6 py-2.5 rounded-full font-medium transition-colors ${
+                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-medium transition-colors ${
                   activeTab === "guides"
                     ? "bg-black dark:bg-white text-white dark:text-black"
                     : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
@@ -50,7 +51,7 @@ export default function AIInnovationSection() {
               </button>
               <button
                 onClick={() => setActiveTab("articles")}
-                className={`px-6 py-2.5 rounded-full font-medium transition-colors ${
+                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-medium transition-colors ${
                   activeTab === "articles"
                     ? "bg-black dark:bg-white text-white dark:text-black"
                     : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
@@ -62,14 +63,14 @@ export default function AIInnovationSection() {
             </div>
           </div>
 
-          <div className="max-w-md">
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+          <div className="w-full lg:max-w-md">
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base leading-relaxed">
               Bukan ahli? Jangan khawatir! Kami punya panduan dan artikel lengkap tentang praktik terbaik dan tips dalam merekrut karyawan.
             </p>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {articles.map((article) => (
             <div
               key={article.id}
@@ -83,10 +84,10 @@ export default function AIInnovationSection() {
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
                 />
               </div>
-              <h3 className="text-xl font-bold text-black dark:text-white mb-3 group-hover:text-primary transition-colors">
+              <h3 className="text-lg sm:text-xl font-bold text-black dark:text-white mb-2 sm:mb-3 group-hover:text-primary transition-colors">
                 {article.title}
               </h3>
-              <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 <span>{article.date}</span>
                 <span>•</span>
                 <span>{article.readTime}</span>
