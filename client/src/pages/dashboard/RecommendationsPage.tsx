@@ -190,7 +190,7 @@ export default function RecommendationsPage() {
                     disabled={quickApplyMutation.isPending}
                   >
                     <Zap className="w-4 h-4 mr-1" />
-                    Quick Apply
+                    Lamar Cepat
                   </Button>
                   <Button
                     size="sm"

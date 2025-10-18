@@ -13,6 +13,7 @@ import HiringPage from "@/pages/HiringPage";
 import CommunityPage from "@/pages/CommunityPage";
 import FAQPage from "@/pages/FAQPage";
 import JobDetailPage from "@/pages/JobDetailPage";
+import NotificationsPage from "@/pages/NotificationsPage";
 import RegisterPage from "@/pages/RegisterPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/hiring" component={HiringPage} />
       <Route path="/community" component={CommunityPage} />
       <Route path="/faq" component={FAQPage} />
+      <Route path="/notifications" component={NotificationsPage} />
       <Route path="/jobs/:id" component={JobDetailPage} />
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />

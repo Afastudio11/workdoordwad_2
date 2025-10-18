@@ -87,8 +87,8 @@ export default function HeroSection() {
         <div className="max-w-[1600px] mx-auto overflow-hidden">
           <div className="flex items-center gap-4 md:gap-12 py-4">
             <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
-              <span className="text-white font-semibold text-xs md:text-sm">Trusted By 1M+</span>
-              <span className="text-white font-semibold text-xs md:text-sm">Business</span>
+              <span className="text-white font-semibold text-xs md:text-sm">Dipercaya Oleh 1 Juta+</span>
+              <span className="text-white font-semibold text-xs md:text-sm">Bisnis</span>
             </div>
             
             <div className="h-4 md:h-6 w-px bg-gray-600"></div>

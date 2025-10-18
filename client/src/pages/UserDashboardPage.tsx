@@ -25,8 +25,9 @@ export default function UserDashboardPage() {
   };
 
   const navItems = [
-    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'profile', label: 'Profil', icon: User },
     { id: 'recommendations', label: 'Rekomendasi', icon: Sparkles },
+    { id: 'applications', label: 'Lamaran Saya', icon: Briefcase },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'settings', label: 'Pengaturan Akun', icon: Settings },
   ];
