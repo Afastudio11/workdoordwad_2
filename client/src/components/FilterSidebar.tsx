@@ -34,7 +34,7 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   return (
     <div className="w-full">
       <div className="bg-white border border-gray-200 rounded-2xl p-6">
-        <h3 className="text-lg font-semibold text-black mb-6">Filters</h3>
+        <h3 className="text-lg font-semibold text-black mb-6">Filter</h3>
 
         {/* Working schedule */}
         <div className="mb-6">
@@ -42,7 +42,7 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             onClick={() => setShowWorkingSchedule(!showWorkingSchedule)}
             className="flex items-center justify-between w-full mb-3"
           >
-            <span className="text-sm font-medium text-black">Working schedule</span>
+            <span className="text-sm font-medium text-black">Jadwal Kerja</span>
             {showWorkingSchedule ? (
               <ChevronUp className="h-4 w-4 text-gray-600" />
             ) : (
@@ -51,7 +51,7 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
           </button>
           {showWorkingSchedule && (
             <div className="space-y-3">
-              {["Full time", "Part time", "Internship", "Project work", "Volunteering"].map((item) => (
+              {["Waktu Penuh", "Paruh Waktu", "Magang", "Kerja Proyek", "Sukarela"].map((item) => (
                 <div key={item} className="flex items-center space-x-2">
                   <Checkbox
                     id={`schedule-${item}`}
@@ -78,7 +78,7 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             onClick={() => setShowEmploymentType(!showEmploymentType)}
             className="flex items-center justify-between w-full mb-3"
           >
-            <span className="text-sm font-medium text-black">Employment type</span>
+            <span className="text-sm font-medium text-black">Tipe Pekerjaan</span>
             {showEmploymentType ? (
               <ChevronUp className="h-4 w-4 text-gray-600" />
             ) : (
@@ -88,11 +88,11 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
           {showEmploymentType && (
             <div className="space-y-3">
               {[
-                "Full day",
-                "Flexible schedule",
-                "Shift work",
-                "Distant work",
-                "Shift method",
+                "Hari Penuh",
+                "Jadwal Fleksibel",
+                "Kerja Shift",
+                "Kerja Jarak Jauh",
+                "Metode Shift",
               ].map((item) => (
                 <div key={item} className="flex items-center space-x-2">
                   <Checkbox

@@ -47,7 +47,7 @@ export default function NewJobDashboardPage() {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+    return date.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
   };
 
   const getJobCardColor = (index: number) => {
@@ -90,7 +90,7 @@ export default function NewJobDashboardPage() {
             </button>
 
             <div className="hidden lg:flex items-center gap-3 ml-2">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">Salary range</span>
+              <span className="text-sm text-muted-foreground whitespace-nowrap">Rentang Gaji</span>
               <div className="w-48">
                 <Slider
                   value={salaryRange}
@@ -116,14 +116,14 @@ export default function NewJobDashboardPage() {
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-gradient-to-br from-purple-600 to-orange-400 rounded-2xl p-8 text-white">
               <h2 className="text-2xl font-bold mb-4">
-                Get Your best
+                Dapatkan
                 <br />
-                profession
+                profesi terbaikmu
                 <br />
-                with LuckyJob
+                dengan PintuKerja
               </h2>
               <button className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity">
-                Learn more
+                Pelajari Lebih Lanjut
               </button>
             </div>
 
@@ -133,18 +133,18 @@ export default function NewJobDashboardPage() {
           {/* Job Listings */}
           <div className="lg:col-span-9">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-black">Popular jobs</h2>
+              <h2 className="text-2xl font-bold text-black">Pekerjaan Populer</h2>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Sort by:</span>
+                <span className="text-sm text-gray-600">Urutkan:</span>
                 <select 
                   className="text-sm border-none bg-transparent font-medium text-black focus:outline-none cursor-pointer"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
-                  <option value="last_updated">Last updated</option>
-                  <option value="salary_high">Salary high to low</option>
-                  <option value="salary_low">Salary low to high</option>
-                  <option value="most_recent">Most recent</option>
+                  <option value="last_updated">Terakhir diperbarui</option>
+                  <option value="salary_high">Gaji tertinggi</option>
+                  <option value="salary_low">Gaji terendah</option>
+                  <option value="most_recent">Terbaru</option>
                 </select>
               </div>
             </div>
@@ -160,8 +160,8 @@ export default function NewJobDashboardPage() {
                   tags={[job.jobType, job.location, job.industry || "General"].slice(0, 3)}
                   salary={
                     job.salaryMin && job.salaryMax
-                      ? `$${job.salaryMin}/hr - $${job.salaryMax}/hr`
-                      : "Competitive"
+                      ? `$${job.salaryMin}/jam - $${job.salaryMax}/jam`
+                      : "Kompetitif"
                   }
                   location={job.location}
                   bgColor={getJobCardColor(index)}
