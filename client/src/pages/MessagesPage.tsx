@@ -105,7 +105,7 @@ export default function MessagesPage() {
       <DashboardHeader />
       
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
-        <h1 className="text-3xl font-bold text-foreground mb-6">Messages</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-6">Pesan</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-280px)]">
           {/* Conversations List */}
@@ -115,7 +115,7 @@ export default function MessagesPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Search conversations..."
+                  placeholder="Cari percakapan..."
                   className="w-full pl-10 pr-4 py-2 border border-border rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   data-testid="input-search-messages"
                 />
@@ -178,7 +178,7 @@ export default function MessagesPage() {
                     <div>
                       <h2 className="text-sm font-semibold text-foreground">{activeConversation.name}</h2>
                       <p className="text-xs text-muted-foreground">
-                        {activeConversation.online ? 'Active now' : activeConversation.company}
+                        {activeConversation.online ? 'Aktif sekarang' : activeConversation.company}
                       </p>
                     </div>
                   </div>
@@ -243,7 +243,7 @@ export default function MessagesPage() {
                     </button>
                     <input
                       type="text"
-                      placeholder="Type a message..."
+                      placeholder="Ketik pesan..."
                       className="flex-1 px-4 py-2 border border-border rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                       value={messageInput}
                       onChange={(e) => setMessageInput(e.target.value)}

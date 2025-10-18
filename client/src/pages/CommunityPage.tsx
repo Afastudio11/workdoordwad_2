@@ -74,10 +74,10 @@ export default function CommunityPage() {
 
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-foreground">Community</h1>
+          <h1 className="text-3xl font-bold text-foreground">Komunitas</h1>
           <Button className="flex items-center gap-2" data-testid="button-new-post">
             <MessageCircle className="h-4 w-4" />
-            New Post
+            Posting Baru
           </Button>
         </div>
 
@@ -86,7 +86,7 @@ export default function CommunityPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search discussions..."
+              placeholder="Cari diskusi..."
               className="w-full pl-12 pr-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
@@ -106,7 +106,7 @@ export default function CommunityPage() {
                 }`}
                 data-testid={`category-${category.toLowerCase().replace(' ', '-')}`}
               >
-                {category === "all" ? "All Topics" : category}
+                {category === "all" ? "Semua Topik" : category}
               </button>
             ))}
           </div>

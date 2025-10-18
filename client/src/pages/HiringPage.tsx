@@ -82,16 +82,16 @@ export default function HiringPage() {
             
             <nav className="hidden md:flex items-center gap-6">
               <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-findjob">
-                Find job
+                Cari Pekerjaan
               </Link>
               <Link href="/messages" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-messages">
-                Messages
+                Pesan
               </Link>
               <Link href="/hiring" className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors" data-testid="link-hiring">
-                Hiring
+                Rekrutmen
               </Link>
               <Link href="/community" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-community">
-                Community
+                Komunitas
               </Link>
               <Link href="/faq" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-faq">
                 FAQ
@@ -103,39 +103,39 @@ export default function HiringPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-semibold text-gray-900">Hiring Dashboard</h1>
+          <h1 className="text-3xl font-semibold text-gray-900">Dashboard Rekrutmen</h1>
           <Button className="flex items-center gap-2" data-testid="button-post-job">
             <Plus className="h-4 w-4" />
-            Post New Job
+            Posting Lowongan Baru
           </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Active Jobs</h3>
+              <h3 className="text-sm font-medium text-gray-600">Lowongan Aktif</h3>
               <FileText className="h-5 w-5 text-gray-400" />
             </div>
             <p className="text-3xl font-bold text-gray-900">12</p>
-            <p className="text-sm text-gray-500 mt-1">+2 from last month</p>
+            <p className="text-sm text-gray-500 mt-1">+2 dari bulan lalu</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Total Applicants</h3>
+              <h3 className="text-sm font-medium text-gray-600">Total Pelamar</h3>
               <Users className="h-5 w-5 text-gray-400" />
             </div>
             <p className="text-3xl font-bold text-gray-900">135</p>
-            <p className="text-sm text-gray-500 mt-1">+18 this week</p>
+            <p className="text-sm text-gray-500 mt-1">+18 minggu ini</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Total Views</h3>
+              <h3 className="text-sm font-medium text-gray-600">Total Tampilan</h3>
               <Eye className="h-5 w-5 text-gray-400" />
             </div>
             <p className="text-3xl font-bold text-gray-900">896</p>
-            <p className="text-sm text-gray-500 mt-1">+124 this week</p>
+            <p className="text-sm text-gray-500 mt-1">+124 minggu ini</p>
           </div>
         </div>
 
@@ -144,7 +144,7 @@ export default function HiringPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search jobs..."
+              placeholder="Cari lowongan..."
               className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
@@ -162,7 +162,7 @@ export default function HiringPage() {
               }`}
               data-testid="tab-all"
             >
-              All Jobs
+              Semua Lowongan
             </button>
             <button
               onClick={() => setActiveTab("active")}
@@ -173,7 +173,7 @@ export default function HiringPage() {
               }`}
               data-testid="tab-active"
             >
-              Active
+              Aktif
             </button>
             <button
               onClick={() => setActiveTab("closed")}
@@ -184,7 +184,7 @@ export default function HiringPage() {
               }`}
               data-testid="tab-closed"
             >
-              Closed
+              Ditutup
             </button>
             <button
               onClick={() => setActiveTab("draft")}
@@ -206,28 +206,28 @@ export default function HiringPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Job Title
+                    Judul Lowongan
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
+                    Lokasi
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Type
+                    Tipe
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Applicants
+                    Pelamar
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Views
+                    Tampilan
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Posted
+                    Diposting
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    Aksi
                   </th>
                 </tr>
               </thead>
