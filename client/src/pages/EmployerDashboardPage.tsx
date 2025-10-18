@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { LayoutDashboard, Briefcase, Users, Building2, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import DashboardHeader from "@/components/DashboardHeader";
+import EmployerDashboardHeader from "@/components/EmployerDashboardHeader";
 import OverviewPage from "./employer/OverviewPage";
 import ManageJobsPage from "./employer/ManageJobsPage";
 import ManageApplicantsPage from "./employer/ManageApplicantsPage";
@@ -47,7 +47,7 @@ export default function EmployerDashboardPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <DashboardHeader />
+      <EmployerDashboardHeader />
       
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">

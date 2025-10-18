@@ -26,12 +26,14 @@ Implemented comprehensive employer (pemberi_kerja) dashboard with full recruitme
 - Authentication checks on all employer endpoints (requires `req.session.userId`)
 
 **Frontend Features:**
+- Dedicated EmployerDashboardHeader with employer-specific navigation (Dashboard, Lowongan Saya, Pelamar, Perusahaan)
 - Sidebar navigation matching worker dashboard UX pattern
 - Consistent design: white background, black text, lime green (#D4FF00) for CTAs
 - Search and filter functionality for jobs and applicants
 - Real-time status updates with optimistic UI updates via TanStack Query
 - Comprehensive data-testid attributes for E2E testing
 - Indonesian language throughout (labels, messages, tips)
+- Employer-specific notifications (pelamar baru, lowongan dipublikasikan)
 
 **Recruitment Workflow:**
 - Post new job → Review incoming applications → Update status → Hire candidates
