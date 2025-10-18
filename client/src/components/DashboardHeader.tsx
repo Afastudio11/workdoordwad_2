@@ -1,8 +1,9 @@
 import { Link, useLocation } from "wouter";
-import { MapPin, Bell, User, LogOut, Briefcase, Settings, ChevronDown } from "lucide-react";
+import { MapPin, Bell, User, LogOut, Briefcase, Settings, ChevronDown, Search } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useState } from "react";
 import logoImg from "@assets/as@4x_1760716473766.png";
+import { getPopularLocations, searchLocations } from "@shared/indonesia-locations";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,13 +12,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-const cities = ["Jakarta", "Bandung", "Surabaya", "Yogyakarta", "Semarang", "Bali", "Medan"];
+import { Input } from "@/components/ui/input";
 
 export default function DashboardHeader() {
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
-  const [selectedCity, setSelectedCity] = useState("Jakarta");
+  const [selectedCity, setSelectedCity] = useState("Jakarta Selatan");
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const popularCities = getPopularLocations();
+  const filteredCities = searchQuery 
+    ? searchLocations(searchQuery).map(loc => loc.name).slice(0, 10)
+    : popularCities;
 
   const isActive = (path: string) => location === path;
 
@@ -84,21 +90,52 @@ export default function DashboardHeader() {
                     <ChevronDown className="h-4 w-4 text-white/70" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-white">
-                  <DropdownMenuLabel className="text-black">Pilih Lokasi</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {cities.map((city) => (
-                    <DropdownMenuItem
-                      key={city}
-                      onClick={() => setSelectedCity(city)}
-                      className={`cursor-pointer ${
-                        selectedCity === city ? "bg-gray-100 font-medium" : ""
-                      } text-black hover:bg-gray-50`}
-                    >
-                      <MapPin className="h-4 w-4 mr-2 text-gray-600" />
-                      {city}
-                    </DropdownMenuItem>
-                  ))}
+                <DropdownMenuContent align="end" className="w-72 bg-white p-0">
+                  <div className="p-3 pb-2">
+                    <DropdownMenuLabel className="text-black px-0 pb-2">Pilih Lokasi</DropdownMenuLabel>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        type="text"
+                        placeholder="Cari kota/kabupaten..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 h-9 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator className="my-0" />
+                  <div className="max-h-80 overflow-y-auto">
+                    {filteredCities.length > 0 ? (
+                      filteredCities.map((city) => (
+                        <DropdownMenuItem
+                          key={city}
+                          onClick={() => {
+                            setSelectedCity(city);
+                            setSearchQuery("");
+                          }}
+                          className={`cursor-pointer px-3 py-2 ${
+                            selectedCity === city ? "bg-gray-100 font-medium" : ""
+                          } text-black hover:bg-gray-50`}
+                        >
+                          <MapPin className="h-4 w-4 mr-2 text-gray-600 flex-shrink-0" />
+                          <span className="text-sm">{city}</span>
+                        </DropdownMenuItem>
+                      ))
+                    ) : (
+                      <div className="px-3 py-6 text-center text-sm text-gray-500">
+                        Lokasi tidak ditemukan
+                      </div>
+                    )}
+                  </div>
+                  {searchQuery === "" && (
+                    <>
+                      <DropdownMenuSeparator className="my-0" />
+                      <div className="p-2 text-xs text-gray-500 text-center">
+                        {popularCities.length} lokasi populer ditampilkan
+                      </div>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
