@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Bell, User, Search, Settings, FileText, LogOut, Briefcase } from "lucide-react";
+import { MapPin, Bell, User, LogOut, Briefcase, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import logoImg from "@assets/as@4x_1760716473766.png";
 import {
@@ -12,114 +11,146 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface DashboardHeaderProps {
-  onSearch?: (keyword: string) => void;
-}
-
-export default function DashboardHeader({ onSearch }: DashboardHeaderProps) {
-  const [location] = useLocation();
+export default function DashboardHeader() {
+  const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [hasNotifications] = useState(true); // TODO: Connect to real notifications
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onSearch && searchKeyword.trim()) {
-      onSearch(searchKeyword);
-    } else if (searchKeyword.trim()) {
-      // Navigate to jobs page with search
-      window.location.href = `/jobs?keyword=${encodeURIComponent(searchKeyword)}`;
-    }
-  };
 
   const isActive = (path: string) => location === path;
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="bg-[#1a1a1a] text-white sticky top-0 z-50 border-b border-gray-800">
       <div className="max-w-[1600px] mx-auto px-6 md:px-8">
-        <div className="flex items-center justify-between gap-6 h-16">
-          {/* Logo - Navigasi Utama (Home) */}
-          <Link href="/" className="flex items-center flex-shrink-0">
-            <img src={logoImg} alt="Pintu Kerja" className="h-12" />
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
+            <img src={logoImg} alt="PintuKerja" className="h-12" />
           </Link>
 
-          {/* Kolom Pencarian Global - Desktop */}
-          <form 
-            onSubmit={handleSearch}
-            className="hidden md:flex flex-1 max-w-xl relative"
-          >
-            <input
-              type="text"
-              placeholder="Cari posisi, perusahaan, atau skill..."
-              className="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-1 focus:ring-[#D4FF00] text-black placeholder:text-gray-500"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              data-testid="input-global-search"
-            />
-            <button
-              type="submit"
-              className="px-6 bg-white border border-[#D4FF00] border-l-0 rounded-r-lg hover:bg-[#D4FF00]/10 transition-colors flex items-center justify-center"
-              data-testid="button-global-search"
-            >
-              <Search className="h-5 w-5 text-black" />
-            </button>
-          </form>
-
-          {/* Navigation Links & Icons */}
-          <div className="flex items-center gap-6">
-            {/* Link: Cari Lowongan */}
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
             <Link href="/jobs">
               <span
-                className={`hidden md:block text-sm font-medium transition-colors cursor-pointer ${
-                  isActive('/jobs')
-                    ? 'text-black border-b-2 border-[#D4FF00] pb-1'
-                    : 'text-black hover:text-gray-700'
+                className={`text-sm cursor-pointer transition-colors ${
+                  isActive("/jobs") ? "text-white font-medium" : "text-white/80 hover:text-white"
                 }`}
-                data-testid="link-cari-lowongan"
               >
-                Cari Lowongan
+                Find job
               </span>
             </Link>
-
-            {/* Link: Lowongan Tersimpan */}
-            <Link href="/user/dashboard#wishlist">
+            <Link href="/messages">
               <span
-                className={`hidden md:block text-sm font-medium transition-colors cursor-pointer ${
-                  location.includes('#wishlist')
-                    ? 'text-black border-b-2 border-[#D4FF00] pb-1'
-                    : 'text-black hover:text-gray-700'
+                className={`text-sm cursor-pointer transition-colors ${
+                  isActive("/messages") ? "text-white font-medium" : "text-white/80 hover:text-white"
                 }`}
-                data-testid="link-lowongan-tersimpan"
               >
-                Lowongan Tersimpan
+                Messages
               </span>
             </Link>
+            <Link href="/community">
+              <span
+                className={`text-sm cursor-pointer transition-colors ${
+                  isActive("/community") ? "text-white font-medium" : "text-white/80 hover:text-white"
+                }`}
+              >
+                Community
+              </span>
+            </Link>
+            <Link href="/faq">
+              <span
+                className={`text-sm cursor-pointer transition-colors ${
+                  isActive("/faq") ? "text-white font-medium" : "text-white/80 hover:text-white"
+                }`}
+              >
+                FAQ
+              </span>
+            </Link>
+          </nav>
 
-            {/* Icon Notifikasi (Lonceng) */}
-            <button 
-              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
-              data-testid="button-notifications"
-            >
-              <Bell className="h-5 w-5 text-black" />
-              {hasNotifications && (
-                <span 
-                  className="absolute top-1 right-1 w-2 h-2 bg-[#D4FF00] rounded-full"
-                  data-testid="notification-badge"
-                />
-              )}
-            </button>
+          {/* Right side */}
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-3">
+              <Link href="/jobs">
+                <button 
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  data-testid="button-location"
+                  title="Find Jobs by Location"
+                >
+                  <MapPin className="h-5 w-5 text-white" />
+                </button>
+              </Link>
+            </div>
 
-            {/* Icon Profil (Dropdown Menu) */}
+            {/* Notifications Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button 
-                  className="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
-                  data-testid="button-profile-menu"
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
+                  data-testid="button-notifications"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#D4FF00] flex items-center justify-center">
-                    <span className="text-sm font-bold text-black">
-                      {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
-                    </span>
+                  <Bell className="h-5 w-5 text-white" />
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 bg-white">
+                <DropdownMenuLabel>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-black">Notifikasi</p>
+                    <button className="text-xs text-primary hover:underline">Tandai semua dibaca</button>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                {/* Notification Items */}
+                <div className="max-h-96 overflow-y-auto">
+                  <DropdownMenuItem className="p-3 cursor-pointer hover:bg-gray-50 transition-colors">
+                    <div className="flex gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Briefcase className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-black">Lamaran Anda Diterima</p>
+                        <p className="text-xs text-gray-600 mt-1">PT Maju Jaya telah menerima lamaran Anda untuk posisi Senior Developer</p>
+                        <p className="text-xs text-gray-500 mt-1">2 jam yang lalu</p>
+                      </div>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="p-3 cursor-pointer hover:bg-gray-50 transition-colors">
+                    <div className="flex gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <Bell className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-black">Lowongan Baru Sesuai Profil Anda</p>
+                        <p className="text-xs text-gray-600 mt-1">3 lowongan baru yang sesuai dengan keahlian Anda</p>
+                        <p className="text-xs text-gray-500 mt-1">5 jam yang lalu</p>
+                      </div>
+                    </div>
+                  </DropdownMenuItem>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/notifications" className="text-center justify-center text-sm text-primary hover:underline cursor-pointer py-2">
+                    Lihat semua notifikasi
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity"
+                  data-testid="button-profile"
+                >
+                  <div className="w-8 h-8 rounded-full bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
+                    {user?.fullName ? (
+                      <span className="text-sm font-semibold text-white">
+                        {user.fullName.charAt(0).toUpperCase()}
+                      </span>
+                    ) : (
+                      <User className="w-4 h-4 text-white" />
+                    )}
                   </div>
                 </button>
               </DropdownMenuTrigger>
@@ -134,7 +165,7 @@ export default function DashboardHeader({ onSearch }: DashboardHeaderProps) {
                 
                 {/* Profile */}
                 <DropdownMenuItem asChild>
-                  <Link href="/user/dashboard#profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profil">
+                  <Link href="/user/dashboard#profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile-cv">
                     <User className="h-4 w-4" />
                     <span>Profile</span>
                   </Link>
@@ -146,7 +177,7 @@ export default function DashboardHeader({ onSearch }: DashboardHeaderProps) {
                 <DropdownMenuItem 
                   onClick={logout}
                   className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                  data-testid="menu-keluar"
+                  data-testid="menu-logout"
                 >
                   <LogOut className="mr-3 h-4 w-4" />
                   <span>Keluar</span>
@@ -154,27 +185,6 @@ export default function DashboardHeader({ onSearch }: DashboardHeaderProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
-
-        {/* Mobile Search Bar */}
-        <div className="md:hidden pb-3">
-          <form onSubmit={handleSearch} className="flex relative">
-            <input
-              type="text"
-              placeholder="Cari posisi, perusahaan, atau skill..."
-              className="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-1 focus:ring-[#D4FF00] text-black placeholder:text-gray-500"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              data-testid="input-global-search-mobile"
-            />
-            <button
-              type="submit"
-              className="px-4 bg-white border border-[#D4FF00] border-l-0 rounded-r-lg hover:bg-[#D4FF00]/10 transition-colors flex items-center justify-center"
-              data-testid="button-global-search-mobile"
-            >
-              <Search className="h-5 w-5 text-black" />
-            </button>
-          </form>
         </div>
       </div>
     </header>
