@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DashboardPageHeader from "@/components/DashboardPageHeader";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
@@ -106,15 +105,10 @@ export default function ProfilePage() {
 
   if (isLoadingApplications || isLoadingProfile) {
     return (
-      <div className="min-h-screen bg-white">
-        <DashboardPageHeader />
-        <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-muted rounded-lg animate-pulse"></div>
-            ))}
-          </div>
-        </div>
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-32 bg-muted rounded-lg animate-pulse"></div>
+        ))}
       </div>
     );
   }

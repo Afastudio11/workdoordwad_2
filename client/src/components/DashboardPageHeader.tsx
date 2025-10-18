@@ -180,14 +180,6 @@ export default function DashboardPageHeader() {
                   </Link>
                 </DropdownMenuItem>
 
-                {/* Pengaturan Akun */}
-                <DropdownMenuItem asChild>
-                  <Link href="/user/dashboard#settings" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-settings">
-                    <Settings className="h-4 w-4" />
-                    <span>Pengaturan Akun</span>
-                  </Link>
-                </DropdownMenuItem>
-
                 <DropdownMenuSeparator />
 
                 {/* Keluar (Sign Out) */}
