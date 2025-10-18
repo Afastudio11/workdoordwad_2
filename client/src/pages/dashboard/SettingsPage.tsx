@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Edit2, Save, X, Shield, Lock, Bell, User, Mail, Phone, MapPin, Calendar } from "lucide-react";
+import { Edit2, Save, X, Shield, Lock, Bell, User, Mail, Phone, MapPin, Calendar, Briefcase, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,16 +34,29 @@ const passwordSchema = z.object({
   path: ["confirmPassword"],
 });
 
+const preferencesSchema = z.object({
+  preferredIndustries: z.array(z.string()).optional(),
+  preferredLocations: z.array(z.string()).optional(),
+  preferredJobTypes: z.array(z.string()).optional(),
+  expectedSalaryMin: z.number().optional(),
+});
+
 type AccountForm = z.infer<typeof accountSchema>;
 type PasswordForm = z.infer<typeof passwordSchema>;
+type PreferencesForm = z.infer<typeof preferencesSchema>;
 
 export default function SettingsPage() {
   const { toast } = useToast();
   const [isEditingAccount, setIsEditingAccount] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isEditingPreferences, setIsEditingPreferences] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [jobAlerts, setJobAlerts] = useState(true);
   const [applicationUpdates, setApplicationUpdates] = useState(true);
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
+  const [minSalary, setMinSalary] = useState<number>(0);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["/api/profile"],

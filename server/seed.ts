@@ -1,5 +1,6 @@
 import { db } from "./db";
-import { companies, jobs } from "@shared/schema";
+import { users, companies, jobs } from "@shared/schema";
+import bcrypt from "bcrypt";
 
 const locations = [
   "Jakarta", "Bandung", "Surabaya", "Medan", "Semarang", "Makassar", 
@@ -116,6 +117,46 @@ Kirimkan CV dan lamaran Anda segera!`;
 async function seed() {
   console.log("🌱 Starting seed...");
   
+  // Create test users
+  console.log("Creating test users...");
+  const hashedPassword = await bcrypt.hash("password123", 10);
+
+  const [testPekerja] = await db
+    .insert(users)
+    .values({
+      username: "pekerja_test",
+      password: hashedPassword,
+      email: "pekerja@test.com",
+      fullName: "Ahmad Setiawan",
+      phone: "081234567890",
+      role: "pekerja",
+      bio: "Fresh graduate yang bersemangat mencari pekerjaan pertama di bidang IT",
+      city: "Jakarta",
+      province: "DKI Jakarta",
+      skills: ["JavaScript", "React", "Node.js", "TypeScript"],
+      preferredIndustries: ["Teknologi", "Startup"],
+      preferredLocations: ["Jakarta", "Bandung"],
+      preferredJobTypes: ["full-time"],
+      expectedSalaryMin: 5000000,
+    })
+    .returning()
+    .onConflictDoNothing();
+
+  const [testEmployer] = await db
+    .insert(users)
+    .values({
+      username: "employer_test",
+      password: hashedPassword,
+      email: "employer@test.com",
+      fullName: "Budi Santoso",
+      phone: "081234567891",
+      role: "pemberi_kerja",
+    })
+    .returning()
+    .onConflictDoNothing();
+
+  console.log("✓ Created test users");
+  
   // Create companies
   console.log("Creating companies...");
   const createdCompanies = [];
@@ -169,7 +210,19 @@ async function seed() {
   }
   
   console.log(`✓ Created ${createdJobs.length} jobs`);
-  console.log("✅ Seed completed!");
+  
+  console.log("\n🎉 Seed completed successfully!");
+  console.log("\nTest accounts created:");
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.log("👤 Pekerja Account:");
+  console.log("   Username: pekerja_test");
+  console.log("   Password: password123");
+  console.log("   Email: pekerja@test.com");
+  console.log("\n👔 Employer Account:");
+  console.log("   Username: employer_test");
+  console.log("   Password: password123");
+  console.log("   Email: employer@test.com");
+  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 }
 
 seed()
