@@ -42,6 +42,7 @@ export default function ProfilePage() {
   const [isEditingSkills, setIsEditingSkills] = useState(false);
   const [newSkill, setNewSkill] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
+  const [isUploadingCV, setIsUploadingCV] = useState(false);
 
   const { data: applications, isLoading: isLoadingApplications } = useQuery<Application[]>({
     queryKey: ["/api/applications"],
@@ -49,6 +50,35 @@ export default function ProfilePage() {
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["/api/profile"],
+  });
+
+  const uploadCVMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("cv", file);
+      
+      const response = await fetch("/api/profile/upload-cv", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to upload CV");
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      toast({ title: "CV berhasil diunggah" });
+      setIsUploadingCV(false);
+    },
+    onError: (error: Error) => {
+      toast({ title: "Gagal mengunggah CV", description: error.message, variant: "destructive" });
+      setIsUploadingCV(false);
+    },
   });
 
   const updateSkillsMutation = useMutation({
@@ -91,6 +121,18 @@ export default function ProfilePage() {
 
   const saveSkills = () => {
     updateSkillsMutation.mutate({ skills });
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setIsUploadingCV(true);
+      uploadCVMutation.mutate(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    document.getElementById('cv-upload-input')?.click();
   };
 
   const startEditingSkills = () => {
@@ -182,9 +224,16 @@ export default function ProfilePage() {
                     <p className="text-sm text-gray-600 mb-6">
                       Unggah CV Anda untuk menggunakan fitur Lamar Cepat dan meningkatkan peluang diterima
                     </p>
-                    <Button data-testid="button-upload-cv">
+                    <input
+                      type="file"
+                      id="cv-upload-input"
+                      accept=".pdf,.doc,.docx"
+                      onChange={handleFileChange}
+                      style={{ display: 'none' }}
+                    />
+                    <Button onClick={triggerFileInput} disabled={isUploadingCV} data-testid="button-upload-cv">
                       <Upload className="w-4 h-4 mr-2" />
-                      Unggah CV
+                      {isUploadingCV ? "Mengunggah..." : "Unggah CV"}
                     </Button>
                   </div>
                 )}

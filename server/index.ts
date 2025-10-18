@@ -3,10 +3,22 @@ import session from "express-session";
 import MemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { mkdirSync } from "fs";
+import { join } from "path";
+
+// Ensure upload directories exist
+try {
+  mkdirSync(join(process.cwd(), "uploads", "cv"), { recursive: true });
+} catch (err) {
+  console.error("Failed to create upload directories:", err);
+}
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Serve uploaded files
+app.use("/uploads", express.static("uploads"));
 
 // Session configuration
 const MemoryStoreSession = MemoryStore(session);

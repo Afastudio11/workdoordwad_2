@@ -29,26 +29,42 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    let url = queryKey[0] as string;
+    // Build URL from query key
+    // If queryKey has an object as last element, treat it as query params
+    // Otherwise, join all elements as path segments
+    let url: string;
+    let queryParams: Record<string, any> | null = null;
     
-    // If there's a second element in queryKey and it's an object, treat it as query params
-    if (queryKey.length > 1 && typeof queryKey[1] === 'object' && queryKey[1] !== null) {
+    // Check if the last element is a plain object (not array, not null)
+    const lastElement = queryKey[queryKey.length - 1];
+    const isLastElementParamsObject = 
+      queryKey.length > 1 &&
+      typeof lastElement === 'object' && 
+      lastElement !== null && 
+      !Array.isArray(lastElement);
+    
+    if (isLastElementParamsObject) {
+      // Last element is query params, rest are path segments
+      const pathSegments = queryKey.slice(0, -1);
+      url = pathSegments.join("/") as string;
+      queryParams = lastElement as Record<string, any>;
+    } else {
+      // All elements are path segments
+      url = queryKey.join("/") as string;
+    }
+    
+    // Append query parameters if any
+    if (queryParams) {
       const params = new URLSearchParams();
-      const paramsObj = queryKey[1] as Record<string, any>;
-      
-      for (const [key, value] of Object.entries(paramsObj)) {
+      for (const [key, value] of Object.entries(queryParams)) {
         if (value !== undefined && value !== null && value !== '') {
           params.append(key, String(value));
         }
       }
-      
       const queryString = params.toString();
       if (queryString) {
         url += '?' + queryString;
       }
-    } else if (queryKey.length > 1) {
-      // Otherwise join with "/"
-      url = queryKey.join("/");
     }
     
     const res = await fetch(url, {

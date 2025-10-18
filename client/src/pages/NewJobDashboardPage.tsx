@@ -150,23 +150,28 @@ export default function NewJobDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {data?.jobs.slice(0, 6).map((job, index) => (
-                <JobCard
-                  key={job.id}
-                  id={job.id}
-                  date={formatDate(job.createdAt)}
-                  company={job.company.name}
-                  title={job.title}
-                  tags={[job.jobType, job.location, job.industry || "General"].slice(0, 3)}
-                  salary={
-                    job.salaryMin && job.salaryMax
-                      ? `$${job.salaryMin}/jam - $${job.salaryMax}/jam`
-                      : "Kompetitif"
-                  }
-                  location={job.location}
-                  bgColor={getJobCardColor(index)}
-                />
-              ))}
+              {data?.jobs.slice(0, 6).map((job, index) => {
+                const formatSalary = (min: number | null, max: number | null) => {
+                  if (!min || !max) return "Kompetitif";
+                  const minJuta = (min / 1000000).toFixed(1);
+                  const maxJuta = (max / 1000000).toFixed(1);
+                  return `Rp${minJuta}-${maxJuta}jt/bln`;
+                };
+                
+                return (
+                  <JobCard
+                    key={job.id}
+                    id={job.id}
+                    date={formatDate(job.createdAt)}
+                    company={job.company.name}
+                    title={job.title}
+                    tags={[job.jobType, job.location, job.industry || "General"].slice(0, 3)}
+                    salary={formatSalary(job.salaryMin, job.salaryMax)}
+                    location={job.location}
+                    bgColor={getJobCardColor(index)}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

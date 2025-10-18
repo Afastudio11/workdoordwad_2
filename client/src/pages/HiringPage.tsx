@@ -1,75 +1,44 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Plus, Search, MoreVertical, Users, Eye, FileText } from "lucide-react";
+import { Plus, Search, MoreVertical, Users, Eye, FileText, Loader2 } from "lucide-react";
 import logoImgDark from "@assets/black@4x_1760695283292.png";
 import { Button } from "@/components/ui/button";
-
-interface Job {
-  id: string;
-  title: string;
-  location: string;
-  type: string;
-  applicants: number;
-  views: number;
-  status: "active" | "closed" | "draft";
-  postedDate: string;
-}
+import { useQuery } from "@tanstack/react-query";
+import type { Job, Company } from "@shared/schema";
+import { formatDistanceToNow } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
 
 export default function HiringPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [activeTab, setActiveTab] = useState<"all" | "active" | "closed" | "draft">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "active" | "closed">("all");
 
-  const jobs: Job[] = [
-    {
-      id: "1",
-      title: "Staff Admin",
-      location: "Jakarta",
-      type: "Full-time",
-      applicants: 45,
-      views: 320,
-      status: "active",
-      postedDate: "2 days ago",
-    },
-    {
-      id: "2",
-      title: "Kasir Toko",
-      location: "Bandung",
-      type: "Part-time",
-      applicants: 23,
-      views: 156,
-      status: "active",
-      postedDate: "5 days ago",
-    },
-    {
-      id: "3",
-      title: "Driver Pengiriman",
-      location: "Surabaya",
-      type: "Full-time",
-      applicants: 67,
-      views: 420,
-      status: "closed",
-      postedDate: "1 week ago",
-    },
-  ];
+  const { data: jobs = [], isLoading } = useQuery<(Job & { company: Company })[]>({
+    queryKey: ["/api/employer/jobs"],
+  });
 
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch = job.title.toLowerCase().includes(searchKeyword.toLowerCase());
-    const matchesTab = activeTab === "all" || job.status === activeTab;
+    
+    // Map isActive to status
+    let status: "active" | "closed" = job.isActive ? "active" : "closed";
+    const matchesTab = activeTab === "all" || status === activeTab;
+    
     return matchesSearch && matchesTab;
   });
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: "active" | "closed") => {
     switch (status) {
       case "active":
         return "bg-gray-900 text-white";
       case "closed":
         return "bg-gray-100 text-gray-800";
-      case "draft":
-        return "bg-gray-300 text-gray-900";
       default:
         return "bg-gray-100 text-gray-800";
     }
   };
+
+  // Calculate metrics from real data
+  const activeJobsCount = jobs.filter(j => j.isActive).length;
 
   return (
     <div className="min-h-screen bg-white">
@@ -116,8 +85,10 @@ export default function HiringPage() {
               <h3 className="text-sm font-medium text-gray-600">Lowongan Aktif</h3>
               <FileText className="h-5 w-5 text-gray-400" />
             </div>
-            <p className="text-3xl font-bold text-gray-900">12</p>
-            <p className="text-sm text-gray-500 mt-1">+2 dari bulan lalu</p>
+            <p className="text-3xl font-bold text-gray-900" data-testid="text-active-jobs">
+              {isLoading ? "..." : activeJobsCount}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">Total lowongan yang dipublikasikan</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -125,17 +96,21 @@ export default function HiringPage() {
               <h3 className="text-sm font-medium text-gray-600">Total Pelamar</h3>
               <Users className="h-5 w-5 text-gray-400" />
             </div>
-            <p className="text-3xl font-bold text-gray-900">135</p>
-            <p className="text-sm text-gray-500 mt-1">+18 minggu ini</p>
+            <p className="text-3xl font-bold text-gray-900" data-testid="text-total-applicants">
+              {isLoading ? "..." : "0"}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">Dari semua lowongan</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Total Tampilan</h3>
+              <h3 className="text-sm font-medium text-gray-600">Total Lowongan</h3>
               <Eye className="h-5 w-5 text-gray-400" />
             </div>
-            <p className="text-3xl font-bold text-gray-900">896</p>
-            <p className="text-sm text-gray-500 mt-1">+124 minggu ini</p>
+            <p className="text-3xl font-bold text-gray-900" data-testid="text-total-jobs">
+              {isLoading ? "..." : jobs.length}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">Aktif dan tidak aktif</p>
           </div>
         </div>
 
@@ -186,92 +161,89 @@ export default function HiringPage() {
             >
               Ditutup
             </button>
-            <button
-              onClick={() => setActiveTab("draft")}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                activeTab === "draft"
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-              }`}
-              data-testid="tab-draft"
-            >
-              Draft
-            </button>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Judul Lowongan
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Lokasi
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tipe
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pelamar
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tampilan
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Diposting
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredJobs.map((job) => (
-                  <tr key={job.id} className="hover:bg-gray-50" data-testid={`job-row-${job.id}`}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{job.title}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-600">{job.location}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-600">{job.type}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{job.applicants}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{job.views}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(job.status)}`}>
-                        {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-600">{job.postedDate}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button className="text-gray-600 hover:text-gray-900" data-testid={`button-actions-${job.id}`}>
-                        <MoreVertical className="h-5 w-5" />
-                      </button>
-                    </td>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+          </div>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Judul Lowongan
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Lokasi
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Tipe
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Industri
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Diposting
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Aksi
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {filteredJobs.map((job) => {
+                    const status: "active" | "closed" = job.isActive ? "active" : "closed";
+                    const postedDate = formatDistanceToNow(new Date(job.createdAt), { 
+                      addSuffix: true, 
+                      locale: idLocale 
+                    });
+                    
+                    return (
+                      <tr key={job.id} className="hover:bg-gray-50" data-testid={`job-row-${job.id}`}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{job.title}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-600">{job.location}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-600">{job.jobType}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-600">{job.industry || "-"}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(status)}`}>
+                            {status === "active" ? "Aktif" : "Ditutup"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-600">{postedDate}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button className="text-gray-600 hover:text-gray-900" data-testid={`button-actions-${job.id}`}>
+                            <MoreVertical className="h-5 w-5" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
 
-        {filteredJobs.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No jobs found</p>
+        {!isLoading && filteredJobs.length === 0 && (
+          <div className="text-center py-12 bg-white border border-gray-200 rounded-lg">
+            <p className="text-gray-500">Tidak ada lowongan ditemukan</p>
           </div>
         )}
       </div>

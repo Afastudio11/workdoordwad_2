@@ -2,6 +2,9 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
+import multer from "multer";
+import path from "path";
+import { randomUUID } from "crypto";
 import { 
   registerPekerjaSchema, 
   registerPemberiKerjaSchema, 
@@ -12,6 +15,7 @@ import {
   updateSkillsSchema,
   updatePreferencesSchema,
   quickApplySchema,
+  insertJobSchema,
   type User 
 } from "@shared/schema";
 
@@ -21,6 +25,32 @@ declare module "express-session" {
     userId: string;
   }
 }
+
+// Configure multer for CV uploads
+const cvStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/cv");
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `${randomUUID()}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
+  },
+});
+
+const uploadCV = multer({
+  storage: cvStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /pdf|doc|docx/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (extname && mimetype) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only PDF, DOC, and DOCX files are allowed"));
+    }
+  },
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get current user
@@ -285,6 +315,125 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Employer job management API
+  app.get("/api/employer/jobs", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const jobs = await storage.getJobsByEmployer(req.session.userId);
+      res.json(jobs);
+    } catch (error) {
+      console.error("Error fetching employer jobs:", error);
+      res.status(500).json({ error: "Failed to fetch jobs" });
+    }
+  });
+
+  app.post("/api/jobs", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const validatedData = insertJobSchema.parse(req.body);
+      const job = await storage.createJob({
+        ...validatedData,
+        postedBy: req.session.userId,
+      });
+
+      res.status(201).json(job);
+    } catch (error: any) {
+      console.error("Error creating job:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create job" });
+    }
+  });
+
+  app.put("/api/jobs/:id", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const job = await storage.getJobById(req.params.id);
+      if (!job || job.postedBy !== req.session.userId) {
+        return res.status(404).json({ error: "Job not found or access denied" });
+      }
+
+      const updatedJob = await storage.updateJob(req.params.id, req.body);
+      res.json(updatedJob);
+    } catch (error) {
+      console.error("Error updating job:", error);
+      res.status(500).json({ error: "Failed to update job" });
+    }
+  });
+
+  app.delete("/api/jobs/:id", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const job = await storage.getJobById(req.params.id);
+      if (!job || job.postedBy !== req.session.userId) {
+        return res.status(404).json({ error: "Job not found or access denied" });
+      }
+
+      await storage.deleteJob(req.params.id);
+      res.json({ message: "Job deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting job:", error);
+      res.status(500).json({ error: "Failed to delete job" });
+    }
+  });
+
+  app.get("/api/jobs/:id/applications", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const job = await storage.getJobById(req.params.id);
+      if (!job || job.postedBy !== req.session.userId) {
+        return res.status(404).json({ error: "Job not found or access denied" });
+      }
+
+      const applications = await storage.getJobApplications(req.params.id);
+      res.json(applications);
+    } catch (error) {
+      console.error("Error fetching job applications:", error);
+      res.status(500).json({ error: "Failed to fetch applications" });
+    }
+  });
+
   // Profile API
   app.get("/api/profile", async (req, res) => {
     if (!req.session.userId) {
@@ -422,6 +571,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Data tidak valid", details: error.errors });
       }
       res.status(500).json({ error: "Failed to update preferences" });
+    }
+  });
+
+  // CV Upload API
+  app.post("/api/profile/upload-cv", uploadCV.single("cv"), async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      const cvUrl = `/uploads/cv/${req.file.filename}`;
+      const cvFileName = req.file.originalname;
+
+      const updatedUser = await storage.updateUserProfile(req.session.userId, {
+        cvUrl,
+        cvFileName,
+      });
+
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Error uploading CV:", error);
+      res.status(500).json({ error: error.message || "Failed to upload CV" });
     }
   });
 

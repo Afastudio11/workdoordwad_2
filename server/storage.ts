@@ -28,6 +28,11 @@ export interface IStorage {
   }): Promise<{ jobs: (Job & { company: Company })[], total: number }>;
   getJobById(id: string): Promise<(Job & { company: Company }) | undefined>;
   getRecommendedJobs(userId: string, limit?: number): Promise<(Job & { company: Company })[]>;
+  getJobsByEmployer(userId: string): Promise<(Job & { company: Company })[]>;
+  createJob(job: InsertJob): Promise<Job>;
+  updateJob(jobId: string, updates: Partial<Job>): Promise<Job | undefined>;
+  deleteJob(jobId: string): Promise<void>;
+  getJobApplications(jobId: string): Promise<(Application & { user: User })[]>;
   
   // Companies
   getCompanyById(id: string): Promise<Company | undefined>;
@@ -373,6 +378,75 @@ export class DbStorage implements IStorage {
         eq(wishlistsTable.jobId, jobId)
       ));
     return !!result;
+  }
+
+  async getJobsByEmployer(userId: string): Promise<(Job & { company: Company })[]> {
+    const results = await db.select({
+      id: jobsTable.id,
+      companyId: jobsTable.companyId,
+      title: jobsTable.title,
+      description: jobsTable.description,
+      requirements: jobsTable.requirements,
+      location: jobsTable.location,
+      jobType: jobsTable.jobType,
+      industry: jobsTable.industry,
+      salaryMin: jobsTable.salaryMin,
+      salaryMax: jobsTable.salaryMax,
+      education: jobsTable.education,
+      experience: jobsTable.experience,
+      isFeatured: jobsTable.isFeatured,
+      isActive: jobsTable.isActive,
+      source: jobsTable.source,
+      sourceUrl: jobsTable.sourceUrl,
+      postedBy: jobsTable.postedBy,
+      createdAt: jobsTable.createdAt,
+      updatedAt: jobsTable.updatedAt,
+      company: companiesTable,
+    })
+    .from(jobsTable)
+    .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
+    .where(eq(jobsTable.postedBy, userId))
+    .orderBy(desc(jobsTable.createdAt));
+
+    return results as (Job & { company: Company })[];
+  }
+
+  async createJob(job: InsertJob): Promise<Job> {
+    const [newJob] = await db.insert(jobsTable).values(job).returning();
+    return newJob;
+  }
+
+  async updateJob(jobId: string, updates: Partial<Job>): Promise<Job | undefined> {
+    const [updatedJob] = await db
+      .update(jobsTable)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(jobsTable.id, jobId))
+      .returning();
+    return updatedJob;
+  }
+
+  async deleteJob(jobId: string): Promise<void> {
+    await db.delete(jobsTable).where(eq(jobsTable.id, jobId));
+  }
+
+  async getJobApplications(jobId: string): Promise<(Application & { user: User })[]> {
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(eq(applicationsTable.jobId, jobId))
+      .orderBy(desc(applicationsTable.createdAt));
+
+    const enrichedApplications = await Promise.all(
+      applications.map(async (app) => {
+        const user = await this.getUser(app.applicantId);
+        return {
+          ...app,
+          user: user!,
+        };
+      })
+    );
+
+    return enrichedApplications as (Application & { user: User })[];
   }
 }
 
