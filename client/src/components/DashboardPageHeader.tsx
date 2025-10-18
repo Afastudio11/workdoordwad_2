@@ -174,17 +174,9 @@ export default function DashboardPageHeader() {
                 
                 {/* Profil Saya / CV Digital */}
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile-cv">
+                  <Link href="/user/dashboard#profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile-cv">
                     <User className="h-4 w-4" />
                     <span>Profil Saya / CV Digital</span>
-                  </Link>
-                </DropdownMenuItem>
-
-                {/* Riwayat Lamaran */}
-                <DropdownMenuItem asChild>
-                  <Link href="/user/dashboard#applications" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-applications">
-                    <Briefcase className="h-4 w-4" />
-                    <span>Riwayat Lamaran</span>
                   </Link>
                 </DropdownMenuItem>
 
