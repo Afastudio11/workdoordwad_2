@@ -59,7 +59,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Header variant="light" />
+      <Header variant="dark" />
       <div className="min-h-screen bg-white flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
           <div className="mb-8">

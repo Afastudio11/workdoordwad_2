@@ -28,7 +28,7 @@ const notificationIcons = {
 };
 
 const notificationColors = {
-  application: "bg-primary/10 text-primary",
+  application: "bg-gray-100 text-gray-700",
   message: "bg-blue-50 text-blue-600",
   system: "bg-purple-50 text-purple-600",
   job_match: "bg-green-50 text-green-600",
@@ -184,7 +184,7 @@ export default function NotificationsPage() {
                             {notification.title}
                           </h3>
                           {!notification.read && (
-                            <Badge className="bg-primary/20 text-primary border-0 flex-shrink-0">
+                            <Badge className="bg-gray-200 text-gray-900 border-0 flex-shrink-0 font-semibold">
                               Baru
                             </Badge>
                           )}

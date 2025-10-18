@@ -95,7 +95,7 @@ export default function DashboardHeader() {
                 <DropdownMenuLabel>
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-black">Notifikasi</p>
-                    <button className="text-xs text-primary hover:underline">Tandai semua dibaca</button>
+                    <button className="text-xs text-black hover:underline font-semibold">Tandai semua dibaca</button>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -104,8 +104,8 @@ export default function DashboardHeader() {
                 <div className="max-h-96 overflow-y-auto">
                   <DropdownMenuItem className="p-3 cursor-pointer hover:bg-gray-50 transition-colors">
                     <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Briefcase className="w-5 h-5 text-primary" />
+                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <Briefcase className="w-5 h-5 text-gray-700" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-black">Lamaran Anda Diterima</p>
@@ -129,7 +129,7 @@ export default function DashboardHeader() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/notifications" className="text-center justify-center text-sm text-primary hover:underline cursor-pointer py-2">
+                  <Link href="/notifications" className="text-center justify-center text-sm text-black hover:underline cursor-pointer py-2 font-semibold">
                     Lihat semua notifikasi
                   </Link>
                 </DropdownMenuItem>
