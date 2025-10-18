@@ -95,13 +95,13 @@ export default function RecommendationsPage() {
             Lengkapi profil Anda (keahlian, preferensi industri, dan lokasi) untuk mendapatkan rekomendasi pekerjaan yang lebih sesuai
           </p>
           <div className="flex gap-4 justify-center">
-            <Link href="/user/dashboard#profile">
-              <Button>
+            <Link href="/user/dashboard/settings">
+              <Button data-testid="button-complete-profile">
                 Lengkapi Profil
               </Button>
             </Link>
             <Link href="/jobs">
-              <Button variant="outline">
+              <Button variant="outline" data-testid="button-browse-jobs">
                 Jelajahi Semua Lowongan
               </Button>
             </Link>
