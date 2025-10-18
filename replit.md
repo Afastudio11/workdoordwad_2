@@ -10,6 +10,33 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Updates (October 18, 2025)
 
+### UI/UX Color Accessibility Improvements
+Completed comprehensive audit and fixes for color contrast and readability issues throughout the application:
+
+**Problems Addressed:**
+- Eliminated all instances of lime green (#D4FF00) text on white/light backgrounds that caused readability issues
+- Standardized header appearance across login and register pages to use dark variant (black background)
+- Removed Sparkles icon from Recommendations page title for cleaner design
+
+**Files Modified:**
+- Login & Register pages: Changed header from light to dark variant for consistency
+- DashboardHeader: Updated notification dropdown to use black text instead of lime green for "Tandai semua dibaca" and "Lihat semua notifikasi"
+- NotificationsPage: Changed notification badge and icon colors from lime to gray
+- QuickAccessPage: Updated all role icons and "Kembali ke Halaman Utama" link to use readable gray/black
+- FAQPage: Changed help icon to gray
+- CommunityPage: Updated avatar circles and like button colors to use gray when active
+- RecommendationsPage: Removed Sparkles icon from page title
+
+**Design Token Changes:**
+- Replaced `text-primary` (lime green) with `text-gray-700` or `text-gray-900` on light backgrounds
+- Replaced `bg-primary/10` with `bg-gray-100` for better contrast
+- Used `font-semibold` to maintain visual hierarchy without relying on color
+
+**Accessibility Impact:**
+- Improved text contrast ratios across all pages
+- Better readability for users with visual impairments
+- Maintained brand color (#D4FF00) only for primary action buttons and highlights where appropriate
+
 ### Job Preferences Feature
 Added comprehensive job preferences system allowing users to set their preferences for better job recommendations:
 - **Industries**: Users can select from 8 predefined industries (Teknologi, Keuangan, Kesehatan, Pendidikan, Retail, Manufaktur, Pariwisata, Media)
