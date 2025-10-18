@@ -36,12 +36,24 @@ export interface IStorage {
   
   // Companies
   getCompanyById(id: string): Promise<Company | undefined>;
+  getCompanyByUserId(userId: string): Promise<Company | undefined>;
   createCompany(company: InsertCompany): Promise<Company>;
+  updateCompany(companyId: string, updates: Partial<Company>): Promise<Company | undefined>;
   
   // Applications
   createApplication(application: InsertApplication): Promise<Application>;
   getUserApplications(userId: string): Promise<(Application & { job: Job & { company: Company } })[]>;
+  getEmployerApplications(userId: string): Promise<(Application & { user: User; job: Job & { company: Company } })[]>;
+  updateApplicationStatus(applicationId: string, status: string): Promise<Application | undefined>;
   checkApplicationExists(userId: string, jobId: string): Promise<boolean>;
+  
+  // Employer Analytics
+  getEmployerStats(userId: string): Promise<{
+    totalJobs: number;
+    activeJobs: number;
+    totalApplications: number;
+    newApplicationsThisWeek: number;
+  }>;
   
   // Wishlists
   getUserWishlists(userId: string): Promise<(Wishlist & { job: Job & { company: Company } })[]>;
@@ -447,6 +459,101 @@ export class DbStorage implements IStorage {
     );
 
     return enrichedApplications as (Application & { user: User })[];
+  }
+
+  async getCompanyByUserId(userId: string): Promise<Company | undefined> {
+    const [company] = await db.select().from(companiesTable).where(eq(companiesTable.createdBy, userId));
+    return company;
+  }
+
+  async updateCompany(companyId: string, updates: Partial<Company>): Promise<Company | undefined> {
+    const [updatedCompany] = await db
+      .update(companiesTable)
+      .set(updates)
+      .where(eq(companiesTable.id, companyId))
+      .returning();
+    return updatedCompany;
+  }
+
+  async getEmployerApplications(userId: string): Promise<(Application & { user: User; job: Job & { company: Company } })[]> {
+    const employerJobs = await this.getJobsByEmployer(userId);
+    const jobIds = employerJobs.map(job => job.id);
+
+    if (jobIds.length === 0) {
+      return [];
+    }
+
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(inArray(applicationsTable.jobId, jobIds))
+      .orderBy(desc(applicationsTable.createdAt));
+
+    const enrichedApplications = await Promise.all(
+      applications.map(async (app) => {
+        const user = await this.getUser(app.applicantId);
+        const job = await this.getJobById(app.jobId);
+        return {
+          ...app,
+          user: user!,
+          job: job!,
+        };
+      })
+    );
+
+    return enrichedApplications as (Application & { user: User; job: Job & { company: Company } })[];
+  }
+
+  async updateApplicationStatus(applicationId: string, status: string): Promise<Application | undefined> {
+    const [updatedApplication] = await db
+      .update(applicationsTable)
+      .set({ status })
+      .where(eq(applicationsTable.id, applicationId))
+      .returning();
+    return updatedApplication;
+  }
+
+  async getEmployerStats(userId: string): Promise<{
+    totalJobs: number;
+    activeJobs: number;
+    totalApplications: number;
+    newApplicationsThisWeek: number;
+  }> {
+    const jobs = await this.getJobsByEmployer(userId);
+    const totalJobs = jobs.length;
+    const activeJobs = jobs.filter(j => j.isActive).length;
+
+    const jobIds = jobs.map(job => job.id);
+    
+    if (jobIds.length === 0) {
+      return {
+        totalJobs: 0,
+        activeJobs: 0,
+        totalApplications: 0,
+        newApplicationsThisWeek: 0,
+      };
+    }
+
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(inArray(applicationsTable.jobId, jobIds));
+
+    const totalApplications = applications.length;
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const newApplicationsThisWeek = applications.filter(
+      app => new Date(app.createdAt) > oneWeekAgo
+    ).length;
+
+    return {
+      totalJobs,
+      activeJobs,
+      totalApplications,
+      newApplicationsThisWeek,
+    };
   }
 }
 
