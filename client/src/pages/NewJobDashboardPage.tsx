@@ -114,19 +114,6 @@ export default function NewJobDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="bg-gradient-to-br from-purple-600 to-orange-400 rounded-2xl p-8 text-white">
-              <h2 className="text-2xl font-bold mb-4">
-                Dapatkan
-                <br />
-                profesi terbaikmu
-                <br />
-                dengan PintuKerja
-              </h2>
-              <button className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity">
-                Pelajari Lebih Lanjut
-              </button>
-            </div>
-
             <FilterSidebar onFilterChange={setFilters} />
           </div>
 
