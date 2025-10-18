@@ -15,8 +15,8 @@ export default function QuickAccessPage() {
           <Link href="/jobs" data-testid="link-access-pekerja">
             <div className="bg-card border-2 border-border rounded-xl p-8 hover:border-primary transition-all cursor-pointer group">
               <div className="flex flex-col items-center text-center">
-                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <User className="h-8 w-8 text-primary" />
+                <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
+                  <User className="h-8 w-8 text-gray-700" />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">Pekerja</h3>
                 <p className="text-sm text-muted-foreground mb-6">
@@ -32,8 +32,8 @@ export default function QuickAccessPage() {
           <Link href="/employer/dashboard" data-testid="link-access-pemberi">
             <div className="bg-card border-2 border-border rounded-xl p-8 hover:border-primary transition-all cursor-pointer group">
               <div className="flex flex-col items-center text-center">
-                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Briefcase className="h-8 w-8 text-primary" />
+                <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
+                  <Briefcase className="h-8 w-8 text-gray-700" />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">Pemberi Kerja</h3>
                 <p className="text-sm text-muted-foreground mb-6">
@@ -49,8 +49,8 @@ export default function QuickAccessPage() {
           <Link href="/admin/dashboard" data-testid="link-access-admin">
             <div className="bg-card border-2 border-border rounded-xl p-8 hover:border-primary transition-all cursor-pointer group">
               <div className="flex flex-col items-center text-center">
-                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Shield className="h-8 w-8 text-primary" />
+                <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
+                  <Shield className="h-8 w-8 text-gray-700" />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">Admin</h3>
                 <p className="text-sm text-muted-foreground mb-6">
@@ -65,7 +65,7 @@ export default function QuickAccessPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/" className="text-sm text-primary hover:underline" data-testid="link-back-home">
+          <Link href="/" className="text-sm text-black hover:underline font-semibold" data-testid="link-back-home">
             ← Kembali ke Halaman Utama
           </Link>
         </div>

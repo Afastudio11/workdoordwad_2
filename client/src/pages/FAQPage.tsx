@@ -86,8 +86,8 @@ export default function FAQPage() {
 
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-            <HelpCircle className="h-8 w-8 text-primary" />
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 mb-4">
+            <HelpCircle className="h-8 w-8 text-gray-700" />
           </div>
           <h1 className="text-4xl font-bold text-foreground mb-4">Pertanyaan yang Sering Diajukan</h1>
           <p className="text-lg text-muted-foreground">Temukan jawaban untuk pertanyaan yang sering diajukan</p>

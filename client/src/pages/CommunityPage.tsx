@@ -121,8 +121,8 @@ export default function CommunityPage() {
                 data-testid={`post-${post.id}`}
               >
                 <div className="flex items-start gap-3 mb-4">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-semibold text-primary">{post.avatar}</span>
+                  <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-semibold text-gray-700">{post.avatar}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -142,7 +142,7 @@ export default function CommunityPage() {
                 <div className="flex items-center gap-6">
                   <button
                     className={`flex items-center gap-2 text-sm transition-colors ${
-                      post.isLiked ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                      post.isLiked ? "text-gray-900 font-semibold" : "text-muted-foreground hover:text-foreground"
                     }`}
                     data-testid={`button-like-${post.id}`}
                   >
