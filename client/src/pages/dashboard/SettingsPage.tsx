@@ -138,20 +138,17 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <DashboardPageHeader />
-      
-      <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-            Pengaturan Akun
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Kelola informasi akun dan preferensi keamanan Anda
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
+          Pengaturan Akun
+        </h1>
+        <p className="text-gray-600 mt-1">
+          Kelola informasi akun dan preferensi keamanan Anda
+        </p>
+      </div>
 
-        <div className="space-y-6">
+      <div className="space-y-6">
           {/* Account Information */}
           <Card className="bg-white border-gray-200">
             <CardHeader>
@@ -533,7 +530,6 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
       </div>
     </div>
   );

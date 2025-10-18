@@ -120,20 +120,17 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <DashboardPageHeader />
-      
-      <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-            Profil Saya / CV Digital
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Kelola CV dan riwayat lamaran Anda
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
+          Profile
+        </h1>
+        <p className="text-gray-600 mt-1">
+          Kelola CV dan riwayat lamaran Anda
+        </p>
+      </div>
 
-        <Tabs defaultValue="cv" className="w-full">
+      <Tabs defaultValue="cv" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200">
             <TabsTrigger value="cv" className="data-[state=active]:bg-[#D4FF00] data-[state=active]:text-gray-900">
               <FileText className="w-4 h-4 mr-2" />
@@ -401,7 +398,6 @@ export default function ProfilePage() {
             )}
           </TabsContent>
         </Tabs>
-      </div>
     </div>
   );
 }

@@ -172,11 +172,11 @@ export default function DashboardPageHeader() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
-                {/* Profil Saya / CV Digital */}
+                {/* Profile */}
                 <DropdownMenuItem asChild>
                   <Link href="/user/dashboard#profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile-cv">
                     <User className="h-4 w-4" />
-                    <span>Profil Saya / CV Digital</span>
+                    <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
 
