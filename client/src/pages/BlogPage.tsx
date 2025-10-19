@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import Header from "@/components/Header";
 import { ChevronDown } from "lucide-react";
 import article1Img from "@assets/5_1760872341106.png";
@@ -83,51 +84,13 @@ export default function BlogPage() {
       
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-12 md:py-20">
         {/* Hero Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-12 md:mb-16">
-          <div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black mb-6 leading-tight" data-testid="page-title">
-              Our Blog & Insight
-            </h1>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              We delve into the world of job market, exploring the latest trends, regulations, and best practices that drive responsible career operations.
-            </p>
-          </div>
-          
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="relative w-full max-w-md">
-              <svg viewBox="0 0 400 300" className="w-full h-auto">
-                {/* Decorative Background */}
-                <ellipse cx="200" cy="150" rx="180" ry="130" fill="#E5E7EB" />
-                
-                {/* Computer Screens */}
-                <rect x="120" y="60" width="60" height="45" rx="3" fill="white" stroke="#9CA3AF" strokeWidth="2" />
-                <rect x="200" y="50" width="70" height="50" rx="3" fill="white" stroke="#9CA3AF" strokeWidth="2" />
-                <rect x="290" y="70" width="55" height="40" rx="3" fill="white" stroke="#9CA3AF" strokeWidth="2" />
-                
-                {/* Icons on screens */}
-                <circle cx="235" cy="70" r="8" fill="#D4FF00" />
-                <rect x="315" y="85" width="15" height="15" fill="#FF6B6B" />
-                <circle cx="150" cy="80" r="6" fill="#4ECDC4" />
-                
-                {/* Bear Character */}
-                <circle cx="200" cy="200" r="45" fill="#8B6F47" />
-                <circle cx="185" cy="190" r="8" fill="#F5E6D3" />
-                <circle cx="215" cy="190" r="8" fill="#F5E6D3" />
-                <circle cx="185" cy="188" r="3" fill="black" />
-                <circle cx="215" cy="188" r="3" fill="black" />
-                <ellipse cx="200" cy="205" rx="6" ry="4" fill="#F5E6D3" />
-                
-                {/* Hard Hat */}
-                <ellipse cx="200" cy="165" rx="30" ry="8" fill="#FFD700" />
-                <path d="M 170 165 Q 200 140 230 165" fill="#FFD700" />
-                
-                {/* Vest */}
-                <rect x="175" y="220" width="50" height="40" rx="5" fill="#4A90E2" />
-                <rect x="177" y="225" width="10" height="30" fill="#FF6B6B" />
-                <rect x="213" y="225" width="10" height="30" fill="#FF6B6B" />
-              </svg>
-            </div>
-          </div>
+        <div className="mb-12 md:mb-16">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black mb-6 leading-tight" data-testid="page-title">
+            Our Blog & Insight
+          </h1>
+          <p className="text-lg text-gray-600 leading-relaxed max-w-3xl">
+            We delve into the world of job market, exploring the latest trends, regulations, and best practices that drive responsible career operations.
+          </p>
         </div>
 
         {/* Filter Section */}
@@ -163,11 +126,14 @@ export default function BlogPage() {
         {/* Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {filteredPosts.map((post) => (
-            <div
+            <Link
               key={post.id}
-              className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer group"
-              data-testid={`blog-card-${post.id}`}
+              href={`/blog/${post.id}`}
             >
+              <div
+                className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer group"
+                data-testid={`blog-card-${post.id}`}
+              >
               <div className="relative overflow-hidden aspect-[4/3]">
                 <img
                   src={post.image}
@@ -201,6 +167,7 @@ export default function BlogPage() {
                 </p>
               </div>
             </div>
+            </Link>
           ))}
         </div>
 
