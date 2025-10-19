@@ -1,9 +1,11 @@
 import { Link, useLocation } from "wouter";
-import { Bell, User, LogOut } from "lucide-react";
+import { Bell, User, LogOut, MapPin, ChevronDown, Search } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import logoImg from "@assets/as@4x_1760716473766.png";
+import { getPopularLocations, searchLocations } from "@shared/indonesia-locations";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import {
@@ -14,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 
 interface Notification {
   id: string;
@@ -28,6 +31,13 @@ interface Notification {
 export default function DashboardHeader() {
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
+  const [selectedCity, setSelectedCity] = useState("Jakarta Selatan");
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const popularCities = getPopularLocations();
+  const filteredCities = searchQuery 
+    ? searchLocations(searchQuery).map(loc => loc.name).slice(0, 10)
+    : popularCities;
 
   const { data: unreadData } = useQuery<{ count: number }>({
     queryKey: ["/api/notifications/unread-count"],
@@ -106,6 +116,68 @@ export default function DashboardHeader() {
 
           {/* Right side */}
           <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-3">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button 
+                    className="flex items-center gap-2 px-3 py-2 hover:bg-white/10 rounded-lg transition-colors"
+                    data-testid="button-location"
+                  >
+                    <MapPin className="h-5 w-5 text-white" />
+                    <span className="text-sm text-white font-medium">{selectedCity}</span>
+                    <ChevronDown className="h-4 w-4 text-white/70" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-72 bg-white p-0">
+                  <div className="p-3 pb-2">
+                    <DropdownMenuLabel className="text-black px-0 pb-2">Pilih Lokasi</DropdownMenuLabel>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        type="text"
+                        placeholder="Cari kota/kabupaten..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 h-9 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator className="my-0" />
+                  <div className="max-h-80 overflow-y-auto">
+                    {filteredCities.length > 0 ? (
+                      filteredCities.map((city) => (
+                        <DropdownMenuItem
+                          key={city}
+                          onClick={() => {
+                            setSelectedCity(city);
+                            setSearchQuery("");
+                          }}
+                          className={`cursor-pointer px-3 py-2 ${
+                            selectedCity === city ? "bg-gray-100 font-medium" : ""
+                          } text-black hover:bg-gray-50`}
+                        >
+                          <MapPin className="h-4 w-4 mr-2 text-gray-600 flex-shrink-0" />
+                          <span className="text-sm">{city}</span>
+                        </DropdownMenuItem>
+                      ))
+                    ) : (
+                      <div className="px-3 py-6 text-center text-sm text-gray-500">
+                        Lokasi tidak ditemukan
+                      </div>
+                    )}
+                  </div>
+                  {searchQuery === "" && (
+                    <>
+                      <DropdownMenuSeparator className="my-0" />
+                      <div className="p-2 text-xs text-gray-500 text-center">
+                        {popularCities.length} lokasi populer ditampilkan
+                      </div>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
             {/* Notifications Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
