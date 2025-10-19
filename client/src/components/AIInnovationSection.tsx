@@ -1,4 +1,7 @@
 import { useState } from "react";
+import article1Img from "@assets/5_1760872341106.png";
+import article2Img from "@assets/3_1760872341107.png";
+import article3Img from "@assets/4_1760872341107.png";
 
 const articles = [
   {
@@ -6,21 +9,21 @@ const articles = [
     title: "Tips Menulis CV yang Menarik Perhatian Recruiter",
     date: "29 Juni 2024",
     readTime: "6 min read",
-    image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&h=300&fit=crop"
+    image: article1Img
   },
   {
     id: 2,
     title: "Cara Memaksimalkan Peluang Diterima Kerja",
     date: "29 Juni 2024",
     readTime: "6 min read",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=300&fit=crop"
+    image: article2Img
   },
   {
     id: 3,
     title: "Strategi Interview yang Efektif untuk Fresh Graduate",
     date: "29 Juni 2024",
     readTime: "6 min read",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=300&fit=crop"
+    image: article3Img
   }
 ];
 
