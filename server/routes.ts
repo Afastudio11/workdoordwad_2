@@ -1352,6 +1352,142 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Messages API
+  app.get("/api/messages", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const conversations = await storage.getUserConversations(req.session.userId);
+      res.json(conversations);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+      res.status(500).json({ error: "Gagal mengambil percakapan" });
+    }
+  });
+
+  app.get("/api/messages/:userId", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const messages = await storage.getMessageThread(req.session.userId, req.params.userId);
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching message thread:", error);
+      res.status(500).json({ error: "Gagal mengambil pesan" });
+    }
+  });
+
+  app.post("/api/messages", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const { receiverId, content, applicationId, jobId } = req.body;
+
+      if (!receiverId || !content) {
+        return res.status(400).json({ error: "Data tidak lengkap" });
+      }
+
+      const message = await storage.sendMessage(
+        req.session.userId,
+        receiverId,
+        content,
+        applicationId,
+        jobId
+      );
+
+      // Create notification for receiver
+      await storage.createNotification(
+        receiverId,
+        "new_message",
+        "Pesan Baru",
+        "Anda mendapat pesan baru",
+        "/messages"
+      );
+
+      res.status(201).json(message);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      res.status(500).json({ error: "Gagal mengirim pesan" });
+    }
+  });
+
+  app.patch("/api/messages/:userId/read", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      await storage.markMessagesAsRead(req.session.userId, req.params.userId);
+      res.json({ message: "Pesan ditandai sebagai dibaca" });
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+      res.status(500).json({ error: "Gagal menandai pesan" });
+    }
+  });
+
+  // Notifications API
+  app.get("/api/notifications", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const notifications = await storage.getUserNotifications(req.session.userId);
+      res.json(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ error: "Gagal mengambil notifikasi" });
+    }
+  });
+
+  app.get("/api/notifications/unread-count", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const count = await storage.getUnreadNotificationCount(req.session.userId);
+      res.json({ count });
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+      res.status(500).json({ error: "Gagal mengambil jumlah notifikasi" });
+    }
+  });
+
+  app.patch("/api/notifications/:id/read", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      await storage.markNotificationAsRead(req.params.id);
+      res.json({ message: "Notifikasi ditandai sebagai dibaca" });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      res.status(500).json({ error: "Gagal menandai notifikasi" });
+    }
+  });
+
+  app.patch("/api/notifications/read-all", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      await storage.markAllNotificationsAsRead(req.session.userId);
+      res.json({ message: "Semua notifikasi ditandai sebagai dibaca" });
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      res.status(500).json({ error: "Gagal menandai semua notifikasi" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

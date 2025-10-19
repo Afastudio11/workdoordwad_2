@@ -78,10 +78,27 @@ export interface IStorage {
   createApplicationNote(note: InsertApplicantNote): Promise<ApplicantNote>;
   updateApplicationNote(noteId: string, note: string): Promise<ApplicantNote | undefined>;
   deleteApplicationNote(noteId: string): Promise<void>;
+  
+  // Messages
+  getUserConversations(userId: string): Promise<Array<{
+    otherUser: Omit<User, 'password'>;
+    lastMessage: any;
+    unreadCount: number;
+  }>>;
+  getMessageThread(userId: string, otherUserId: string): Promise<any[]>;
+  sendMessage(senderId: string, receiverId: string, content: string, applicationId?: string, jobId?: string): Promise<any>;
+  markMessagesAsRead(userId: string, otherUserId: string): Promise<void>;
+  
+  // Notifications
+  getUserNotifications(userId: string): Promise<any[]>;
+  getUnreadNotificationCount(userId: string): Promise<number>;
+  markNotificationAsRead(notificationId: string): Promise<void>;
+  markAllNotificationsAsRead(userId: string): Promise<void>;
+  createNotification(userId: string, type: string, title: string, message: string, linkUrl?: string): Promise<any>;
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable } from "@shared/schema";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable } from "@shared/schema";
 import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
@@ -782,6 +799,172 @@ export class DbStorage implements IStorage {
     await db
       .delete(jobTemplatesTable)
       .where(and(eq(jobTemplatesTable.id, templateId), eq(jobTemplatesTable.userId, userId)));
+  }
+
+  async getUserConversations(userId: string): Promise<Array<{
+    otherUser: User;
+    lastMessage: any;
+    unreadCount: number;
+  }>> {
+    const conversations = await db
+      .select({
+        senderId: messagesTable.senderId,
+        receiverId: messagesTable.receiverId,
+        content: messagesTable.content,
+        createdAt: messagesTable.createdAt,
+        isRead: messagesTable.isRead,
+      })
+      .from(messagesTable)
+      .where(or(eq(messagesTable.senderId, userId), eq(messagesTable.receiverId, userId)))
+      .orderBy(desc(messagesTable.createdAt));
+
+    const conversationMap = new Map<string, { lastMessage: any; unreadCount: number }>();
+    
+    for (const msg of conversations) {
+      const otherUserId = msg.senderId === userId ? msg.receiverId : msg.senderId;
+      
+      if (!conversationMap.has(otherUserId)) {
+        const unread = conversations.filter(
+          m => m.senderId === otherUserId && m.receiverId === userId && !m.isRead
+        ).length;
+        
+        conversationMap.set(otherUserId, {
+          lastMessage: msg,
+          unreadCount: unread,
+        });
+      }
+    }
+
+    const result = [];
+    for (const [otherUserId, data] of Array.from(conversationMap.entries())) {
+      const otherUser = await this.getUser(otherUserId);
+      if (otherUser) {
+        const { password, ...otherUserWithoutPassword } = otherUser;
+        result.push({
+          otherUser: otherUserWithoutPassword,
+          lastMessage: data.lastMessage,
+          unreadCount: data.unreadCount,
+        });
+      }
+    }
+
+    return result;
+  }
+
+  async getMessageThread(userId: string, otherUserId: string): Promise<any[]> {
+    const messages = await db
+      .select()
+      .from(messagesTable)
+      .where(
+        or(
+          and(eq(messagesTable.senderId, userId), eq(messagesTable.receiverId, otherUserId)),
+          and(eq(messagesTable.senderId, otherUserId), eq(messagesTable.receiverId, userId))
+        )
+      )
+      .orderBy(messagesTable.createdAt);
+
+    return messages;
+  }
+
+  async sendMessage(
+    senderId: string,
+    receiverId: string,
+    content: string,
+    applicationId?: string,
+    jobId?: string
+  ): Promise<any> {
+    const [message] = await db
+      .insert(messagesTable)
+      .values({
+        senderId,
+        receiverId,
+        content,
+        applicationId,
+        jobId,
+        isRead: false,
+      })
+      .returning();
+
+    return message;
+  }
+
+  async markMessagesAsRead(userId: string, otherUserId: string): Promise<void> {
+    await db
+      .update(messagesTable)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(messagesTable.senderId, otherUserId),
+          eq(messagesTable.receiverId, userId),
+          eq(messagesTable.isRead, false)
+        )
+      );
+  }
+
+  async getUserNotifications(userId: string): Promise<any[]> {
+    const notifications = await db
+      .select()
+      .from(notificationsTable)
+      .where(eq(notificationsTable.userId, userId))
+      .orderBy(desc(notificationsTable.createdAt))
+      .limit(50);
+
+    return notifications;
+  }
+
+  async getUnreadNotificationCount(userId: string): Promise<number> {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(notificationsTable)
+      .where(
+        and(
+          eq(notificationsTable.userId, userId),
+          eq(notificationsTable.isRead, false)
+        )
+      );
+
+    return Number(result?.count || 0);
+  }
+
+  async markNotificationAsRead(notificationId: string): Promise<void> {
+    await db
+      .update(notificationsTable)
+      .set({ isRead: true })
+      .where(eq(notificationsTable.id, notificationId));
+  }
+
+  async markAllNotificationsAsRead(userId: string): Promise<void> {
+    await db
+      .update(notificationsTable)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(notificationsTable.userId, userId),
+          eq(notificationsTable.isRead, false)
+        )
+      );
+  }
+
+  async createNotification(
+    userId: string,
+    type: string,
+    title: string,
+    message: string,
+    linkUrl?: string
+  ): Promise<any> {
+    const [notification] = await db
+      .insert(notificationsTable)
+      .values({
+        userId,
+        type,
+        title,
+        message,
+        linkUrl,
+        isRead: false,
+      })
+      .returning();
+
+    return notification;
   }
 }
 
