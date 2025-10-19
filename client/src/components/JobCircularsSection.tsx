@@ -5,7 +5,7 @@ import { Link, useLocation } from "wouter";
 const jobCirculars = [
   {
     company: "Apple Inc.",
-    position: "Desainer Antarmuka Senior",
+    position: "Senior UI Designer",
     location: "Jakarta, Indonesia",
     type: "Waktu Penuh",
     category: "Pengembangan Web",
@@ -15,7 +15,7 @@ const jobCirculars = [
   },
   {
     company: "Fiverr",
-    position: "Pengembang PHP",
+    position: "PHP Developer",
     location: "Bandung, Indonesia",
     type: "Waktu Penuh",
     category: "Desain Grafis",
@@ -25,7 +25,7 @@ const jobCirculars = [
   },
   {
     company: "Behance",
-    position: "Insinyur Perangkat Lunak Senior",
+    position: "Senior Software Engineer",
     location: "Surabaya, Indonesia",
     type: "Waktu Penuh",
     category: "Rekayasa Perangkat Lunak",
@@ -35,7 +35,7 @@ const jobCirculars = [
   },
   {
     company: "Apple Inc.",
-    position: "Peneliti Pengalaman Pengguna",
+    position: "User Experience Researcher",
     location: "Jakarta, Indonesia",
     type: "Waktu Penuh",
     category: "Pengembangan Web",
@@ -45,7 +45,7 @@ const jobCirculars = [
   },
   {
     company: "Apple Inc.",
-    position: "Manajer Proyek",
+    position: "Project Manager",
     location: "Jakarta, Indonesia",
     type: "Waktu Penuh",
     category: "Pengembangan Web",
@@ -55,7 +55,7 @@ const jobCirculars = [
   },
   {
     company: "Behance",
-    position: "Desainer Produk",
+    position: "Product Designer",
     location: "Yogyakarta, Indonesia",
     type: "Waktu Penuh",
     category: "Desain Produk",
