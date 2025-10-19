@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { User, Briefcase, Heart, LogOut, Menu, X, Sparkles, Settings } from "lucide-react";
+import { User, Briefcase, Heart, LogOut, Menu, X, Sparkles, Settings, Bell } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import DashboardHeader from "@/components/DashboardHeader";
 import ProfilePage from "./dashboard/ProfilePage";
@@ -8,6 +8,7 @@ import ApplicationsPage from "./dashboard/ApplicationsPage";
 import WishlistPage from "./dashboard/WishlistPage";
 import RecommendationsPage from "./dashboard/RecommendationsPage";
 import SettingsPage from "./dashboard/SettingsPage";
+import NotificationsPage from "./dashboard/NotificationsPage";
 
 export default function UserDashboardPage() {
   const [location] = useLocation();
@@ -29,6 +30,7 @@ export default function UserDashboardPage() {
     { id: 'recommendations', label: 'Rekomendasi', icon: Sparkles },
     { id: 'applications', label: 'Lamaran Saya', icon: Briefcase },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
+    { id: 'notifications', label: 'Notifikasi', icon: Bell },
     { id: 'settings', label: 'Pengaturan Akun', icon: Settings },
   ];
 
@@ -42,6 +44,8 @@ export default function UserDashboardPage() {
         return <ApplicationsPage />;
       case 'wishlist':
         return <WishlistPage />;
+      case 'notifications':
+        return <NotificationsPage />;
       case 'settings':
         return <SettingsPage />;
       default:

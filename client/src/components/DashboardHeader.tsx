@@ -2,8 +2,11 @@ import { Link, useLocation } from "wouter";
 import { MapPin, Bell, User, LogOut, Briefcase, Settings, ChevronDown, Search } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import logoImg from "@assets/as@4x_1760716473766.png";
 import { getPopularLocations, searchLocations } from "@shared/indonesia-locations";
+import { formatDistanceToNow } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +16,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+
+interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  linkUrl: string | null;
+  isRead: boolean;
+  createdAt: string;
+}
 
 export default function DashboardHeader() {
   const [location, setLocation] = useLocation();
@@ -24,6 +37,18 @@ export default function DashboardHeader() {
   const filteredCities = searchQuery 
     ? searchLocations(searchQuery).map(loc => loc.name).slice(0, 10)
     : popularCities;
+
+  const { data: unreadData } = useQuery<{ count: number }>({
+    queryKey: ["/api/notifications/unread-count"],
+    enabled: !!user,
+  });
+
+  const { data: notifications = [] } = useQuery<Notification[]>({
+    queryKey: ["/api/notifications"],
+    enabled: !!user,
+  });
+
+  const recentNotifications = notifications.slice(0, 5);
 
   const isActive = (path: string) => location === path;
 
@@ -148,48 +173,69 @@ export default function DashboardHeader() {
                   data-testid="button-notifications"
                 >
                   <Bell className="h-5 w-5 text-white" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+                  {unreadData && unreadData.count > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#D4FF00] text-[10px] font-bold text-gray-900">
+                      {unreadData.count > 9 ? '9+' : unreadData.count}
+                    </span>
+                  )}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80 bg-white">
                 <DropdownMenuLabel>
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-black">Notifikasi</p>
-                    <button className="text-xs text-black hover:underline font-semibold">Tandai semua dibaca</button>
+                    {unreadData && unreadData.count > 0 && (
+                      <Link href="/user/dashboard#notifications">
+                        <button className="text-xs text-black hover:underline font-semibold" data-testid="button-mark-all-read-header">Tandai semua dibaca</button>
+                      </Link>
+                    )}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
                 {/* Notification Items */}
                 <div className="max-h-96 overflow-y-auto">
-                  <DropdownMenuItem className="p-3 cursor-pointer hover:bg-gray-50 transition-colors">
-                    <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                        <Briefcase className="w-5 h-5 text-gray-700" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-black">Lamaran Anda Diterima</p>
-                        <p className="text-xs text-gray-600 mt-1">PT Maju Jaya telah menerima lamaran Anda untuk posisi Senior Developer</p>
-                        <p className="text-xs text-gray-500 mt-1">2 jam yang lalu</p>
-                      </div>
+                  {recentNotifications.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <Bell className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                      <p className="text-sm text-gray-500">Belum ada notifikasi</p>
                     </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="p-3 cursor-pointer hover:bg-gray-50 transition-colors">
-                    <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                        <Bell className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-black">Lowongan Baru Sesuai Profil Anda</p>
-                        <p className="text-xs text-gray-600 mt-1">3 lowongan baru yang sesuai dengan keahlian Anda</p>
-                        <p className="text-xs text-gray-500 mt-1">5 jam yang lalu</p>
-                      </div>
-                    </div>
-                  </DropdownMenuItem>
+                  ) : (
+                    recentNotifications.map((notif) => (
+                      <DropdownMenuItem 
+                        key={notif.id}
+                        className={`p-3 cursor-pointer hover:bg-gray-50 transition-colors ${!notif.isRead ? 'bg-blue-50/30' : ''}`}
+                        asChild
+                      >
+                        <Link href={notif.linkUrl || "/user/dashboard#notifications"}>
+                          <div className="flex gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                              <span className="text-lg">{notif.type === 'application_status' ? '📋' : notif.type === 'new_message' ? '💬' : notif.type === 'job_match' ? '🎯' : '🔔'}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2 mb-1">
+                                <p className="text-sm font-medium text-black line-clamp-1">{notif.title}</p>
+                                {!notif.isRead && (
+                                  <span className="w-2 h-2 rounded-full bg-[#D4FF00] flex-shrink-0 mt-1.5"></span>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-600 line-clamp-2 mb-1">{notif.message}</p>
+                              <p className="text-xs text-gray-500">
+                                {formatDistanceToNow(new Date(notif.createdAt), {
+                                  addSuffix: true,
+                                  locale: idLocale,
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    ))
+                  )}
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/notifications" className="text-center justify-center text-sm text-black hover:underline cursor-pointer py-2 font-semibold">
+                  <Link href="/user/dashboard#notifications" className="text-center justify-center text-sm text-black hover:underline cursor-pointer py-2 font-semibold">
                     Lihat semua notifikasi
                   </Link>
                 </DropdownMenuItem>
