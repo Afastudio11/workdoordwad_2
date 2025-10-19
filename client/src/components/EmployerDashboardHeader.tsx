@@ -1,6 +1,7 @@
-import { Link, useLocation } from "wouter";
-import { Bell, User, LogOut, Briefcase, Building2, Users, LayoutDashboard } from "lucide-react";
+import { Link } from "wouter";
+import { Bell, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
 import logoImg from "@assets/as@4x_1760716473766.png";
 import {
   DropdownMenu,
@@ -10,12 +11,38 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatDistanceToNow } from "date-fns";
+import { id as localeId } from "date-fns/locale";
+
+type Notification = {
+  id: string;
+  userId: string;
+  type: string;
+  title: string;
+  message: string;
+  link?: string | null;
+  isRead: boolean;
+  createdAt: string;
+};
 
 export default function EmployerDashboardHeader() {
-  const [location] = useLocation();
   const { user, logout } = useAuth();
 
-  const isActive = (path: string) => location === path;
+  // Fetch real notifications
+  const { data: notifications = [], isLoading } = useQuery<Notification[]>({
+    queryKey: ["/api/notifications"],
+    enabled: !!user,
+  });
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  const formatNotificationTime = (dateStr: string) => {
+    try {
+      return formatDistanceToNow(new Date(dateStr), { addSuffix: true, locale: localeId });
+    } catch {
+      return "Baru saja";
+    }
+  };
 
   return (
     <header className="bg-[#1a1a1a] text-white sticky top-0 z-50 border-b border-gray-800">
@@ -26,55 +53,10 @@ export default function EmployerDashboardHeader() {
             <img src={logoImg} alt="PintuKerja" className="h-12" />
           </Link>
 
-          {/* Navigation - Employer specific */}
-          <nav className="hidden md:flex items-center gap-8">
-            <a 
-              href="#overview"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.hash = 'overview';
-              }}
-              className={`text-sm cursor-pointer transition-colors ${
-                window.location.hash === '#overview' || !window.location.hash ? "text-white font-medium" : "text-white/80 hover:text-white"
-              }`}
-              data-testid="nav-dashboard"
-            >
-              Dashboard
-            </a>
-            <a 
-              href="#jobs"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.hash = 'jobs';
-              }}
-              className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
-              data-testid="nav-jobs"
-            >
-              Lowongan Saya
-            </a>
-            <a 
-              href="#applicants"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.hash = 'applicants';
-              }}
-              className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
-              data-testid="nav-applicants"
-            >
-              Pelamar
-            </a>
-            <a 
-              href="#company"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.hash = 'company';
-              }}
-              className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
-              data-testid="nav-company"
-            >
-              Perusahaan
-            </a>
-          </nav>
+          {/* Page Title - Centered */}
+          <div className="hidden md:block">
+            <h1 className="text-lg font-semibold text-white">Dashboard Pemberi Kerja</h1>
+          </div>
 
           {/* Right side */}
           <div className="flex items-center gap-4">
@@ -86,51 +68,70 @@ export default function EmployerDashboardHeader() {
                   data-testid="button-notifications"
                 >
                   <Bell className="h-5 w-5 text-white" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 w-5 h-5 bg-[#D4FF00] text-gray-900 text-xs font-bold rounded-full flex items-center justify-center">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80 bg-white">
                 <DropdownMenuLabel>
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-black">Notifikasi</p>
-                    <button className="text-xs text-black hover:underline font-semibold">Tandai semua dibaca</button>
+                    {unreadCount > 0 && (
+                      <span className="text-xs text-gray-500">{unreadCount} baru</span>
+                    )}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
                 {/* Notification Items */}
                 <div className="max-h-96 overflow-y-auto">
-                  <DropdownMenuItem className="p-3 cursor-pointer hover:bg-gray-50 transition-colors">
-                    <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                        <Users className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-black">Pelamar Baru</p>
-                        <p className="text-xs text-gray-600 mt-1">3 pelamar baru melamar untuk posisi Senior Developer</p>
-                        <p className="text-xs text-gray-500 mt-1">2 jam yang lalu</p>
-                      </div>
+                  {isLoading ? (
+                    <div className="p-4 text-center">
+                      <p className="text-sm text-gray-500">Memuat notifikasi...</p>
                     </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="p-3 cursor-pointer hover:bg-gray-50 transition-colors">
-                    <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
-                        <Briefcase className="w-5 h-5 text-green-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-black">Lowongan Dipublikasikan</p>
-                        <p className="text-xs text-gray-600 mt-1">Lowongan "Marketing Manager" telah aktif</p>
-                        <p className="text-xs text-gray-500 mt-1">5 jam yang lalu</p>
-                      </div>
+                  ) : notifications.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <Bell className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                      <p className="text-sm text-gray-500">Belum ada notifikasi</p>
                     </div>
-                  </DropdownMenuItem>
+                  ) : (
+                    notifications.slice(0, 5).map((notification) => (
+                      <DropdownMenuItem 
+                        key={notification.id}
+                        className={`p-3 cursor-pointer hover:bg-gray-50 transition-colors ${!notification.isRead ? 'bg-blue-50/50' : ''}`}
+                        onClick={() => {
+                          if (notification.link) {
+                            window.location.href = notification.link;
+                          }
+                        }}
+                      >
+                        <div className="flex gap-3 w-full">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-black">{notification.title}</p>
+                            <p className="text-xs text-gray-600 mt-1 line-clamp-2">{notification.message}</p>
+                            <p className="text-xs text-gray-500 mt-1">{formatNotificationTime(notification.createdAt)}</p>
+                          </div>
+                          {!notification.isRead && (
+                            <div className="w-2 h-2 bg-[#D4FF00] rounded-full flex-shrink-0 mt-1"></div>
+                          )}
+                        </div>
+                      </DropdownMenuItem>
+                    ))
+                  )}
                 </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/employer/notifications" className="text-center justify-center text-sm text-black hover:underline cursor-pointer py-2 font-semibold">
-                    Lihat semua notifikasi
-                  </Link>
-                </DropdownMenuItem>
+                {notifications.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/notifications" className="text-center justify-center text-sm text-black hover:underline cursor-pointer py-2 font-semibold">
+                        Lihat semua notifikasi
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -160,32 +161,6 @@ export default function EmployerDashboardHeader() {
                     <p className="text-xs leading-none text-gray-500 mt-1">Pemberi Kerja</p>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                
-                {/* Dashboard */}
-                <DropdownMenuItem asChild>
-                  <Link href="/employer/dashboard" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-dashboard">
-                    <LayoutDashboard className="h-4 w-4" />
-                    <span>Dashboard</span>
-                  </Link>
-                </DropdownMenuItem>
-
-                {/* Company Profile */}
-                <DropdownMenuItem asChild>
-                  <a 
-                    href="#company"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.location.hash = 'company';
-                    }}
-                    className="flex items-center gap-3 cursor-pointer text-black" 
-                    data-testid="menu-company"
-                  >
-                    <Building2 className="h-4 w-4" />
-                    <span>Profil Perusahaan</span>
-                  </a>
-                </DropdownMenuItem>
-
                 <DropdownMenuSeparator />
 
                 {/* Keluar (Sign Out) */}

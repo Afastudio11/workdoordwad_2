@@ -286,6 +286,18 @@ export default function ManageJobsPage() {
 
   const confirmBulkAction = () => {
     const jobIds = Array.from(selectedJobs);
+    
+    // Prevent empty action
+    if (jobIds.length === 0) {
+      toast({
+        title: "Tidak ada lowongan dipilih",
+        description: "Pilih setidaknya satu lowongan untuk melakukan aksi",
+        variant: "destructive",
+      });
+      setIsBulkActionDialogOpen(false);
+      return;
+    }
+    
     if (bulkActionType === "delete") {
       bulkDeleteMutation.mutate(jobIds);
     } else if (bulkActionType === "activate") {
@@ -322,7 +334,7 @@ export default function ManageJobsPage() {
           />
         </div>
 
-        {selectedJobs.size > 0 && (
+        {selectedJobs.size > 0 && !isLoading && (
           <div className="mb-4 flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <span className="text-sm text-gray-700 dark:text-gray-300">
               {selectedJobs.size} lowongan dipilih
@@ -332,26 +344,32 @@ export default function ManageJobsPage() {
                 size="sm"
                 variant="outline"
                 onClick={() => handleBulkAction("activate")}
+                disabled={bulkUpdateMutation.isPending || bulkDeleteMutation.isPending}
                 data-testid="button-bulk-activate"
                 className="bg-white dark:bg-gray-800"
               >
+                {bulkUpdateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Aktifkan
               </Button>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => handleBulkAction("deactivate")}
+                disabled={bulkUpdateMutation.isPending || bulkDeleteMutation.isPending}
                 data-testid="button-bulk-deactivate"
                 className="bg-white dark:bg-gray-800"
               >
+                {bulkUpdateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Nonaktifkan
               </Button>
               <Button
                 size="sm"
                 variant="destructive"
                 onClick={() => handleBulkAction("delete")}
+                disabled={bulkUpdateMutation.isPending || bulkDeleteMutation.isPending}
                 data-testid="button-bulk-delete"
               >
+                {bulkDeleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Hapus
               </Button>
             </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Search, Send, MoreVertical, ArrowLeft } from "lucide-react";
+import { Search, Send, MoreVertical, ArrowLeft, MessageSquare, WifiOff, Loader2, AlertCircle } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useWebSocket } from "@/hooks/useWebSocket";
@@ -8,6 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface User {
   id: string;
@@ -46,12 +47,12 @@ export default function MessagesPage() {
     queryKey: ["/api/auth/me"],
   });
 
-  const { data: conversations = [], isLoading: conversationsLoading } = useQuery<Conversation[]>({
+  const { data: conversations = [], isLoading: conversationsLoading, error: conversationsError } = useQuery<Conversation[]>({
     queryKey: ["/api/messages"],
     enabled: !!currentUser,
   });
 
-  const { data: messages = [], isLoading: messagesLoading } = useQuery<Message[]>({
+  const { data: messages = [], isLoading: messagesLoading, error: messagesError } = useQuery<Message[]>({
     queryKey: ["/api/messages", selectedUserId],
     enabled: !!selectedUserId,
   });
@@ -165,9 +166,19 @@ export default function MessagesPage() {
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-foreground">Pesan</h1>
-          {isConnected && (
-            <span className="text-xs text-green-600 dark:text-green-400">● Connected</span>
-          )}
+          <div className="flex items-center gap-2">
+            {isConnected ? (
+              <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                <span className="w-2 h-2 bg-green-600 dark:bg-green-400 rounded-full animate-pulse"></span>
+                Real-time aktif
+              </span>
+            ) : (
+              <span className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
+                <WifiOff className="w-3 h-3" />
+                Menghubungkan...
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-280px)]">
@@ -189,12 +200,30 @@ export default function MessagesPage() {
 
             <div className="flex-1 overflow-y-auto">
               {conversationsLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <p className="text-muted-foreground">Loading...</p>
+                <div className="flex flex-col items-center justify-center py-12 gap-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Memuat percakapan...</p>
+                </div>
+              ) : conversationsError ? (
+                <div className="p-4">
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Gagal memuat percakapan. Silakan refresh halaman.
+                    </AlertDescription>
+                  </Alert>
                 </div>
               ) : filteredConversations.length === 0 ? (
-                <div className="flex items-center justify-center py-12">
-                  <p className="text-muted-foreground">Belum ada percakapan</p>
+                <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                  <MessageSquare className="h-16 w-16 text-muted-foreground/30 mb-4" />
+                  <p className="text-base font-medium text-foreground mb-1">
+                    {conversations.length === 0 ? 'Belum ada percakapan' : 'Tidak ada hasil'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {conversations.length === 0 
+                      ? 'Mulai percakapan dengan melamar pekerjaan' 
+                      : 'Coba kata kunci lain'}
+                  </p>
                 </div>
               ) : (
                 filteredConversations.map((conv) => (
@@ -247,9 +276,10 @@ export default function MessagesPage() {
           <div className={`lg:col-span-8 bg-card border border-border rounded-xl overflow-hidden flex flex-col ${!selectedUserId ? 'hidden lg:flex' : ''}`}>
             {!selectedUserId ? (
               <div className="flex-1 flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-muted-foreground text-lg mb-2">Pilih percakapan untuk memulai</p>
-                  <p className="text-muted-foreground text-sm">Pesan Anda akan muncul di sini</p>
+                <div className="text-center px-4">
+                  <MessageSquare className="h-20 w-20 text-muted-foreground/30 mx-auto mb-4" />
+                  <p className="text-lg font-medium text-foreground mb-2">Pilih percakapan</p>
+                  <p className="text-sm text-muted-foreground">Pilih percakapan dari daftar untuk melihat pesan</p>
                 </div>
               </div>
             ) : (
@@ -284,12 +314,24 @@ export default function MessagesPage() {
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background">
                   {messagesLoading ? (
-                    <div className="flex items-center justify-center py-12">
-                      <p className="text-muted-foreground">Loading...</p>
+                    <div className="flex flex-col items-center justify-center py-12 gap-3">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">Memuat pesan...</p>
+                    </div>
+                  ) : messagesError ? (
+                    <div className="p-4">
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          Gagal memuat pesan. Silakan coba lagi.
+                        </AlertDescription>
+                      </Alert>
                     </div>
                   ) : messages.length === 0 ? (
-                    <div className="flex items-center justify-center py-12">
-                      <p className="text-muted-foreground">Belum ada pesan. Mulai percakapan!</p>
+                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                      <MessageSquare className="h-16 w-16 text-muted-foreground/30 mb-4" />
+                      <p className="text-base font-medium text-foreground mb-1">Belum ada pesan</p>
+                      <p className="text-sm text-muted-foreground">Mulai percakapan dengan mengirim pesan</p>
                     </div>
                   ) : (
                     messages.map((message) => {
