@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import article1Img from "@assets/5_1760872341106.png";
 import article2Img from "@assets/3_1760872341107.png";
 import article3Img from "@assets/4_1760872341107.png";
@@ -8,21 +9,21 @@ const articles = [
     id: 1,
     title: "Tips Menulis CV yang Menarik Perhatian Recruiter",
     date: "29 Juni 2024",
-    readTime: "6 min read",
+    readTime: "6 menit baca",
     image: article1Img
   },
   {
     id: 2,
     title: "Cara Memaksimalkan Peluang Diterima Kerja",
     date: "29 Juni 2024",
-    readTime: "6 min read",
+    readTime: "6 menit baca",
     image: article2Img
   },
   {
     id: 3,
     title: "Strategi Interview yang Efektif untuk Fresh Graduate",
     date: "29 Juni 2024",
-    readTime: "6 min read",
+    readTime: "6 menit baca",
     image: article3Img
   }
 ];
@@ -75,27 +76,28 @@ export default function AIInnovationSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {articles.map((article) => (
-            <div
-              key={article.id}
-              className="group cursor-pointer"
-              data-testid={`article-card-${article.id}`}
-            >
-              <div className="mb-4 overflow-hidden rounded-2xl aspect-[4/3]">
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
-                />
+            <Link key={article.id} href={`/blog/${article.id}`}>
+              <div
+                className="group cursor-pointer"
+                data-testid={`article-card-${article.id}`}
+              >
+                <div className="mb-4 overflow-hidden rounded-2xl aspect-[4/3]">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-black mb-2 sm:mb-3 transition-colors">
+                  {article.title}
+                </h3>
+                <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
+                  <span>{article.date}</span>
+                  <span>•</span>
+                  <span>{article.readTime}</span>
+                </div>
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-black mb-2 sm:mb-3 transition-colors">
-                {article.title}
-              </h3>
-              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
-                <span>{article.date}</span>
-                <span>•</span>
-                <span>{article.readTime}</span>
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

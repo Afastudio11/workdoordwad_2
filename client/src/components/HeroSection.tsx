@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import cityscapeImg from "@assets/Cari Pekerjaan Kamu Disini,(1)_1760686523490.png";
 import starburstImg from "@assets/0d231d(1)_1760687086089.png";
 
-const popularJobs = ["Sales Marketing", "Software Engineer", "Web Developer"];
+const popularJobs = ["Pemasaran Penjualan", "Insinyur Perangkat Lunak", "Pengembang Web"];
 
 export default function HeroSection() {
   const [keyword, setKeyword] = useState("");
@@ -20,6 +20,12 @@ export default function HeroSection() {
     if (e.key === 'Enter') {
       handleSearch();
     }
+  };
+
+  const handleJobTagClick = (job: string) => {
+    const params = new URLSearchParams();
+    params.append("keyword", job);
+    setLocation(`/jobs?${params.toString()}`);
   };
 
   return (
@@ -60,13 +66,15 @@ export default function HeroSection() {
             <span className="text-gray-400 text-xs md:text-sm">Pekerjaan Populer Saat ini:</span>
             <div className="flex flex-wrap justify-center gap-2">
               {popularJobs.map((job, index) => (
-                <span 
+                <button 
                   key={index}
-                  className="px-3 md:px-4 py-1.5 text-white text-xs md:text-sm rounded-full hover:border-primary transition-colors cursor-pointer"
+                  onClick={() => handleJobTagClick(job)}
+                  className="px-3 md:px-4 py-1.5 text-white text-xs md:text-sm rounded-full hover:border-primary hover:border transition-colors cursor-pointer"
                   style={{ backgroundColor: '#484946' }}
+                  data-testid={`tag-job-${index}`}
                 >
                   {job}
-                </span>
+                </button>
               ))}
             </div>
           </div>

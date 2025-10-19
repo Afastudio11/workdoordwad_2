@@ -1,20 +1,21 @@
+import { Link } from "wouter";
 import logoImg from "@assets/as@4x_1760716473766.png";
 
 const footerLinks = {
   perusahaan: [
-    { label: "Tentang", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Kontak", href: "#" }
+    { label: "Tentang", href: "/" },
+    { label: "Blog", href: "/blog" },
+    { label: "Kontak", href: "/contact" }
   ],
   pencariKerja: [
-    { label: "Cari Lowongan", href: "#" },
-    { label: "Tips Karir", href: "#" },
-    { label: "FAQ", href: "#" }
+    { label: "Cari Lowongan", href: "/jobs" },
+    { label: "Tips Karir", href: "/blog" },
+    { label: "FAQ", href: "/faq" }
   ],
   perekrut: [
-    { label: "Posting Lowongan", href: "#" },
-    { label: "Harga", href: "#" },
-    { label: "Panduan", href: "#" }
+    { label: "Posting Lowongan", href: "/hiring" },
+    { label: "Harga", href: "/register" },
+    { label: "Panduan", href: "/blog" }
   ]
 };
 
@@ -24,9 +25,11 @@ export default function Footer() {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
           <div className="sm:col-span-2 md:col-span-1">
-            <div className="mb-4 md:mb-6">
-              <img src={logoImg} alt="PintuKerja" className="h-10 md:h-12" />
-            </div>
+            <Link href="/">
+              <div className="mb-4 md:mb-6 cursor-pointer">
+                <img src={logoImg} alt="PintuKerja" className="h-10 md:h-12" />
+              </div>
+            </Link>
             <p className="text-sm text-gray-400">
               Portal lowongan kerja terpercaya di Indonesia
             </p>
@@ -37,9 +40,9 @@ export default function Footer() {
             <ul className="space-y-3">
               {footerLinks.perusahaan.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -50,9 +53,9 @@ export default function Footer() {
             <ul className="space-y-2 md:space-y-3">
               {footerLinks.pencariKerja.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -63,9 +66,9 @@ export default function Footer() {
             <ul className="space-y-2 md:space-y-3">
               {footerLinks.perekrut.map((link, index) => (
                 <li key={index}>
-                  <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -74,15 +77,15 @@ export default function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-400">
-            © 2025 PintuKerja.com. All rights reserved.
+            © 2025 PintuKerja.com. Semua hak dilindungi.
           </p>
           <div className="flex items-center gap-6">
-            <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
-              Terms of Service
-            </a>
+            <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">
+              Kebijakan Privasi
+            </Link>
+            <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">
+              Syarat & Ketentuan
+            </Link>
           </div>
         </div>
       </div>

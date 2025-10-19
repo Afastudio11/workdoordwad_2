@@ -1,4 +1,5 @@
 import { Calendar, CreditCard } from "lucide-react";
+import { Link } from "wouter";
 import recruitmentImg from "@assets/0d231d(6)_1760871652852.png";
 
 export default function TestimonialsSection() {
@@ -23,18 +24,20 @@ export default function TestimonialsSection() {
             </div>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-3 md:gap-4">
-              <button 
-                className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-black text-lime-400 text-sm md:text-base font-semibold rounded-full hover:opacity-90 transition-colors sm:min-w-[180px] md:min-w-[200px]"
+              <Link 
+                href="/register"
+                className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-black text-lime-400 text-sm md:text-base font-semibold rounded-full hover:opacity-90 transition-colors sm:min-w-[180px] md:min-w-[200px] text-center"
                 data-testid="button-start-trial"
               >
                 Mulai Trial Gratis
-              </button>
-              <button 
-                className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-white text-black text-sm md:text-base font-semibold rounded-full hover:bg-white/90 transition-colors sm:min-w-[180px] md:min-w-[200px]"
+              </Link>
+              <Link 
+                href="/register"
+                className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-white text-black text-sm md:text-base font-semibold rounded-full hover:bg-white/90 transition-colors sm:min-w-[180px] md:min-w-[200px] text-center"
                 data-testid="button-get-demo"
               >
                 Dapatkan Demo
-              </button>
+              </Link>
             </div>
           </div>
 
