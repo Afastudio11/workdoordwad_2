@@ -3,8 +3,8 @@ import recruitmentImg from "@assets/0d231d(6)_1760871652852.png";
 
 export default function TestimonialsSection() {
   return (
-    <section className="relative py-16 md:py-24 lg:py-32 bg-lime-400 overflow-hidden">
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 md:px-8">
+    <section className="relative py-8 md:py-12 lg:py-16 bg-lime-400 overflow-hidden">
+      <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12">
           <div className="flex-1 text-left w-full">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-6 md:mb-8 leading-tight" data-testid="cta-title">
