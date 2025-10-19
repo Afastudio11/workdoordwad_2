@@ -49,24 +49,24 @@ export default function Header({ variant = "dark" }: HeaderProps) {
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
-            <a href="/" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-beranda">
+            <Link href="/" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-beranda">
               Beranda
-            </a>
-            <a href="/jobs" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-pekerjaan">
+            </Link>
+            <Link href="/jobs" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-pekerjaan">
               Cari Pekerjaan
-            </a>
-            <a href="/quick-access" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-quick-access">
+            </Link>
+            <Link href="/quick-access" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-quick-access">
               Akses Cepat
-            </a>
-            <a href="#cari-kandidat" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-kandidat">
+            </Link>
+            <Link href="/hiring" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-kandidat">
               Cari Kandidat
-            </a>
-            <a href="#blog" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-blog">
+            </Link>
+            <Link href="/blog" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-blog">
               Blog
-            </a>
-            <a href="#kontak" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-kontak">
+            </Link>
+            <Link href="/contact" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-kontak">
               Kontak
-            </a>
+            </Link>
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
@@ -134,24 +134,24 @@ export default function Header({ variant = "dark" }: HeaderProps) {
       {mobileMenuOpen && (
         <div className={`md:hidden border-t ${borderClass} ${bgClass}`} data-testid="mobile-menu">
           <div className="px-6 py-4 space-y-4">
-            <a href="/" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-beranda">
+            <Link href="/" className={`block text-base ${textClass}`} data-testid="mobile-link-beranda">
               Beranda
-            </a>
-            <a href="/jobs" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-cari-pekerjaan">
+            </Link>
+            <Link href="/jobs" className={`block text-base ${textClass}`} data-testid="mobile-link-cari-pekerjaan">
               Cari Pekerjaan
-            </a>
-            <a href="/quick-access" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-quick-access">
+            </Link>
+            <Link href="/quick-access" className={`block text-base ${textClass}`} data-testid="mobile-link-quick-access">
               Akses Cepat
-            </a>
-            <a href="#cari-kandidat" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-cari-kandidat">
+            </Link>
+            <Link href="/hiring" className={`block text-base ${textClass}`} data-testid="mobile-link-cari-kandidat">
               Cari Kandidat
-            </a>
-            <a href="#blog" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-blog">
+            </Link>
+            <Link href="/blog" className={`block text-base ${textClass}`} data-testid="mobile-link-blog">
               Blog
-            </a>
-            <a href="#kontak" className={`block text-base ${textClass}`} onClick={() => setMobileMenuOpen(false)} data-testid="mobile-link-kontak">
+            </Link>
+            <Link href="/contact" className={`block text-base ${textClass}`} data-testid="mobile-link-kontak">
               Kontak
-            </a>
+            </Link>
             <div className={`pt-4 space-y-3 border-t ${borderClass}`}>
               <div className="flex justify-center py-2">
                 <ThemeToggle />
