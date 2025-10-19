@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, Search, MoreVertical, Edit, Trash2, Eye, Loader2, X } from "lucide-react";
+import { Plus, Search, MoreVertical, Edit, Trash2, Eye, Loader2, X, CheckSquare, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { Job, Company } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -45,6 +46,9 @@ export default function ManageJobsPage() {
   const [activeTab, setActiveTab] = useState<"all" | "active" | "closed">("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<(Job & { company: Company }) | null>(null);
+  const [selectedJobs, setSelectedJobs] = useState<Set<string>>(new Set());
+  const [isBulkActionDialogOpen, setIsBulkActionDialogOpen] = useState(false);
+  const [bulkActionType, setBulkActionType] = useState<"delete" | "activate" | "deactivate" | null>(null);
 
   const { data: jobs = [], isLoading } = useQuery<(Job & { company: Company })[]>({
     queryKey: ["/api/employer/jobs"],
@@ -147,6 +151,53 @@ export default function ManageJobsPage() {
     },
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (jobIds: string[]) => {
+      const res = await apiRequest("/api/jobs/bulk-delete", "POST", { jobIds });
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/employer/jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/employer/stats"] });
+      setSelectedJobs(new Set());
+      setIsBulkActionDialogOpen(false);
+      toast({
+        title: "Berhasil",
+        description: `${data.deletedCount} lowongan berhasil dihapus`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Gagal",
+        description: "Gagal menghapus lowongan",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const bulkUpdateMutation = useMutation({
+    mutationFn: async ({ jobIds, updates }: { jobIds: string[]; updates: any }) => {
+      const res = await apiRequest("/api/jobs/bulk-update", "POST", { jobIds, updates });
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/employer/jobs"] });
+      setSelectedJobs(new Set());
+      setIsBulkActionDialogOpen(false);
+      toast({
+        title: "Berhasil",
+        description: `${data.updatedCount} lowongan berhasil diperbarui`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Gagal",
+        description: "Gagal memperbarui lowongan",
+        variant: "destructive",
+      });
+    },
+  });
+
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch = job.title.toLowerCase().includes(searchKeyword.toLowerCase());
     const status: "active" | "closed" = job.isActive ? "active" : "closed";
@@ -210,6 +261,40 @@ export default function ManageJobsPage() {
     }
   };
 
+  const handleSelectJob = (jobId: string) => {
+    const newSelected = new Set(selectedJobs);
+    if (newSelected.has(jobId)) {
+      newSelected.delete(jobId);
+    } else {
+      newSelected.add(jobId);
+    }
+    setSelectedJobs(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedJobs.size === filteredJobs.length) {
+      setSelectedJobs(new Set());
+    } else {
+      setSelectedJobs(new Set(filteredJobs.map(job => job.id)));
+    }
+  };
+
+  const handleBulkAction = (action: "delete" | "activate" | "deactivate") => {
+    setBulkActionType(action);
+    setIsBulkActionDialogOpen(true);
+  };
+
+  const confirmBulkAction = () => {
+    const jobIds = Array.from(selectedJobs);
+    if (bulkActionType === "delete") {
+      bulkDeleteMutation.mutate(jobIds);
+    } else if (bulkActionType === "activate") {
+      bulkUpdateMutation.mutate({ jobIds, updates: { isActive: true } });
+    } else if (bulkActionType === "deactivate") {
+      bulkUpdateMutation.mutate({ jobIds, updates: { isActive: false } });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -236,6 +321,42 @@ export default function ManageJobsPage() {
             data-testid="input-search-jobs"
           />
         </div>
+
+        {selectedJobs.size > 0 && (
+          <div className="mb-4 flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              {selectedJobs.size} lowongan dipilih
+            </span>
+            <div className="flex gap-2 ml-auto">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleBulkAction("activate")}
+                data-testid="button-bulk-activate"
+                className="bg-white dark:bg-gray-800"
+              >
+                Aktifkan
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleBulkAction("deactivate")}
+                data-testid="button-bulk-deactivate"
+                className="bg-white dark:bg-gray-800"
+              >
+                Nonaktifkan
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleBulkAction("delete")}
+                data-testid="button-bulk-delete"
+              >
+                Hapus
+              </Button>
+            </div>
+          </div>
+        )}
 
         <div className="flex gap-2">
           <button
@@ -288,6 +409,13 @@ export default function ManageJobsPage() {
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                 <tr>
+                  <th className="px-6 py-3 text-left w-12">
+                    <Checkbox
+                      checked={selectedJobs.size === filteredJobs.length && filteredJobs.length > 0}
+                      onCheckedChange={handleSelectAll}
+                      data-testid="checkbox-select-all"
+                    />
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Judul Lowongan
                   </th>
@@ -317,6 +445,13 @@ export default function ManageJobsPage() {
 
                   return (
                     <tr key={job.id} className="hover:bg-gray-50 dark:hover:bg-gray-700" data-testid={`job-row-${job.id}`}>
+                      <td className="px-6 py-4">
+                        <Checkbox
+                          checked={selectedJobs.has(job.id)}
+                          onCheckedChange={() => handleSelectJob(job.id)}
+                          data-testid={`checkbox-job-${job.id}`}
+                        />
+                      </td>
                       <td className="px-6 py-4">
                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{job.title}</div>
                       </td>
@@ -640,6 +775,55 @@ export default function ManageJobsPage() {
               </DialogFooter>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isBulkActionDialogOpen} onOpenChange={setIsBulkActionDialogOpen}>
+        <DialogContent className="bg-white dark:bg-gray-800">
+          <DialogHeader>
+            <DialogTitle className="text-gray-900 dark:text-gray-100">
+              Konfirmasi Aksi Massal
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-700 dark:text-gray-300">
+              {bulkActionType === "delete" && (
+                <>Apakah Anda yakin ingin menghapus <strong>{selectedJobs.size} lowongan</strong> yang dipilih? Tindakan ini tidak dapat dibatalkan.</>
+              )}
+              {bulkActionType === "activate" && (
+                <>Apakah Anda yakin ingin mengaktifkan <strong>{selectedJobs.size} lowongan</strong> yang dipilih?</>
+              )}
+              {bulkActionType === "deactivate" && (
+                <>Apakah Anda yakin ingin menonaktifkan <strong>{selectedJobs.size} lowongan</strong> yang dipilih?</>
+              )}
+            </p>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsBulkActionDialogOpen(false)}
+              data-testid="button-cancel-bulk-action"
+              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+            >
+              Batal
+            </Button>
+            <Button
+              variant={bulkActionType === "delete" ? "destructive" : "default"}
+              onClick={confirmBulkAction}
+              disabled={bulkDeleteMutation.isPending || bulkUpdateMutation.isPending}
+              data-testid="button-confirm-bulk-action"
+              className={bulkActionType === "delete" ? "" : "bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900"}
+            >
+              {(bulkDeleteMutation.isPending || bulkUpdateMutation.isPending) ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Memproses...
+                </>
+              ) : (
+                "Konfirmasi"
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

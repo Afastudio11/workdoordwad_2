@@ -29,11 +29,27 @@ export default function ManageApplicantsPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [jobFilter, setJobFilter] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
+  const [skillsFilter, setSkillsFilter] = useState<string>("");
   const [selectedApplicant, setSelectedApplicant] = useState<ApplicationWithDetails | null>(null);
   const [newNote, setNewNote] = useState("");
 
+  const queryParams = new URLSearchParams();
+  if (statusFilter !== "all") queryParams.append("status", statusFilter);
+  if (jobFilter !== "all") queryParams.append("jobId", jobFilter);
+  if (dateFrom) queryParams.append("dateFrom", dateFrom);
+  if (dateTo) queryParams.append("dateTo", dateTo);
+  if (skillsFilter) queryParams.append("skills", skillsFilter);
+
   const { data: applications = [], isLoading } = useQuery<ApplicationWithDetails[]>({
-    queryKey: ["/api/employer/applications"],
+    queryKey: ["/api/employer/applications", queryParams.toString()],
+    queryFn: async () => {
+      const url = `/api/employer/applications${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch applications");
+      return res.json();
+    },
   });
 
   const updateStatusMutation = useMutation({
@@ -153,7 +169,7 @@ export default function ManageApplicantsPage() {
 
       {/* Filters */}
       <Card className="p-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
@@ -193,6 +209,48 @@ export default function ManageApplicantsPage() {
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Dari Tanggal
+            </label>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300"
+              data-testid="input-date-from"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Sampai Tanggal
+            </label>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300"
+              data-testid="input-date-to"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Filter Keahlian
+            </label>
+            <input
+              type="text"
+              placeholder="Contoh: JavaScript, React"
+              value={skillsFilter}
+              onChange={(e) => setSkillsFilter(e.target.value)}
+              className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300"
+              data-testid="input-skills-filter"
+            />
+          </div>
         </div>
       </Card>
 

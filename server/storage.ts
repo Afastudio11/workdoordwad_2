@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Job, type InsertJob, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist, type ApplicantNote, type InsertApplicantNote } from "@shared/schema";
+import { type User, type InsertUser, type Job, type InsertJob, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist, type ApplicantNote, type InsertApplicantNote, type JobTemplate, type InsertJobTemplate } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // modify the interface with any CRUD methods
@@ -81,7 +81,7 @@ export interface IStorage {
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable } from "@shared/schema";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable } from "@shared/schema";
 import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
@@ -459,6 +459,19 @@ export class DbStorage implements IStorage {
     await db.delete(jobsTable).where(eq(jobsTable.id, jobId));
   }
 
+  async bulkDeleteJobs(jobIds: string[]): Promise<void> {
+    if (jobIds.length === 0) return;
+    await db.delete(jobsTable).where(inArray(jobsTable.id, jobIds));
+  }
+
+  async bulkUpdateJobs(jobIds: string[], updates: Partial<Job>): Promise<void> {
+    if (jobIds.length === 0) return;
+    await db
+      .update(jobsTable)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(inArray(jobsTable.id, jobIds));
+  }
+
   async getJobApplications(jobId: string): Promise<(Application & { user: User })[]> {
     const applications = await db
       .select()
@@ -746,6 +759,29 @@ export class DbStorage implements IStorage {
 
   async deleteApplicationNote(noteId: string): Promise<void> {
     await db.delete(applicantNotesTable).where(eq(applicantNotesTable.id, noteId));
+  }
+
+  async getJobTemplatesByUser(userId: string): Promise<JobTemplate[]> {
+    const templates = await db
+      .select()
+      .from(jobTemplatesTable)
+      .where(eq(jobTemplatesTable.userId, userId))
+      .orderBy(desc(jobTemplatesTable.createdAt));
+    return templates;
+  }
+
+  async createJobTemplate(template: InsertJobTemplate): Promise<JobTemplate> {
+    const [newTemplate] = await db
+      .insert(jobTemplatesTable)
+      .values(template)
+      .returning();
+    return newTemplate;
+  }
+
+  async deleteJobTemplate(templateId: string, userId: string): Promise<void> {
+    await db
+      .delete(jobTemplatesTable)
+      .where(and(eq(jobTemplatesTable.id, templateId), eq(jobTemplatesTable.userId, userId)));
   }
 }
 

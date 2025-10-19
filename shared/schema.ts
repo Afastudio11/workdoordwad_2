@@ -225,8 +225,8 @@ export const registerPemberiKerjaSchema = insertUserSchema.extend({
 });
 
 export const loginSchema = z.object({
-  username: z.string().min(1, "Username harus diisi"),
-  password: z.string().min(1, "Password harus diisi"),
+  username: z.string().min(1, "Username wajib diisi. Silakan masukkan username Anda."),
+  password: z.string().min(1, "Password wajib diisi. Silakan masukkan password Anda."),
 });
 
 // Update profile schemas

@@ -467,6 +467,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/jobs/bulk-delete", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const { jobIds } = req.body;
+      if (!jobIds || !Array.isArray(jobIds) || jobIds.length === 0) {
+        return res.status(400).json({ error: "jobIds array is required and must not be empty" });
+      }
+
+      // Verify all jobs belong to the employer
+      const employerJobs = await storage.getJobsByEmployer(req.session.userId);
+      const employerJobIds = employerJobs.map(job => job.id);
+      const invalidJobs = jobIds.filter(id => !employerJobIds.includes(id));
+
+      if (invalidJobs.length > 0) {
+        return res.status(403).json({ 
+          error: "Some jobs do not belong to you or do not exist",
+          invalidJobIds: invalidJobs 
+        });
+      }
+
+      await storage.bulkDeleteJobs(jobIds);
+      res.json({ 
+        message: `Successfully deleted ${jobIds.length} job(s)`,
+        deletedCount: jobIds.length 
+      });
+    } catch (error) {
+      console.error("Error bulk deleting jobs:", error);
+      res.status(500).json({ error: "Failed to delete jobs" });
+    }
+  });
+
+  app.post("/api/jobs/bulk-update", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const { jobIds, updates } = req.body;
+      if (!jobIds || !Array.isArray(jobIds) || jobIds.length === 0) {
+        return res.status(400).json({ error: "jobIds array is required and must not be empty" });
+      }
+
+      if (!updates || typeof updates !== 'object') {
+        return res.status(400).json({ error: "updates object is required" });
+      }
+
+      // Verify all jobs belong to the employer
+      const employerJobs = await storage.getJobsByEmployer(req.session.userId);
+      const employerJobIds = employerJobs.map(job => job.id);
+      const invalidJobs = jobIds.filter(id => !employerJobIds.includes(id));
+
+      if (invalidJobs.length > 0) {
+        return res.status(403).json({ 
+          error: "Some jobs do not belong to you or do not exist",
+          invalidJobIds: invalidJobs 
+        });
+      }
+
+      // Prevent updating protected fields
+      const allowedUpdates: Partial<typeof updates> = {};
+      const allowedFields = ['title', 'description', 'requirements', 'location', 'jobType', 
+                             'industry', 'salaryMin', 'salaryMax', 'education', 'experience', 
+                             'isFeatured', 'isActive'];
+      
+      for (const key of Object.keys(updates)) {
+        if (allowedFields.includes(key)) {
+          allowedUpdates[key] = updates[key];
+        }
+      }
+
+      if (Object.keys(allowedUpdates).length === 0) {
+        return res.status(400).json({ error: "No valid fields to update" });
+      }
+
+      await storage.bulkUpdateJobs(jobIds, allowedUpdates);
+      res.json({ 
+        message: `Successfully updated ${jobIds.length} job(s)`,
+        updatedCount: jobIds.length,
+        updatedFields: Object.keys(allowedUpdates)
+      });
+    } catch (error) {
+      console.error("Error bulk updating jobs:", error);
+      res.status(500).json({ error: "Failed to update jobs" });
+    }
+  });
+
   app.get("/api/jobs/:id/applications", async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
@@ -560,7 +659,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: "Access denied" });
       }
 
-      const applications = await storage.getEmployerApplications(req.session.userId);
+      let applications = await storage.getEmployerApplications(req.session.userId);
+      
+      // Apply advanced filtering
+      const { status, jobId, dateFrom, dateTo, skills } = req.query;
+      
+      if (status && status !== 'all') {
+        applications = applications.filter(app => app.status === status);
+      }
+      
+      if (jobId && jobId !== 'all') {
+        applications = applications.filter(app => app.jobId === jobId);
+      }
+      
+      if (dateFrom) {
+        const fromDate = new Date(dateFrom as string);
+        applications = applications.filter(app => new Date(app.createdAt) >= fromDate);
+      }
+      
+      if (dateTo) {
+        const toDate = new Date(dateTo as string);
+        toDate.setHours(23, 59, 59, 999); // End of day
+        applications = applications.filter(app => new Date(app.createdAt) <= toDate);
+      }
+      
+      if (skills && typeof skills === 'string') {
+        const skillsArray = skills.split(',').map(s => s.trim().toLowerCase());
+        applications = applications.filter(app => {
+          const userSkills = app.user.skills?.map(s => s.toLowerCase()) || [];
+          return skillsArray.some(skill => userSkills.includes(skill));
+        });
+      }
+      
       res.json(applications);
     } catch (error) {
       console.error("Error fetching employer applications:", error);
@@ -620,14 +750,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { status } = req.body;
       if (!status) {
-        return res.status(400).json({ error: "Status is required" });
+        return res.status(400).json({ error: "Status wajib diisi" });
+      }
+
+      const validStatuses = ['submitted', 'reviewed', 'shortlisted', 'rejected', 'accepted'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ error: "Status tidak valid. Gunakan: submitted, reviewed, shortlisted, rejected, atau accepted" });
       }
 
       const updatedApplication = await storage.updateApplicationStatus(req.params.id, status);
+      
+      // Send notification to applicant (simple console log for now, can be extended to email/push)
+      const application = await storage.getUserApplications(updatedApplication?.applicantId || '');
+      if (application.length > 0) {
+        console.log(`[NOTIFICATION] Status lamaran untuk ${application[0].job.title} diubah menjadi: ${status}`);
+        // Future: Send email notification here
+      }
+      
       res.json(updatedApplication);
     } catch (error) {
       console.error("Error updating application status:", error);
-      res.status(500).json({ error: "Failed to update application status" });
+      res.status(500).json({ error: "Gagal memperbarui status lamaran. Silakan coba lagi." });
     }
   });
 
@@ -1092,6 +1235,120 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error removing from wishlist:", error);
       res.status(500).json({ error: "Failed to remove from wishlist" });
+    }
+  });
+
+  // Job Templates API
+  app.get("/api/job-templates", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const templates = await storage.getJobTemplatesByUser(req.session.userId);
+      res.json(templates);
+    } catch (error) {
+      console.error("Error fetching job templates:", error);
+      res.status(500).json({ error: "Gagal mengambil template lowongan" });
+    }
+  });
+
+  app.post("/api/job-templates", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const template = await storage.createJobTemplate({
+        ...req.body,
+        userId: req.session.userId,
+      });
+      res.status(201).json(template);
+    } catch (error) {
+      console.error("Error creating job template:", error);
+      res.status(500).json({ error: "Gagal membuat template lowongan" });
+    }
+  });
+
+  app.delete("/api/job-templates/:id", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      await storage.deleteJobTemplate(req.params.id, req.session.userId);
+      res.json({ message: "Template dihapus" });
+    } catch (error) {
+      console.error("Error deleting job template:", error);
+      res.status(500).json({ error: "Gagal menghapus template" });
+    }
+  });
+
+  // Enhanced Analytics API
+  app.get("/api/employer/analytics/advanced", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const jobs = await storage.getJobsByEmployer(req.session.userId);
+      const applications = await storage.getEmployerApplications(req.session.userId);
+
+      // Calculate conversion rates
+      const totalApplications = applications.length;
+      const shortlistedCount = applications.filter(app => app.status === 'shortlisted').length;
+      const acceptedCount = applications.filter(app => app.status === 'accepted').length;
+      const rejectedCount = applications.filter(app => app.status === 'rejected').length;
+
+      const conversionRate = totalApplications > 0 ? (acceptedCount / totalApplications * 100).toFixed(2) : "0";
+      const shortlistRate = totalApplications > 0 ? (shortlistedCount / totalApplications * 100).toFixed(2) : "0";
+
+      // Calculate average time-to-hire (simplified: from submission to accepted)
+      const acceptedApplications = applications.filter(app => app.status === 'accepted');
+      let avgTimeToHire = 0;
+      if (acceptedApplications.length > 0) {
+        const totalDays = acceptedApplications.reduce((sum, app) => {
+          const days = Math.floor((new Date().getTime() - new Date(app.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+          return sum + days;
+        }, 0);
+        avgTimeToHire = Math.round(totalDays / acceptedApplications.length);
+      }
+
+      // Top performing jobs
+      const jobStats = jobs.map(job => {
+        const jobApps = applications.filter(app => app.jobId === job.id);
+        return {
+          jobId: job.id,
+          title: job.title,
+          totalApplications: jobApps.length,
+          acceptedCount: jobApps.filter(app => app.status === 'accepted').length,
+          conversionRate: jobApps.length > 0 ? ((jobApps.filter(app => app.status === 'accepted').length / jobApps.length) * 100).toFixed(2) : "0"
+        };
+      }).sort((a, b) => b.totalApplications - a.totalApplications).slice(0, 5);
+
+      res.json({
+        conversionRate,
+        shortlistRate,
+        avgTimeToHire,
+        totalApplications,
+        shortlistedCount,
+        acceptedCount,
+        rejectedCount,
+        topPerformingJobs: jobStats
+      });
+    } catch (error) {
+      console.error("Error fetching advanced analytics:", error);
+      res.status(500).json({ error: "Failed to fetch advanced analytics" });
     }
   });
 
