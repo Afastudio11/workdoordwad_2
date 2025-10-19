@@ -68,7 +68,7 @@ const categories = ["Designer", "Web Developer", "Software Engineer", "Doctors",
 export default function JobCircularsSection() {
   return (
     <section className="py-12 md:py-20 bg-white dark:bg-gray-900">
-      <div className="max-w-[1200px] mx-auto px-4 md:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-8">
         <div className="mb-8 md:mb-12">
           <h2 className="text-3xl md:text-5xl font-bold text-black dark:text-white mb-6 md:mb-8">
             Featured Job Circulars
