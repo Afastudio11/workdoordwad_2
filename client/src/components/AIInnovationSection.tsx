@@ -87,7 +87,7 @@ export default function AIInnovationSection() {
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
                 />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-black dark:text-white mb-2 sm:mb-3 group-hover:text-primary transition-colors">
+              <h3 className="text-lg sm:text-xl font-bold text-black dark:text-white mb-2 sm:mb-3 transition-colors">
                 {article.title}
               </h3>
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
