@@ -41,18 +41,18 @@ export default function HowItWorksSection() {
     <section className="relative py-12 md:py-24 bg-white dark:bg-gray-900 overflow-hidden">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-12 md:mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-8 md:mb-12">
           {/* Left Side - Steps */}
           <div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-4 md:mb-6 leading-tight" data-testid="how-it-works-title">
               Temukan Pekerjaan<br className="hidden sm:block" />
               <span className="sm:hidden"> </span>dengan Mudah
             </h2>
-            <p className="text-gray-600 mb-8 md:mb-12 text-sm sm:text-base leading-relaxed" data-testid="how-it-works-description">
+            <p className="text-gray-600 mb-6 md:mb-8 text-sm sm:text-base leading-relaxed" data-testid="how-it-works-description">
               Platform kami memudahkan Anda untuk mencari pekerjaan impian atau menemukan kandidat terbaik dalam tiga langkah sederhana.
             </p>
 
-            <div className="space-y-6 md:space-y-8">
+            <div className="space-y-4 md:space-y-6">
               {steps.map((step, index) => (
                 <div key={index} data-testid={`step-${index}`}>
                   {activeStep === index ? (
