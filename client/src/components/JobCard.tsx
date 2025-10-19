@@ -8,7 +8,7 @@ interface JobCardProps {
   date: string;
   company: string;
   title: string;
-  companyLogo?: string;
+  companyLogo?: string | null;
   tags: string[];
   salary: string;
   location: string;
@@ -16,8 +16,6 @@ interface JobCardProps {
   icon?: string;
   jobType?: string;
 }
-
-const jobIcons = ['🍎', '🎯', '💼', '🎨', '💻', '🚀'];
 
 export default function JobCard({
   id,
@@ -27,16 +25,26 @@ export default function JobCard({
   tags,
   salary,
   location,
-  icon,
+  companyLogo,
   jobType = "Penuh Waktu",
 }: JobCardProps) {
-  const randomIcon = icon || jobIcons[Math.floor(Math.random() * jobIcons.length)];
   const category = tags[0] || "Umum";
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all" data-testid={`card-job-${id}`}>
       <div className="flex items-start gap-3 mb-4">
-        <div className="text-3xl">{randomIcon}</div>
+        {companyLogo ? (
+          <img 
+            src={companyLogo} 
+            alt={`${company} logo`}
+            className="w-12 h-12 object-cover rounded-lg border border-gray-200"
+            data-testid={`img-company-logo-${id}`}
+          />
+        ) : (
+          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+            <Building2 className="h-6 w-6 text-gray-400" />
+          </div>
+        )}
         <div className="flex-1">
           <h3 className="text-lg font-bold text-black mb-2" data-testid={`text-job-title-${id}`}>{title}</h3>
           <div className="flex items-center gap-1 text-sm text-gray-600 mb-1">

@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
-import { Briefcase, MapPin, Clock, GraduationCap, DollarSign, Building2, Instagram, ArrowLeft, AlertCircle, RefreshCw } from "lucide-react";
+import { Briefcase, MapPin, Clock, GraduationCap, DollarSign, Building2, Instagram, ArrowLeft, AlertCircle, RefreshCw, Mail, Phone, Globe } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { queryClient } from "@/lib/queryClient";
 
 interface Job {
@@ -27,6 +29,9 @@ interface Job {
     description: string | null;
     location: string | null;
     industry: string | null;
+    website: string | null;
+    logo: string | null;
+    employeeCount: string | null;
     contactEmail: string | null;
     contactPhone: string | null;
   };
@@ -35,6 +40,7 @@ interface Job {
 export default function JobDetailPage() {
   const params = useParams<{ id: string }>();
   const jobId = params.id;
+  const [showCompanyDialog, setShowCompanyDialog] = useState(false);
 
   const { data: job, isLoading, isError, error } = useQuery<Job>({
     queryKey: [`/api/jobs/${jobId}`],
@@ -297,7 +303,7 @@ export default function JobDetailPage() {
             
             <button 
               className="w-full sm:w-auto px-6 md:px-8 py-3 bg-blue-600 text-white text-sm md:text-base font-medium rounded-md hover:bg-blue-700 transition-colors min-h-[44px]"
-              onClick={() => console.log("Apply clicked for job:", job.id)}
+              onClick={() => setShowCompanyDialog(true)}
               data-testid="button-apply"
             >
               Lamar Sekarang
@@ -305,6 +311,125 @@ export default function JobDetailPage() {
           </div>
         </div>
       </div>
+
+      <Dialog open={showCompanyDialog} onOpenChange={setShowCompanyDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="dialog-company-detail">
+          <DialogHeader>
+            <DialogTitle className="text-xl sm:text-2xl font-bold">Tentang Perusahaan</DialogTitle>
+            <DialogDescription>
+              Pelajari lebih lanjut tentang perusahaan sebelum melamar
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            <div className="flex items-start gap-4">
+              {job.company.logo ? (
+                <img 
+                  src={job.company.logo} 
+                  alt={`${job.company.name} logo`}
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-gray-200"
+                  data-testid="img-company-logo"
+                />
+              ) : (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                  <Building2 className="h-8 w-8 text-gray-400" />
+                </div>
+              )}
+              <div className="flex-1">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1" data-testid="text-company-name-dialog">
+                  {job.company.name}
+                </h3>
+                {job.company.industry && (
+                  <p className="text-sm text-gray-600">{job.company.industry}</p>
+                )}
+                {job.company.employeeCount && (
+                  <p className="text-sm text-gray-600 mt-1">{job.company.employeeCount} karyawan</p>
+                )}
+              </div>
+            </div>
+
+            {job.company.description && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-2">Deskripsi Perusahaan</h4>
+                <p className="text-sm text-gray-600 leading-relaxed" data-testid="text-company-description">
+                  {job.company.description}
+                </p>
+              </div>
+            )}
+
+            <div className="border-t pt-4">
+              <h4 className="font-semibold text-gray-900 mb-3">Informasi Kontak</h4>
+              <div className="space-y-3">
+                {job.company.location && (
+                  <div className="flex items-start gap-3 text-sm">
+                    <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-600" data-testid="text-company-location">{job.company.location}</span>
+                  </div>
+                )}
+                {job.company.contactEmail && (
+                  <div className="flex items-start gap-3 text-sm">
+                    <Mail className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                    <a 
+                      href={`mailto:${job.company.contactEmail}`}
+                      className="text-blue-600 hover:text-blue-700 break-all"
+                      data-testid="link-company-email"
+                    >
+                      {job.company.contactEmail}
+                    </a>
+                  </div>
+                )}
+                {job.company.contactPhone && (
+                  <div className="flex items-start gap-3 text-sm">
+                    <Phone className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                    <a 
+                      href={`tel:${job.company.contactPhone}`}
+                      className="text-blue-600 hover:text-blue-700"
+                      data-testid="link-company-phone"
+                    >
+                      {job.company.contactPhone}
+                    </a>
+                  </div>
+                )}
+                {job.company.website && (
+                  <div className="flex items-start gap-3 text-sm">
+                    <Globe className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                    <a 
+                      href={job.company.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 break-all"
+                      data-testid="link-company-website"
+                    >
+                      {job.company.website}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowCompanyDialog(false)}
+              className="w-full sm:w-auto"
+              data-testid="button-cancel-apply"
+            >
+              Batal
+            </Button>
+            <Button
+              onClick={() => {
+                setShowCompanyDialog(false);
+                console.log("Proceed with application for job:", job.id);
+              }}
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+              data-testid="button-proceed-apply"
+            >
+              Lanjutkan Melamar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
