@@ -138,7 +138,7 @@ export default function BlogPage() {
                 <img
                   src={post.image}
                   alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300"
                 />
                 {/* Decorative Shapes */}
                 <div className={`absolute top-6 left-6 w-16 h-16 ${post.decorativeColor} rounded-full opacity-80`}></div>
