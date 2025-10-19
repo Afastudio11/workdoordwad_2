@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { LayoutDashboard, Briefcase, Users, Building2, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, User, PlusCircle, Briefcase, Bookmark, CreditCard, Building2, Settings as SettingsIcon, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import EmployerDashboardHeader from "@/components/EmployerDashboardHeader";
 import OverviewPage from "./employer/OverviewPage";
-import ManageJobsPage from "./employer/ManageJobsPage";
-import ManageApplicantsPage from "./employer/ManageApplicantsPage";
-import CompanyProfilePage from "./employer/CompanyProfilePage";
+import EmployerProfilePage from "./employer/EmployerProfilePage";
+import PostJobPage from "./employer/PostJobPage";
+import MyJobsPage from "./employer/MyJobsPage";
+import SavedCandidatesPage from "./employer/SavedCandidatesPage";
+import PlansBillingPage from "./employer/PlansBillingPage";
+import AllCompaniesPage from "./employer/AllCompaniesPage";
+import EmployerSettingsPage from "./employer/EmployerSettingsPage";
 
 export default function EmployerDashboardPage() {
   const [location] = useLocation();
@@ -35,22 +39,34 @@ export default function EmployerDashboardPage() {
   };
 
   const navItems = [
-    { id: 'overview', label: 'Ringkasan', icon: LayoutDashboard },
-    { id: 'jobs', label: 'Kelola Lowongan', icon: Briefcase },
-    { id: 'applicants', label: 'Kelola Pelamar', icon: Users },
-    { id: 'company', label: 'Profil Perusahaan', icon: Building2 },
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'profile', label: 'Employers Profile', icon: User },
+    { id: 'post-job', label: 'Post a Job', icon: PlusCircle },
+    { id: 'my-jobs', label: 'My Jobs', icon: Briefcase },
+    { id: 'saved-candidates', label: 'Saved Candidate', icon: Bookmark },
+    { id: 'plans-billing', label: 'Plans & Billing', icon: CreditCard },
+    { id: 'all-companies', label: 'All Companies', icon: Building2 },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
         return <OverviewPage />;
-      case 'jobs':
-        return <ManageJobsPage />;
-      case 'applicants':
-        return <ManageApplicantsPage />;
-      case 'company':
-        return <CompanyProfilePage />;
+      case 'profile':
+        return <EmployerProfilePage />;
+      case 'post-job':
+        return <PostJobPage />;
+      case 'my-jobs':
+        return <MyJobsPage />;
+      case 'saved-candidates':
+        return <SavedCandidatesPage />;
+      case 'plans-billing':
+        return <PlansBillingPage />;
+      case 'all-companies':
+        return <AllCompaniesPage />;
+      case 'settings':
+        return <EmployerSettingsPage />;
       default:
         return <OverviewPage />;
     }

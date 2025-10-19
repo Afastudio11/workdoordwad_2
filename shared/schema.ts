@@ -174,6 +174,14 @@ export const notifications = pgTable("notifications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const savedCandidates = pgTable("saved_candidates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  employerId: varchar("employer_id").references(() => users.id).notNull(),
+  candidateId: varchar("candidate_id").references(() => users.id).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -228,6 +236,11 @@ export const insertMessageSchema = createInsertSchema(messages).omit({
 });
 
 export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSavedCandidateSchema = createInsertSchema(savedCandidates).omit({
   id: true,
   createdAt: true,
 });
@@ -332,6 +345,9 @@ export type Message = typeof messages.$inferSelect;
 
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type Notification = typeof notifications.$inferSelect;
+
+export type InsertSavedCandidate = z.infer<typeof insertSavedCandidateSchema>;
+export type SavedCandidate = typeof savedCandidates.$inferSelect;
 
 export type RegisterPekerja = z.infer<typeof registerPekerjaSchema>;
 export type RegisterPemberiKerja = z.infer<typeof registerPemberiKerjaSchema>;

@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Bell, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
@@ -27,6 +27,7 @@ type Notification = {
 
 export default function EmployerDashboardHeader() {
   const { user, logout } = useAuth();
+  const [location] = useLocation();
 
   // Fetch real notifications
   const { data: notifications = [], isLoading } = useQuery<Notification[]>({
@@ -44,19 +45,58 @@ export default function EmployerDashboardHeader() {
     }
   };
 
+  const navItems = [
+    { path: "/", label: "Home", external: true },
+    { path: "/find-candidate", label: "Find Candidate", external: false },
+    { path: "/employer/dashboard", label: "Dashboard", external: false },
+    { path: "/employer/applications", label: "Applications", external: false },
+    { path: "/contact", label: "Customer Supports", external: true },
+  ];
+
+  const isActive = (path: string) => {
+    if (path === "/") return location === path;
+    return location.startsWith(path.split('#')[0]);
+  };
+
   return (
-    <header className="bg-[#1a1a1a] text-white sticky top-0 z-50 border-b border-gray-800">
+    <header className="bg-black sticky top-0 z-50 border-b border-zinc-800">
       <div className="max-w-[1600px] mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/employer/dashboard" className="flex items-center">
             <img src={logoImg} alt="PintuKerja" className="h-12" />
           </Link>
 
-          {/* Page Title - Centered */}
-          <div className="hidden md:block">
-            <h1 className="text-lg font-semibold text-white">Dashboard Pemberi Kerja</h1>
-          </div>
+          {/* Navigation Menu - Centered */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navItems.map((item) => (
+              item.external ? (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium transition-colors text-gray-400 hover:text-white"
+                  data-testid={`nav-link-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`text-sm font-medium transition-colors ${
+                    isActive(item.path)
+                      ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                  data-testid={`nav-link-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                >
+                  {item.label}
+                </Link>
+              )
+            ))}
+          </nav>
 
           {/* Right side */}
           <div className="flex items-center gap-4">
@@ -64,10 +104,10 @@ export default function EmployerDashboardHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button 
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
+                  className="p-2 hover:bg-zinc-800 rounded-lg transition-colors relative"
                   data-testid="button-notifications"
                 >
-                  <Bell className="h-5 w-5 text-white" />
+                  <Bell className="h-5 w-5 text-gray-400" />
                   {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 w-5 h-5 bg-[#D4FF00] text-gray-900 text-xs font-bold rounded-full flex items-center justify-center">
                       {unreadCount > 9 ? '9+' : unreadCount}
@@ -139,16 +179,16 @@ export default function EmployerDashboardHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button 
-                  className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity"
+                  className="w-10 h-10 rounded-full bg-[#D4FF00] flex items-center justify-center hover:opacity-90 transition-opacity"
                   data-testid="button-profile"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
+                  <div className="w-full h-full rounded-full flex items-center justify-center overflow-hidden">
                     {user?.fullName ? (
-                      <span className="text-sm font-semibold text-white">
+                      <span className="text-sm font-semibold text-gray-900">
                         {user.fullName.charAt(0).toUpperCase()}
                       </span>
                     ) : (
-                      <User className="w-4 h-4 text-white" />
+                      <User className="w-4 h-4 text-gray-900" />
                     )}
                   </div>
                 </button>

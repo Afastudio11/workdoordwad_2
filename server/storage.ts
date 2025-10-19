@@ -81,7 +81,7 @@ export interface IStorage {
   
   // Messages
   getUserConversations(userId: string): Promise<Array<{
-    otherUser: Omit<User, 'password'>;
+    otherUser: any;
     lastMessage: any;
     unreadCount: number;
   }>>;
@@ -101,10 +101,20 @@ export interface IStorage {
   getPremiumTransactions(userId: string): Promise<any[]>;
   updateTransactionStatus(transactionId: string, status: string): Promise<any>;
   getUserPremiumBalance(userId: string): Promise<{ jobBoosts: number; featuredSlots: number }>;
+  
+  // Saved Candidates
+  getSavedCandidates(employerId: string): Promise<any[]>;
+  saveCandidate(employerId: string, candidateId: string, notes?: string): Promise<any>;
+  removeSavedCandidate(employerId: string, candidateId: string): Promise<void>;
+  checkCandidateSaved(employerId: string, candidateId: string): Promise<boolean>;
+  
+  // Companies
+  getAllCompanies(): Promise<Company[]>;
+  getMyCompanies(userId: string): Promise<Company[]>;
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable } from "@shared/schema";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable, savedCandidates as savedCandidatesTable } from "@shared/schema";
 import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
@@ -1057,6 +1067,88 @@ export class DbStorage implements IStorage {
       jobBoosts: availableBoosts,
       featuredSlots: availableBoosts,
     };
+  }
+
+  // Saved Candidates
+  async getSavedCandidates(employerId: string): Promise<any[]> {
+    const savedCandidates = await db
+      .select()
+      .from(savedCandidatesTable)
+      .where(eq(savedCandidatesTable.employerId, employerId))
+      .orderBy(desc(savedCandidatesTable.createdAt));
+
+    const candidatesWithDetails = await Promise.all(
+      savedCandidates.map(async (saved) => {
+        const candidate = await this.getUser(saved.candidateId);
+        if (!candidate) return null;
+        
+        const { password, ...candidateWithoutPassword } = candidate;
+        return {
+          ...saved,
+          candidate: candidateWithoutPassword,
+        };
+      })
+    );
+
+    return candidatesWithDetails.filter(Boolean);
+  }
+
+  async saveCandidate(employerId: string, candidateId: string, notes?: string): Promise<any> {
+    const [saved] = await db
+      .insert(savedCandidatesTable)
+      .values({
+        employerId,
+        candidateId,
+        notes,
+      })
+      .returning();
+
+    return saved;
+  }
+
+  async removeSavedCandidate(employerId: string, candidateId: string): Promise<void> {
+    await db
+      .delete(savedCandidatesTable)
+      .where(
+        and(
+          eq(savedCandidatesTable.employerId, employerId),
+          eq(savedCandidatesTable.candidateId, candidateId)
+        )
+      );
+  }
+
+  async checkCandidateSaved(employerId: string, candidateId: string): Promise<boolean> {
+    const [saved] = await db
+      .select()
+      .from(savedCandidatesTable)
+      .where(
+        and(
+          eq(savedCandidatesTable.employerId, employerId),
+          eq(savedCandidatesTable.candidateId, candidateId)
+        )
+      );
+
+    return !!saved;
+  }
+
+  // Companies
+  async getAllCompanies(): Promise<Company[]> {
+    const companies = await db
+      .select()
+      .from(companiesTable)
+      .orderBy(desc(companiesTable.createdAt));
+
+    return companies;
+  }
+
+  async getMyCompanies(userId: string): Promise<Company[]> {
+    const companies = await db
+      .select()
+      .from(companiesTable)
+      .where(eq(companiesTable.createdBy, userId))
+      .orderBy(desc(companiesTable.createdAt));
+
+    return companies;
   }
 }
 

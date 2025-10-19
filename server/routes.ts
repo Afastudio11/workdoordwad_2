@@ -1649,6 +1649,183 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Saved Candidates Routes
+  app.get("/api/saved-candidates", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const savedCandidates = await storage.getSavedCandidates(req.session.userId);
+      res.json(savedCandidates);
+    } catch (error) {
+      console.error("Error fetching saved candidates:", error);
+      res.status(500).json({ error: "Failed to fetch saved candidates" });
+    }
+  });
+
+  app.post("/api/saved-candidates", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { candidateId, notes } = req.body;
+      
+      if (!candidateId) {
+        return res.status(400).json({ error: "Candidate ID is required" });
+      }
+
+      const saved = await storage.saveCandidate(req.session.userId, candidateId, notes);
+      res.status(201).json(saved);
+    } catch (error) {
+      console.error("Error saving candidate:", error);
+      res.status(500).json({ error: "Failed to save candidate" });
+    }
+  });
+
+  app.delete("/api/saved-candidates/:candidateId", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      await storage.removeSavedCandidate(req.session.userId, req.params.candidateId);
+      res.json({ message: "Candidate removed from saved list" });
+    } catch (error) {
+      console.error("Error removing saved candidate:", error);
+      res.status(500).json({ error: "Failed to remove saved candidate" });
+    }
+  });
+
+  // Companies Routes
+  app.get("/api/companies", async (req, res) => {
+    try {
+      const companies = await storage.getAllCompanies();
+      res.json(companies);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      res.status(500).json({ error: "Failed to fetch companies" });
+    }
+  });
+
+  app.get("/api/companies/my-companies", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const companies = await storage.getMyCompanies(req.session.userId);
+      res.json(companies);
+    } catch (error) {
+      console.error("Error fetching my companies:", error);
+      res.status(500).json({ error: "Failed to fetch companies" });
+    }
+  });
+
+  // Candidates Routes (for employers to browse)
+  app.get("/api/candidates", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const candidates = await storage.getUsersByRole("pekerja");
+      
+      const candidatesWithoutPasswords = candidates.map(user => {
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
+
+      res.json(candidatesWithoutPasswords);
+    } catch (error) {
+      console.error("Error fetching candidates:", error);
+      res.status(500).json({ error: "Failed to fetch candidates" });
+    }
+  });
+
+  // My Jobs Route (dedicated employer jobs endpoint)
+  app.get("/api/jobs/my-jobs", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const jobs = await storage.getJobsByEmployer(req.session.userId);
+      res.json(jobs);
+    } catch (error) {
+      console.error("Error fetching my jobs:", error);
+      res.status(500).json({ error: "Failed to fetch jobs" });
+    }
+  });
+
+  // Update Application Status
+  app.patch("/api/applications/:id/status", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { status } = req.body;
+      
+      if (!status) {
+        return res.status(400).json({ error: "Status is required" });
+      }
+
+      const application = await storage.updateApplicationStatus(req.params.id, status);
+      
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+
+      res.json(application);
+    } catch (error) {
+      console.error("Error updating application status:", error);
+      res.status(500).json({ error: "Failed to update application status" });
+    }
+  });
+
+  // Update Job
+  app.patch("/api/jobs/:id", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const job = await storage.updateJob(req.params.id, req.body);
+      
+      if (!job) {
+        return res.status(404).json({ error: "Job not found" });
+      }
+
+      res.json(job);
+    } catch (error) {
+      console.error("Error updating job:", error);
+      res.status(500).json({ error: "Failed to update job" });
+    }
+  });
+
+  // Employer Applications Route
+  app.get("/api/applications/employer", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const applications = await storage.getEmployerApplications(req.session.userId);
+      
+      const applicationsWithDetails = applications.map(app => ({
+        ...app,
+        applicant: app.user,
+      }));
+
+      res.json(applicationsWithDetails);
+    } catch (error) {
+      console.error("Error fetching employer applications:", error);
+      res.status(500).json({ error: "Failed to fetch applications" });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Setup WebSocket for real-time features
