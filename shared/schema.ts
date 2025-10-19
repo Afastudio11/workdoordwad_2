@@ -109,10 +109,36 @@ export const applications = pgTable("applications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const applicantNotes = pgTable("applicant_notes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  applicationId: varchar("application_id").references(() => applications.id).notNull(),
+  note: text("note").notNull(),
+  createdBy: varchar("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const wishlists = pgTable("wishlists", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").references(() => users.id).notNull(),
   jobId: varchar("job_id").references(() => jobs.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const jobTemplates = pgTable("job_templates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  requirements: text("requirements"),
+  location: text("location").notNull(),
+  jobType: text("job_type").notNull(),
+  industry: text("industry"),
+  salaryMin: integer("salary_min"),
+  salaryMax: integer("salary_max"),
+  education: text("education"),
+  experience: text("experience"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -153,7 +179,18 @@ export const insertApplicationSchema = createInsertSchema(applications).omit({
   createdAt: true,
 });
 
+export const insertApplicantNoteSchema = createInsertSchema(applicantNotes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertWishlistSchema = createInsertSchema(wishlists).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertJobTemplateSchema = createInsertSchema(jobTemplates).omit({
   id: true,
   createdAt: true,
 });
@@ -246,8 +283,14 @@ export type AggregatedJob = typeof aggregatedJobs.$inferSelect;
 export type InsertApplication = z.infer<typeof insertApplicationSchema>;
 export type Application = typeof applications.$inferSelect;
 
+export type InsertApplicantNote = z.infer<typeof insertApplicantNoteSchema>;
+export type ApplicantNote = typeof applicantNotes.$inferSelect;
+
 export type InsertWishlist = z.infer<typeof insertWishlistSchema>;
 export type Wishlist = typeof wishlists.$inferSelect;
+
+export type InsertJobTemplate = z.infer<typeof insertJobTemplateSchema>;
+export type JobTemplate = typeof jobTemplates.$inferSelect;
 
 export type InsertPremiumTransaction = z.infer<typeof insertPremiumTransactionSchema>;
 export type PremiumTransaction = typeof premiumTransactions.$inferSelect;

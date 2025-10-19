@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Job, type InsertJob, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist } from "@shared/schema";
+import { type User, type InsertUser, type Job, type InsertJob, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist, type ApplicantNote, type InsertApplicantNote } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // modify the interface with any CRUD methods
@@ -72,10 +72,16 @@ export interface IStorage {
   addToWishlist(userId: string, jobId: string): Promise<Wishlist>;
   removeFromWishlist(userId: string, jobId: string): Promise<void>;
   checkWishlistExists(userId: string, jobId: string): Promise<boolean>;
+  
+  // Applicant Notes
+  getApplicationNotes(applicationId: string): Promise<(ApplicantNote & { createdByUser: Pick<User, 'id' | 'fullName'> })[]>;
+  createApplicationNote(note: InsertApplicantNote): Promise<ApplicantNote>;
+  updateApplicationNote(noteId: string, note: string): Promise<ApplicantNote | undefined>;
+  deleteApplicationNote(noteId: string): Promise<void>;
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable } from "@shared/schema";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable } from "@shared/schema";
 import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
@@ -697,6 +703,49 @@ export class DbStorage implements IStorage {
     return activities.sort((a, b) => 
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     ).slice(0, 20);
+  }
+
+  async getApplicationNotes(applicationId: string): Promise<(ApplicantNote & { createdByUser: Pick<User, 'id' | 'fullName'> })[]> {
+    const notes = await db
+      .select({
+        id: applicantNotesTable.id,
+        applicationId: applicantNotesTable.applicationId,
+        note: applicantNotesTable.note,
+        createdBy: applicantNotesTable.createdBy,
+        createdAt: applicantNotesTable.createdAt,
+        updatedAt: applicantNotesTable.updatedAt,
+        createdByUser: {
+          id: usersTable.id,
+          fullName: usersTable.fullName,
+        },
+      })
+      .from(applicantNotesTable)
+      .innerJoin(usersTable, eq(applicantNotesTable.createdBy, usersTable.id))
+      .where(eq(applicantNotesTable.applicationId, applicationId))
+      .orderBy(desc(applicantNotesTable.createdAt));
+
+    return notes as (ApplicantNote & { createdByUser: Pick<User, 'id' | 'fullName'> })[];
+  }
+
+  async createApplicationNote(note: InsertApplicantNote): Promise<ApplicantNote> {
+    const [newNote] = await db
+      .insert(applicantNotesTable)
+      .values(note)
+      .returning();
+    return newNote;
+  }
+
+  async updateApplicationNote(noteId: string, noteText: string): Promise<ApplicantNote | undefined> {
+    const [updatedNote] = await db
+      .update(applicantNotesTable)
+      .set({ note: noteText, updatedAt: new Date() })
+      .where(eq(applicantNotesTable.id, noteId))
+      .returning();
+    return updatedNote;
+  }
+
+  async deleteApplicationNote(noteId: string): Promise<void> {
+    await db.delete(applicantNotesTable).where(eq(applicantNotesTable.id, noteId));
   }
 }
 

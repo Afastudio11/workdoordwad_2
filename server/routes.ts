@@ -568,6 +568,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/employer/applications/export", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const applications = await storage.getEmployerApplications(req.session.userId);
+      
+      const csvHeader = "Nama,Email,Telepon,Lowongan,Perusahaan,Status,Tanggal Melamar,Kota,Provinsi\n";
+      const csvRows = applications.map(app => {
+        const name = app.user.fullName || "";
+        const email = app.user.email || "";
+        const phone = app.user.phone || "";
+        const jobTitle = app.job.title || "";
+        const company = app.job.company.name || "";
+        const status = app.status || "";
+        const appliedDate = new Date(app.createdAt).toLocaleDateString('id-ID');
+        const city = app.user.city || "";
+        const province = app.user.province || "";
+        
+        return `"${name}","${email}","${phone}","${jobTitle}","${company}","${status}","${appliedDate}","${city}","${province}"`;
+      }).join("\n");
+
+      const csv = csvHeader + csvRows;
+      
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="applicants-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send('\ufeff' + csv);
+    } catch (error) {
+      console.error("Error exporting applications:", error);
+      res.status(500).json({ error: "Failed to export applications" });
+    }
+  });
+
   app.put("/api/applications/:id/status", async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
@@ -589,6 +628,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating application status:", error);
       res.status(500).json({ error: "Failed to update application status" });
+    }
+  });
+
+  app.get("/api/applications/:id/notes", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const applications = await storage.getEmployerApplications(req.session.userId);
+      const application = applications.find(app => app.id === req.params.id);
+      
+      if (!application) {
+        return res.status(404).json({ error: "Application not found or access denied" });
+      }
+
+      const notes = await storage.getApplicationNotes(req.params.id);
+      res.json(notes);
+    } catch (error) {
+      console.error("Error fetching application notes:", error);
+      res.status(500).json({ error: "Failed to fetch notes" });
+    }
+  });
+
+  app.post("/api/applications/:id/notes", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const applications = await storage.getEmployerApplications(req.session.userId);
+      const application = applications.find(app => app.id === req.params.id);
+      
+      if (!application) {
+        return res.status(404).json({ error: "Application not found or access denied" });
+      }
+
+      const { note } = req.body;
+      if (!note || note.trim().length === 0) {
+        return res.status(400).json({ error: "Note cannot be empty" });
+      }
+
+      const newNote = await storage.createApplicationNote({
+        applicationId: req.params.id,
+        note: note.trim(),
+        createdBy: req.session.userId,
+      });
+
+      res.status(201).json(newNote);
+    } catch (error) {
+      console.error("Error creating application note:", error);
+      res.status(500).json({ error: "Failed to create note" });
+    }
+  });
+
+  app.put("/api/notes/:id", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const applications = await storage.getEmployerApplications(req.session.userId);
+      const allNotes = await Promise.all(applications.map(app => storage.getApplicationNotes(app.id)));
+      const flatNotes = allNotes.flat();
+      const noteToUpdate = flatNotes.find(n => n.id === req.params.id);
+
+      if (!noteToUpdate) {
+        return res.status(404).json({ error: "Note not found or access denied" });
+      }
+
+      const { note } = req.body;
+      if (!note || note.trim().length === 0) {
+        return res.status(400).json({ error: "Note cannot be empty" });
+      }
+
+      const updatedNote = await storage.updateApplicationNote(req.params.id, note.trim());
+      res.json(updatedNote);
+    } catch (error) {
+      console.error("Error updating note:", error);
+      res.status(500).json({ error: "Failed to update note" });
+    }
+  });
+
+  app.delete("/api/notes/:id", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const applications = await storage.getEmployerApplications(req.session.userId);
+      const allNotes = await Promise.all(applications.map(app => storage.getApplicationNotes(app.id)));
+      const flatNotes = allNotes.flat();
+      const noteToDelete = flatNotes.find(n => n.id === req.params.id);
+
+      if (!noteToDelete) {
+        return res.status(404).json({ error: "Note not found or access denied" });
+      }
+
+      await storage.deleteApplicationNote(req.params.id);
+      res.json({ message: "Note deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      res.status(500).json({ error: "Failed to delete note" });
     }
   });
 

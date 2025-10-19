@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Search, Filter, User, Loader2, FileText, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap, Award, X } from "lucide-react";
+import { Search, Filter, User, Loader2, FileText, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap, Award, X, MessageSquare, Plus, Trash2, Send, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import type { Application, User as UserType, Job, Company } from "@shared/schema";
+import { Textarea } from "@/components/ui/textarea";
+import type { Application, User as UserType, Job, Company, ApplicantNote } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -22,11 +23,14 @@ type ApplicationWithDetails = Application & {
   job: Job & { company: Company };
 };
 
+type NoteWithUser = ApplicantNote & { createdByUser: Pick<UserType, 'id' | 'fullName'> };
+
 export default function ManageApplicantsPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [jobFilter, setJobFilter] = useState<string>("all");
   const [selectedApplicant, setSelectedApplicant] = useState<ApplicationWithDetails | null>(null);
+  const [newNote, setNewNote] = useState("");
 
   const { data: applications = [], isLoading } = useQuery<ApplicationWithDetails[]>({
     queryKey: ["/api/employer/applications"],
@@ -41,6 +45,32 @@ export default function ManageApplicantsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/employer/applications"] });
+    },
+  });
+
+  const { data: notes = [], isLoading: notesLoading } = useQuery<NoteWithUser[]>({
+    queryKey: ["/api/applications", selectedApplicant?.id, "notes"],
+    enabled: !!selectedApplicant,
+  });
+
+  const createNoteMutation = useMutation({
+    mutationFn: async ({ applicationId, note }: { applicationId: string; note: string }) => {
+      const res = await apiRequest(`/api/applications/${applicationId}/notes`, "POST", { note });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/applications", selectedApplicant?.id, "notes"] });
+      setNewNote("");
+    },
+  });
+
+  const deleteNoteMutation = useMutation({
+    mutationFn: async (noteId: string) => {
+      const res = await apiRequest(`/api/notes/${noteId}`, "DELETE");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/applications", selectedApplicant?.id, "notes"] });
     },
   });
 
@@ -96,12 +126,28 @@ export default function ManageApplicantsPage() {
     updateStatusMutation.mutate({ applicationId, status: newStatus });
   };
 
+  const handleExport = () => {
+    window.open('/api/employer/applications/export', '_blank');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Kelola Pelamar</h1>
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          Total: <span className="font-semibold">{applications.length}</span> lamaran
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Total: <span className="font-semibold">{applications.length}</span> lamaran
+          </div>
+          <Button
+            onClick={handleExport}
+            variant="outline"
+            size="sm"
+            disabled={applications.length === 0}
+            data-testid="button-export-applicants"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export ke CSV
+          </Button>
         </div>
       </div>
 
@@ -415,6 +461,88 @@ export default function ManageApplicantsPage() {
                     </p>
                   </div>
                 )}
+
+                {/* Internal Notes */}
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    Catatan Internal
+                  </h3>
+                  
+                  {/* Add Note Form */}
+                  <div className="mb-4">
+                    <Textarea
+                      placeholder="Tambahkan catatan internal tentang pelamar ini..."
+                      value={newNote}
+                      onChange={(e) => setNewNote(e.target.value)}
+                      className="mb-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                      rows={3}
+                      data-testid="textarea-add-note"
+                    />
+                    <Button
+                      onClick={() => {
+                        if (newNote.trim() && selectedApplicant) {
+                          createNoteMutation.mutate({ applicationId: selectedApplicant.id, note: newNote });
+                        }
+                      }}
+                      disabled={!newNote.trim() || createNoteMutation.isPending}
+                      className="bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900"
+                      size="sm"
+                      data-testid="button-add-note"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      {createNoteMutation.isPending ? "Menyimpan..." : "Tambah Catatan"}
+                    </Button>
+                  </div>
+
+                  {/* Notes List */}
+                  <div className="space-y-3 max-h-60 overflow-y-auto">
+                    {notesLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                      </div>
+                    ) : notes.length === 0 ? (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                        Belum ada catatan. Tambahkan catatan pertama untuk pelamar ini.
+                      </p>
+                    ) : (
+                      notes.map((note) => (
+                        <div
+                          key={note.id}
+                          className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
+                          data-testid={`note-${note.id}`}
+                        >
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {note.createdByUser.fullName}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {formatDistanceToNow(new Date(note.createdAt), {
+                                  addSuffix: true,
+                                  locale: idLocale,
+                                })}
+                              </p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteNoteMutation.mutate(note.id)}
+                              disabled={deleteNoteMutation.isPending}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              data-testid={`button-delete-note-${note.id}`}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                            {note.note}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
 
                 {/* Actions */}
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-6 flex gap-3">
