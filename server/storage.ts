@@ -54,6 +54,18 @@ export interface IStorage {
     totalApplications: number;
     newApplicationsThisWeek: number;
   }>;
+  getEmployerAnalytics(userId: string): Promise<{
+    applicationsOverTime: Array<{ date: string; count: number }>;
+    jobsByType: Array<{ type: string; count: number }>;
+  }>;
+  getEmployerActivities(userId: string): Promise<Array<{
+    id: string;
+    type: "new_application" | "status_change" | "new_job";
+    message: string;
+    timestamp: string;
+    jobTitle?: string;
+    applicantName?: string;
+  }>>;
   
   // Wishlists
   getUserWishlists(userId: string): Promise<(Wishlist & { job: Job & { company: Company } })[]>;
@@ -554,6 +566,137 @@ export class DbStorage implements IStorage {
       totalApplications,
       newApplicationsThisWeek,
     };
+  }
+
+  async getEmployerAnalytics(userId: string): Promise<{
+    applicationsOverTime: Array<{ date: string; count: number }>;
+    jobsByType: Array<{ type: string; count: number }>;
+  }> {
+    const jobs = await this.getJobsByEmployer(userId);
+    const jobIds = jobs.map(job => job.id);
+
+    if (jobIds.length === 0) {
+      return {
+        applicationsOverTime: [],
+        jobsByType: [],
+      };
+    }
+
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(inArray(applicationsTable.jobId, jobIds))
+      .orderBy(desc(applicationsTable.createdAt));
+
+    const last30Days = new Date();
+    last30Days.setDate(last30Days.getDate() - 30);
+
+    const applicationsMap = new Map<string, number>();
+    applications
+      .filter(app => new Date(app.createdAt) > last30Days)
+      .forEach(app => {
+        const dateStr = new Date(app.createdAt).toLocaleDateString('id-ID', { 
+          day: '2-digit', 
+          month: 'short' 
+        });
+        applicationsMap.set(dateStr, (applicationsMap.get(dateStr) || 0) + 1);
+      });
+
+    const applicationsOverTime = Array.from(applicationsMap.entries())
+      .map(([date, count]) => ({ date, count }))
+      .reverse();
+
+    const jobTypesMap = new Map<string, number>();
+    jobs.forEach(job => {
+      jobTypesMap.set(job.jobType, (jobTypesMap.get(job.jobType) || 0) + 1);
+    });
+
+    const jobsByType = Array.from(jobTypesMap.entries())
+      .map(([type, count]) => ({ type, count }));
+
+    return {
+      applicationsOverTime,
+      jobsByType,
+    };
+  }
+
+  async getEmployerActivities(userId: string): Promise<Array<{
+    id: string;
+    type: "new_application" | "status_change" | "new_job";
+    message: string;
+    timestamp: string;
+    jobTitle?: string;
+    applicantName?: string;
+  }>> {
+    const jobs = await this.getJobsByEmployer(userId);
+    const jobIds = jobs.map(job => job.id);
+
+    if (jobIds.length === 0) {
+      return [];
+    }
+
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(inArray(applicationsTable.jobId, jobIds))
+      .orderBy(desc(applicationsTable.createdAt))
+      .limit(50);
+
+    const activities: Array<{
+      id: string;
+      type: "new_application" | "status_change" | "new_job";
+      message: string;
+      timestamp: string;
+      jobTitle?: string;
+      applicantName?: string;
+    }> = [];
+
+    for (const app of applications) {
+      const job = jobs.find(j => j.id === app.jobId);
+      const user = await this.getUser(app.applicantId);
+      
+      if (job && user) {
+        const isNew = new Date(app.createdAt).getTime() === new Date(app.createdAt).getTime();
+        
+        if (app.status === 'submitted') {
+          activities.push({
+            id: `app-${app.id}`,
+            type: "new_application",
+            message: `Lamaran baru dari ${user.fullName}`,
+            timestamp: app.createdAt.toISOString(),
+            jobTitle: job.title,
+            applicantName: user.fullName,
+          });
+        } else {
+          activities.push({
+            id: `status-${app.id}`,
+            type: "status_change",
+            message: `Status lamaran ${user.fullName} diubah ke ${app.status}`,
+            timestamp: app.createdAt.toISOString(),
+            jobTitle: job.title,
+            applicantName: user.fullName,
+          });
+        }
+      }
+    }
+
+    const recentJobs = jobs
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 10);
+
+    recentJobs.forEach(job => {
+      activities.push({
+        id: `job-${job.id}`,
+        type: "new_job",
+        message: `Lowongan "${job.title}" dipublikasikan`,
+        timestamp: job.createdAt.toISOString(),
+        jobTitle: job.title,
+      });
+    });
+
+    return activities.sort((a, b) => 
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    ).slice(0, 20);
   }
 }
 
