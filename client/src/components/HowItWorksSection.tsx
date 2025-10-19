@@ -1,6 +1,6 @@
 import { useState } from "react";
 import starburstImg from "@assets/0d231d(1)_1760687086089.png";
-import cardImg from "@assets/0d231d(2)_1760688190358.png";
+import cardImg from "@assets/0d231d(7)_1760872023956.png";
 
 const steps = [
   {
