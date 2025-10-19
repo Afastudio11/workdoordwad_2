@@ -28,36 +28,52 @@ export default function EmployerDashboardHeader() {
 
           {/* Navigation - Employer specific */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/employer/dashboard#overview">
-              <span
-                className={`text-sm cursor-pointer transition-colors ${
-                  location.includes("/employer/dashboard") ? "text-white font-medium" : "text-white/80 hover:text-white"
-                }`}
-              >
-                Dashboard
-              </span>
-            </Link>
-            <Link href="/employer/dashboard#jobs">
-              <span
-                className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
-              >
-                Lowongan Saya
-              </span>
-            </Link>
-            <Link href="/employer/dashboard#applicants">
-              <span
-                className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
-              >
-                Pelamar
-              </span>
-            </Link>
-            <Link href="/employer/dashboard#company">
-              <span
-                className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
-              >
-                Perusahaan
-              </span>
-            </Link>
+            <a 
+              href="#overview"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.hash = 'overview';
+              }}
+              className={`text-sm cursor-pointer transition-colors ${
+                window.location.hash === '#overview' || !window.location.hash ? "text-white font-medium" : "text-white/80 hover:text-white"
+              }`}
+              data-testid="nav-dashboard"
+            >
+              Dashboard
+            </a>
+            <a 
+              href="#jobs"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.hash = 'jobs';
+              }}
+              className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
+              data-testid="nav-jobs"
+            >
+              Lowongan Saya
+            </a>
+            <a 
+              href="#applicants"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.hash = 'applicants';
+              }}
+              className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
+              data-testid="nav-applicants"
+            >
+              Pelamar
+            </a>
+            <a 
+              href="#company"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.hash = 'company';
+              }}
+              className="text-sm cursor-pointer transition-colors text-white/80 hover:text-white"
+              data-testid="nav-company"
+            >
+              Perusahaan
+            </a>
           </nav>
 
           {/* Right side */}
@@ -156,10 +172,18 @@ export default function EmployerDashboardHeader() {
 
                 {/* Company Profile */}
                 <DropdownMenuItem asChild>
-                  <Link href="/employer/dashboard#company" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-company">
+                  <a 
+                    href="#company"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.hash = 'company';
+                    }}
+                    className="flex items-center gap-3 cursor-pointer text-black" 
+                    data-testid="menu-company"
+                  >
                     <Building2 className="h-4 w-4" />
                     <span>Profil Perusahaan</span>
-                  </Link>
+                  </a>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

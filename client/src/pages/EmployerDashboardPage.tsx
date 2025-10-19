@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { LayoutDashboard, Briefcase, Users, Building2, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
@@ -16,6 +16,17 @@ export default function EmployerDashboardPage() {
     return hash || 'overview';
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Listen to hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      setActiveTab(hash || 'overview');
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
