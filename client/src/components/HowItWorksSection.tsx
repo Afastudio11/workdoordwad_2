@@ -6,17 +6,17 @@ const steps = [
   {
     number: "1",
     title: "Buat Akun",
-    description: "Daftar gratis dan buat profil profesional Anda. Lengkapi dengan CV, foto, dan portofolio untuk meningkatkan peluang ditemukan oleh perekrut terbaik."
+    description: "Daftar gratis dan buat profil profesional Anda. Lengkapi dengan CV, foto, dan portofolio untuk meningkatkan peluang ditemukan oleh perekrut terbaik. Proses pendaftaran hanya membutuhkan beberapa menit dan Anda langsung dapat mengakses ribuan lowongan pekerjaan dari perusahaan terpercaya di seluruh Indonesia."
   },
   {
     number: "2",
     title: "Lengkapi Profil Anda",
-    description: "Tambahkan pengalaman kerja, pendidikan, dan keahlian Anda untuk mendapatkan rekomendasi pekerjaan yang lebih relevan."
+    description: "Tambahkan riwayat pendidikan, pengalaman kerja, keahlian teknis, dan sertifikasi Anda untuk membuat profil yang menonjol. Semakin lengkap profil Anda, semakin besar peluang mendapatkan rekomendasi pekerjaan yang sesuai dengan kualifikasi dan preferensi karir Anda. Sistem AI kami akan mencocokkan profil Anda dengan lowongan yang paling relevan."
   },
   {
     number: "3",
     title: "Lamar Pekerjaan atau Rekrut",
-    description: "Cari dan lamar pekerjaan impian Anda dengan mudah, atau jika Anda perekrut, posting lowongan dan temukan kandidat terbaik."
+    description: "Gunakan fitur pencarian canggih kami untuk menemukan pekerjaan berdasarkan lokasi, industri, gaji, dan jenis pekerjaan. Lamar dengan satu klik menggunakan profil yang sudah Anda buat. Untuk perekrut, posting lowongan pekerjaan, kelola lamaran, dan temukan kandidat terbaik dengan tools manajemen yang lengkap dan efisien."
   }
 ];
 
