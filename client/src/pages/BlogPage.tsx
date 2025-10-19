@@ -79,7 +79,7 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header variant="light" />
+      <Header variant="dark" />
       
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-12 md:py-20">
         {/* Hero Section */}

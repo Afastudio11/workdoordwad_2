@@ -5,7 +5,7 @@ import { ArrowLeft, Mail, Phone, MapPin } from "lucide-react";
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
-      <Header variant="light" />
+      <Header variant="dark" />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-12">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6" data-testid="link-back">
