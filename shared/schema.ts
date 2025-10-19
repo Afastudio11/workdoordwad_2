@@ -152,6 +152,28 @@ export const premiumTransactions = pgTable("premium_transactions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const messages = pgTable("messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  senderId: varchar("sender_id").references(() => users.id).notNull(),
+  receiverId: varchar("receiver_id").references(() => users.id).notNull(),
+  applicationId: varchar("application_id").references(() => applications.id),
+  jobId: varchar("job_id").references(() => jobs.id),
+  content: text("content").notNull(),
+  isRead: boolean("is_read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const notifications = pgTable("notifications", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  type: text("type").notNull(), // application_status | new_message | new_applicant | job_match
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  linkUrl: text("link_url"),
+  isRead: boolean("is_read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -196,6 +218,16 @@ export const insertJobTemplateSchema = createInsertSchema(jobTemplates).omit({
 });
 
 export const insertPremiumTransactionSchema = createInsertSchema(premiumTransactions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMessageSchema = createInsertSchema(messages).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
   id: true,
   createdAt: true,
 });
@@ -294,6 +326,12 @@ export type JobTemplate = typeof jobTemplates.$inferSelect;
 
 export type InsertPremiumTransaction = z.infer<typeof insertPremiumTransactionSchema>;
 export type PremiumTransaction = typeof premiumTransactions.$inferSelect;
+
+export type InsertMessage = z.infer<typeof insertMessageSchema>;
+export type Message = typeof messages.$inferSelect;
+
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type Notification = typeof notifications.$inferSelect;
 
 export type RegisterPekerja = z.infer<typeof registerPekerjaSchema>;
 export type RegisterPemberiKerja = z.infer<typeof registerPemberiKerjaSchema>;

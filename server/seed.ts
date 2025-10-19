@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { users, companies, jobs } from "@shared/schema";
+import { users, companies, jobs, applications, wishlists, messages, notifications } from "@shared/schema";
 import bcrypt from "bcrypt";
 
 const locations = [
@@ -211,7 +211,133 @@ async function seed() {
   
   console.log(`✓ Created ${createdJobs.length} jobs`);
   
+  // Create applications with various statuses
+  console.log("Creating applications...");
+  const statuses = ["submitted", "reviewed", "shortlisted", "rejected", "accepted"];
+  const createdApplications = [];
+  
+  for (let i = 0; i < 15; i++) {
+    const app = await db.insert(applications).values({
+      jobId: randomElement(createdJobs).id,
+      applicantId: testPekerja.id,
+      coverLetter: `Saya tertarik dengan posisi ini. Saya memiliki pengalaman yang relevan dan siap untuk bergabung dengan tim Anda.`,
+      status: randomElement(statuses),
+    }).returning();
+    createdApplications.push(app[0]);
+  }
+  
+  console.log(`✓ Created ${createdApplications.length} applications`);
+  
+  // Create wishlists
+  console.log("Creating wishlist items...");
+  for (let i = 0; i < 10; i++) {
+    await db.insert(wishlists).values({
+      userId: testPekerja.id,
+      jobId: randomElement(createdJobs).id,
+    }).onConflictDoNothing();
+  }
+  
+  console.log(`✓ Created wishlist items`);
+  
+  // Create messages untuk aplikasi yang di-shortlist atau accepted
+  console.log("Creating messages...");
+  const messageableApps = createdApplications.filter(app => 
+    app.status === "shortlisted" || app.status === "accepted"
+  );
+  
+  for (const app of messageableApps.slice(0, 5)) {
+    // Message from employer to applicant
+    await db.insert(messages).values({
+      senderId: testEmployer.id,
+      receiverId: testPekerja.id,
+      applicationId: app.id,
+      jobId: app.jobId,
+      content: `Halo! Kami tertarik dengan lamaran Anda. Apakah Anda bisa hadir untuk wawancara minggu ini?`,
+      isRead: Math.random() > 0.5,
+    });
+    
+    // Reply from applicant
+    if (Math.random() > 0.3) {
+      await db.insert(messages).values({
+        senderId: testPekerja.id,
+        receiverId: testEmployer.id,
+        applicationId: app.id,
+        jobId: app.jobId,
+        content: `Terima kasih atas responnya! Saya tersedia untuk wawancara. Kapan waktu yang tepat?`,
+        isRead: true,
+      });
+    }
+  }
+  
+  console.log(`✓ Created message threads`);
+  
+  // Create notifications
+  console.log("Creating notifications...");
+  const notificationTypes = [
+    {
+      type: "application_status",
+      title: "Status Lamaran Diperbarui",
+      message: "Lamaran Anda untuk posisi {job} telah di-review",
+      linkUrl: "/user/dashboard#applications",
+    },
+    {
+      type: "new_message",
+      title: "Pesan Baru",
+      message: "Anda mendapat pesan baru dari pemberi kerja",
+      linkUrl: "/messages",
+    },
+    {
+      type: "job_match",
+      title: "Lowongan Cocok Untuk Anda! 🎯",
+      message: "Ada lowongan baru yang sesuai dengan preferensi Anda",
+      linkUrl: "/jobs",
+    },
+    {
+      type: "new_applicant",
+      title: "Pelamar Baru",
+      message: "Ada pelamar baru untuk lowongan Anda",
+      linkUrl: "/employer/dashboard#applicants",
+    },
+  ];
+  
+  // Notifications for pekerja
+  for (let i = 0; i < 8; i++) {
+    const notif = randomElement(notificationTypes.filter(n => n.type !== "new_applicant"));
+    await db.insert(notifications).values({
+      userId: testPekerja.id,
+      type: notif.type,
+      title: notif.title,
+      message: notif.message,
+      linkUrl: notif.linkUrl,
+      isRead: Math.random() > 0.4,
+    });
+  }
+  
+  // Notifications for employer
+  for (let i = 0; i < 5; i++) {
+    const notif = randomElement(notificationTypes.filter(n => 
+      n.type === "new_applicant" || n.type === "new_message"
+    ));
+    await db.insert(notifications).values({
+      userId: testEmployer.id,
+      type: notif.type,
+      title: notif.title,
+      message: notif.message,
+      linkUrl: notif.linkUrl,
+      isRead: Math.random() > 0.3,
+    });
+  }
+  
+  console.log(`✓ Created notifications`);
+  
   console.log("\n🎉 Seed completed successfully!");
+  console.log("\n📊 Summary:");
+  console.log(`   - Companies: ${createdCompanies.length}`);
+  console.log(`   - Jobs: ${createdJobs.length}`);
+  console.log(`   - Applications: ${createdApplications.length} (with various statuses)`);
+  console.log(`   - Wishlists: 10 items`);
+  console.log(`   - Messages: Multiple conversation threads`);
+  console.log(`   - Notifications: For both pekerja and employer`);
   console.log("\nTest accounts created:");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log("👤 Pekerja Account:");
