@@ -95,10 +95,16 @@ export interface IStorage {
   markNotificationAsRead(notificationId: string): Promise<void>;
   markAllNotificationsAsRead(userId: string): Promise<void>;
   createNotification(userId: string, type: string, title: string, message: string, linkUrl?: string): Promise<any>;
+  
+  // Premium Transactions
+  createPremiumTransaction(userId: string, jobId: string | null, type: string, amount: number): Promise<any>;
+  getPremiumTransactions(userId: string): Promise<any[]>;
+  updateTransactionStatus(transactionId: string, status: string): Promise<any>;
+  getUserPremiumBalance(userId: string): Promise<{ jobBoosts: number; featuredSlots: number }>;
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable } from "@shared/schema";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable } from "@shared/schema";
 import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
@@ -965,6 +971,92 @@ export class DbStorage implements IStorage {
       .returning();
 
     return notification;
+  }
+
+  // Premium Transactions
+  async createPremiumTransaction(
+    userId: string,
+    jobId: string | null,
+    type: string,
+    amount: number
+  ): Promise<any> {
+    const [transaction] = await db
+      .insert(premiumTransactionsTable)
+      .values({
+        userId,
+        jobId,
+        type,
+        amount,
+        status: "pending",
+      })
+      .returning();
+
+    return transaction;
+  }
+
+  async getPremiumTransactions(userId: string): Promise<any[]> {
+    const transactions = await db
+      .select()
+      .from(premiumTransactionsTable)
+      .where(eq(premiumTransactionsTable.userId, userId))
+      .orderBy(desc(premiumTransactionsTable.createdAt));
+
+    return transactions;
+  }
+
+  async updateTransactionStatus(transactionId: string, status: string): Promise<any> {
+    const [transaction] = await db
+      .update(premiumTransactionsTable)
+      .set({ status })
+      .where(eq(premiumTransactionsTable.id, transactionId))
+      .returning();
+
+    return transaction;
+  }
+
+  async getUserPremiumBalance(userId: string): Promise<{ jobBoosts: number; featuredSlots: number }> {
+    // Get completed premium transactions
+    const transactions = await db
+      .select()
+      .from(premiumTransactionsTable)
+      .where(
+        and(
+          eq(premiumTransactionsTable.userId, userId),
+          eq(premiumTransactionsTable.status, "completed")
+        )
+      );
+
+    // Calculate balance
+    let jobBoosts = 0;
+    let featuredSlots = 0;
+
+    for (const transaction of transactions) {
+      if (transaction.type === "job_booster") {
+        // Each job booster can be used once
+        const job = transaction.jobId ? await this.getJobById(transaction.jobId) : null;
+        // If job doesn't exist or is not featured, this boost is available
+        if (!job || !job.isFeatured) {
+          jobBoosts += 1;
+        }
+      } else if (transaction.type === "slot_package") {
+        // Slot packages give multiple boosts
+        // For now, 1 transaction = 5 boosts (can be customized)
+        featuredSlots += 5;
+      }
+    }
+
+    // Subtract used boosts (jobs that are currently featured)
+    const userJobs = await this.getJobsByEmployer(userId);
+    const featuredCount = userJobs.filter(job => job.isFeatured).length;
+    
+    // Adjust balance
+    const totalBoosts = jobBoosts + featuredSlots;
+    const availableBoosts = Math.max(0, totalBoosts - featuredCount);
+
+    return {
+      jobBoosts: availableBoosts,
+      featuredSlots: availableBoosts,
+    };
   }
 }
 

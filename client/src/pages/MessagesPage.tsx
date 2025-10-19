@@ -1,121 +1,186 @@
-import { useState } from "react";
-import { Search, Send, MoreVertical, Phone, Video, Paperclip, Smile } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Search, Send, MoreVertical, ArrowLeft } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useWebSocket } from "@/hooks/useWebSocket";
+import { formatDistanceToNow } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
+interface User {
+  id: string;
+  fullName: string;
+  role: string;
+  photoUrl?: string;
+}
 
 interface Conversation {
-  id: string;
-  name: string;
-  company: string;
-  avatar: string;
-  lastMessage: string;
-  timestamp: string;
-  unread: number;
-  online: boolean;
+  otherUser: User;
+  lastMessage: {
+    content: string;
+    createdAt: string;
+    isRead: boolean;
+    senderId: string;
+  };
+  unreadCount: number;
 }
 
 interface Message {
   id: string;
-  sender: string;
+  senderId: string;
+  receiverId: string;
   content: string;
-  timestamp: string;
-  isMine: boolean;
+  createdAt: string;
+  isRead: boolean;
 }
 
 export default function MessagesPage() {
-  const [selectedConversation, setSelectedConversation] = useState<string | null>("1");
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const conversations: Conversation[] = [
-    {
-      id: "1",
-      name: "Sarah Johnson",
-      company: "PT Maju Jaya",
-      avatar: "SJ",
-      lastMessage: "Terima kasih sudah apply, kami akan review CV Anda",
-      timestamp: "10:30 AM",
-      unread: 2,
-      online: true,
-    },
-    {
-      id: "2",
-      name: "Michael Chen",
-      company: "CV Sejahtera",
-      avatar: "MC",
-      lastMessage: "Kapan bisa interview?",
-      timestamp: "Yesterday",
-      unread: 0,
-      online: true,
-    },
-    {
-      id: "3",
-      name: "Emily Davis",
-      company: "Toko Elektronik",
-      avatar: "ED",
-      lastMessage: "Kami tertarik dengan profil Anda",
-      timestamp: "2 days ago",
-      unread: 1,
-      online: false,
-    },
-    {
-      id: "4",
-      name: "David Wilson",
-      company: "StartupHub Indonesia",
-      avatar: "DW",
-      lastMessage: "Terima kasih atas minat Anda pada perusahaan kami",
-      timestamp: "3 days ago",
-      unread: 0,
-      online: false,
-    },
-  ];
+  const { data: currentUser } = useQuery<User>({
+    queryKey: ["/api/auth/me"],
+  });
 
-  const messages: Message[] = [
-    {
-      id: "1",
-      sender: "PT Maju Jaya",
-      content: "Halo, terima kasih sudah apply untuk posisi Staff Admin",
-      timestamp: "10:00 AM",
-      isMine: false,
+  const { data: conversations = [], isLoading: conversationsLoading } = useQuery<Conversation[]>({
+    queryKey: ["/api/messages"],
+    enabled: !!currentUser,
+  });
+
+  const { data: messages = [], isLoading: messagesLoading } = useQuery<Message[]>({
+    queryKey: ["/api/messages", selectedUserId],
+    enabled: !!selectedUserId,
+  });
+
+  // WebSocket for real-time updates
+  const { isConnected, sendMessage: sendWsMessage } = useWebSocket({
+    userId: currentUser?.id,
+    onMessage: (data) => {
+      if (data.type === "new_message") {
+        // Refresh conversations
+        queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
+        
+        // Refresh message thread if it's the active conversation
+        if (selectedUserId === data.message.senderId) {
+          queryClient.invalidateQueries({ queryKey: ["/api/messages", selectedUserId] });
+        }
+      } else if (data.type === "messages_read") {
+        queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
+      }
     },
-    {
-      id: "2",
-      sender: "You",
-      content: "Terima kasih kembali. Saya sangat tertarik dengan posisi ini",
-      timestamp: "10:15 AM",
-      isMine: true,
+  });
+
+  const sendMessageMutation = useMutation({
+    mutationFn: async (content: string) => {
+      const res = await apiRequest("/api/messages", "POST", {
+        receiverId: selectedUserId,
+        content,
+      });
+      return res.json();
     },
-    {
-      id: "3",
-      sender: "PT Maju Jaya",
-      content: "Terima kasih sudah apply, kami akan review CV Anda dan menghubungi Anda dalam 3 hari kerja",
-      timestamp: "10:30 AM",
-      isMine: false,
+    onSuccess: (newMessage) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/messages", selectedUserId] });
+      
+      // Send via WebSocket for real-time delivery
+      sendWsMessage({
+        type: "message",
+        receiverId: selectedUserId,
+        data: newMessage,
+      });
+      
+      setMessageInput("");
     },
-  ];
+  });
+
+  const markAsReadMutation = useMutation({
+    mutationFn: async (otherUserId: string) => {
+      const res = await apiRequest(`/api/messages/${otherUserId}/read`, "PATCH");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
+      
+      // Notify via WebSocket
+      if (selectedUserId) {
+        sendWsMessage({
+          type: "mark_read",
+          senderId: selectedUserId,
+        });
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (selectedUserId) {
+      // Mark messages as read when viewing a conversation
+      const conversation = conversations.find(c => c.otherUser.id === selectedUserId);
+      if (conversation && conversation.unreadCount > 0) {
+        markAsReadMutation.mutate(selectedUserId);
+      }
+    }
+  }, [selectedUserId]);
+
+  useEffect(() => {
+    // Scroll to bottom when messages change
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSendMessage = () => {
-    if (messageInput.trim()) {
-      setMessageInput("");
+    if (messageInput.trim() && selectedUserId) {
+      sendMessageMutation.mutate(messageInput.trim());
     }
   };
 
-  const activeConversation = conversations.find(c => c.id === selectedConversation);
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const filteredConversations = conversations.filter((conv) => 
+    conv.otherUser.fullName.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
+
+  const activeConversation = conversations.find(c => c.otherUser.id === selectedUserId);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader />
       
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
-        <h1 className="text-3xl font-bold text-foreground mb-6">Pesan</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-foreground">Pesan</h1>
+          {isConnected && (
+            <span className="text-xs text-green-600 dark:text-green-400">● Connected</span>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-280px)]">
           {/* Conversations List */}
-          <div className="lg:col-span-4 bg-card border border-border rounded-xl overflow-hidden flex flex-col">
+          <div className={`lg:col-span-4 bg-card border border-border rounded-xl overflow-hidden flex flex-col ${selectedUserId ? 'hidden lg:flex' : ''}`}>
             <div className="p-4 border-b border-border">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Cari percakapan..."
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-border rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   data-testid="input-search-messages"
                 />
@@ -123,153 +188,162 @@ export default function MessagesPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto">
-              {conversations.map((conversation) => (
-                <button
-                  key={conversation.id}
-                  onClick={() => setSelectedConversation(conversation.id)}
-                  className={`w-full p-4 border-b border-border hover:bg-secondary/50 transition-colors text-left ${
-                    selectedConversation === conversation.id ? 'bg-secondary' : ''
-                  }`}
-                  data-testid={`conversation-${conversation.id}`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="relative">
-                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-semibold text-primary">{conversation.avatar}</span>
+              {conversationsLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <p className="text-muted-foreground">Loading...</p>
+                </div>
+              ) : filteredConversations.length === 0 ? (
+                <div className="flex items-center justify-center py-12">
+                  <p className="text-muted-foreground">Belum ada percakapan</p>
+                </div>
+              ) : (
+                filteredConversations.map((conv) => (
+                  <button
+                    key={conv.otherUser.id}
+                    onClick={() => setSelectedUserId(conv.otherUser.id)}
+                    className={`w-full p-4 border-b border-border hover:bg-accent transition-colors text-left ${
+                      selectedUserId === conv.otherUser.id ? 'bg-accent' : ''
+                    }`}
+                    data-testid={`conversation-${conv.otherUser.id}`}
+                  >
+                    <div className="flex gap-3">
+                      <div className="w-12 h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-primary-foreground font-semibold">
+                        {conv.otherUser.photoUrl ? (
+                          <img src={conv.otherUser.photoUrl} alt={conv.otherUser.fullName} className="w-full h-full rounded-full object-cover" />
+                        ) : (
+                          getInitials(conv.otherUser.fullName)
+                        )}
                       </div>
-                      {conversation.online && (
-                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-card rounded-full" />
-                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="font-semibold text-foreground truncate">{conv.otherUser.fullName}</h3>
+                          <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
+                            {formatDistanceToNow(new Date(conv.lastMessage.createdAt), { addSuffix: true, locale: idLocale })}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <p className={`text-sm truncate ${
+                            !conv.lastMessage.isRead && conv.lastMessage.senderId !== currentUser?.id
+                              ? 'font-semibold text-foreground'
+                              : 'text-muted-foreground'
+                          }`}>
+                            {conv.lastMessage.content}
+                          </p>
+                          {conv.unreadCount > 0 && (
+                            <span className="bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 ml-2">
+                              {conv.unreadCount > 9 ? '9+' : conv.unreadCount}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="text-sm font-semibold text-foreground truncate">{conversation.name}</h3>
-                        <span className="text-xs text-muted-foreground">{conversation.timestamp}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-1">{conversation.company}</p>
-                      <p className="text-sm text-muted-foreground truncate">{conversation.lastMessage}</p>
-                    </div>
-                    {conversation.unread > 0 && (
-                      <div className="h-5 w-5 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs text-primary-foreground">{conversation.unread}</span>
-                      </div>
-                    )}
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))
+              )}
             </div>
           </div>
 
           {/* Chat Area */}
-          <div className="lg:col-span-8 bg-card border border-border rounded-xl overflow-hidden flex flex-col">
-            {selectedConversation && activeConversation ? (
+          <div className={`lg:col-span-8 bg-card border border-border rounded-xl overflow-hidden flex flex-col ${!selectedUserId ? 'hidden lg:flex' : ''}`}>
+            {!selectedUserId ? (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-muted-foreground text-lg mb-2">Pilih percakapan untuk memulai</p>
+                  <p className="text-muted-foreground text-sm">Pesan Anda akan muncul di sini</p>
+                </div>
+              </div>
+            ) : (
               <>
                 {/* Chat Header */}
-                <div className="p-4 border-b border-border flex items-center justify-between">
+                <div className="p-4 border-b border-border flex items-center justify-between bg-card">
                   <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="text-sm font-semibold text-primary">{activeConversation.avatar}</span>
-                      </div>
-                      {activeConversation.online && (
-                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-card rounded-full" />
+                    <button
+                      onClick={() => setSelectedUserId(null)}
+                      className="lg:hidden mr-2"
+                      data-testid="button-back-conversations"
+                    >
+                      <ArrowLeft className="h-5 w-5 text-foreground" />
+                    </button>
+                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
+                      {activeConversation?.otherUser.photoUrl ? (
+                        <img src={activeConversation.otherUser.photoUrl} alt={activeConversation.otherUser.fullName} className="w-full h-full rounded-full object-cover" />
+                      ) : (
+                        activeConversation && getInitials(activeConversation.otherUser.fullName)
                       )}
                     </div>
                     <div>
-                      <h2 className="text-sm font-semibold text-foreground">{activeConversation.name}</h2>
-                      <p className="text-xs text-muted-foreground">
-                        {activeConversation.online ? 'Aktif sekarang' : activeConversation.company}
-                      </p>
+                      <h2 className="font-semibold text-foreground">{activeConversation?.otherUser.fullName}</h2>
+                      <p className="text-xs text-muted-foreground capitalize">{activeConversation?.otherUser.role.replace('_', ' ')}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      className="p-2 hover:bg-secondary rounded-lg transition-colors" 
-                      data-testid="button-call"
-                    >
-                      <Phone className="h-5 w-5 text-muted-foreground" />
-                    </button>
-                    <button 
-                      className="p-2 hover:bg-secondary rounded-lg transition-colors" 
-                      data-testid="button-video"
-                    >
-                      <Video className="h-5 w-5 text-muted-foreground" />
-                    </button>
-                    <button 
-                      className="p-2 hover:bg-secondary rounded-lg transition-colors" 
-                      data-testid="button-more"
-                    >
-                      <MoreVertical className="h-5 w-5 text-muted-foreground" />
-                    </button>
-                  </div>
+                  <button className="p-2 hover:bg-accent rounded-lg transition-colors" data-testid="button-more-options">
+                    <MoreVertical className="h-5 w-5 text-muted-foreground" />
+                  </button>
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${message.isMine ? 'justify-end' : 'justify-start'}`}
-                      data-testid={`message-${message.id}`}
-                    >
-                      <div className={`max-w-[70%]`}>
-                        <div
-                          className={`rounded-2xl px-4 py-2 ${
-                            message.isMine
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-secondary text-foreground'
-                          }`}
-                        >
-                          <p className="text-sm">{message.content}</p>
-                        </div>
-                        <p className={`text-xs mt-1 px-1 ${
-                          message.isMine ? 'text-right text-muted-foreground' : 'text-muted-foreground'
-                        }`}>
-                          {message.timestamp}
-                        </p>
-                      </div>
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background">
+                  {messagesLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <p className="text-muted-foreground">Loading...</p>
                     </div>
-                  ))}
+                  ) : messages.length === 0 ? (
+                    <div className="flex items-center justify-center py-12">
+                      <p className="text-muted-foreground">Belum ada pesan. Mulai percakapan!</p>
+                    </div>
+                  ) : (
+                    messages.map((message) => {
+                      const isMine = message.senderId === currentUser?.id;
+                      return (
+                        <div
+                          key={message.id}
+                          className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}
+                          data-testid={`message-${message.id}`}
+                        >
+                          <div className={`max-w-[70%] ${isMine ? 'order-2' : 'order-1'}`}>
+                            <div
+                              className={`rounded-2xl px-4 py-2 ${
+                                isMine
+                                  ? 'bg-[#D4FF00] text-gray-900'
+                                  : 'bg-card text-foreground border border-border'
+                              }`}
+                            >
+                              <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                            </div>
+                            <p className={`text-xs text-muted-foreground mt-1 ${isMine ? 'text-right' : 'text-left'}`}>
+                              {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true, locale: idLocale })}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                  <div ref={messagesEndRef} />
                 </div>
 
                 {/* Message Input */}
-                <div className="p-4 border-t border-border">
-                  <div className="flex items-center gap-2">
-                    <button 
-                      className="p-2 hover:bg-secondary rounded-lg transition-colors"
-                      data-testid="button-attach"
-                    >
-                      <Paperclip className="h-5 w-5 text-muted-foreground" />
-                    </button>
-                    <input
-                      type="text"
-                      placeholder="Ketik pesan..."
-                      className="flex-1 px-4 py-2 border border-border rounded-lg text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                <div className="p-4 border-t border-border bg-card">
+                  <div className="flex gap-2">
+                    <Textarea
                       value={messageInput}
                       onChange={(e) => setMessageInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                      data-testid="input-message"
+                      onKeyPress={handleKeyPress}
+                      placeholder="Ketik pesan..."
+                      className="flex-1 min-h-[44px] max-h-32 resize-none"
+                      rows={1}
+                      data-testid="textarea-message-input"
                     />
-                    <button 
-                      className="p-2 hover:bg-secondary rounded-lg transition-colors"
-                      data-testid="button-emoji"
-                    >
-                      <Smile className="h-5 w-5 text-muted-foreground" />
-                    </button>
-                    <button
+                    <Button
                       onClick={handleSendMessage}
-                      className="p-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
-                      data-testid="button-send"
+                      disabled={!messageInput.trim() || sendMessageMutation.isPending}
+                      className="bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900 px-4"
+                      data-testid="button-send-message"
                     >
                       <Send className="h-5 w-5" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center">
-                <p className="text-muted-foreground">Select a conversation to start messaging</p>
-              </div>
             )}
           </div>
         </div>

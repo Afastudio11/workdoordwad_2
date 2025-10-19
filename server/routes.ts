@@ -1,6 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupWebSocket, broadcastNotification } from "./websocket";
 import bcrypt from "bcrypt";
 import multer from "multer";
 import path from "path";
@@ -760,11 +761,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const updatedApplication = await storage.updateApplicationStatus(req.params.id, status);
       
-      // Send notification to applicant (simple console log for now, can be extended to email/push)
-      const application = await storage.getUserApplications(updatedApplication?.applicantId || '');
-      if (application.length > 0) {
-        console.log(`[NOTIFICATION] Status lamaran untuk ${application[0].job.title} diubah menjadi: ${status}`);
-        // Future: Send email notification here
+      // Create notification for applicant
+      if (updatedApplication) {
+        const applications = await storage.getUserApplications(updatedApplication.applicantId);
+        const application = applications.find(app => app.id === req.params.id);
+        
+        if (application) {
+          const statusMessages: Record<string, string> = {
+            submitted: "Lamaran Anda telah diterima",
+            reviewed: "Lamaran Anda sedang ditinjau",
+            shortlisted: "Selamat! Anda masuk shortlist",
+            rejected: "Mohon maaf, lamaran Anda belum dapat kami terima",
+            accepted: "Selamat! Lamaran Anda diterima",
+          };
+
+          const notification = await storage.createNotification(
+            updatedApplication.applicantId,
+            "application_status",
+            "Status Lamaran Diperbarui",
+            `${statusMessages[status]} untuk posisi ${application.job.title}`,
+            `/user/dashboard#applications`
+          );
+          
+          // Broadcast notification via WebSocket
+          broadcastNotification(updatedApplication.applicantId, notification);
+        }
       }
       
       res.json(updatedApplication);
@@ -1402,13 +1423,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       // Create notification for receiver
-      await storage.createNotification(
+      const notification = await storage.createNotification(
         receiverId,
         "new_message",
         "Pesan Baru",
         "Anda mendapat pesan baru",
         "/messages"
       );
+      
+      // Broadcast notification via WebSocket
+      broadcastNotification(receiverId, notification);
 
       res.status(201).json(message);
     } catch (error) {
@@ -1488,7 +1512,147 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Premium Transactions API
+  app.get("/api/premium/balance", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const balance = await storage.getUserPremiumBalance(req.session.userId);
+      res.json(balance);
+    } catch (error) {
+      console.error("Error fetching premium balance:", error);
+      res.status(500).json({ error: "Gagal mengambil saldo premium" });
+    }
+  });
+
+  app.get("/api/premium/transactions", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const transactions = await storage.getPremiumTransactions(req.session.userId);
+      res.json(transactions);
+    } catch (error) {
+      console.error("Error fetching premium transactions:", error);
+      res.status(500).json({ error: "Gagal mengambil riwayat transaksi" });
+    }
+  });
+
+  app.post("/api/premium/purchase", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const { type, amount } = req.body;
+      
+      if (!type || !amount) {
+        return res.status(400).json({ error: "Type dan amount harus diisi" });
+      }
+
+      if (!["job_booster", "slot_package"].includes(type)) {
+        return res.status(400).json({ error: "Tipe tidak valid" });
+      }
+
+      // Create transaction
+      const transaction = await storage.createPremiumTransaction(
+        req.session.userId,
+        null,
+        type,
+        amount
+      );
+
+      // In production, integrate with payment gateway here
+      // For now, automatically mark as completed (demo mode)
+      const completedTransaction = await storage.updateTransactionStatus(
+        transaction.id,
+        "completed"
+      );
+
+      // Create notification
+      await storage.createNotification(
+        req.session.userId,
+        "system",
+        "Pembelian Berhasil",
+        `Anda telah membeli ${type === "job_booster" ? "Job Booster" : "Paket Slot"}`,
+        "/employer/dashboard#jobs"
+      );
+
+      res.status(201).json(completedTransaction);
+    } catch (error) {
+      console.error("Error creating premium transaction:", error);
+      res.status(500).json({ error: "Gagal membuat transaksi" });
+    }
+  });
+
+  app.post("/api/jobs/:id/boost", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const job = await storage.getJobById(req.params.id);
+      if (!job || job.postedBy !== req.session.userId) {
+        return res.status(404).json({ error: "Job not found or access denied" });
+      }
+
+      // Check if already featured
+      if (job.isFeatured) {
+        return res.status(400).json({ error: "Lowongan sudah dipromosikan" });
+      }
+
+      // Check balance
+      const balance = await storage.getUserPremiumBalance(req.session.userId);
+      if (balance.jobBoosts === 0) {
+        return res.status(400).json({ error: "Saldo boost tidak cukup. Silakan beli paket terlebih dahulu" });
+      }
+
+      // Feature the job
+      await storage.updateJob(req.params.id, { isFeatured: true });
+
+      // Create notification
+      await storage.createNotification(
+        req.session.userId,
+        "system",
+        "Lowongan Dipromosikan",
+        `Lowongan "${job.title}" berhasil dipromosikan`,
+        `/employer/dashboard#jobs`
+      );
+
+      res.json({ message: "Lowongan berhasil dipromosikan" });
+    } catch (error) {
+      console.error("Error boosting job:", error);
+      res.status(500).json({ error: "Gagal mempromosikan lowongan" });
+    }
+  });
+
   const httpServer = createServer(app);
+  
+  // Setup WebSocket for real-time features
+  setupWebSocket(httpServer);
 
   return httpServer;
 }
