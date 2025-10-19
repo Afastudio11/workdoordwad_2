@@ -1,7 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { Bell, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import logoImg from "@assets/as@4x_1760716473766.png";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -41,6 +42,18 @@ export default function DashboardHeader() {
   const recentNotifications = notifications.slice(0, 5);
 
   const isActive = (path: string) => location === path;
+
+  const markAllAsReadMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("/api/notifications/read-all", {
+        method: "PATCH",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
+    },
+  });
 
   return (
     <header className="bg-[#1a1a1a] text-white sticky top-0 z-50 border-b border-gray-800">
@@ -113,9 +126,14 @@ export default function DashboardHeader() {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium text-black">Notifikasi</p>
                     {unreadData && unreadData.count > 0 && (
-                      <Link href="/user/dashboard#notifications">
-                        <button className="text-xs text-black hover:underline font-semibold" data-testid="button-mark-all-read-header">Tandai semua dibaca</button>
-                      </Link>
+                      <button 
+                        onClick={() => markAllAsReadMutation.mutate()}
+                        disabled={markAllAsReadMutation.isPending}
+                        className="text-xs text-black hover:underline font-semibold disabled:opacity-50" 
+                        data-testid="button-mark-all-read-header"
+                      >
+                        {markAllAsReadMutation.isPending ? "Memproses..." : "Tandai semua dibaca"}
+                      </button>
                     )}
                   </div>
                 </DropdownMenuLabel>
@@ -195,6 +213,16 @@ export default function DashboardHeader() {
                     <p className="text-xs leading-none text-gray-600">{user?.email}</p>
                   </div>
                 </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                {/* Profile */}
+                <DropdownMenuItem asChild>
+                  <Link href="/user/dashboard#profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile">
+                    <User className="h-4 w-4" />
+                    <span>Profil</span>
+                  </Link>
+                </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
 
                 {/* Keluar (Sign Out) */}
