@@ -84,7 +84,7 @@ export default function HowItWorksSection() {
 
           {/* Right Side - Image Card */}
           <div className="flex items-center justify-center">
-            <div className="relative max-w-2xl w-full">
+            <div className="relative max-w-md w-full">
               <img 
                 src={cardImg}
                 alt="Upload Resume Card" 
