@@ -79,10 +79,10 @@ export default function RecommendationsPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-            Rekomendasi Untuk Anda
+            Rekomendasi Untuk kamu
           </h1>
           <p className="text-gray-900 mt-1">
-            Lowongan yang sesuai dengan profil dan preferensi Anda
+            Lowongan yang sesuai dengan profil dan preferensi kamu
           </p>
         </div>
 
@@ -119,10 +119,10 @@ export default function RecommendationsPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-            Rekomendasi Untuk Anda
+            Rekomendasi Untuk kamu
           </h1>
           <p className="text-gray-900 mt-1">
-            Lowongan yang sesuai dengan profil dan preferensi Anda
+            Lowongan yang sesuai dengan profil dan preferensi kamu
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export default function RecommendationsPage() {
             Belum Ada Rekomendasi
           </h3>
           <p className="text-gray-900 mb-6 max-w-md mx-auto">
-            Lengkapi profil Anda (keahlian, preferensi industri, dan lokasi) untuk mendapatkan rekomendasi pekerjaan yang lebih sesuai
+            Lengkapi profil kamu (keahlian, preferensi industri, dan lokasi) untuk mendapatkan rekomendasi pekerjaan yang lebih sesuai
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/user/dashboard/settings">
@@ -155,10 +155,10 @@ export default function RecommendationsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-          Rekomendasi Untuk Anda
+          Rekomendasi Untuk kamu
         </h1>
         <p className="text-gray-900 mt-1">
-          {recommendations.length} lowongan yang cocok dengan profil Anda
+          {recommendations.length} lowongan yang cocok dengan profil kamu
         </p>
       </div>
 

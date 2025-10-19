@@ -107,17 +107,17 @@ export default function ManageApplicantsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "submitted":
-        return "bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200";
+        return "bg-blue-100 text-blue-800";
       case "reviewed":
-        return "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200";
+        return "bg-yellow-100 text-yellow-800";
       case "shortlisted":
-        return "bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200";
+        return "bg-purple-100 text-purple-800";
       case "rejected":
-        return "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200";
+        return "bg-red-100 text-red-800";
       case "accepted":
-        return "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200";
+        return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -149,9 +149,9 @@ export default function ManageApplicantsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Kelola Pelamar</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Kelola Pelamar</h1>
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-sm text-gray-600">
             Total: <span className="font-semibold">{applications.length}</span> lamaran
           </div>
           <Button
@@ -168,14 +168,14 @@ export default function ManageApplicantsPage() {
       </div>
 
       {/* Filters */}
-      <Card className="p-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <Card className="p-6 border-gray-200 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
               placeholder="Cari pelamar atau lowongan..."
-              className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300"
+              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               data-testid="input-search-applicants"
@@ -213,33 +213,33 @@ export default function ManageApplicantsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Dari Tanggal
             </label>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900"
               data-testid="input-date-from"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Sampai Tanggal
             </label>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900"
               data-testid="input-date-to"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Filter Keahlian
             </label>
             <input
@@ -247,7 +247,7 @@ export default function ManageApplicantsPage() {
               placeholder="Contoh: JavaScript, React"
               value={skillsFilter}
               onChange={(e) => setSkillsFilter(e.target.value)}
-              className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
               data-testid="input-skills-filter"
             />
           </div>
@@ -260,8 +260,8 @@ export default function ManageApplicantsPage() {
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
         </div>
       ) : filteredApplications.length === 0 ? (
-        <Card className="p-12 text-center border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <p className="text-gray-500 dark:text-gray-400">Tidak ada lamaran ditemukan</p>
+        <Card className="p-12 text-center border-gray-200 bg-white">
+          <p className="text-gray-500">Tidak ada lamaran ditemukan</p>
         </Card>
       ) : (
         <div className="space-y-4">
@@ -272,18 +272,18 @@ export default function ManageApplicantsPage() {
             });
 
             return (
-              <Card key={application.id} className="p-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" data-testid={`applicant-card-${application.id}`}>
+              <Card key={application.id} className="p-6 border-gray-200 bg-white" data-testid={`applicant-card-${application.id}`}>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex items-start gap-4 flex-1">
                     <div className="w-12 h-12 rounded-full bg-[#D4FF00] flex items-center justify-center flex-shrink-0">
                       <User className="w-6 h-6 text-gray-900" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100" data-testid={`text-applicant-name-${application.id}`}>
+                      <h3 className="text-lg font-semibold text-gray-900" data-testid={`text-applicant-name-${application.id}`}>
                         {application.user.fullName}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Melamar: {application.job.title}</p>
-                      <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-gray-600 mb-2">Melamar: {application.job.title}</p>
+                      <div className="flex flex-wrap gap-3 text-sm text-gray-500">
                         {application.user.email && (
                           <span className="flex items-center gap-1">
                             <Mail className="w-4 h-4" />
@@ -297,7 +297,7 @@ export default function ManageApplicantsPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">Dilamar {appliedDate}</p>
+                      <p className="text-xs text-gray-400 mt-2">Dilamar {appliedDate}</p>
                     </div>
                   </div>
 
@@ -349,9 +349,9 @@ export default function ManageApplicantsPage() {
                 </div>
 
                 {application.coverLetter && (
-                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Surat Lamaran:</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">{application.coverLetter}</p>
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Surat Lamaran:</p>
+                    <p className="text-sm text-gray-600 line-clamp-3">{application.coverLetter}</p>
                   </div>
                 )}
               </Card>
@@ -362,11 +362,11 @@ export default function ManageApplicantsPage() {
 
       {/* Applicant Profile Dialog */}
       <Dialog open={!!selectedApplicant} onOpenChange={(open) => !open && setSelectedApplicant(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white">
           {selectedApplicant && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-gray-900 dark:text-gray-100">Profil Pelamar</DialogTitle>
+                <DialogTitle className="text-gray-900">Profil Pelamar</DialogTitle>
               </DialogHeader>
               
               <div className="space-y-6 pt-4">
@@ -376,10 +376,10 @@ export default function ManageApplicantsPage() {
                     <User className="w-12 h-12 text-gray-900" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <h2 className="text-2xl font-bold text-gray-900">
                       {selectedApplicant.user.fullName}
                     </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       Melamar: {selectedApplicant.job.title}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-3">
@@ -391,34 +391,34 @@ export default function ManageApplicantsPage() {
                 </div>
 
                 {/* Contact Information */}
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                <div className="border-t border-gray-200 pt-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <Mail className="w-5 h-5" />
                     Informasi Kontak
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {selectedApplicant.user.email && (
                       <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Email</p>
-                        <p className="text-base text-gray-900 dark:text-gray-100">{selectedApplicant.user.email}</p>
+                        <p className="text-sm text-gray-600">Email</p>
+                        <p className="text-base text-gray-900">{selectedApplicant.user.email}</p>
                       </div>
                     )}
                     {selectedApplicant.user.phone && (
                       <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Telepon</p>
-                        <p className="text-base text-gray-900 dark:text-gray-100">{selectedApplicant.user.phone}</p>
+                        <p className="text-sm text-gray-600">Telepon</p>
+                        <p className="text-base text-gray-900">{selectedApplicant.user.phone}</p>
                       </div>
                     )}
                     {selectedApplicant.user.city && (
                       <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Kota</p>
-                        <p className="text-base text-gray-900 dark:text-gray-100">{selectedApplicant.user.city}</p>
+                        <p className="text-sm text-gray-600">Kota</p>
+                        <p className="text-base text-gray-900">{selectedApplicant.user.city}</p>
                       </div>
                     )}
                     {selectedApplicant.user.province && (
                       <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Provinsi</p>
-                        <p className="text-base text-gray-900 dark:text-gray-100">{selectedApplicant.user.province}</p>
+                        <p className="text-sm text-gray-600">Provinsi</p>
+                        <p className="text-base text-gray-900">{selectedApplicant.user.province}</p>
                       </div>
                     )}
                   </div>
@@ -426,12 +426,12 @@ export default function ManageApplicantsPage() {
 
                 {/* Bio */}
                 {selectedApplicant.user.bio && (
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <User className="w-5 h-5" />
                       Tentang
                     </h3>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
                       {selectedApplicant.user.bio}
                     </p>
                   </div>
@@ -439,14 +439,14 @@ export default function ManageApplicantsPage() {
 
                 {/* Skills */}
                 {selectedApplicant.user.skills && selectedApplicant.user.skills.length > 0 && (
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <Award className="w-5 h-5" />
                       Keterampilan
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {selectedApplicant.user.skills.map((skill, index) => (
-                        <Badge key={index} variant="secondary" className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                        <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-900">
                           {skill}
                         </Badge>
                       ))}
@@ -456,8 +456,8 @@ export default function ManageApplicantsPage() {
 
                 {/* Education */}
                 {selectedApplicant.user.education && (
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <GraduationCap className="w-5 h-5" />
                       Pendidikan
                     </h3>
@@ -466,14 +466,14 @@ export default function ManageApplicantsPage() {
                         try {
                           const education = JSON.parse(selectedApplicant.user.education);
                           return Array.isArray(education) ? education.map((edu: any, index: number) => (
-                            <div key={index} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                              <p className="font-semibold text-gray-900 dark:text-gray-100">{edu.degree || edu.institution}</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">{edu.institution || edu.degree}</p>
-                              {edu.year && <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{edu.year}</p>}
+                            <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                              <p className="font-semibold text-gray-900">{edu.degree || edu.institution}</p>
+                              <p className="text-sm text-gray-600">{edu.institution || edu.degree}</p>
+                              {edu.year && <p className="text-xs text-gray-500 mt-1">{edu.year}</p>}
                             </div>
-                          )) : <p className="text-sm text-gray-600 dark:text-gray-400">{selectedApplicant.user.education}</p>;
+                          )) : <p className="text-sm text-gray-600">{selectedApplicant.user.education}</p>;
                         } catch {
-                          return <p className="text-sm text-gray-600 dark:text-gray-400">{selectedApplicant.user.education}</p>;
+                          return <p className="text-sm text-gray-600">{selectedApplicant.user.education}</p>;
                         }
                       })()}
                     </div>
@@ -482,8 +482,8 @@ export default function ManageApplicantsPage() {
 
                 {/* Experience */}
                 {selectedApplicant.user.experience && (
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <Briefcase className="w-5 h-5" />
                       Pengalaman Kerja
                     </h3>
@@ -492,15 +492,15 @@ export default function ManageApplicantsPage() {
                         try {
                           const experience = JSON.parse(selectedApplicant.user.experience);
                           return Array.isArray(experience) ? experience.map((exp: any, index: number) => (
-                            <div key={index} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                              <p className="font-semibold text-gray-900 dark:text-gray-100">{exp.position || exp.company}</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">{exp.company || exp.position}</p>
-                              {exp.duration && <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{exp.duration}</p>}
-                              {exp.description && <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">{exp.description}</p>}
+                            <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                              <p className="font-semibold text-gray-900">{exp.position || exp.company}</p>
+                              <p className="text-sm text-gray-600">{exp.company || exp.position}</p>
+                              {exp.duration && <p className="text-xs text-gray-500 mt-1">{exp.duration}</p>}
+                              {exp.description && <p className="text-sm text-gray-700 mt-2">{exp.description}</p>}
                             </div>
-                          )) : <p className="text-sm text-gray-600 dark:text-gray-400">{selectedApplicant.user.experience}</p>;
+                          )) : <p className="text-sm text-gray-600">{selectedApplicant.user.experience}</p>;
                         } catch {
-                          return <p className="text-sm text-gray-600 dark:text-gray-400">{selectedApplicant.user.experience}</p>;
+                          return <p className="text-sm text-gray-600">{selectedApplicant.user.experience}</p>;
                         }
                       })()}
                     </div>
@@ -509,20 +509,20 @@ export default function ManageApplicantsPage() {
 
                 {/* Cover Letter */}
                 {selectedApplicant.coverLetter && (
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <FileText className="w-5 h-5" />
                       Surat Lamaran
                     </h3>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
                       {selectedApplicant.coverLetter}
                     </p>
                   </div>
                 )}
 
                 {/* Internal Notes */}
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                <div className="border-t border-gray-200 pt-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <MessageSquare className="w-5 h-5" />
                     Catatan Internal
                   </h3>
@@ -533,7 +533,7 @@ export default function ManageApplicantsPage() {
                       placeholder="Tambahkan catatan internal tentang pelamar ini..."
                       value={newNote}
                       onChange={(e) => setNewNote(e.target.value)}
-                      className="mb-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                      className="mb-2 bg-white text-gray-900 border-gray-300"
                       rows={3}
                       data-testid="textarea-add-note"
                     />
@@ -560,22 +560,22 @@ export default function ManageApplicantsPage() {
                         <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
                       </div>
                     ) : notes.length === 0 ? (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                      <p className="text-sm text-gray-500 text-center py-4">
                         Belum ada catatan. Tambahkan catatan pertama untuk pelamar ini.
                       </p>
                     ) : (
                       notes.map((note) => (
                         <div
                           key={note.id}
-                          className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
+                          className="bg-gray-50 p-4 rounded-lg"
                           data-testid={`note-${note.id}`}
                         >
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <div className="flex-1">
-                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <p className="text-sm font-medium text-gray-900">
                                 {note.createdByUser.fullName}
                               </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                              <p className="text-xs text-gray-500">
                                 {formatDistanceToNow(new Date(note.createdAt), {
                                   addSuffix: true,
                                   locale: idLocale,
@@ -587,13 +587,13 @@ export default function ManageApplicantsPage() {
                               size="sm"
                               onClick={() => deleteNoteMutation.mutate(note.id)}
                               disabled={deleteNoteMutation.isPending}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
                               data-testid={`button-delete-note-${note.id}`}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
-                          <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                          <p className="text-sm text-gray-700 whitespace-pre-wrap">
                             {note.note}
                           </p>
                         </div>
@@ -603,7 +603,7 @@ export default function ManageApplicantsPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-6 flex gap-3">
+                <div className="border-t border-gray-200 pt-6 flex gap-3">
                   {selectedApplicant.cvUrl && (
                     <Button
                       variant="outline"

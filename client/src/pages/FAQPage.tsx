@@ -27,19 +27,19 @@ export default function FAQPage() {
       id: "1",
       category: "Pekerja",
       question: "Bagaimana cara melamar pekerjaan?",
-      answer: "Untuk melamar pekerjaan, cari lowongan yang sesuai di halaman Find Job, klik pada lowongan yang Anda minati, lalu klik tombol 'Apply'. Anda akan diminta untuk melengkapi data dan mengunggah CV.",
+      answer: "Untuk melamar pekerjaan, cari lowongan yang sesuai di halaman Find Job, klik pada lowongan yang kamu minati, lalu klik tombol 'Apply'. kamu akan diminta untuk melengkapi data dan mengunggah CV.",
     },
     {
       id: "2",
       category: "Pekerja",
       question: "Apakah gratis untuk mencari pekerjaan?",
-      answer: "Ya, Pintu Kerja 100% gratis untuk pencari kerja. Anda dapat mencari lowongan, melamar pekerjaan, dan berkomunikasi dengan pemberi kerja tanpa biaya apapun.",
+      answer: "Ya, Pintu Kerja 100% gratis untuk pencari kerja. kamu dapat mencari lowongan, melamar pekerjaan, dan berkomunikasi dengan pemberi kerja tanpa biaya apapun.",
     },
     {
       id: "3",
       category: "Pekerja",
       question: "Bagaimana cara mengupdate CV saya?",
-      answer: "Anda dapat mengupdate CV dengan masuk ke profil Anda, klik menu 'Ubah Profil', lalu unggah CV terbaru Anda di bagian 'Unggah CV'.",
+      answer: "kamu dapat mengupdate CV dengan masuk ke profil kamu, klik menu 'Ubah Profil', lalu unggah CV terbaru kamu di bagian 'Unggah CV'.",
     },
     {
       id: "4",
@@ -57,13 +57,13 @@ export default function FAQPage() {
       id: "6",
       category: "Akun",
       question: "Bagaimana cara reset password?",
-      answer: "Klik 'Lupa Password' di halaman login, masukkan email Anda, dan kami akan mengirimkan link untuk reset password ke email Anda.",
+      answer: "Klik 'Lupa Password' di halaman login, masukkan email kamu, dan kami akan mengirimkan link untuk reset password ke email kamu.",
     },
     {
       id: "7",
       category: "Akun",
       question: "Bisakah saya punya dua akun?",
-      answer: "Satu email hanya bisa digunakan untuk satu akun. Namun Anda bisa memilih peran yang berbeda (pekerja atau pemberi kerja) dalam satu akun.",
+      answer: "Satu email hanya bisa digunakan untuk satu akun. Namun kamu bisa memilih peran yang berbeda (pekerja atau pemberi kerja) dalam satu akun.",
     },
     {
       id: "8",
@@ -151,7 +151,7 @@ export default function FAQPage() {
         )}
 
         <div className="mt-12 text-center">
-          <p className="text-muted-foreground mb-4">Tidak menemukan jawaban yang Anda cari?</p>
+          <p className="text-muted-foreground mb-4">Tidak menemukan jawaban yang kamu cari?</p>
           <Link href="/contact">
             <button className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:opacity-90 transition-opacity" data-testid="button-contact">
               Hubungi Kami

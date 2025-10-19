@@ -31,13 +31,13 @@ export default function AIInnovationSection() {
   const [activeTab, setActiveTab] = useState("articles");
 
   return (
-    <section className="py-12 md:py-20 bg-gray-50 dark:bg-gray-900">
+    <section className="py-12 md:py-20 bg-gray-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
         <div className="flex flex-col lg:flex-row justify-between items-start mb-8 md:mb-12">
           <div className="mb-6 md:mb-8 lg:mb-0">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4 md:mb-6 leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 md:mb-6 leading-tight">
               Sumber Daya untuk Membantu<br className="hidden sm:block" />
-              <span className="sm:hidden"> </span>Anda Merekrut dengan Tepat
+              <span className="sm:hidden"> </span>kamu Merekrut dengan Tepat
             </h2>
             
             <div className="flex gap-2 sm:gap-3 flex-wrap">
@@ -45,8 +45,8 @@ export default function AIInnovationSection() {
                 onClick={() => setActiveTab("guides")}
                 className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-medium transition-colors ${
                   activeTab === "guides"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                    ? "bg-black text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
                 data-testid="tab-guides"
               >
@@ -56,8 +56,8 @@ export default function AIInnovationSection() {
                 onClick={() => setActiveTab("articles")}
                 className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-medium transition-colors ${
                   activeTab === "articles"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                    ? "bg-black text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
                 data-testid="tab-articles"
               >
@@ -67,7 +67,7 @@ export default function AIInnovationSection() {
           </div>
 
           <div className="w-full lg:max-w-md">
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base leading-relaxed">
+            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
               Bukan ahli? Jangan khawatir! Kami punya panduan dan artikel lengkap tentang praktik terbaik dan tips dalam merekrut karyawan.
             </p>
           </div>
@@ -87,10 +87,10 @@ export default function AIInnovationSection() {
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
                 />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-black dark:text-white mb-2 sm:mb-3 transition-colors">
+              <h3 className="text-lg sm:text-xl font-bold text-black mb-2 sm:mb-3 transition-colors">
                 {article.title}
               </h3>
-              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
                 <span>{article.date}</span>
                 <span>•</span>
                 <span>{article.readTime}</span>

@@ -8,7 +8,7 @@ export default function TestimonialsSection() {
         <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12">
           <div className="flex-1 text-left w-full">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-6 md:mb-8 leading-tight" data-testid="cta-title">
-              Siap Mengorganisir<br />Rekrutmen Anda?
+              Siap Mengorganisir<br />Rekrutmen kamu?
             </h2>
 
             <div className="flex flex-col sm:flex-row items-start gap-3 md:gap-4 mb-6 md:mb-8">

@@ -32,7 +32,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
       <div className="min-h-screen flex items-center justify-center" data-testid="unauthorized">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Akses Ditolak</h1>
-          <p className="text-gray-600">Anda tidak memiliki izin untuk mengakses halaman ini.</p>
+          <p className="text-gray-600">kamu tidak memiliki izin untuk mengakses halaman ini.</p>
         </div>
       </div>
     );

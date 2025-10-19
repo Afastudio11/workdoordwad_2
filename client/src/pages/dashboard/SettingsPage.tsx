@@ -156,7 +156,7 @@ export default function SettingsPage() {
           Pengaturan Akun
         </h1>
         <p className="text-sm sm:text-base text-gray-600 mt-1">
-          Kelola informasi akun dan preferensi keamanan Anda
+          Kelola informasi akun dan preferensi keamanan kamu
         </p>
       </div>
 
@@ -170,7 +170,7 @@ export default function SettingsPage() {
                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
                     Informasi Akun
                   </CardTitle>
-                  <CardDescription className="text-xs sm:text-sm text-gray-600">Data pribadi dan kontak Anda</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm text-gray-600">Data pribadi dan kontak kamu</CardDescription>
                 </div>
                 {!isEditingAccount && (
                   <Button
@@ -489,7 +489,7 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-3">
                   <Shield className="w-12 h-12 text-green-600" />
                   <div>
-                    <p className="font-medium text-gray-900">Password Anda aman</p>
+                    <p className="font-medium text-gray-900">Password kamu aman</p>
                     <p className="text-sm text-gray-600">Terakhir diubah 30 hari yang lalu</p>
                   </div>
                 </div>
@@ -793,7 +793,7 @@ export default function SettingsPage() {
 
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <p className="text-sm text-blue-900">
-                      💡 <strong>Tips:</strong> Lengkapi preferensi Anda untuk mendapatkan rekomendasi lowongan yang lebih sesuai dengan keinginan Anda.
+                      💡 <strong>Tips:</strong> Lengkapi preferensi kamu untuk mendapatkan rekomendasi lowongan yang lebih sesuai dengan keinginan kamu.
                     </p>
                   </div>
                 </div>

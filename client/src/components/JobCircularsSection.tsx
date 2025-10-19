@@ -67,24 +67,24 @@ const categories = ["Designer", "Web Developer", "Software Engineer", "Doctors",
 
 export default function JobCircularsSection() {
   return (
-    <section className="py-12 md:py-20 bg-white dark:bg-gray-900">
+    <section className="py-12 md:py-20 bg-white">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8">
         <div className="mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold text-black dark:text-white mb-6 md:mb-8">
+          <h2 className="text-3xl md:text-5xl font-bold text-black mb-6 md:mb-8">
             Featured Job Circulars
           </h2>
           
           {/* Search Bar - Single Pill Shape */}
           <div className="mb-6">
-            <div className="flex items-center gap-0 bg-white dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 p-1.5 max-w-2xl shadow-sm">
+            <div className="flex items-center gap-0 bg-white rounded-full border border-gray-200 p-1.5 max-w-2xl shadow-sm">
               <input 
                 type="text" 
                 placeholder="etc: Search Your Needs" 
-                className="flex-1 pl-6 pr-4 py-2.5 bg-transparent text-black dark:text-white text-sm focus:outline-none"
+                className="flex-1 pl-6 pr-4 py-2.5 bg-transparent text-black text-sm focus:outline-none"
                 data-testid="input-search"
               />
               <select 
-                className="px-4 py-2.5 bg-transparent text-black dark:text-white text-sm border-l border-gray-200 dark:border-gray-700 focus:outline-none cursor-pointer"
+                className="px-4 py-2.5 bg-transparent text-black text-sm border-l border-gray-200 focus:outline-none cursor-pointer"
                 data-testid="select-category"
               >
                 <option>Web Devleopment</option>
@@ -102,14 +102,14 @@ export default function JobCircularsSection() {
 
           {/* Popular Categories */}
           <div className="flex gap-2 items-center flex-wrap">
-            <span className="text-gray-600 dark:text-gray-400 text-sm font-medium">Popular Categories:</span>
+            <span className="text-gray-600 text-sm font-medium">Popular Categories:</span>
             {categories.map((cat, index) => (
               <button 
                 key={index}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   index === 1 
-                    ? 'bg-black dark:bg-white text-white dark:text-black' 
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-black text-white 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200
                 }`}
                 data-testid={`button-category-${index}`}
               >
@@ -123,15 +123,15 @@ export default function JobCircularsSection() {
           {jobCirculars.map((job, index) => (
             <div
               key={index}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300"
+              className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-md transition-all duration-300"
               data-testid={`job-card-${index}`}
             >
               {/* Position and Location */}
               <div className="mb-4">
-                <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+                <h3 className="text-lg font-semibold text-black mb-2">
                   {job.position}
                 </h3>
-                <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-1 text-sm text-gray-500">
                   <MapPin className="h-3.5 w-3.5" />
                   <span>{job.location}</span>
                 </div>
@@ -140,16 +140,16 @@ export default function JobCircularsSection() {
               {/* Company */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="text-2xl">{job.logo}</div>
-                <span className="text-sm font-medium text-black dark:text-white">{job.company}</span>
+                <span className="text-sm font-medium text-black">{job.company}</span>
               </div>
 
               {/* Time and Type */}
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-1 text-xs text-gray-500">
                   <Clock className="h-3.5 w-3.5" />
                   <span>{job.postedTime}</span>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-1 text-xs text-gray-500">
                   <Briefcase className="h-3.5 w-3.5" />
                   <span>{job.type}</span>
                 </div>
@@ -157,11 +157,11 @@ export default function JobCircularsSection() {
 
               {/* Category and Salary */}
               <div className="flex items-center gap-2 mb-5">
-                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-1 text-xs text-gray-500">
                   <Briefcase className="h-3.5 w-3.5" />
                   <span>{job.category}</span>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-1 text-xs text-gray-500">
                   <span>💰</span>
                   <span>{job.salary}</span>
                 </div>
@@ -169,7 +169,7 @@ export default function JobCircularsSection() {
 
               {/* Apply Button */}
               <button 
-                className="w-full py-2.5 bg-black dark:bg-white text-white dark:text-black font-medium text-sm rounded-md hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                className="w-full py-2.5 bg-black text-white font-medium text-sm rounded-md hover:bg-gray-800 transition-colors"
                 data-testid={`button-apply-${index}`}
               >
                 Apply Now

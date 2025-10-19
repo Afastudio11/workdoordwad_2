@@ -23,7 +23,7 @@ export default function BlogPage() {
         
         <div className="bg-gray-50 rounded-lg p-8 text-center">
           <p className="text-gray-600" data-testid="coming-soon">
-            Konten blog akan segera hadir. Kami sedang menyiapkan artikel-artikel menarik untuk Anda.
+            Konten blog akan segera hadir. Kami sedang menyiapkan artikel-artikel menarik untuk kamu.
           </p>
         </div>
       </div>

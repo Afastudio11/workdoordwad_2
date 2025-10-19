@@ -6,17 +6,17 @@ const steps = [
   {
     number: "1",
     title: "Buat Akun",
-    description: "Daftar gratis dan buat profil profesional Anda. Lengkapi dengan CV, foto, dan portofolio untuk meningkatkan peluang ditemukan oleh perekrut terbaik. Proses pendaftaran hanya membutuhkan beberapa menit dan Anda langsung dapat mengakses ribuan lowongan pekerjaan dari perusahaan terpercaya di seluruh Indonesia."
+    description: "Daftar gratis dan buat profil profesional kamu. Lengkapi dengan CV, foto, dan portofolio untuk meningkatkan peluang ditemukan oleh perekrut terbaik. Proses pendaftaran hanya membutuhkan beberapa menit dan kamu langsung dapat mengakses ribuan lowongan pekerjaan dari perusahaan terpercaya di seluruh Indonesia."
   },
   {
     number: "2",
-    title: "Lengkapi Profil Anda",
-    description: "Tambahkan riwayat pendidikan, pengalaman kerja, keahlian teknis, dan sertifikasi Anda untuk membuat profil yang menonjol. Semakin lengkap profil Anda, semakin besar peluang mendapatkan rekomendasi pekerjaan yang sesuai dengan kualifikasi dan preferensi karir Anda. Sistem AI kami akan mencocokkan profil Anda dengan lowongan yang paling relevan."
+    title: "Lengkapi Profil kamu",
+    description: "Tambahkan riwayat pendidikan, pengalaman kerja, keahlian teknis, dan sertifikasi kamu untuk membuat profil yang menonjol. Semakin lengkap profil kamu, semakin besar peluang mendapatkan rekomendasi pekerjaan yang sesuai dengan kualifikasi dan preferensi karir kamu. Sistem AI kami akan mencocokkan profil kamu dengan lowongan yang paling relevan."
   },
   {
     number: "3",
     title: "Lamar Pekerjaan atau Rekrut",
-    description: "Gunakan fitur pencarian canggih kami untuk menemukan pekerjaan berdasarkan lokasi, industri, gaji, dan jenis pekerjaan. Lamar dengan satu klik menggunakan profil yang sudah Anda buat. Untuk perekrut, posting lowongan pekerjaan, kelola lamaran, dan temukan kandidat terbaik dengan tools manajemen yang lengkap dan efisien."
+    description: "Gunakan fitur pencarian canggih kami untuk menemukan pekerjaan berdasarkan lokasi, industri, gaji, dan jenis pekerjaan. Lamar dengan satu klik menggunakan profil yang sudah kamu buat. Untuk perekrut, posting lowongan pekerjaan, kelola lamaran, dan temukan kandidat terbaik dengan tools manajemen yang lengkap dan efisien."
   }
 ];
 
@@ -27,7 +27,7 @@ const stats = [
   },
   {
     value: "15min+",
-    description: "Waktu rata-rata yang dibutuhkan untuk membuat profil lengkap dan mulai melamar pekerjaan impian Anda."
+    description: "Waktu rata-rata yang dibutuhkan untuk membuat profil lengkap dan mulai melamar pekerjaan impian kamu."
   },
   {
     value: "2000+",
@@ -38,7 +38,7 @@ const stats = [
 export default function HowItWorksSection() {
   const [activeStep, setActiveStep] = useState(0);
   return (
-    <section className="relative py-12 md:py-24 bg-white dark:bg-gray-900 overflow-hidden">
+    <section className="relative py-12 md:py-24 bg-white overflow-hidden">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-8 md:mb-12">
@@ -49,7 +49,7 @@ export default function HowItWorksSection() {
               <span className="sm:hidden"> </span>dengan Mudah
             </h2>
             <p className="text-gray-600 mb-6 md:mb-8 text-sm sm:text-base leading-relaxed" data-testid="how-it-works-description">
-              Platform kami memudahkan Anda untuk mencari pekerjaan impian atau menemukan kandidat terbaik dalam tiga langkah sederhana.
+              Platform kami memudahkan kamu untuk mencari pekerjaan impian atau menemukan kandidat terbaik dalam tiga langkah sederhana.
             </p>
 
             <div className="space-y-4 md:space-y-6">

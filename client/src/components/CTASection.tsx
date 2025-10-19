@@ -45,7 +45,7 @@ export default function CTASection() {
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder:text-gray-400"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Nama Anda"
+                  placeholder="Nama kamu"
                 />
               </div>
               <div>
@@ -71,7 +71,7 @@ export default function CTASection() {
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-white placeholder:text-gray-400"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="Tulis pesan Anda..."
+                  placeholder="Tulis pesan kamu..."
                 />
               </div>
               <button 

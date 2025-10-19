@@ -13,7 +13,7 @@ export default function NotFound() {
           </div>
 
           <p className="mt-4 text-sm text-gray-600 mb-4">
-            Halaman yang Anda cari tidak ditemukan.
+            Halaman yang kamu cari tidak ditemukan.
           </p>
           
           <Link href="/" className="text-blue-600 hover:underline text-sm font-medium">

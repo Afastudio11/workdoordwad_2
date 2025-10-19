@@ -37,15 +37,15 @@ const getNotificationIcon = (type: string) => {
 const getNotificationColor = (type: string) => {
   switch (type) {
     case "application_status":
-      return "bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800";
+      return "bg-blue-50 border-blue-200";
     case "new_message":
-      return "bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800";
+      return "bg-green-50 border-green-200";
     case "job_match":
-      return "bg-purple-50 dark:bg-purple-950 border-purple-200 dark:border-purple-800";
+      return "bg-purple-50 border-purple-200";
     case "new_applicant":
-      return "bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800";
+      return "bg-yellow-50 border-yellow-200";
     default:
-      return "bg-gray-50 dark:bg-gray-950 border-gray-200 dark:border-gray-800";
+      return "bg-gray-50 border-gray-200";
   }
 };
 
@@ -120,17 +120,17 @@ export default function NotificationsPage() {
   if (isError) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100" data-testid="text-page-title">
+        <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
           Notifikasi
         </h1>
         
         <Card className="p-12">
           <div className="text-center space-y-4">
             <AlertCircle className="h-12 w-12 mx-auto text-red-500" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">
               Terjadi Kesalahan
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-600">
               {(error as any)?.message || "Gagal memuat notifikasi. Silakan coba lagi."}
             </p>
             <Button
@@ -151,10 +151,10 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100" data-testid="text-page-title">
+          <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
             Notifikasi
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-gray-600 mt-1">
             {unreadData?.count ? `${unreadData.count} notifikasi belum dibaca` : "Semua notifikasi sudah dibaca"}
           </p>
         </div>
@@ -185,11 +185,11 @@ export default function NotificationsPage() {
         <Card className="p-12">
           <div className="text-center space-y-3">
             <BellOff className="h-12 w-12 mx-auto text-gray-400" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">
               Belum ada notifikasi
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Notifikasi Anda akan muncul di sini
+            <p className="text-gray-600">
+              Notifikasi kamu akan muncul di sini
             </p>
           </div>
         </Card>
@@ -198,7 +198,7 @@ export default function NotificationsPage() {
           {/* Unread Notifications */}
           {unreadNotifications.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Bell className="h-5 w-5" />
                 Belum Dibaca ({unreadNotifications.length})
               </h2>
@@ -218,7 +218,7 @@ export default function NotificationsPage() {
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
+                          <h3 className="font-semibold text-gray-900 text-sm">
                             {notification.title}
                           </h3>
                           <Badge variant="default" className="bg-[#D4FF00] text-gray-900 flex-shrink-0">
@@ -226,12 +226,12 @@ export default function NotificationsPage() {
                           </Badge>
                         </div>
                         
-                        <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                        <p className="text-sm text-gray-700 mb-2">
                           {notification.message}
                         </p>
                         
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          <span className="text-xs text-gray-500">
                             {formatDistanceToNow(new Date(notification.createdAt), {
                               addSuffix: true,
                               locale: idLocale,
@@ -263,7 +263,7 @@ export default function NotificationsPage() {
           {/* Read Notifications */}
           {readNotifications.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-600 flex items-center gap-2">
                 <Check className="h-5 w-5" />
                 Sudah Dibaca ({readNotifications.length})
               </h2>
@@ -272,7 +272,7 @@ export default function NotificationsPage() {
                 {readNotifications.map((notification) => (
                   <Card
                     key={notification.id}
-                    className="p-4 bg-gray-50 dark:bg-gray-900 opacity-75 border border-gray-200 dark:border-gray-800"
+                    className="p-4 bg-gray-50 opacity-75 border border-gray-200"
                     data-testid={`notification-read-${notification.id}`}
                   >
                     <div className="flex items-start gap-4">
@@ -281,16 +281,16 @@ export default function NotificationsPage() {
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-700 dark:text-gray-300 text-sm mb-1">
+                        <h3 className="font-semibold text-gray-700 text-sm mb-1">
                           {notification.title}
                         </h3>
                         
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        <p className="text-sm text-gray-600 mb-2">
                           {notification.message}
                         </p>
                         
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-500 dark:text-gray-500">
+                          <span className="text-xs text-gray-500">
                             {formatDistanceToNow(new Date(notification.createdAt), {
                               addSuffix: true,
                               locale: idLocale,

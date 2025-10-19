@@ -21,7 +21,7 @@ const registerPekerjaSchema = z.object({
   password: z.string().min(6, "Password minimal 6 karakter"),
   confirmPassword: z.string(),
   agreeToTerms: z.boolean().refine((val) => val === true, {
-    message: "Anda harus menyetujui Terms of Services",
+    message: "kamu harus menyetujui Terms of Services",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Password tidak sama",
@@ -37,7 +37,7 @@ const registerPemberiKerjaSchema = z.object({
   password: z.string().min(6, "Password minimal 6 karakter"),
   confirmPassword: z.string(),
   agreeToTerms: z.boolean().refine((val) => val === true, {
-    message: "Anda harus menyetujui Terms of Services",
+    message: "kamu harus menyetujui Terms of Services",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Password tidak sama",
@@ -80,7 +80,7 @@ export default function RegisterPage() {
     onSuccess: () => {
       toast({
         title: "Berhasil mendaftar!",
-        description: "Akun Anda berhasil dibuat dan Anda sudah login.",
+        description: "Akun kamu berhasil dibuat dan kamu sudah login.",
       });
       setLocation("/jobs");
     },

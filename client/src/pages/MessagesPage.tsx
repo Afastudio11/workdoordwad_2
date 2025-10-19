@@ -168,12 +168,12 @@ export default function MessagesPage() {
           <h1 className="text-3xl font-bold text-foreground">Pesan</h1>
           <div className="flex items-center gap-2">
             {isConnected ? (
-              <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
-                <span className="w-2 h-2 bg-green-600 dark:bg-green-400 rounded-full animate-pulse"></span>
+              <span className="text-xs text-green-600 flex items-center gap-1">
+                <span className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
                 Real-time aktif
               </span>
             ) : (
-              <span className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
+              <span className="text-xs text-yellow-600 flex items-center gap-1">
                 <WifiOff className="w-3 h-3" />
                 Menghubungkan...
               </span>

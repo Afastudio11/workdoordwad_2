@@ -2,7 +2,6 @@ import { Menu, X, User, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import logoImg from "@assets/as@4x_1760716473766.png";
 import logoImgDark from "@assets/as@4x_1760716473766.png";
 import {
@@ -70,7 +69,6 @@ export default function Header({ variant = "dark" }: HeaderProps) {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <ThemeToggle />
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -153,9 +151,6 @@ export default function Header({ variant = "dark" }: HeaderProps) {
               Kontak
             </Link>
             <div className={`pt-4 space-y-3 border-t ${borderClass}`}>
-              <div className="flex justify-center py-2">
-                <ThemeToggle />
-              </div>
               {isAuthenticated ? (
                 <>
                   <div className={`px-4 py-3 ${textClass}`}>

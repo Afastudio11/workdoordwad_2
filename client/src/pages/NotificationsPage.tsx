@@ -193,8 +193,8 @@ export default function NotificationsPage() {
             </h3>
             <p className="text-muted-foreground">
               {filter === 'unread' 
-                ? 'Semua notifikasi Anda sudah dibaca'
-                : 'Anda belum memiliki notifikasi apapun'}
+                ? 'Semua notifikasi kamu sudah dibaca'
+                : 'kamu belum memiliki notifikasi apapun'}
             </p>
           </div>
         ) : (

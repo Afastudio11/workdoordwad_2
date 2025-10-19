@@ -210,7 +210,7 @@ export default function ManageJobsPage() {
   };
 
   const handleDeleteJob = (jobId: string, jobTitle: string) => {
-    if (confirm(`Apakah Anda yakin ingin menghapus lowongan "${jobTitle}"?`)) {
+    if (confirm(`Apakah kamu yakin ingin menghapus lowongan "${jobTitle}"?`)) {
       deleteJobMutation.mutate(jobId);
     }
   };
@@ -310,7 +310,7 @@ export default function ManageJobsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Kelola Lowongan</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Kelola Lowongan</h1>
         <Button 
           onClick={handleCreateNew}
           className="bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900" 
@@ -321,13 +321,13 @@ export default function ManageJobsPage() {
         </Button>
       </div>
 
-      <Card className="p-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <Card className="p-6 border-gray-200 bg-white">
         <div className="relative mb-4">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           <input
             type="text"
             placeholder="Cari lowongan..."
-            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300"
+            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             data-testid="input-search-jobs"
@@ -335,8 +335,8 @@ export default function ManageJobsPage() {
         </div>
 
         {selectedJobs.size > 0 && !isLoading && (
-          <div className="mb-4 flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+          <div className="mb-4 flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+            <span className="text-sm text-gray-700">
               {selectedJobs.size} lowongan dipilih
             </span>
             <div className="flex gap-2 ml-auto">
@@ -346,7 +346,7 @@ export default function ManageJobsPage() {
                 onClick={() => handleBulkAction("activate")}
                 disabled={bulkUpdateMutation.isPending || bulkDeleteMutation.isPending}
                 data-testid="button-bulk-activate"
-                className="bg-white dark:bg-gray-800"
+                className="bg-white"
               >
                 {bulkUpdateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Aktifkan
@@ -357,7 +357,7 @@ export default function ManageJobsPage() {
                 onClick={() => handleBulkAction("deactivate")}
                 disabled={bulkUpdateMutation.isPending || bulkDeleteMutation.isPending}
                 data-testid="button-bulk-deactivate"
-                className="bg-white dark:bg-gray-800"
+                className="bg-white"
               >
                 {bulkUpdateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Nonaktifkan
@@ -381,8 +381,8 @@ export default function ManageJobsPage() {
             onClick={() => setActiveTab("all")}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               activeTab === "all"
-                ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
-                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                ? "bg-gray-900 text-white"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
             }`}
             data-testid="tab-all"
           >
@@ -392,8 +392,8 @@ export default function ManageJobsPage() {
             onClick={() => setActiveTab("active")}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               activeTab === "active"
-                ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
-                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                ? "bg-gray-900 text-white"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
             }`}
             data-testid="tab-active"
           >
@@ -403,8 +403,8 @@ export default function ManageJobsPage() {
             onClick={() => setActiveTab("closed")}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               activeTab === "closed"
-                ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
-                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                ? "bg-gray-900 text-white"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
             }`}
             data-testid="tab-closed"
           >
@@ -418,14 +418,14 @@ export default function ManageJobsPage() {
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
         </div>
       ) : filteredJobs.length === 0 ? (
-        <Card className="p-12 text-center border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <p className="text-gray-500 dark:text-gray-400">Tidak ada lowongan ditemukan</p>
+        <Card className="p-12 text-center border-gray-200 bg-white">
+          <p className="text-gray-500">Tidak ada lowongan ditemukan</p>
         </Card>
       ) : (
-        <Card className="border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800">
+        <Card className="border-gray-200 overflow-hidden bg-white">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left w-12">
                     <Checkbox
@@ -434,27 +434,27 @@ export default function ManageJobsPage() {
                       data-testid="checkbox-select-all"
                     />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Judul Lowongan
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Lokasi
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Tipe
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Diposting
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Aksi
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+              <tbody className="divide-y divide-gray-200 bg-white">
                 {filteredJobs.map((job) => {
                   const postedDate = formatDistanceToNow(new Date(job.createdAt), {
                     addSuffix: true,
@@ -462,7 +462,7 @@ export default function ManageJobsPage() {
                   });
 
                   return (
-                    <tr key={job.id} className="hover:bg-gray-50 dark:hover:bg-gray-700" data-testid={`job-row-${job.id}`}>
+                    <tr key={job.id} className="hover:bg-gray-50" data-testid={`job-row-${job.id}`}>
                       <td className="px-6 py-4">
                         <Checkbox
                           checked={selectedJobs.has(job.id)}
@@ -471,13 +471,13 @@ export default function ManageJobsPage() {
                         />
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{job.title}</div>
+                        <div className="text-sm font-medium text-gray-900">{job.title}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{job.location}</div>
+                        <div className="text-sm text-gray-600">{job.location}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{job.jobType}</div>
+                        <div className="text-sm text-gray-600">{job.jobType}</div>
                       </td>
                       <td className="px-6 py-4">
                         <span
@@ -487,13 +487,13 @@ export default function ManageJobsPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{postedDate}</div>
+                        <div className="text-sm text-gray-600">{postedDate}</div>
                       </td>
                       <td className="px-6 py-4">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button
-                              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                              className="text-gray-600 hover:text-gray-900"
                               data-testid={`button-actions-${job.id}`}
                             >
                               <MoreVertical className="h-5 w-5" />
@@ -538,9 +538,9 @@ export default function ManageJobsPage() {
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
           <DialogHeader>
-            <DialogTitle className="text-gray-900 dark:text-gray-100">
+            <DialogTitle className="text-gray-900">
               {editingJob ? "Edit Lowongan" : "Buat Lowongan Baru"}
             </DialogTitle>
           </DialogHeader>
@@ -551,13 +551,13 @@ export default function ManageJobsPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-gray-100">Judul Lowongan *</FormLabel>
+                    <FormLabel className="text-gray-900">Judul Lowongan *</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
                         placeholder="e.g. Senior Software Engineer" 
                         data-testid="input-job-title"
-                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                        className="bg-white text-gray-900 border-gray-300"
                       />
                     </FormControl>
                     <FormMessage />
@@ -570,14 +570,14 @@ export default function ManageJobsPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-gray-100">Deskripsi Pekerjaan *</FormLabel>
+                    <FormLabel className="text-gray-900">Deskripsi Pekerjaan *</FormLabel>
                     <FormControl>
                       <Textarea 
                         {...field} 
                         rows={5}
                         placeholder="Jelaskan deskripsi pekerjaan secara detail..." 
                         data-testid="textarea-job-description"
-                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                        className="bg-white text-gray-900 border-gray-300"
                       />
                     </FormControl>
                     <FormMessage />
@@ -590,14 +590,14 @@ export default function ManageJobsPage() {
                 name="requirements"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-gray-100">Persyaratan</FormLabel>
+                    <FormLabel className="text-gray-900">Persyaratan</FormLabel>
                     <FormControl>
                       <Textarea 
                         {...field} 
                         rows={4}
                         placeholder="Jelaskan persyaratan yang dibutuhkan..." 
                         data-testid="textarea-job-requirements"
-                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                        className="bg-white text-gray-900 border-gray-300"
                       />
                     </FormControl>
                     <FormMessage />
@@ -611,13 +611,13 @@ export default function ManageJobsPage() {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-gray-100">Lokasi *</FormLabel>
+                      <FormLabel className="text-gray-900">Lokasi *</FormLabel>
                       <FormControl>
                         <Input 
                           {...field} 
                           placeholder="e.g. Jakarta" 
                           data-testid="input-job-location"
-                          className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                          className="bg-white text-gray-900 border-gray-300"
                         />
                       </FormControl>
                       <FormMessage />
@@ -630,10 +630,10 @@ export default function ManageJobsPage() {
                   name="jobType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-gray-100">Tipe Pekerjaan *</FormLabel>
+                      <FormLabel className="text-gray-900">Tipe Pekerjaan *</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger data-testid="select-job-type" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600">
+                          <SelectTrigger data-testid="select-job-type" className="bg-white text-gray-900 border-gray-300">
                             <SelectValue />
                           </SelectTrigger>
                         </FormControl>
@@ -655,13 +655,13 @@ export default function ManageJobsPage() {
                 name="industry"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-gray-100">Industri</FormLabel>
+                    <FormLabel className="text-gray-900">Industri</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
                         placeholder="e.g. Teknologi, Keuangan" 
                         data-testid="input-job-industry"
-                        className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                        className="bg-white text-gray-900 border-gray-300"
                       />
                     </FormControl>
                     <FormMessage />
@@ -675,14 +675,14 @@ export default function ManageJobsPage() {
                   name="salaryMin"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-gray-100">Gaji Minimum (Rp)</FormLabel>
+                      <FormLabel className="text-gray-900">Gaji Minimum (Rp)</FormLabel>
                       <FormControl>
                         <Input 
                           {...field} 
                           type="number"
                           placeholder="5000000" 
                           data-testid="input-salary-min"
-                          className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                          className="bg-white text-gray-900 border-gray-300"
                         />
                       </FormControl>
                       <FormMessage />
@@ -695,14 +695,14 @@ export default function ManageJobsPage() {
                   name="salaryMax"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-gray-100">Gaji Maximum (Rp)</FormLabel>
+                      <FormLabel className="text-gray-900">Gaji Maximum (Rp)</FormLabel>
                       <FormControl>
                         <Input 
                           {...field} 
                           type="number"
                           placeholder="10000000" 
                           data-testid="input-salary-max"
-                          className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                          className="bg-white text-gray-900 border-gray-300"
                         />
                       </FormControl>
                       <FormMessage />
@@ -717,10 +717,10 @@ export default function ManageJobsPage() {
                   name="education"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-gray-100">Pendidikan</FormLabel>
+                      <FormLabel className="text-gray-900">Pendidikan</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger data-testid="select-education" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600">
+                          <SelectTrigger data-testid="select-education" className="bg-white text-gray-900 border-gray-300">
                             <SelectValue placeholder="Pilih pendidikan" />
                           </SelectTrigger>
                         </FormControl>
@@ -741,10 +741,10 @@ export default function ManageJobsPage() {
                   name="experience"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-gray-100">Pengalaman</FormLabel>
+                      <FormLabel className="text-gray-900">Pengalaman</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger data-testid="select-experience" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600">
+                          <SelectTrigger data-testid="select-experience" className="bg-white text-gray-900 border-gray-300">
                             <SelectValue placeholder="Pilih pengalaman" />
                           </SelectTrigger>
                         </FormControl>
@@ -771,7 +771,7 @@ export default function ManageJobsPage() {
                     form.reset();
                   }}
                   data-testid="button-cancel"
-                  className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                  className="border-gray-300 text-gray-700"
                 >
                   Batal
                 </Button>
@@ -797,22 +797,22 @@ export default function ManageJobsPage() {
       </Dialog>
 
       <Dialog open={isBulkActionDialogOpen} onOpenChange={setIsBulkActionDialogOpen}>
-        <DialogContent className="bg-white dark:bg-gray-800">
+        <DialogContent className="bg-white">
           <DialogHeader>
-            <DialogTitle className="text-gray-900 dark:text-gray-100">
+            <DialogTitle className="text-gray-900">
               Konfirmasi Aksi Massal
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-gray-700 dark:text-gray-300">
+            <p className="text-gray-700">
               {bulkActionType === "delete" && (
-                <>Apakah Anda yakin ingin menghapus <strong>{selectedJobs.size} lowongan</strong> yang dipilih? Tindakan ini tidak dapat dibatalkan.</>
+                <>Apakah kamu yakin ingin menghapus <strong>{selectedJobs.size} lowongan</strong> yang dipilih? Tindakan ini tidak dapat dibatalkan.</>
               )}
               {bulkActionType === "activate" && (
-                <>Apakah Anda yakin ingin mengaktifkan <strong>{selectedJobs.size} lowongan</strong> yang dipilih?</>
+                <>Apakah kamu yakin ingin mengaktifkan <strong>{selectedJobs.size} lowongan</strong> yang dipilih?</>
               )}
               {bulkActionType === "deactivate" && (
-                <>Apakah Anda yakin ingin menonaktifkan <strong>{selectedJobs.size} lowongan</strong> yang dipilih?</>
+                <>Apakah kamu yakin ingin menonaktifkan <strong>{selectedJobs.size} lowongan</strong> yang dipilih?</>
               )}
             </p>
           </div>
@@ -821,7 +821,7 @@ export default function ManageJobsPage() {
               variant="outline"
               onClick={() => setIsBulkActionDialogOpen(false)}
               data-testid="button-cancel-bulk-action"
-              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+              className="border-gray-300 text-gray-700"
             >
               Batal
             </Button>

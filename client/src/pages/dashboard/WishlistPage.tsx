@@ -71,7 +71,7 @@ export default function WishlistPage() {
             Wishlist
           </h1>
           <p className="text-gray-900 mt-1">
-            Lowongan yang Anda simpan
+            Lowongan yang kamu simpan
           </p>
         </div>
 

@@ -20,7 +20,7 @@ export default function QuickAccessPage() {
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">Pekerja</h3>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Cari dan lamar pekerjaan yang sesuai dengan keahlian Anda
+                  Cari dan lamar pekerjaan yang sesuai dengan keahlian kamu
                 </p>
                 <Button className="w-full" data-testid="button-access-pekerja">
                   Masuk sebagai Pekerja

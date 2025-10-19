@@ -127,7 +127,7 @@ export default function CompanyProfilePage() {
                 value={formData.description || ""}
                 onChange={(e) => handleChange("description", e.target.value)}
                 rows={5}
-                placeholder="Ceritakan tentang perusahaan Anda..."
+                placeholder="Ceritakan tentang perusahaan kamu..."
                 data-testid="textarea-description"
               />
             ) : (

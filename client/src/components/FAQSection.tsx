@@ -8,19 +8,19 @@ import {
 const faqs = [
   {
     question: "Bagaimana cara mendaftar di platform ini?",
-    answer: "Anda dapat mendaftar dengan mudah menggunakan email atau akun media sosial. Proses pendaftaran hanya memerlukan beberapa menit."
+    answer: "kamu dapat mendaftar dengan mudah menggunakan email atau akun media sosial. Proses pendaftaran hanya memerlukan beberapa menit."
   },
   {
     question: "Apakah ada biaya untuk posting lowongan kerja?",
-    answer: "Tidak, platform kami gratis selamanya untuk UMKM Indonesia. Anda dapat memposting lowongan kerja tanpa biaya apapun."
+    answer: "Tidak, platform kami gratis selamanya untuk UMKM Indonesia. kamu dapat memposting lowongan kerja tanpa biaya apapun."
   },
   {
     question: "Bagaimana cara melamar pekerjaan?",
-    answer: "Gunakan fitur Quick Apply untuk melamar pekerjaan dalam hitungan detik. Cukup simpan CV Anda sekali, dan lamar ke berbagai posisi dengan satu klik."
+    answer: "Gunakan fitur Quick Apply untuk melamar pekerjaan dalam hitungan detik. Cukup simpan CV kamu sekali, dan lamar ke berbagai posisi dengan satu klik."
   },
   {
     question: "Apakah platform ini mobile-friendly?",
-    answer: "Ya, platform kami didesain mobile-first sehingga Anda dapat mengakses lowongan dari mana saja, kapan saja melalui smartphone Anda."
+    answer: "Ya, platform kami didesain mobile-first sehingga kamu dapat mengakses lowongan dari mana saja, kapan saja melalui smartphone kamu."
   },
   {
     question: "Bagaimana AI membantu dalam proses rekrutmen?",

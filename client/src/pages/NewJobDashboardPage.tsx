@@ -185,7 +185,7 @@ export default function NewJobDashboardPage() {
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Search className="h-20 w-20 text-gray-300 mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Tidak ada lowongan ditemukan</h3>
-                <p className="text-sm text-gray-600">Coba ubah kata kunci pencarian atau filter Anda</p>
+                <p className="text-sm text-gray-600">Coba ubah kata kunci pencarian atau filter kamu</p>
               </div>
             ) : (
               <>

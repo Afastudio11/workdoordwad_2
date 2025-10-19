@@ -33,10 +33,10 @@ interface Application {
 
 const statusConfig = {
   submitted: { label: "Terkirim", color: "bg-primary/20 text-primary", icon: Clock },
-  reviewed: { label: "Ditinjau", color: "bg-yellow-500/20 text-yellow-700 dark:text-yellow-400", icon: Eye },
-  shortlisted: { label: "Diundang Interview", color: "bg-green-500/20 text-green-700 dark:text-green-400", icon: CheckCircle },
+  reviewed: { label: "Ditinjau", color: "bg-yellow-500/20 text-yellow-700", icon: Eye },
+  shortlisted: { label: "Diundang Interview", color: "bg-green-500/20 text-green-700", icon: CheckCircle },
   rejected: { label: "Ditolak", color: "bg-destructive/20 text-destructive", icon: XCircle },
-  accepted: { label: "Diterima", color: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400", icon: CheckCircle },
+  accepted: { label: "Diterima", color: "bg-emerald-500/20 text-emerald-700", icon: CheckCircle },
 };
 
 export default function ProfilePage() {
@@ -153,7 +153,7 @@ export default function ProfilePage() {
             Profil
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-1">
-            Kelola CV dan riwayat lamaran Anda
+            Kelola CV dan riwayat lamaran kamu
           </p>
         </div>
 
@@ -194,7 +194,7 @@ export default function ProfilePage() {
           Profil
         </h1>
         <p className="text-sm sm:text-base text-gray-600 mt-1">
-          Kelola CV dan riwayat lamaran Anda
+          Kelola CV dan riwayat lamaran kamu
         </p>
       </div>
 
@@ -222,7 +222,7 @@ export default function ProfilePage() {
             <Card className="bg-white border-gray-200">
               <CardHeader>
                 <CardTitle className="text-gray-900">CV / Resume</CardTitle>
-                <CardDescription className="text-gray-600">Unggah CV Anda dalam format PDF atau DOCX (maks 5MB)</CardDescription>
+                <CardDescription className="text-gray-600">Unggah CV kamu dalam format PDF atau DOCX (maks 5MB)</CardDescription>
               </CardHeader>
               <CardContent>
                 {(profile as any)?.cvUrl ? (
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                       </div>
                     </div>
                     <p className="text-sm text-gray-600">
-                      💡 CV Anda akan otomatis dilampirkan saat menggunakan fitur Lamar Cepat
+                      💡 CV kamu akan otomatis dilampirkan saat menggunakan fitur Lamar Cepat
                     </p>
                   </div>
                 ) : (
@@ -257,7 +257,7 @@ export default function ProfilePage() {
                     <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-600 mb-2">Belum ada CV terupload</p>
                     <p className="text-sm text-gray-600 mb-6">
-                      Unggah CV Anda untuk menggunakan fitur Lamar Cepat dan meningkatkan peluang diterima
+                      Unggah CV kamu untuk menggunakan fitur Lamar Cepat dan meningkatkan peluang diterima
                     </p>
                     <input
                       type="file"
@@ -283,7 +283,7 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-gray-900">Keahlian</CardTitle>
-                    <CardDescription className="text-gray-600">Tambahkan keahlian dan kemampuan Anda</CardDescription>
+                    <CardDescription className="text-gray-600">Tambahkan keahlian dan kemampuan kamu</CardDescription>
                   </div>
                   {!isEditingSkills && (
                     <Button
@@ -378,7 +378,7 @@ export default function ProfilePage() {
                       <div className="text-center py-8">
                         <Award className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                         <p className="text-gray-600">Belum ada keahlian ditambahkan</p>
-                        <p className="text-sm text-gray-500 mt-1">Tambahkan keahlian untuk meningkatkan profil Anda</p>
+                        <p className="text-sm text-gray-500 mt-1">Tambahkan keahlian untuk meningkatkan profil kamu</p>
                       </div>
                     )}
                   </div>
@@ -397,7 +397,7 @@ export default function ProfilePage() {
                     Belum Ada Lamaran
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    Anda belum melamar ke lowongan manapun
+                    kamu belum melamar ke lowongan manapun
                   </p>
                   <Button asChild>
                     <a href="/jobs">Cari Lowongan</a>

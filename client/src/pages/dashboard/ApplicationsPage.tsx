@@ -28,10 +28,10 @@ interface Application {
 
 const statusConfig = {
   submitted: { label: "Terkirim", color: "bg-primary/20 text-primary", icon: Clock },
-  reviewed: { label: "Ditinjau", color: "bg-yellow-500/20 text-yellow-700 dark:text-yellow-400", icon: Eye },
-  shortlisted: { label: "Diundang Interview", color: "bg-green-500/20 text-green-700 dark:text-green-400", icon: CheckCircle },
+  reviewed: { label: "Ditinjau", color: "bg-yellow-500/20 text-yellow-700", icon: Eye },
+  shortlisted: { label: "Diundang Interview", color: "bg-green-500/20 text-green-700", icon: CheckCircle },
   rejected: { label: "Ditolak", color: "bg-destructive/20 text-destructive", icon: XCircle },
-  accepted: { label: "Diterima", color: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400", icon: CheckCircle },
+  accepted: { label: "Diterima", color: "bg-emerald-500/20 text-emerald-700", icon: CheckCircle },
 };
 
 export default function ApplicationsPage() {
@@ -57,7 +57,7 @@ export default function ApplicationsPage() {
             Lamaran Saya
           </h1>
           <p className="text-gray-900 mt-1">
-            Riwayat lamaran pekerjaan Anda
+            Riwayat lamaran pekerjaan kamu
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function ApplicationsPage() {
           Belum Ada Lamaran
         </h3>
         <p className="text-gray-900 mb-6">
-          Anda belum melamar ke lowongan manapun
+          kamu belum melamar ke lowongan manapun
         </p>
         <Button asChild>
           <a href="/jobs">Cari Lowongan</a>

@@ -38,7 +38,7 @@ export default function LoginPage() {
     onSuccess: async () => {
       toast({
         title: "Berhasil masuk!",
-        description: "Anda berhasil login ke akun Anda",
+        description: "kamu berhasil login ke akun kamu",
       });
       // Small delay to ensure session is set
       await new Promise(resolve => setTimeout(resolve, 100));
