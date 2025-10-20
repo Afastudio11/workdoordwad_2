@@ -8,11 +8,6 @@ export default function ContactPage() {
       <Header variant="dark" />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-12">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6" data-testid="link-back">
-          <ArrowLeft className="h-4 w-4" />
-          Kembali ke Beranda
-        </Link>
-        
         <h1 className="text-4xl font-bold text-gray-900 mb-4" data-testid="page-title">
           Hubungi Kami
         </h1>

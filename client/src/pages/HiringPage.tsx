@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
 import { Plus, Search, MoreVertical, Users, Eye, FileText, Loader2, AlertCircle, RefreshCw } from "lucide-react";
-import logoImgDark from "@assets/black@4x_1760695283292.png";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +7,7 @@ import type { Job, Company } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { queryClient } from "@/lib/queryClient";
+import EmployerDashboardHeader from "@/components/EmployerDashboardHeader";
 
 export default function HiringPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -44,35 +43,9 @@ export default function HiringPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center" data-testid="link-home">
-              <img src={logoImgDark} alt="Pintu Kerja" className="h-8" />
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-findjob">
-                Cari Pekerjaan
-              </Link>
-              <Link href="/messages" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-messages">
-                Pesan
-              </Link>
-              <Link href="/hiring" className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors" data-testid="link-hiring">
-                Rekrutmen
-              </Link>
-              <Link href="/community" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-community">
-                Komunitas
-              </Link>
-              <Link href="/faq" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-faq">
-                FAQ
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <EmployerDashboardHeader />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-semibold text-gray-900">Dashboard Rekrutmen</h1>
           <Button className="flex items-center gap-2" data-testid="button-post-job">

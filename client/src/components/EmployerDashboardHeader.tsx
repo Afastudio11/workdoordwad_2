@@ -46,9 +46,8 @@ export default function EmployerDashboardHeader() {
   };
 
   const navItems = [
-    { path: "/", label: "Home", external: false },
-    { path: "/find-candidate", label: "Find Candidate", external: false },
     { path: "/employer/dashboard", label: "Dashboard", external: false },
+    { path: "/find-candidate", label: "Find Candidate", external: false },
     { path: "/employer/applications", label: "Applications", external: false },
     { path: "/contact", label: "Customer Supports", external: false },
   ];
