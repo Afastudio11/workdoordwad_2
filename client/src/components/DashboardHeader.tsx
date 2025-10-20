@@ -76,48 +76,36 @@ export default function DashboardHeader() {
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <Link
-              href="/"
+              href="/user/dashboard"
               className={`text-sm font-medium transition-colors ${
-                isActive("/")
+                isActive("/user/dashboard")
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-home"
+              data-testid="nav-link-dashboard"
             >
-              Home
+              Dashboard
             </Link>
             <Link
-              href="/find-employers"
-              className={`text-sm font-medium transition-colors ${
-                isActive("/find-employers")
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-find-employers"
+              href="/user/dashboard#applications"
+              className={`text-sm font-medium transition-colors text-gray-400 hover:text-white`}
+              data-testid="nav-link-applications"
             >
-              Find Employers
+              My Applications
             </Link>
             <Link
-              href="/community"
-              className={`text-sm font-medium transition-colors ${
-                isActive("/community")
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-community"
+              href="/user/dashboard#wishlist"
+              className={`text-sm font-medium transition-colors text-gray-400 hover:text-white`}
+              data-testid="nav-link-wishlist"
             >
-              Community
+              Saved Jobs
             </Link>
             <Link
-              href="/messages"
-              className={`text-sm font-medium transition-colors ${
-                isActive("/messages")
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-messages"
+              href="/user/dashboard#profile"
+              className={`text-sm font-medium transition-colors text-gray-400 hover:text-white`}
+              data-testid="nav-link-profile"
             >
-              Messages
+              Profile
             </Link>
           </nav>
 

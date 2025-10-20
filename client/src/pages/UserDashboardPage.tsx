@@ -16,8 +16,8 @@ import { Badge } from "@/components/ui/badge";
 import type { Notification } from "@shared/schema";
 
 export default function UserDashboardPage() {
-  const [location] = useLocation();
-  const { user, logout } = useAuth();
+  const [location, navigate] = useLocation();
+  const { user, logout, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState(() => {
     const hash = window.location.hash.replace('#', '');
     return hash || 'overview';
@@ -90,6 +90,39 @@ export default function UserDashboardPage() {
         return <OverviewPage />;
     }
   };
+
+  const DEV_MODE = import.meta.env.VITE_DEV_BYPASS_AUTH === "true" || import.meta.env.MODE === "development";
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-black">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!DEV_MODE && (!user || user.role !== 'pekerja')) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-black mb-2">
+            Akses Ditolak
+          </h1>
+          <p className="text-gray-600 mb-4">
+            Anda tidak memiliki akses ke dashboard pekerja
+          </p>
+          <Link href="/">
+            <button className="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary/90">
+              Kembali ke Beranda
+            </button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
