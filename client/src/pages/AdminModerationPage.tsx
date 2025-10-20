@@ -15,7 +15,7 @@ export default function AdminModerationPage() {
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<{ jobs?: any[] }>({
     queryKey: ["/api/admin/aggregated-jobs", { status: "pending" }],
   });
 
