@@ -27,15 +27,15 @@ export default function EmployerApplicationsPage() {
     },
     onSuccess: () => {
       toast({
-        title: "Status Updated",
-        description: "Application status has been updated successfully.",
+        title: "Status Diperbarui",
+        description: "Status lamaran berhasil diperbarui.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/applications/employer"] });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to update status. Please try again.",
+        title: "Terjadi Kesalahan",
+        description: "Gagal memperbarui status. Silakan coba lagi.",
         variant: "destructive",
       });
     },
@@ -43,11 +43,11 @@ export default function EmployerApplicationsPage() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { variant: "default" | "secondary" | "destructive", label: string }> = {
-      submitted: { variant: "secondary", label: "Submitted" },
-      reviewed: { variant: "default", label: "Reviewed" },
-      shortlisted: { variant: "default", label: "Shortlisted" },
-      rejected: { variant: "destructive", label: "Rejected" },
-      accepted: { variant: "default", label: "Accepted" },
+      submitted: { variant: "secondary", label: "Terkirim" },
+      reviewed: { variant: "default", label: "Ditinjau" },
+      shortlisted: { variant: "default", label: "Diundang Interview" },
+      rejected: { variant: "destructive", label: "Ditolak" },
+      accepted: { variant: "default", label: "Diterima" },
     };
     
     const config = statusConfig[status] || { variant: "secondary", label: status };
@@ -75,7 +75,7 @@ export default function EmployerApplicationsPage() {
                 {application.applicant.fullName}
               </CardTitle>
               <p className="text-sm text-gray-600 truncate">
-                Applied for: {application.job.title}
+                Melamar untuk: {application.job.title}
               </p>
               <p className="text-xs text-gray-500 mt-1">
                 {new Date(application.createdAt).toLocaleDateString()}
@@ -91,7 +91,7 @@ export default function EmployerApplicationsPage() {
       <CardContent className="space-y-4">
         {application.coverLetter && (
           <div className="bg-gray-50 p-3 rounded-lg">
-            <p className="text-sm font-medium text-gray-900 mb-1">Cover Letter:</p>
+            <p className="text-sm font-medium text-gray-900 mb-1">Surat Lamaran:</p>
             <p className="text-sm text-gray-700 line-clamp-3">
               {application.coverLetter}
             </p>
@@ -108,7 +108,7 @@ export default function EmployerApplicationsPage() {
                 data-testid={`button-review-${application.id}`}
               >
                 <Eye className="w-4 h-4 mr-1" />
-                Mark as Reviewed
+                Tandai Sudah Ditinjau
               </Button>
               <Button
                 size="sm"
@@ -118,7 +118,7 @@ export default function EmployerApplicationsPage() {
                 data-testid={`button-shortlist-${application.id}`}
               >
                 <CheckCircle className="w-4 h-4 mr-1" />
-                Shortlist
+                Undang Interview
               </Button>
             </>
           )}
@@ -132,7 +132,7 @@ export default function EmployerApplicationsPage() {
                 data-testid={`button-shortlist-${application.id}`}
               >
                 <CheckCircle className="w-4 h-4 mr-1" />
-                Shortlist
+                Undang Interview
               </Button>
               <Button
                 size="sm"
@@ -142,7 +142,7 @@ export default function EmployerApplicationsPage() {
                 data-testid={`button-reject-${application.id}`}
               >
                 <XCircle className="w-4 h-4 mr-1" />
-                Reject
+                Tolak
               </Button>
             </>
           )}
@@ -156,7 +156,7 @@ export default function EmployerApplicationsPage() {
                 data-testid={`button-accept-${application.id}`}
               >
                 <CheckCircle className="w-4 h-4 mr-1" />
-                Accept
+                Terima
               </Button>
               <Button
                 size="sm"
@@ -166,7 +166,7 @@ export default function EmployerApplicationsPage() {
                 data-testid={`button-reject-${application.id}`}
               >
                 <XCircle className="w-4 h-4 mr-1" />
-                Reject
+                Tolak
               </Button>
             </>
           )}
@@ -179,7 +179,7 @@ export default function EmployerApplicationsPage() {
               data-testid={`button-view-cv-${application.id}`}
             >
               <FileText className="w-4 h-4 mr-1" />
-              View CV
+              Lihat CV
             </Button>
           )}
         </div>
@@ -194,34 +194,34 @@ export default function EmployerApplicationsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-            Applications
+            Lamaran
           </h1>
           <p className="text-gray-600 mt-2">
-            Manage all job applications received for your postings
+            Kelola semua lamaran pekerjaan yang diterima untuk lowongan Anda
           </p>
         </div>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="text-gray-500">Loading applications...</div>
+            <div className="text-gray-500">Memuat lamaran...</div>
           </div>
         ) : (
           <Tabs defaultValue="all" className="space-y-6">
             <TabsList>
               <TabsTrigger value="all" data-testid="tab-all">
-                All ({applications?.length || 0})
+                Semua ({applications?.length || 0})
               </TabsTrigger>
               <TabsTrigger value="submitted" data-testid="tab-submitted">
                 <Clock className="w-4 h-4 mr-1" />
-                Submitted ({filterByStatus("submitted").length})
+                Terkirim ({filterByStatus("submitted").length})
               </TabsTrigger>
               <TabsTrigger value="reviewed" data-testid="tab-reviewed">
                 <Eye className="w-4 h-4 mr-1" />
-                Reviewed ({filterByStatus("reviewed").length})
+                Ditinjau ({filterByStatus("reviewed").length})
               </TabsTrigger>
               <TabsTrigger value="shortlisted" data-testid="tab-shortlisted">
                 <CheckCircle className="w-4 h-4 mr-1" />
-                Shortlisted ({filterByStatus("shortlisted").length})
+                Interview ({filterByStatus("shortlisted").length})
               </TabsTrigger>
             </TabsList>
 
@@ -231,10 +231,10 @@ export default function EmployerApplicationsPage() {
                   <CardContent className="py-12 text-center">
                     <Briefcase className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      No applications yet
+                      Belum ada lamaran
                     </h3>
                     <p className="text-gray-600">
-                      Applications will appear here when candidates apply to your jobs
+                      Lamaran akan muncul di sini ketika kandidat melamar ke lowongan Anda
                     </p>
                   </CardContent>
                 </Card>
@@ -251,10 +251,10 @@ export default function EmployerApplicationsPage() {
                   <CardContent className="py-12 text-center">
                     <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      No submitted applications
+                      Tidak ada lamaran baru
                     </h3>
                     <p className="text-gray-600">
-                      New applications will appear here
+                      Lamaran baru akan muncul di sini
                     </p>
                   </CardContent>
                 </Card>
@@ -271,10 +271,10 @@ export default function EmployerApplicationsPage() {
                   <CardContent className="py-12 text-center">
                     <Eye className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      No reviewed applications
+                      Belum ada lamaran yang ditinjau
                     </h3>
                     <p className="text-gray-600">
-                      Applications you've reviewed will appear here
+                      Lamaran yang sudah Anda tinjau akan muncul di sini
                     </p>
                   </CardContent>
                 </Card>
@@ -291,10 +291,10 @@ export default function EmployerApplicationsPage() {
                   <CardContent className="py-12 text-center">
                     <CheckCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      No shortlisted candidates
+                      Belum ada kandidat yang diundang interview
                     </h3>
                     <p className="text-gray-600">
-                      Candidates you shortlist will appear here
+                      Kandidat yang Anda undang interview akan muncul di sini
                     </p>
                   </CardContent>
                 </Card>

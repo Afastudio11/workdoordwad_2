@@ -50,10 +50,10 @@ export default function FindCandidatePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
-            Find Candidate
+            Cari Kandidat
           </h1>
           <p className="text-gray-600 mt-2">
-            Search and discover talented candidates for your job openings
+            Cari dan temukan kandidat berbakat untuk lowongan pekerjaan Anda
           </p>
         </div>
 
@@ -63,7 +63,7 @@ export default function FindCandidatePage() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
-                  placeholder="Search by name or bio..."
+                  placeholder="Cari berdasarkan nama atau bio..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -74,7 +74,7 @@ export default function FindCandidatePage() {
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
-                  placeholder="Location..."
+                  placeholder="Lokasi..."
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
                   className="pl-10"
@@ -85,7 +85,7 @@ export default function FindCandidatePage() {
               <div className="relative">
                 <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
-                  placeholder="Skills..."
+                  placeholder="Keahlian..."
                   value={skillFilter}
                   onChange={(e) => setSkillFilter(e.target.value)}
                   className="pl-10"
@@ -98,7 +98,7 @@ export default function FindCandidatePage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="text-gray-500">Loading candidates...</div>
+            <div className="text-gray-500">Memuat kandidat...</div>
           </div>
         ) : !filteredCandidates || filteredCandidates.length === 0 ? (
           <Card>
@@ -106,13 +106,13 @@ export default function FindCandidatePage() {
               <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 {searchQuery || locationFilter || skillFilter
-                  ? "No candidates found"
-                  : "No candidates available"}
+                  ? "Tidak ada kandidat ditemukan"
+                  : "Belum ada kandidat tersedia"}
               </h3>
               <p className="text-gray-600">
                 {searchQuery || locationFilter || skillFilter
-                  ? "Try adjusting your filters"
-                  : "Check back later for new candidates"}
+                  ? "Coba sesuaikan filter Anda"
+                  : "Kembali lagi nanti untuk kandidat baru"}
               </p>
             </CardContent>
           </Card>
@@ -159,7 +159,7 @@ export default function FindCandidatePage() {
                       ))}
                       {candidate.skills.length > 4 && (
                         <Badge variant="secondary" className="text-xs">
-                          +{candidate.skills.length - 4} more
+                          +{candidate.skills.length - 4} lainnya
                         </Badge>
                       )}
                     </div>
@@ -172,7 +172,7 @@ export default function FindCandidatePage() {
                       data-testid={`button-contact-${candidate.id}`}
                     >
                       <Mail className="w-4 h-4 mr-1" />
-                      Contact
+                      Hubungi
                     </Button>
                     <Button
                       size="sm"
