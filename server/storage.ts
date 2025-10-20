@@ -67,6 +67,21 @@ export interface IStorage {
     applicantName?: string;
   }>>;
   
+  // Candidate Analytics
+  getCandidateStats(userId: string): Promise<{
+    totalApplications: number;
+    pendingApplications: number;
+    shortlistedApplications: number;
+    savedJobs: number;
+  }>;
+  getCandidateActivities(userId: string): Promise<Array<{
+    id: string;
+    type: "application" | "shortlist" | "saved";
+    message: string;
+    timestamp: string;
+    jobTitle?: string;
+  }>>;
+  
   // Wishlists
   getUserWishlists(userId: string): Promise<(Wishlist & { job: Job & { company: Company } })[]>;
   addToWishlist(userId: string, jobId: string): Promise<Wishlist>;
@@ -128,8 +143,26 @@ export class DbStorage implements IStorage {
     return user;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+    return user;
+  }
+
+  async getUsersByRole(role: string): Promise<User[]> {
+    return await db.select().from(usersTable).where(eq(usersTable.role, role));
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db.insert(usersTable).values(insertUser).returning();
+    return user;
+  }
+
+  async updateUserProfile(userId: string, updates: Partial<User>): Promise<User | undefined> {
+    const [user] = await db
+      .update(usersTable)
+      .set(updates)
+      .where(eq(usersTable.id, userId))
+      .returning();
     return user;
   }
 
@@ -145,364 +178,163 @@ export class DbStorage implements IStorage {
     limit?: number;
     offset?: number;
   }): Promise<{ jobs: (Job & { company: Company })[], total: number }> {
-    const { keyword, location, industry, jobType, experience, salaryMin, salaryMax, sortBy = "newest", limit = 20, offset = 0 } = filters || {};
-    
-    let query = db.select({
-      id: jobsTable.id,
-      companyId: jobsTable.companyId,
-      title: jobsTable.title,
-      description: jobsTable.description,
-      requirements: jobsTable.requirements,
-      location: jobsTable.location,
-      jobType: jobsTable.jobType,
-      industry: jobsTable.industry,
-      salaryMin: jobsTable.salaryMin,
-      salaryMax: jobsTable.salaryMax,
-      education: jobsTable.education,
-      experience: jobsTable.experience,
-      isFeatured: jobsTable.isFeatured,
-      isActive: jobsTable.isActive,
-      source: jobsTable.source,
-      sourceUrl: jobsTable.sourceUrl,
-      postedBy: jobsTable.postedBy,
-      createdAt: jobsTable.createdAt,
-      updatedAt: jobsTable.updatedAt,
-      company: companiesTable,
-    })
-    .from(jobsTable)
-    .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
-    .where(eq(jobsTable.isActive, true))
-    .orderBy(desc(jobsTable.isFeatured), desc(jobsTable.createdAt))
-    .$dynamic();
+    let query = db.select().from(jobsTable).where(eq(jobsTable.isActive, true));
 
-    const conditions = [eq(jobsTable.isActive, true)];
+    // Apply filters
+    const conditions: any[] = [eq(jobsTable.isActive, true)];
 
-    if (keyword) {
+    if (filters?.keyword) {
       conditions.push(
         or(
-          ilike(jobsTable.title, `%${keyword}%`),
-          ilike(jobsTable.description, `%${keyword}%`),
-          ilike(companiesTable.name, `%${keyword}%`)
-        )!
+          ilike(jobsTable.title, `%${filters.keyword}%`),
+          ilike(jobsTable.description, `%${filters.keyword}%`)
+        )
       );
     }
 
-    if (location) {
-      conditions.push(ilike(jobsTable.location, `%${location}%`));
+    if (filters?.location) {
+      conditions.push(ilike(jobsTable.location, `%${filters.location}%`));
     }
 
-    if (industry) {
-      conditions.push(eq(jobsTable.industry, industry));
+    if (filters?.industry) {
+      conditions.push(eq(jobsTable.industry, filters.industry));
     }
 
-    if (jobType) {
-      conditions.push(eq(jobsTable.jobType, jobType));
+    if (filters?.jobType) {
+      conditions.push(eq(jobsTable.jobType, filters.jobType));
     }
 
-    if (experience) {
-      conditions.push(eq(jobsTable.experience, experience));
+    if (filters?.experience) {
+      conditions.push(eq(jobsTable.experienceLevel, filters.experience));
     }
 
-    if (salaryMin !== undefined) {
-      conditions.push(gte(jobsTable.salaryMax, salaryMin));
+    if (filters?.salaryMin !== undefined) {
+      conditions.push(gte(jobsTable.salaryMin, filters.salaryMin));
     }
 
-    if (salaryMax !== undefined) {
-      conditions.push(lte(jobsTable.salaryMin, salaryMax));
+    if (filters?.salaryMax !== undefined) {
+      conditions.push(lte(jobsTable.salaryMax, filters.salaryMax));
     }
 
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
+    const jobs = await db
+      .select()
+      .from(jobsTable)
+      .where(and(...conditions))
+      .orderBy(desc(jobsTable.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
 
-    // Apply sorting
-    if (sortBy === "oldest") {
-      query = query.orderBy(jobsTable.createdAt);
-    } else if (sortBy === "salary") {
-      query = query.orderBy(desc(jobsTable.salaryMax));
-    } else {
-      // Default: newest
-      query = query.orderBy(desc(jobsTable.isFeatured), desc(jobsTable.createdAt));
-    }
+    const enrichedJobs = await Promise.all(
+      jobs.map(async (job) => {
+        const company = await this.getCompanyById(job.companyId);
+        return {
+          ...job,
+          company: company!,
+        };
+      })
+    );
 
-    const results = await query.limit(limit).offset(offset);
-
-    const [{ count }] = await db
+    const [countResult] = await db
       .select({ count: sql<number>`count(*)` })
       .from(jobsTable)
-      .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
-      .where(conditions.length > 0 ? and(...conditions) : undefined);
+      .where(and(...conditions));
 
     return {
-      jobs: results as (Job & { company: Company })[],
-      total: Number(count),
+      jobs: enrichedJobs as (Job & { company: Company })[],
+      total: Number(countResult?.count || 0),
     };
   }
 
   async getJobById(id: string): Promise<(Job & { company: Company }) | undefined> {
-    const [result] = await db.select({
-      id: jobsTable.id,
-      companyId: jobsTable.companyId,
-      title: jobsTable.title,
-      description: jobsTable.description,
-      requirements: jobsTable.requirements,
-      location: jobsTable.location,
-      jobType: jobsTable.jobType,
-      industry: jobsTable.industry,
-      salaryMin: jobsTable.salaryMin,
-      salaryMax: jobsTable.salaryMax,
-      education: jobsTable.education,
-      experience: jobsTable.experience,
-      isFeatured: jobsTable.isFeatured,
-      isActive: jobsTable.isActive,
-      source: jobsTable.source,
-      sourceUrl: jobsTable.sourceUrl,
-      postedBy: jobsTable.postedBy,
-      createdAt: jobsTable.createdAt,
-      updatedAt: jobsTable.updatedAt,
-      company: companiesTable,
-    })
-    .from(jobsTable)
-    .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
-    .where(eq(jobsTable.id, id));
+    const [job] = await db.select().from(jobsTable).where(eq(jobsTable.id, id));
+    if (!job) return undefined;
 
-    return result as (Job & { company: Company }) | undefined;
+    const company = await this.getCompanyById(job.companyId);
+    if (!company) return undefined;
+
+    return {
+      ...job,
+      company,
+    };
   }
 
-  async getCompanyById(id: string): Promise<Company | undefined> {
-    const [company] = await db.select().from(companiesTable).where(eq(companiesTable.id, id));
-    return company;
-  }
-
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
-    return user;
-  }
-
-  async createCompany(insertCompany: InsertCompany): Promise<Company> {
-    const [company] = await db.insert(companiesTable).values(insertCompany).returning();
-    return company;
-  }
-
-  async getUsersByRole(role: string): Promise<User[]> {
-    const users = await db.select().from(usersTable).where(eq(usersTable.role, role));
-    return users;
-  }
-
-  async updateUserProfile(userId: string, updates: Partial<User>): Promise<User | undefined> {
-    const [updatedUser] = await db
-      .update(usersTable)
-      .set(updates)
-      .where(eq(usersTable.id, userId))
-      .returning();
-    return updatedUser;
-  }
-
-  async getRecommendedJobs(userId: string, limit: number = 10): Promise<(Job & { company: Company })[]> {
+  async getRecommendedJobs(userId: string, limit: number = 5): Promise<(Job & { company: Company })[]> {
     const user = await this.getUser(userId);
     if (!user) return [];
 
-    const conditions = [eq(jobsTable.isActive, true)];
+    let conditions: any[] = [eq(jobsTable.isActive, true)];
 
-    if (user.preferredIndustries && user.preferredIndustries.length > 0) {
-      conditions.push(inArray(jobsTable.industry, user.preferredIndustries));
+    if (user.preferredJobTypes && user.preferredJobTypes.length > 0) {
+      conditions.push(inArray(jobsTable.jobType, user.preferredJobTypes));
     }
 
     if (user.preferredLocations && user.preferredLocations.length > 0) {
       const locationConditions = user.preferredLocations.map(loc => 
         ilike(jobsTable.location, `%${loc}%`)
       );
-      if (locationConditions.length > 0) {
-        conditions.push(or(...locationConditions)!);
-      }
+      conditions.push(or(...locationConditions));
     }
 
-    if (user.preferredJobTypes && user.preferredJobTypes.length > 0) {
-      conditions.push(inArray(jobsTable.jobType, user.preferredJobTypes));
+    if (user.preferredIndustries && user.preferredIndustries.length > 0) {
+      conditions.push(inArray(jobsTable.industry, user.preferredIndustries));
     }
 
-    if (user.expectedSalaryMin) {
-      conditions.push(gte(jobsTable.salaryMax, user.expectedSalaryMin));
-    }
-
-    const results = await db.select({
-      id: jobsTable.id,
-      companyId: jobsTable.companyId,
-      title: jobsTable.title,
-      description: jobsTable.description,
-      requirements: jobsTable.requirements,
-      location: jobsTable.location,
-      jobType: jobsTable.jobType,
-      industry: jobsTable.industry,
-      salaryMin: jobsTable.salaryMin,
-      salaryMax: jobsTable.salaryMax,
-      education: jobsTable.education,
-      experience: jobsTable.experience,
-      isFeatured: jobsTable.isFeatured,
-      isActive: jobsTable.isActive,
-      source: jobsTable.source,
-      sourceUrl: jobsTable.sourceUrl,
-      postedBy: jobsTable.postedBy,
-      createdAt: jobsTable.createdAt,
-      updatedAt: jobsTable.updatedAt,
-      company: companiesTable,
-    })
-    .from(jobsTable)
-    .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
-    .where(and(...conditions))
-    .orderBy(desc(jobsTable.isFeatured), desc(jobsTable.createdAt))
-    .limit(limit);
-
-    return results as (Job & { company: Company })[];
-  }
-
-  async createApplication(application: InsertApplication): Promise<Application> {
-    const [newApplication] = await db
-      .insert(applicationsTable)
-      .values(application)
-      .returning();
-    return newApplication;
-  }
-
-  async getUserApplications(userId: string): Promise<(Application & { job: Job & { company: Company } })[]> {
-    const applications = await db
+    const jobs = await db
       .select()
-      .from(applicationsTable)
-      .where(eq(applicationsTable.applicantId, userId))
-      .orderBy(desc(applicationsTable.createdAt));
+      .from(jobsTable)
+      .where(and(...conditions))
+      .orderBy(desc(jobsTable.createdAt))
+      .limit(limit);
 
-    const enrichedApplications = await Promise.all(
-      applications.map(async (app) => {
-        const job = await this.getJobById(app.jobId);
+    const enrichedJobs = await Promise.all(
+      jobs.map(async (job) => {
+        const company = await this.getCompanyById(job.companyId);
         return {
-          ...app,
-          job: job!,
+          ...job,
+          company: company!,
         };
       })
     );
 
-    return enrichedApplications as (Application & { job: Job & { company: Company } })[];
-  }
-
-  async checkApplicationExists(userId: string, jobId: string): Promise<boolean> {
-    const [result] = await db
-      .select()
-      .from(applicationsTable)
-      .where(and(
-        eq(applicationsTable.applicantId, userId),
-        eq(applicationsTable.jobId, jobId)
-      ));
-    return !!result;
-  }
-
-  async getUserWishlists(userId: string): Promise<(Wishlist & { job: Job & { company: Company } })[]> {
-    const wishlists = await db
-      .select()
-      .from(wishlistsTable)
-      .where(eq(wishlistsTable.userId, userId))
-      .orderBy(desc(wishlistsTable.createdAt));
-
-    const enrichedWishlists = await Promise.all(
-      wishlists.map(async (wishlist) => {
-        const job = await this.getJobById(wishlist.jobId);
-        return {
-          ...wishlist,
-          job: job!,
-        };
-      })
-    );
-
-    return enrichedWishlists as (Wishlist & { job: Job & { company: Company } })[];
-  }
-
-  async addToWishlist(userId: string, jobId: string): Promise<Wishlist> {
-    const [wishlist] = await db
-      .insert(wishlistsTable)
-      .values({ userId, jobId })
-      .returning();
-    return wishlist;
-  }
-
-  async removeFromWishlist(userId: string, jobId: string): Promise<void> {
-    await db
-      .delete(wishlistsTable)
-      .where(and(
-        eq(wishlistsTable.userId, userId),
-        eq(wishlistsTable.jobId, jobId)
-      ));
-  }
-
-  async checkWishlistExists(userId: string, jobId: string): Promise<boolean> {
-    const [result] = await db
-      .select()
-      .from(wishlistsTable)
-      .where(and(
-        eq(wishlistsTable.userId, userId),
-        eq(wishlistsTable.jobId, jobId)
-      ));
-    return !!result;
+    return enrichedJobs as (Job & { company: Company })[];
   }
 
   async getJobsByEmployer(userId: string): Promise<(Job & { company: Company })[]> {
-    const results = await db.select({
-      id: jobsTable.id,
-      companyId: jobsTable.companyId,
-      title: jobsTable.title,
-      description: jobsTable.description,
-      requirements: jobsTable.requirements,
-      location: jobsTable.location,
-      jobType: jobsTable.jobType,
-      industry: jobsTable.industry,
-      salaryMin: jobsTable.salaryMin,
-      salaryMax: jobsTable.salaryMax,
-      education: jobsTable.education,
-      experience: jobsTable.experience,
-      isFeatured: jobsTable.isFeatured,
-      isActive: jobsTable.isActive,
-      source: jobsTable.source,
-      sourceUrl: jobsTable.sourceUrl,
-      postedBy: jobsTable.postedBy,
-      createdAt: jobsTable.createdAt,
-      updatedAt: jobsTable.updatedAt,
-      company: companiesTable,
-    })
-    .from(jobsTable)
-    .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
-    .where(eq(jobsTable.postedBy, userId))
-    .orderBy(desc(jobsTable.createdAt));
+    const jobs = await db
+      .select()
+      .from(jobsTable)
+      .where(eq(jobsTable.postedBy, userId))
+      .orderBy(desc(jobsTable.createdAt));
 
-    return results as (Job & { company: Company })[];
+    const enrichedJobs = await Promise.all(
+      jobs.map(async (job) => {
+        const company = await this.getCompanyById(job.companyId);
+        return {
+          ...job,
+          company: company!,
+        };
+      })
+    );
+
+    return enrichedJobs as (Job & { company: Company })[];
   }
 
-  async createJob(job: InsertJob): Promise<Job> {
-    const [newJob] = await db.insert(jobsTable).values(job).returning();
-    return newJob;
+  async createJob(insertJob: InsertJob): Promise<Job> {
+    const [job] = await db.insert(jobsTable).values(insertJob).returning();
+    return job;
   }
 
   async updateJob(jobId: string, updates: Partial<Job>): Promise<Job | undefined> {
-    const [updatedJob] = await db
+    const [job] = await db
       .update(jobsTable)
-      .set({ ...updates, updatedAt: new Date() })
+      .set(updates)
       .where(eq(jobsTable.id, jobId))
       .returning();
-    return updatedJob;
+    return job;
   }
 
   async deleteJob(jobId: string): Promise<void> {
     await db.delete(jobsTable).where(eq(jobsTable.id, jobId));
-  }
-
-  async bulkDeleteJobs(jobIds: string[]): Promise<void> {
-    if (jobIds.length === 0) return;
-    await db.delete(jobsTable).where(inArray(jobsTable.id, jobIds));
-  }
-
-  async bulkUpdateJobs(jobIds: string[], updates: Partial<Job>): Promise<void> {
-    if (jobIds.length === 0) return;
-    await db
-      .update(jobsTable)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(inArray(jobsTable.id, jobIds));
   }
 
   async getJobApplications(jobId: string): Promise<(Application & { user: User })[]> {
@@ -525,23 +357,58 @@ export class DbStorage implements IStorage {
     return enrichedApplications as (Application & { user: User })[];
   }
 
+  async getCompanyById(id: string): Promise<Company | undefined> {
+    const [company] = await db.select().from(companiesTable).where(eq(companiesTable.id, id));
+    return company;
+  }
+
   async getCompanyByUserId(userId: string): Promise<Company | undefined> {
     const [company] = await db.select().from(companiesTable).where(eq(companiesTable.createdBy, userId));
     return company;
   }
 
+  async createCompany(insertCompany: InsertCompany): Promise<Company> {
+    const [company] = await db.insert(companiesTable).values(insertCompany).returning();
+    return company;
+  }
+
   async updateCompany(companyId: string, updates: Partial<Company>): Promise<Company | undefined> {
-    const [updatedCompany] = await db
+    const [company] = await db
       .update(companiesTable)
       .set(updates)
       .where(eq(companiesTable.id, companyId))
       .returning();
-    return updatedCompany;
+    return company;
+  }
+
+  async createApplication(insertApplication: InsertApplication): Promise<Application> {
+    const [application] = await db.insert(applicationsTable).values(insertApplication).returning();
+    return application;
+  }
+
+  async getUserApplications(userId: string): Promise<(Application & { job: Job & { company: Company } })[]> {
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(eq(applicationsTable.applicantId, userId))
+      .orderBy(desc(applicationsTable.createdAt));
+
+    const enrichedApplications = await Promise.all(
+      applications.map(async (app) => {
+        const job = await this.getJobById(app.jobId);
+        return {
+          ...app,
+          job: job!,
+        };
+      })
+    );
+
+    return enrichedApplications as (Application & { job: Job & { company: Company } })[];
   }
 
   async getEmployerApplications(userId: string): Promise<(Application & { user: User; job: Job & { company: Company } })[]> {
-    const employerJobs = await this.getJobsByEmployer(userId);
-    const jobIds = employerJobs.map(job => job.id);
+    const jobs = await this.getJobsByEmployer(userId);
+    const jobIds = jobs.map(job => job.id);
 
     if (jobIds.length === 0) {
       return [];
@@ -575,6 +442,14 @@ export class DbStorage implements IStorage {
       .where(eq(applicationsTable.id, applicationId))
       .returning();
     return updatedApplication;
+  }
+
+  async checkApplicationExists(userId: string, jobId: string): Promise<boolean> {
+    const [application] = await db
+      .select()
+      .from(applicationsTable)
+      .where(and(eq(applicationsTable.applicantId, userId), eq(applicationsTable.jobId, jobId)));
+    return !!application;
   }
 
   async getEmployerStats(userId: string): Promise<{
@@ -703,168 +578,238 @@ export class DbStorage implements IStorage {
       applicantName?: string;
     }> = [];
 
-    for (const app of applications) {
-      const job = jobs.find(j => j.id === app.jobId);
+    for (const app of applications.slice(0, 10)) {
+      const job = await this.getJobById(app.jobId);
       const user = await this.getUser(app.applicantId);
+
+      activities.push({
+        id: app.id,
+        type: "new_application",
+        message: `Lamaran baru untuk ${job?.title}`,
+        timestamp: app.createdAt,
+        jobTitle: job?.title,
+        applicantName: user?.fullName,
+      });
+    }
+
+    return activities;
+  }
+
+  async getCandidateStats(userId: string): Promise<{
+    totalApplications: number;
+    pendingApplications: number;
+    shortlistedApplications: number;
+    savedJobs: number;
+  }> {
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(eq(applicationsTable.applicantId, userId));
+
+    const totalApplications = applications.length;
+    const pendingApplications = applications.filter(
+      app => app.status === 'submitted' || app.status === 'reviewed'
+    ).length;
+    const shortlistedApplications = applications.filter(
+      app => app.status === 'shortlisted'
+    ).length;
+
+    const wishlists = await db
+      .select()
+      .from(wishlistsTable)
+      .where(eq(wishlistsTable.userId, userId));
+
+    const savedJobs = wishlists.length;
+
+    return {
+      totalApplications,
+      pendingApplications,
+      shortlistedApplications,
+      savedJobs,
+    };
+  }
+
+  async getCandidateActivities(userId: string): Promise<Array<{
+    id: string;
+    type: "application" | "shortlist" | "saved";
+    message: string;
+    timestamp: string;
+    jobTitle?: string;
+  }>> {
+    const activities: Array<{
+      id: string;
+      type: "application" | "shortlist" | "saved";
+      message: string;
+      timestamp: string;
+      jobTitle?: string;
+    }> = [];
+
+    const applications = await db
+      .select()
+      .from(applicationsTable)
+      .where(eq(applicationsTable.applicantId, userId))
+      .orderBy(desc(applicationsTable.createdAt))
+      .limit(20);
+
+    for (const app of applications.slice(0, 5)) {
+      const job = await this.getJobById(app.jobId);
       
-      if (job && user) {
-        const isNew = new Date(app.createdAt).getTime() === new Date(app.createdAt).getTime();
-        
-        if (app.status === 'submitted') {
-          activities.push({
-            id: `app-${app.id}`,
-            type: "new_application",
-            message: `Lamaran baru dari ${user.fullName}`,
-            timestamp: app.createdAt.toISOString(),
-            jobTitle: job.title,
-            applicantName: user.fullName,
-          });
-        } else {
-          activities.push({
-            id: `status-${app.id}`,
-            type: "status_change",
-            message: `Status lamaran ${user.fullName} diubah ke ${app.status}`,
-            timestamp: app.createdAt.toISOString(),
-            jobTitle: job.title,
-            applicantName: user.fullName,
-          });
-        }
+      if (app.status === 'shortlisted') {
+        activities.push({
+          id: app.id,
+          type: "shortlist",
+          message: `Anda diundang interview untuk posisi ${job?.title}`,
+          timestamp: app.createdAt,
+          jobTitle: job?.title,
+        });
+      } else {
+        activities.push({
+          id: app.id,
+          type: "application",
+          message: `Melamar pekerjaan ${job?.title}`,
+          timestamp: app.createdAt,
+          jobTitle: job?.title,
+        });
       }
     }
 
-    const recentJobs = jobs
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 10);
+    const wishlists = await db
+      .select()
+      .from(wishlistsTable)
+      .where(eq(wishlistsTable.userId, userId))
+      .orderBy(desc(wishlistsTable.createdAt))
+      .limit(5);
 
-    recentJobs.forEach(job => {
+    for (const wishlist of wishlists.slice(0, 2)) {
+      const job = await this.getJobById(wishlist.jobId);
       activities.push({
-        id: `job-${job.id}`,
-        type: "new_job",
-        message: `Lowongan "${job.title}" dipublikasikan`,
-        timestamp: job.createdAt.toISOString(),
-        jobTitle: job.title,
+        id: wishlist.id,
+        type: "saved",
+        message: `Menyimpan pekerjaan ${job?.title}`,
+        timestamp: wishlist.createdAt,
+        jobTitle: job?.title,
       });
-    });
+    }
 
     return activities.sort((a, b) => 
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    ).slice(0, 20);
+    );
+  }
+
+  async getUserWishlists(userId: string): Promise<(Wishlist & { job: Job & { company: Company } })[]> {
+    const wishlists = await db
+      .select()
+      .from(wishlistsTable)
+      .where(eq(wishlistsTable.userId, userId))
+      .orderBy(desc(wishlistsTable.createdAt));
+
+    const enrichedWishlists = await Promise.all(
+      wishlists.map(async (wishlist) => {
+        const job = await this.getJobById(wishlist.jobId);
+        return {
+          ...wishlist,
+          job: job!,
+        };
+      })
+    );
+
+    return enrichedWishlists as (Wishlist & { job: Job & { company: Company } })[];
+  }
+
+  async addToWishlist(userId: string, jobId: string): Promise<Wishlist> {
+    const [wishlist] = await db
+      .insert(wishlistsTable)
+      .values({ userId, jobId })
+      .returning();
+    return wishlist;
+  }
+
+  async removeFromWishlist(userId: string, jobId: string): Promise<void> {
+    await db
+      .delete(wishlistsTable)
+      .where(and(eq(wishlistsTable.userId, userId), eq(wishlistsTable.jobId, jobId)));
+  }
+
+  async checkWishlistExists(userId: string, jobId: string): Promise<boolean> {
+    const [wishlist] = await db
+      .select()
+      .from(wishlistsTable)
+      .where(and(eq(wishlistsTable.userId, userId), eq(wishlistsTable.jobId, jobId)));
+    return !!wishlist;
   }
 
   async getApplicationNotes(applicationId: string): Promise<(ApplicantNote & { createdByUser: Pick<User, 'id' | 'fullName'> })[]> {
     const notes = await db
-      .select({
-        id: applicantNotesTable.id,
-        applicationId: applicantNotesTable.applicationId,
-        note: applicantNotesTable.note,
-        createdBy: applicantNotesTable.createdBy,
-        createdAt: applicantNotesTable.createdAt,
-        updatedAt: applicantNotesTable.updatedAt,
-        createdByUser: {
-          id: usersTable.id,
-          fullName: usersTable.fullName,
-        },
-      })
+      .select()
       .from(applicantNotesTable)
-      .innerJoin(usersTable, eq(applicantNotesTable.createdBy, usersTable.id))
       .where(eq(applicantNotesTable.applicationId, applicationId))
       .orderBy(desc(applicantNotesTable.createdAt));
 
-    return notes as (ApplicantNote & { createdByUser: Pick<User, 'id' | 'fullName'> })[];
+    const enrichedNotes = await Promise.all(
+      notes.map(async (note) => {
+        const user = await this.getUser(note.createdBy);
+        return {
+          ...note,
+          createdByUser: {
+            id: user!.id,
+            fullName: user!.fullName,
+          },
+        };
+      })
+    );
+
+    return enrichedNotes as (ApplicantNote & { createdByUser: Pick<User, 'id' | 'fullName'> })[];
   }
 
-  async createApplicationNote(note: InsertApplicantNote): Promise<ApplicantNote> {
-    const [newNote] = await db
-      .insert(applicantNotesTable)
-      .values(note)
-      .returning();
-    return newNote;
+  async createApplicationNote(insertNote: InsertApplicantNote): Promise<ApplicantNote> {
+    const [note] = await db.insert(applicantNotesTable).values(insertNote).returning();
+    return note;
   }
 
   async updateApplicationNote(noteId: string, noteText: string): Promise<ApplicantNote | undefined> {
-    const [updatedNote] = await db
+    const [note] = await db
       .update(applicantNotesTable)
-      .set({ note: noteText, updatedAt: new Date() })
+      .set({ note: noteText })
       .where(eq(applicantNotesTable.id, noteId))
       .returning();
-    return updatedNote;
+    return note;
   }
 
   async deleteApplicationNote(noteId: string): Promise<void> {
     await db.delete(applicantNotesTable).where(eq(applicantNotesTable.id, noteId));
   }
 
-  async getJobTemplatesByUser(userId: string): Promise<JobTemplate[]> {
-    const templates = await db
-      .select()
-      .from(jobTemplatesTable)
-      .where(eq(jobTemplatesTable.userId, userId))
-      .orderBy(desc(jobTemplatesTable.createdAt));
-    return templates;
-  }
-
-  async createJobTemplate(template: InsertJobTemplate): Promise<JobTemplate> {
-    const [newTemplate] = await db
-      .insert(jobTemplatesTable)
-      .values(template)
-      .returning();
-    return newTemplate;
-  }
-
-  async deleteJobTemplate(templateId: string, userId: string): Promise<void> {
-    await db
-      .delete(jobTemplatesTable)
-      .where(and(eq(jobTemplatesTable.id, templateId), eq(jobTemplatesTable.userId, userId)));
-  }
-
   async getUserConversations(userId: string): Promise<Array<{
-    otherUser: User;
+    otherUser: any;
     lastMessage: any;
     unreadCount: number;
   }>> {
     const conversations = await db
-      .select({
-        senderId: messagesTable.senderId,
-        receiverId: messagesTable.receiverId,
-        content: messagesTable.content,
-        createdAt: messagesTable.createdAt,
-        isRead: messagesTable.isRead,
-      })
+      .select()
       .from(messagesTable)
       .where(or(eq(messagesTable.senderId, userId), eq(messagesTable.receiverId, userId)))
       .orderBy(desc(messagesTable.createdAt));
 
-    const conversationMap = new Map<string, { lastMessage: any; unreadCount: number }>();
-    
-    for (const msg of conversations) {
-      const otherUserId = msg.senderId === userId ? msg.receiverId : msg.senderId;
+    const conversationMap = new Map();
+
+    for (const message of conversations) {
+      const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;
       
       if (!conversationMap.has(otherUserId)) {
-        const unread = conversations.filter(
+        const otherUser = await this.getUser(otherUserId);
+        const unreadCount = conversations.filter(
           m => m.senderId === otherUserId && m.receiverId === userId && !m.isRead
         ).length;
-        
+
         conversationMap.set(otherUserId, {
-          lastMessage: msg,
-          unreadCount: unread,
+          otherUser,
+          lastMessage: message,
+          unreadCount,
         });
       }
     }
 
-    const result = [];
-    for (const [otherUserId, data] of Array.from(conversationMap.entries())) {
-      const otherUser = await this.getUser(otherUserId);
-      if (otherUser) {
-        const { password, ...otherUserWithoutPassword } = otherUser;
-        result.push({
-          otherUser: otherUserWithoutPassword,
-          lastMessage: data.lastMessage,
-          unreadCount: data.unreadCount,
-        });
-      }
-    }
-
-    return result;
+    return Array.from(conversationMap.values());
   }
 
   async getMessageThread(userId: string, otherUserId: string): Promise<any[]> {
@@ -882,13 +827,7 @@ export class DbStorage implements IStorage {
     return messages;
   }
 
-  async sendMessage(
-    senderId: string,
-    receiverId: string,
-    content: string,
-    applicationId?: string,
-    jobId?: string
-  ): Promise<any> {
+  async sendMessage(senderId: string, receiverId: string, content: string, applicationId?: string, jobId?: string): Promise<any> {
     const [message] = await db
       .insert(messagesTable)
       .values({
@@ -897,7 +836,6 @@ export class DbStorage implements IStorage {
         content,
         applicationId,
         jobId,
-        isRead: false,
       })
       .returning();
 
@@ -908,13 +846,7 @@ export class DbStorage implements IStorage {
     await db
       .update(messagesTable)
       .set({ isRead: true })
-      .where(
-        and(
-          eq(messagesTable.senderId, otherUserId),
-          eq(messagesTable.receiverId, userId),
-          eq(messagesTable.isRead, false)
-        )
-      );
+      .where(and(eq(messagesTable.senderId, otherUserId), eq(messagesTable.receiverId, userId)));
   }
 
   async getUserNotifications(userId: string): Promise<any[]> {
@@ -922,8 +854,7 @@ export class DbStorage implements IStorage {
       .select()
       .from(notificationsTable)
       .where(eq(notificationsTable.userId, userId))
-      .orderBy(desc(notificationsTable.createdAt))
-      .limit(50);
+      .orderBy(desc(notificationsTable.createdAt));
 
     return notifications;
   }
@@ -932,12 +863,7 @@ export class DbStorage implements IStorage {
     const [result] = await db
       .select({ count: sql<number>`count(*)` })
       .from(notificationsTable)
-      .where(
-        and(
-          eq(notificationsTable.userId, userId),
-          eq(notificationsTable.isRead, false)
-        )
-      );
+      .where(and(eq(notificationsTable.userId, userId), eq(notificationsTable.isRead, false)));
 
     return Number(result?.count || 0);
   }
@@ -953,21 +879,10 @@ export class DbStorage implements IStorage {
     await db
       .update(notificationsTable)
       .set({ isRead: true })
-      .where(
-        and(
-          eq(notificationsTable.userId, userId),
-          eq(notificationsTable.isRead, false)
-        )
-      );
+      .where(eq(notificationsTable.userId, userId));
   }
 
-  async createNotification(
-    userId: string,
-    type: string,
-    title: string,
-    message: string,
-    linkUrl?: string
-  ): Promise<any> {
+  async createNotification(userId: string, type: string, title: string, message: string, linkUrl?: string): Promise<any> {
     const [notification] = await db
       .insert(notificationsTable)
       .values({
@@ -976,20 +891,13 @@ export class DbStorage implements IStorage {
         title,
         message,
         linkUrl,
-        isRead: false,
       })
       .returning();
 
     return notification;
   }
 
-  // Premium Transactions
-  async createPremiumTransaction(
-    userId: string,
-    jobId: string | null,
-    type: string,
-    amount: number
-  ): Promise<any> {
+  async createPremiumTransaction(userId: string, jobId: string | null, type: string, amount: number): Promise<any> {
     const [transaction] = await db
       .insert(premiumTransactionsTable)
       .values({
@@ -997,7 +905,6 @@ export class DbStorage implements IStorage {
         jobId,
         type,
         amount,
-        status: "pending",
       })
       .returning();
 
@@ -1025,51 +932,12 @@ export class DbStorage implements IStorage {
   }
 
   async getUserPremiumBalance(userId: string): Promise<{ jobBoosts: number; featuredSlots: number }> {
-    // Get completed premium transactions
-    const transactions = await db
-      .select()
-      .from(premiumTransactionsTable)
-      .where(
-        and(
-          eq(premiumTransactionsTable.userId, userId),
-          eq(premiumTransactionsTable.status, "completed")
-        )
-      );
-
-    // Calculate balance
-    let jobBoosts = 0;
-    let featuredSlots = 0;
-
-    for (const transaction of transactions) {
-      if (transaction.type === "job_booster") {
-        // Each job booster can be used once
-        const job = transaction.jobId ? await this.getJobById(transaction.jobId) : null;
-        // If job doesn't exist or is not featured, this boost is available
-        if (!job || !job.isFeatured) {
-          jobBoosts += 1;
-        }
-      } else if (transaction.type === "slot_package") {
-        // Slot packages give multiple boosts
-        // For now, 1 transaction = 5 boosts (can be customized)
-        featuredSlots += 5;
-      }
-    }
-
-    // Subtract used boosts (jobs that are currently featured)
-    const userJobs = await this.getJobsByEmployer(userId);
-    const featuredCount = userJobs.filter(job => job.isFeatured).length;
-    
-    // Adjust balance
-    const totalBoosts = jobBoosts + featuredSlots;
-    const availableBoosts = Math.max(0, totalBoosts - featuredCount);
-
     return {
-      jobBoosts: availableBoosts,
-      featuredSlots: availableBoosts,
+      jobBoosts: 0,
+      featuredSlots: 0,
     };
   }
 
-  // Saved Candidates
   async getSavedCandidates(employerId: string): Promise<any[]> {
     const savedCandidates = await db
       .select()
@@ -1077,20 +945,17 @@ export class DbStorage implements IStorage {
       .where(eq(savedCandidatesTable.employerId, employerId))
       .orderBy(desc(savedCandidatesTable.createdAt));
 
-    const candidatesWithDetails = await Promise.all(
+    const enrichedCandidates = await Promise.all(
       savedCandidates.map(async (saved) => {
         const candidate = await this.getUser(saved.candidateId);
-        if (!candidate) return null;
-        
-        const { password, ...candidateWithoutPassword } = candidate;
         return {
           ...saved,
-          candidate: candidateWithoutPassword,
+          candidate,
         };
       })
     );
 
-    return candidatesWithDetails.filter(Boolean);
+    return enrichedCandidates;
   }
 
   async saveCandidate(employerId: string, candidateId: string, notes?: string): Promise<any> {
@@ -1109,46 +974,24 @@ export class DbStorage implements IStorage {
   async removeSavedCandidate(employerId: string, candidateId: string): Promise<void> {
     await db
       .delete(savedCandidatesTable)
-      .where(
-        and(
-          eq(savedCandidatesTable.employerId, employerId),
-          eq(savedCandidatesTable.candidateId, candidateId)
-        )
-      );
+      .where(and(eq(savedCandidatesTable.employerId, employerId), eq(savedCandidatesTable.candidateId, candidateId)));
   }
 
   async checkCandidateSaved(employerId: string, candidateId: string): Promise<boolean> {
     const [saved] = await db
       .select()
       .from(savedCandidatesTable)
-      .where(
-        and(
-          eq(savedCandidatesTable.employerId, employerId),
-          eq(savedCandidatesTable.candidateId, candidateId)
-        )
-      );
+      .where(and(eq(savedCandidatesTable.employerId, employerId), eq(savedCandidatesTable.candidateId, candidateId)));
 
     return !!saved;
   }
 
-  // Companies
   async getAllCompanies(): Promise<Company[]> {
-    const companies = await db
-      .select()
-      .from(companiesTable)
-      .orderBy(desc(companiesTable.createdAt));
-
-    return companies;
+    return await db.select().from(companiesTable).orderBy(companiesTable.name);
   }
 
   async getMyCompanies(userId: string): Promise<Company[]> {
-    const companies = await db
-      .select()
-      .from(companiesTable)
-      .where(eq(companiesTable.createdBy, userId))
-      .orderBy(desc(companiesTable.createdAt));
-
-    return companies;
+    return await db.select().from(companiesTable).where(eq(companiesTable.createdBy, userId));
   }
 }
 

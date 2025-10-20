@@ -1,23 +1,37 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { User, Briefcase, Heart, LogOut, Menu, X, Sparkles, Settings, Bell } from "lucide-react";
+import { User, Briefcase, Heart, LogOut, Menu, X, Sparkles, Settings, Bell, Layers } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
 import DashboardHeader from "@/components/DashboardHeader";
+import OverviewPage from "./dashboard/OverviewPage";
 import ProfilePage from "./dashboard/ProfilePage";
 import ApplicationsPage from "./dashboard/ApplicationsPage";
 import WishlistPage from "./dashboard/WishlistPage";
 import RecommendationsPage from "./dashboard/RecommendationsPage";
 import SettingsPage from "./dashboard/SettingsPage";
 import NotificationsPage from "./dashboard/NotificationsPage";
+import JobAlertPage from "./dashboard/JobAlertPage";
+import { Badge } from "@/components/ui/badge";
+import type { Notification } from "@shared/schema";
 
 export default function UserDashboardPage() {
   const [location] = useLocation();
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState(() => {
     const hash = window.location.hash.replace('#', '');
-    return hash || 'profile';
+    return hash || 'overview';
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Get notification count for Job Alert badge
+  const { data: notifications } = useQuery<Notification[]>({
+    queryKey: ["/api/notifications"],
+  });
+
+  const jobAlertCount = notifications?.filter(n => 
+    (n.type === "job_match" || n.type === "new_job_alert") && !n.isRead
+  ).length || 0;
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -26,30 +40,27 @@ export default function UserDashboardPage() {
   };
 
   const navItems = [
-    { id: 'profile', label: 'Profil', icon: User },
-    { id: 'recommendations', label: 'Rekomendasi', icon: Sparkles },
-    { id: 'applications', label: 'Lamaran Saya', icon: Briefcase },
-    { id: 'wishlist', label: 'Wishlist', icon: Heart },
-    { id: 'notifications', label: 'Notifikasi', icon: Bell },
-    { id: 'settings', label: 'Pengaturan Akun', icon: Settings },
+    { id: 'overview', label: 'Overview', icon: Layers },
+    { id: 'applications', label: 'Applied Jobs', icon: Briefcase },
+    { id: 'wishlist', label: 'Favorite Jobs', icon: Heart },
+    { id: 'job-alert', label: 'Job Alert', icon: Bell, badge: jobAlertCount },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'profile':
-        return <ProfilePage />;
-      case 'recommendations':
-        return <RecommendationsPage />;
+      case 'overview':
+        return <OverviewPage />;
       case 'applications':
         return <ApplicationsPage />;
       case 'wishlist':
         return <WishlistPage />;
-      case 'notifications':
-        return <NotificationsPage />;
+      case 'job-alert':
+        return <JobAlertPage />;
       case 'settings':
         return <SettingsPage />;
       default:
-        return <ProfilePage />;
+        return <OverviewPage />;
     }
   };
 
@@ -88,15 +99,22 @@ export default function UserDashboardPage() {
                     <button
                       key={item.id}
                       onClick={() => handleTabChange(item.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                      className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-[#D4FF00] text-gray-900'
-                          : 'text-gray-700 hover:bg-gray-100'
+                          ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                          : 'text-gray-600 hover:bg-gray-50'
                       }`}
                       data-testid={`button-nav-${item.id}`}
                     >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.label}</span>
+                      <div className="flex items-center gap-3">
+                        <Icon className="w-5 h-5" />
+                        <span className="font-medium">{item.label}</span>
+                      </div>
+                      {item.badge && item.badge > 0 && (
+                        <Badge className="bg-gray-900 text-white hover:bg-gray-900" data-testid={`badge-${item.id}`}>
+                          {item.badge > 99 ? '99+' : item.badge}
+                        </Badge>
+                      )}
                     </button>
                   );
                 })}
@@ -138,15 +156,22 @@ export default function UserDashboardPage() {
                     <button
                       key={item.id}
                       onClick={() => handleTabChange(item.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                      className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-[#D4FF00] text-gray-900'
-                          : 'text-gray-700 hover:bg-gray-100'
+                          ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                          : 'text-gray-600 hover:bg-gray-50'
                       }`}
                       data-testid={`button-nav-mobile-${item.id}`}
                     >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.label}</span>
+                      <div className="flex items-center gap-3">
+                        <Icon className="w-5 h-5" />
+                        <span className="font-medium">{item.label}</span>
+                      </div>
+                      {item.badge && item.badge > 0 && (
+                        <Badge className="bg-gray-900 text-white hover:bg-gray-900" data-testid={`badge-mobile-${item.id}`}>
+                          {item.badge > 99 ? '99+' : item.badge}
+                        </Badge>
+                      )}
                     </button>
                   );
                 })}

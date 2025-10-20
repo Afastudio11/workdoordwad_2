@@ -649,6 +649,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Candidate Analytics
+  app.get("/api/candidate/stats", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pekerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const stats = await storage.getCandidateStats(req.session.userId);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching candidate stats:", error);
+      res.status(500).json({ error: "Failed to fetch statistics" });
+    }
+  });
+
+  app.get("/api/candidate/activities", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pekerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const activities = await storage.getCandidateActivities(req.session.userId);
+      res.json(activities);
+    } catch (error) {
+      console.error("Error fetching candidate activities:", error);
+      res.status(500).json({ error: "Failed to fetch activities" });
+    }
+  });
+
   app.get("/api/employer/applications", async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
