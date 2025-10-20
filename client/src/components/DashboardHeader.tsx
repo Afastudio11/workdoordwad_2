@@ -185,41 +185,33 @@ export default function DashboardHeader() {
                     recentNotifications.map((notif) => (
                       <DropdownMenuItem 
                         key={notif.id}
-                        className={`p-3 cursor-pointer hover:bg-gray-50 transition-colors ${!notif.isRead ? 'bg-blue-50/30' : ''}`}
-                        asChild
+                        className={`p-3 hover:bg-gray-50 transition-colors ${!notif.isRead ? 'bg-blue-50/30' : ''}`}
                       >
-                        <Link href={notif.linkUrl || "/user/dashboard#notifications"}>
-                          <div className="flex gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                              <span className="text-lg">{notif.type === 'application_status' ? '📋' : notif.type === 'new_message' ? '💬' : notif.type === 'job_match' ? '🎯' : '🔔'}</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2 mb-1">
-                                <p className="text-sm font-medium text-black line-clamp-1">{notif.title}</p>
-                                {!notif.isRead && (
-                                  <span className="w-2 h-2 rounded-full bg-[#D4FF00] flex-shrink-0 mt-1.5"></span>
-                                )}
-                              </div>
-                              <p className="text-xs text-gray-600 line-clamp-2 mb-1">{notif.message}</p>
-                              <p className="text-xs text-gray-500">
-                                {formatDistanceToNow(new Date(notif.createdAt), {
-                                  addSuffix: true,
-                                  locale: idLocale,
-                                })}
-                              </p>
-                            </div>
+                        <div className="flex gap-3 w-full">
+                          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-lg">{notif.type === 'application_status' ? '📋' : notif.type === 'new_message' ? '💬' : notif.type === 'job_match' ? '🎯' : '🔔'}</span>
                           </div>
-                        </Link>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2 mb-1">
+                              <p className="text-sm font-medium text-black line-clamp-1">{notif.title}</p>
+                              {!notif.isRead && (
+                                <span className="w-2 h-2 rounded-full bg-[#D4FF00] flex-shrink-0 mt-1.5"></span>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-600 line-clamp-2 mb-1">{notif.message}</p>
+                            <p className="text-xs text-gray-500">
+                              {formatDistanceToNow(new Date(notif.createdAt), {
+                                addSuffix: true,
+                                locale: idLocale,
+                              })}
+                            </p>
+                          </div>
+                        </div>
                       </DropdownMenuItem>
                     ))
                   )}
                 </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/user/dashboard#notifications" className="text-center justify-center text-sm text-black hover:underline cursor-pointer py-2 font-semibold">
-                    Lihat semua notifikasi
-                  </Link>
-                </DropdownMenuItem>
+                {/* Removed "Lihat semua notifikasi" link to prevent leaving dashboard */}
               </DropdownMenuContent>
             </DropdownMenu>
 
