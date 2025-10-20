@@ -55,9 +55,7 @@ export default function DashboardHeader() {
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest("/api/notifications/read-all", {
-        method: "PATCH",
-      });
+      return await apiRequest("/api/notifications/read-all", "PATCH");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
@@ -70,7 +68,7 @@ export default function DashboardHeader() {
       <div className="max-w-[1600px] mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/user/dashboard" className="flex items-center">
             <img src={logoImg} alt="PintuKerja" className="h-12" />
           </Link>
 
