@@ -139,11 +139,6 @@ export default function EmployerDashboardHeader() {
                       <DropdownMenuItem 
                         key={notification.id}
                         className={`p-3 cursor-pointer hover:bg-gray-50 transition-colors ${!notification.isRead ? 'bg-blue-50/50' : ''}`}
-                        onClick={() => {
-                          if (notification.link) {
-                            window.location.href = notification.link;
-                          }
-                        }}
                       >
                         <div className="flex gap-3 w-full">
                           <div className="flex-1 min-w-0">
