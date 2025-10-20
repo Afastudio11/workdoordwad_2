@@ -29,6 +29,9 @@ import AdminModerationPage from "@/pages/AdminModerationPage";
 import AdminUsersPage from "@/pages/AdminUsersPage";
 import AdminFinancialPage from "@/pages/AdminFinancialPage";
 import AdminSettingsPage from "@/pages/AdminSettingsPage";
+import AdminBlogManagerPage from "@/pages/AdminBlogManagerPage";
+import AdminContentPagesPage from "@/pages/AdminContentPagesPage";
+import AdminAnalyticsPage from "@/pages/AdminAnalyticsPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -51,13 +54,16 @@ function Router() {
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/blog" component={BlogPage} />
-      <Route path="/blog/:id" component={BlogDetailPage} />
+      <Route path="/blog/:slug" component={BlogDetailPage} />
       <Route path="/contact" component={ContactPage} />
       <Route path="/admin/dashboard" component={AdminDashboardPage} />
       <Route path="/admin/moderation" component={AdminModerationPage} />
       <Route path="/admin/users" component={AdminUsersPage} />
       <Route path="/admin/financial" component={AdminFinancialPage} />
       <Route path="/admin/settings" component={AdminSettingsPage} />
+      <Route path="/admin/blog" component={AdminBlogManagerPage} />
+      <Route path="/admin/content" component={AdminContentPagesPage} />
+      <Route path="/admin/analytics" component={AdminAnalyticsPage} />
       <Route component={NotFound} />
     </Switch>
   );

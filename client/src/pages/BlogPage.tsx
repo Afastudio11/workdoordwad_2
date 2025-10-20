@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import { ChevronDown } from "lucide-react";
 import article1Img from "@assets/5_1760872341106.png";
@@ -8,75 +9,34 @@ import article3Img from "@assets/4_1760872341107.png";
 
 const categories = ["All", "Newsletter", "Tips", "Insight", "Success Stories"];
 
-const blogPosts = [
-  {
-    id: 1,
-    category: "Newsletter",
-    date: "October 18, 2023",
-    readTime: "7 min read",
-    title: "The Future of Job Market: Emerging Trends to Watch",
-    description: "Technological advancements, data analytics, and industry disruptions: navigating the evolving landscape ...",
-    image: article1Img,
-    decorativeColor: "bg-orange-500"
-  },
-  {
-    id: 2,
-    category: "Tips",
-    date: "October 18, 2023",
-    readTime: "7 min read",
-    title: "Mental Health Matters: Strategies for Job Seeker Well-Being",
-    description: "Addressing stress, burnout, and mental Health in the workplace. A holistic approach to support employee ...",
-    image: article2Img,
-    decorativeColor: "bg-teal-500"
-  },
-  {
-    id: 3,
-    category: "Insight",
-    date: "October 18, 2023",
-    readTime: "7 min read",
-    title: "Creating a Career Path: Leadership Insights",
-    description: "Empowering your team to prioritize success every day, leadership strategies, training, and cultivating ...",
-    image: article3Img,
-    decorativeColor: "bg-purple-500"
-  },
-  {
-    id: 4,
-    category: "Newsletter",
-    date: "October 18, 2023",
-    readTime: "7 min read",
-    title: "Tips Menulis CV yang Menarik Perhatian Recruiter",
-    description: "Panduan lengkap membuat CV yang profesional dan menarik perhatian recruiter untuk meningkatkan peluang diterima ...",
-    image: article1Img,
-    decorativeColor: "bg-red-500"
-  },
-  {
-    id: 5,
-    category: "Tips",
-    date: "October 18, 2023",
-    readTime: "7 min read",
-    title: "Cara Memaksimalkan Peluang Diterima Kerja",
-    description: "Strategi efektif untuk meningkatkan peluang kamu diterima di perusahaan impian dengan persiapan yang matang ...",
-    image: article2Img,
-    decorativeColor: "bg-blue-500"
-  },
-  {
-    id: 6,
-    category: "Insight",
-    date: "October 18, 2023",
-    readTime: "7 min read",
-    title: "Strategi Interview yang Efektif untuk Fresh Graduate",
-    description: "Tips dan trik menghadapi interview kerja bagi fresh graduate untuk tampil percaya diri dan profesional ...",
-    image: article3Img,
-    decorativeColor: "bg-green-500"
-  },
-];
+const defaultImages: Record<string, string> = {
+  "Newsletter": article1Img,
+  "Tips": article2Img,
+  "Insight": article3Img,
+  "Success Stories": article1Img,
+};
+
+const decorativeColors = ["bg-orange-500", "bg-teal-500", "bg-purple-500", "bg-red-500", "bg-blue-500", "bg-green-500"];
+
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  heroImage: string | null;
+  category: string;
+  readTime: string | null;
+  publishedAt: string;
+}
 
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const filteredPosts = activeCategory === "All" 
-    ? blogPosts 
-    : blogPosts.filter(post => post.category === activeCategory);
+  const { data: blogData, isLoading } = useQuery<{ posts: BlogPost[]; total: number }>({
+    queryKey: ["/api/blog", activeCategory !== "All" ? { category: activeCategory } : {}],
+  });
+
+  const filteredPosts = blogData?.posts || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -124,54 +84,74 @@ export default function BlogPage() {
         </div>
 
         {/* Blog Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {filteredPosts.map((post) => (
-            <Link
-              key={post.id}
-              href={`/blog/${post.id}`}
-            >
-              <div
-                className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer group"
-                data-testid={`blog-card-${post.id}`}
-              >
-              <div className="relative overflow-hidden aspect-[4/3]">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300"
-                />
-                {/* Decorative Shapes */}
-                <div className={`absolute top-6 left-6 w-16 h-16 ${post.decorativeColor} rounded-full opacity-80`}></div>
-                <div className={`absolute bottom-6 right-6 w-20 h-20 ${post.decorativeColor} rounded-full opacity-60`}></div>
-              </div>
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Loading blog posts...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {filteredPosts.map((post, index) => {
+              const postImage = post.heroImage || defaultImages[post.category] || article1Img;
+              const decorativeColor = decorativeColors[index % decorativeColors.length];
+              const publishedDate = new Date(post.publishedAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              });
               
-              <div className="p-6">
-                <div className="mb-3">
-                  <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
-                    {post.category}
-                  </span>
+              return (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                >
+                  <div
+                    className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer group"
+                    data-testid={`blog-card-${post.id}`}
+                  >
+                  <div className="relative overflow-hidden aspect-[4/3]">
+                    <img
+                      src={postImage}
+                      alt={post.title}
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300"
+                    />
+                    {/* Decorative Shapes */}
+                    <div className={`absolute top-6 left-6 w-16 h-16 ${decorativeColor} rounded-full opacity-80`}></div>
+                    <div className={`absolute bottom-6 right-6 w-20 h-20 ${decorativeColor} rounded-full opacity-60`}></div>
+                  </div>
+                  
+                  <div className="p-6">
+                    <div className="mb-3">
+                      <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
+                        {post.category}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                      <span>{publishedDate}</span>
+                      {post.readTime && (
+                        <>
+                          <span>•</span>
+                          <span>{post.readTime}</span>
+                        </>
+                      )}
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                      {post.title}
+                    </h3>
+                    
+                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                      {post.excerpt}
+                    </p>
+                  </div>
                 </div>
-                
-                <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                  <span>{post.date}</span>
-                  <span>•</span>
-                  <span>{post.readTime}</span>
-                </div>
-                
-                <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h3>
-                
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
-                  {post.description}
-                </p>
-              </div>
-            </div>
-            </Link>
-          ))}
-        </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
 
-        {filteredPosts.length === 0 && (
+        {!isLoading && filteredPosts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-600">No blog posts found in this category.</p>
           </div>
