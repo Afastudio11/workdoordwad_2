@@ -129,11 +129,15 @@ export default function OverviewPage() {
         <Card className="p-6 border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Aktivitas Terkini</h2>
-            <Link href="/user/dashboard#applications">
-              <Button variant="ghost" size="sm" className="text-gray-600" data-testid="button-view-all-activities">
-                Lihat Semua
-              </Button>
-            </Link>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-gray-600" 
+              onClick={() => window.location.hash = 'applications'}
+              data-testid="button-view-all-activities"
+            >
+              Lihat Semua
+            </Button>
           </div>
           {activitiesLoading ? (
             <div className="space-y-3">
@@ -175,11 +179,15 @@ export default function OverviewPage() {
         <Card className="p-6 border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Rekomendasi Pekerjaan</h2>
-            <Link href="/user/dashboard#recommendations">
-              <Button variant="ghost" size="sm" className="text-gray-600" data-testid="button-view-all-recommendations">
-                Lihat Semua
-              </Button>
-            </Link>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-gray-600" 
+              onClick={() => window.location.hash = 'recommendations'}
+              data-testid="button-view-all-recommendations"
+            >
+              Lihat Semua
+            </Button>
           </div>
           {recommendationsLoading ? (
             <div className="space-y-3">
@@ -196,11 +204,14 @@ export default function OverviewPage() {
             <div className="py-8 text-center text-gray-500">
               <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-2" />
               <p>Belum ada rekomendasi</p>
-              <Link href="/user/dashboard#settings">
-                <Button variant="ghost" size="sm" className="mt-2">
-                  Atur Preferensi
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mt-2"
+                onClick={() => window.location.hash = 'settings'}
+              >
+                Atur Preferensi
+              </Button>
             </div>
           ) : (
             <div className="space-y-3">
@@ -238,18 +249,24 @@ export default function OverviewPage() {
               Cari Lowongan Baru
             </Button>
           </Link>
-          <Link href="/user/dashboard#applications">
-            <Button variant="outline" className="w-full justify-start" data-testid="button-view-applications">
-              <Clock className="w-4 h-4 mr-2" />
-              Lihat Status Lamaran
-            </Button>
-          </Link>
-          <Link href="/user/dashboard#settings">
-            <Button variant="outline" className="w-full justify-start" data-testid="button-update-profile">
-              <Users className="w-4 h-4 mr-2" />
-              Update Profil
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            className="w-full justify-start" 
+            onClick={() => window.location.hash = 'applications'}
+            data-testid="button-view-applications"
+          >
+            <Clock className="w-4 h-4 mr-2" />
+            Lihat Status Lamaran
+          </Button>
+          <Button 
+            variant="outline" 
+            className="w-full justify-start" 
+            onClick={() => window.location.hash = 'settings'}
+            data-testid="button-update-profile"
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Update Profil
+          </Button>
         </div>
       </Card>
 

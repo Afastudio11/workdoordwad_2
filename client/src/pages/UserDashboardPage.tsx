@@ -33,16 +33,27 @@ export default function UserDashboardPage() {
     (n.type === "job_match" || n.type === "new_job_alert") && !n.isRead
   ).length || 0;
 
-  // Sync activeTab with hash changes
+  // Sync activeTab with hash changes (for both direct hash changes and wouter navigation)
   useEffect(() => {
-    const handleHashChange = () => {
+    const syncTab = () => {
       const hash = window.location.hash.replace('#', '');
-      setActiveTab(hash || 'overview');
+      const newTab = hash || 'overview';
+      setActiveTab(newTab);
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+    // Sync on mount and whenever location changes
+    syncTab();
+
+    // Listen to hash changes (for direct hash manipulation)
+    window.addEventListener('hashchange', syncTab);
+    // Listen to popstate (for browser back/forward)
+    window.addEventListener('popstate', syncTab);
+
+    return () => {
+      window.removeEventListener('hashchange', syncTab);
+      window.removeEventListener('popstate', syncTab);
+    };
+  }, [location]); // Also re-run when wouter location changes
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -68,6 +79,8 @@ export default function UserDashboardPage() {
         return <WishlistPage />;
       case 'job-alert':
         return <JobAlertPage />;
+      case 'recommendations':
+        return <RecommendationsPage />;
       case 'settings':
         return <SettingsPage />;
       default:
