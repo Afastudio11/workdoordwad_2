@@ -75,61 +75,61 @@ export default function DashboardHeader() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link
-              href="/user/dashboard"
+            <a
+              href="#overview"
               className={`text-sm font-medium transition-colors ${
-                isActive("/user/dashboard")
+                window.location.hash === '' || window.location.hash === '#overview'
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
               data-testid="nav-link-dashboard"
             >
               Dashboard
-            </Link>
-            <Link
-              href="/find-job"
+            </a>
+            <a
+              href="#find-job"
               className={`text-sm font-medium transition-colors ${
-                isActive("/find-job")
+                window.location.hash === '#find-job'
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
               data-testid="nav-link-find-job"
             >
               Find Job
-            </Link>
-            <Link
-              href="/blog"
+            </a>
+            <a
+              href="#blog"
               className={`text-sm font-medium transition-colors ${
-                isActive("/blog")
+                window.location.hash === '#blog'
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
               data-testid="nav-link-blog"
             >
               Blog
-            </Link>
-            <Link
-              href="/community"
+            </a>
+            <a
+              href="#community"
               className={`text-sm font-medium transition-colors ${
-                isActive("/community")
+                window.location.hash === '#community'
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
               data-testid="nav-link-community"
             >
               Community
-            </Link>
-            <Link
-              href="/faq"
+            </a>
+            <a
+              href="#faq"
               className={`text-sm font-medium transition-colors ${
-                isActive("/faq")
+                window.location.hash === '#faq'
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
               data-testid="nav-link-faq"
             >
               FAQ
-            </Link>
+            </a>
           </nav>
 
           {/* Right side */}
