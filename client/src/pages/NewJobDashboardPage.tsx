@@ -2,7 +2,7 @@
  * IMPORTANT: THIS IS A WORKER-ONLY PAGE
  * - MUST USE: DashboardHeader/DynamicHeader (NOT AdminLayout or EmployerDashboardHeader)
  * - ROLE REQUIRED: pekerja (worker/job seeker)
- * - ROUTE: /jobs
+ * - ROUTE: /find-job
  * - DO NOT import admin or employer components
  */
 import { useState } from "react";
@@ -14,6 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import DashboardHeader from "@/components/DashboardHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ApplicationsPage from "./dashboard/ApplicationsPage";
 
 interface Job {
   id: string;
@@ -86,8 +88,16 @@ export default function NewJobDashboardPage() {
     <div className="min-h-screen bg-white">
       <DashboardHeader />
 
-      {/* Search Section */}
-      <div className="bg-background text-foreground pb-6 md:pb-8 border-b border-border">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 pt-6">
+        <Tabs defaultValue="search" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+            <TabsTrigger value="search" data-testid="tab-search">Cari Pekerjaan</TabsTrigger>
+            <TabsTrigger value="applied" data-testid="tab-applied">Lamaran Saya</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="search" className="mt-0">
+            {/* Search Section */}
+            <div className="bg-background text-foreground pb-6 md:pb-8 border-b border-border -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 pt-4 md:pt-6">
           <div className="flex items-center gap-2 md:gap-4">
             <div className="flex-1 relative">
@@ -259,6 +269,13 @@ export default function NewJobDashboardPage() {
             )}
           </div>
         </div>
+      </div>
+      </TabsContent>
+
+      <TabsContent value="applied" className="mt-0">
+        <ApplicationsPage />
+      </TabsContent>
+    </Tabs>
       </div>
     </div>
   );

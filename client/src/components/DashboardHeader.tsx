@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Bell, User, LogOut, MapPin, ChevronDown, Search } from "lucide-react";
+import { Bell, User, LogOut, MapPin, ChevronDown, Search, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -87,25 +87,48 @@ export default function DashboardHeader() {
               Dashboard
             </Link>
             <Link
-              href="/user/dashboard#applications"
-              className={`text-sm font-medium transition-colors text-gray-400 hover:text-white`}
-              data-testid="nav-link-applications"
+              href="/find-job"
+              className={`text-sm font-medium transition-colors ${
+                isActive("/find-job")
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-find-job"
             >
-              My Applications
+              Find Job
             </Link>
             <Link
-              href="/user/dashboard#wishlist"
-              className={`text-sm font-medium transition-colors text-gray-400 hover:text-white`}
-              data-testid="nav-link-wishlist"
+              href="/blog"
+              className={`text-sm font-medium transition-colors ${
+                isActive("/blog")
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-blog"
             >
-              Saved Jobs
+              Blog
             </Link>
             <Link
-              href="/user/dashboard#profile"
-              className={`text-sm font-medium transition-colors text-gray-400 hover:text-white`}
-              data-testid="nav-link-profile"
+              href="/community"
+              className={`text-sm font-medium transition-colors ${
+                isActive("/community")
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-community"
             >
-              Profile
+              Community
+            </Link>
+            <Link
+              href="/faq"
+              className={`text-sm font-medium transition-colors ${
+                isActive("/faq")
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-faq"
+            >
+              FAQ
             </Link>
           </nav>
 
@@ -279,6 +302,14 @@ export default function DashboardHeader() {
                   <Link href="/user/dashboard#profile" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-profile">
                     <User className="h-4 w-4" />
                     <span>Profil</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                {/* Settings */}
+                <DropdownMenuItem asChild>
+                  <Link href="/user/dashboard#settings" className="flex items-center gap-3 cursor-pointer text-black" data-testid="menu-settings">
+                    <Settings className="h-4 w-4" />
+                    <span>Settings</span>
                   </Link>
                 </DropdownMenuItem>
 

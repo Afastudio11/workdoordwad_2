@@ -65,20 +65,40 @@ export default function EmployerDashboardHeader() {
           </Link>
 
           {/* Navigation Menu - Centered */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => (
-              item.external ? (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium transition-colors text-gray-400 hover:text-white"
-                  data-testid={`nav-link-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                >
-                  {item.label}
-                </a>
-              ) : (
+          <nav className="hidden md:flex items-center gap-6">
+            {navItems.map((item) => {
+              if (item.external) {
+                return (
+                  <a
+                    key={item.path}
+                    href={item.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium transition-colors text-gray-400 hover:text-white"
+                    data-testid={`nav-link-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                  >
+                    {item.label}
+                  </a>
+                );
+              }
+              
+              if (item.label === "Post Job") {
+                return (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                  >
+                    <button
+                      className="px-4 py-2 bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900 font-semibold rounded-lg transition-colors text-sm"
+                      data-testid={`nav-link-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                    >
+                      {item.label}
+                    </button>
+                  </Link>
+                );
+              }
+              
+              return (
                 <Link
                   key={item.path}
                   href={item.path}
@@ -91,8 +111,8 @@ export default function EmployerDashboardHeader() {
                 >
                   {item.label}
                 </Link>
-              )
-            ))}
+              );
+            })}
           </nav>
 
           {/* Right side */}

@@ -1,0 +1,39 @@
+Paham, Anda ingin saya memperbaiki *prompt* untuk Replit agar AI mengoreksi kesalahan *header* dan *routing* berdasarkan instruksi spesifik Anda, sambil mempertahankan fitur penting lainnya. Saya akan gunakan bahasa yang langsung dan jelas.
+
+Berikut adalah *prompt* perbaikan yang fokus pada tindakan dan *debugging*:
+
+---
+
+# PROMPT PERBAIKAN KRITIS: HEADER DAN ROUTING ERROR
+
+**Perhatian AI:** Saya menemukan *bug* fatal! *Header* Dashboard Pekerja dan Pemberi Kerja telah salah diterapkan. Halaman Admin memakai *header* Pekerja, dan tombol utama di *dashboard* Pemberi Kerja tidak bisa diklik. **Segera perbaiki *routing* dan sinkronisasi *header*.**
+
+### 1. Perintah Keras: Perbaikan Header Pekerja
+
+Kembalikan *Header Bar* Pekerja persis seperti daftar di bawah. **Pisahkan** fungsi *setting* dari *profile* utama.
+
+| Elemen Header Wajib (Kiri ke Kanan) | Target Link | Catatan Sinkronisasi |
+| :--- | :--- | :--- |
+| **1. Dashboard** | Halaman *Landing* Utama (Ringkasan Profil, Lamaran). | **Tidak boleh** ada menu *setting* di sini. |
+| **2. Find Job** | Halaman *Job Feed* utama (pencarian, filter). | |
+| **3. Blog** | Link ke konten blog. | |
+| **4. Community** | Link ke komunitas/forum. | |
+| **5. FAQ** | Link ke halaman bantuan. | |
+| **6. Profile** (Ikon di Kanan) | *Dropdown* berisi: **"Profile"** (untuk nama, foto, CV) dan **"Setting"** (untuk kata sandi, notifikasi). | |
+| **7. Icon Pesan & Notifikasi** | **Wajib** tetap ada di *Header Bar* untuk sinkronisasi *chat* dan *alert*. |
+
+### 2. Perbaikan Kritis: Dashboard Pemberi Kerja
+
+Perbaiki semua *handler* klik yang mati di *dashboard* Pemberi Kerja, dan pastikan **isolasi komponen** benar.
+
+* **Masalah 1: Link Mati:** Link **"My Jobs"**, **"Post Job"**, dan **"Company Profile"** harus bisa diklik dan mengarahkan ke halaman yang benar. Tombol **"Post Job"** harus menggunakan gaya **Lime Green** yang menonjol.
+* **Masalah 2: Isolasi Layout:** Pastikan *routing* halaman Admin menggunakan **`AdminLayout`** dan **TIDAK PERNAH** menggunakan `WorkerLayout` atau *header* Pemberi Kerja.
+
+### 3. Logika Perbaikan yang Wajib Dijalankan
+
+Lakukan *debug* pada *routing middleware* Anda. Periksa dan laporkan:
+
+1.  **Validasi Kode:** Di mana kesalahan terjadi yang menyebabkan `My Jobs` tidak bisa diklik (kemungkinan *missing onClick handler* atau *dead link*).
+2.  **Verifikasi Komponen:** Pastikan semua halaman di `/pages/admin/` secara eksplisit hanya mengimpor komponen *admin-specific*.
+
+Setelah perbaikan ini, jalankan *smoke test* untuk memastikan Pekerja, Pemberi Kerja, dan Admin dapat mengakses navigasi *header* mereka tanpa *error* dan tanpa pertukaran *header* yang salah.

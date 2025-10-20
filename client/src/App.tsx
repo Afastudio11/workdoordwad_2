@@ -41,6 +41,7 @@ function Router() {
       <Route path="/" component={HomePage} />
       <Route path="/demo" component={JobCardsDemo} />
       <Route path="/user/dashboard" component={UserDashboardPage} />
+      <Route path="/find-job" component={NewJobDashboardPage} />
       <Route path="/employer/dashboard" component={EmployerDashboardPage} />
       <Route path="/find-candidate" component={FindCandidatePage} />
       <Route path="/find-employers" component={FindEmployersPage} />
