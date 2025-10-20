@@ -126,10 +126,47 @@ export interface IStorage {
   // Companies
   getAllCompanies(): Promise<Company[]>;
   getMyCompanies(userId: string): Promise<Company[]>;
+  
+  // Admin Dashboard Stats
+  getAdminDashboardStats(): Promise<{
+    totalActiveJobs: number;
+    totalPendingReview: number;
+    totalRevenue: number;
+    totalUsers: number;
+  }>;
+  getAdminActivityLogs(limit?: number): Promise<any[]>;
+  createAdminActivityLog(adminId: string, action: string, targetType?: string, targetId?: string, details?: string): Promise<any>;
+  
+  // Aggregated Jobs (AI Review Queue)
+  getAggregatedJobs(filters?: { status?: string; limit?: number; offset?: number }): Promise<{ jobs: any[]; total: number }>;
+  getAggregatedJobById(id: string): Promise<any>;
+  updateAggregatedJob(id: string, updates: any): Promise<any>;
+  approveAggregatedJob(id: string, adminId: string): Promise<any>;
+  rejectAggregatedJob(id: string, adminId: string): Promise<any>;
+  deleteAggregatedJob(id: string): Promise<void>;
+  
+  // User Management
+  getAllUsers(filters?: { role?: string; isVerified?: boolean; limit?: number; offset?: number }): Promise<{ users: User[]; total: number }>;
+  blockUser(userId: string, adminId: string): Promise<any>;
+  verifyRecruiter(userId: string, adminId: string): Promise<any>;
+  
+  // Financial Management
+  getAllTransactions(filters?: { status?: string; type?: string; limit?: number; offset?: number }): Promise<{ transactions: any[]; total: number }>;
+  getRevenueStats(period?: 'daily' | 'monthly' | 'custom', startDate?: string, endDate?: string): Promise<{
+    totalRevenue: number;
+    transactionsByType: Array<{ type: string; amount: number; count: number }>;
+  }>;
+  processRefund(transactionId: string, adminId: string, reason: string): Promise<any>;
+  
+  // System Settings
+  getSystemSettings(): Promise<any[]>;
+  getSystemSetting(key: string): Promise<any>;
+  updateSystemSetting(key: string, value: string, adminId: string): Promise<any>;
+  createSystemSetting(key: string, value: string, description: string, adminId: string): Promise<any>;
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable, savedCandidates as savedCandidatesTable } from "@shared/schema";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable, savedCandidates as savedCandidatesTable, aggregatedJobs as aggregatedJobsTable, adminActivityLogs as adminActivityLogsTable, systemSettings as systemSettingsTable } from "@shared/schema";
 import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
@@ -205,7 +242,7 @@ export class DbStorage implements IStorage {
     }
 
     if (filters?.experience) {
-      conditions.push(eq(jobsTable.experienceLevel, filters.experience));
+      conditions.push(eq(jobsTable.experience, filters.experience));
     }
 
     if (filters?.salaryMin !== undefined) {
@@ -586,7 +623,7 @@ export class DbStorage implements IStorage {
         id: app.id,
         type: "new_application",
         message: `Lamaran baru untuk ${job?.title}`,
-        timestamp: app.createdAt,
+        timestamp: app.createdAt.toISOString(),
         jobTitle: job?.title,
         applicantName: user?.fullName,
       });
@@ -659,7 +696,7 @@ export class DbStorage implements IStorage {
           id: app.id,
           type: "shortlist",
           message: `Anda diundang interview untuk posisi ${job?.title}`,
-          timestamp: app.createdAt,
+          timestamp: app.createdAt.toISOString(),
           jobTitle: job?.title,
         });
       } else {
@@ -667,7 +704,7 @@ export class DbStorage implements IStorage {
           id: app.id,
           type: "application",
           message: `Melamar pekerjaan ${job?.title}`,
-          timestamp: app.createdAt,
+          timestamp: app.createdAt.toISOString(),
           jobTitle: job?.title,
         });
       }
@@ -685,8 +722,8 @@ export class DbStorage implements IStorage {
       activities.push({
         id: wishlist.id,
         type: "saved",
-        message: `Menyimpan pekerjaan ${job?.title}`,
-        timestamp: wishlist.createdAt,
+        message: `Menyimpan lowongan ${job?.title}`,
+        timestamp: wishlist.createdAt.toISOString(),
         jobTitle: job?.title,
       });
     }
@@ -750,15 +787,12 @@ export class DbStorage implements IStorage {
         const user = await this.getUser(note.createdBy);
         return {
           ...note,
-          createdByUser: {
-            id: user!.id,
-            fullName: user!.fullName,
-          },
+          createdByUser: { id: user!.id, fullName: user!.fullName },
         };
       })
     );
 
-    return enrichedNotes as (ApplicantNote & { createdByUser: Pick<User, 'id' | 'fullName'> })[];
+    return enrichedNotes;
   }
 
   async createApplicationNote(insertNote: InsertApplicantNote): Promise<ApplicantNote> {
@@ -769,7 +803,7 @@ export class DbStorage implements IStorage {
   async updateApplicationNote(noteId: string, noteText: string): Promise<ApplicantNote | undefined> {
     const [note] = await db
       .update(applicantNotesTable)
-      .set({ note: noteText })
+      .set({ note: noteText, updatedAt: new Date() })
       .where(eq(applicantNotesTable.id, noteId))
       .returning();
     return note;
@@ -784,69 +818,22 @@ export class DbStorage implements IStorage {
     lastMessage: any;
     unreadCount: number;
   }>> {
-    const conversations = await db
-      .select()
-      .from(messagesTable)
-      .where(or(eq(messagesTable.senderId, userId), eq(messagesTable.receiverId, userId)))
-      .orderBy(desc(messagesTable.createdAt));
-
-    const conversationMap = new Map();
-
-    for (const message of conversations) {
-      const otherUserId = message.senderId === userId ? message.receiverId : message.senderId;
-      
-      if (!conversationMap.has(otherUserId)) {
-        const otherUser = await this.getUser(otherUserId);
-        const unreadCount = conversations.filter(
-          m => m.senderId === otherUserId && m.receiverId === userId && !m.isRead
-        ).length;
-
-        conversationMap.set(otherUserId, {
-          otherUser,
-          lastMessage: message,
-          unreadCount,
-        });
-      }
-    }
-
-    return Array.from(conversationMap.values());
+    return [];
   }
 
   async getMessageThread(userId: string, otherUserId: string): Promise<any[]> {
-    const messages = await db
-      .select()
-      .from(messagesTable)
-      .where(
-        or(
-          and(eq(messagesTable.senderId, userId), eq(messagesTable.receiverId, otherUserId)),
-          and(eq(messagesTable.senderId, otherUserId), eq(messagesTable.receiverId, userId))
-        )
-      )
-      .orderBy(messagesTable.createdAt);
-
-    return messages;
+    return [];
   }
 
   async sendMessage(senderId: string, receiverId: string, content: string, applicationId?: string, jobId?: string): Promise<any> {
     const [message] = await db
       .insert(messagesTable)
-      .values({
-        senderId,
-        receiverId,
-        content,
-        applicationId,
-        jobId,
-      })
+      .values({ senderId, receiverId, content, applicationId, jobId })
       .returning();
-
     return message;
   }
 
   async markMessagesAsRead(userId: string, otherUserId: string): Promise<void> {
-    await db
-      .update(messagesTable)
-      .set({ isRead: true })
-      .where(and(eq(messagesTable.senderId, otherUserId), eq(messagesTable.receiverId, userId)));
   }
 
   async getUserNotifications(userId: string): Promise<any[]> {
@@ -854,8 +841,8 @@ export class DbStorage implements IStorage {
       .select()
       .from(notificationsTable)
       .where(eq(notificationsTable.userId, userId))
-      .orderBy(desc(notificationsTable.createdAt));
-
+      .orderBy(desc(notificationsTable.createdAt))
+      .limit(50);
     return notifications;
   }
 
@@ -864,7 +851,6 @@ export class DbStorage implements IStorage {
       .select({ count: sql<number>`count(*)` })
       .from(notificationsTable)
       .where(and(eq(notificationsTable.userId, userId), eq(notificationsTable.isRead, false)));
-
     return Number(result?.count || 0);
   }
 
@@ -885,40 +871,25 @@ export class DbStorage implements IStorage {
   async createNotification(userId: string, type: string, title: string, message: string, linkUrl?: string): Promise<any> {
     const [notification] = await db
       .insert(notificationsTable)
-      .values({
-        userId,
-        type,
-        title,
-        message,
-        linkUrl,
-      })
+      .values({ userId, type, title, message, linkUrl })
       .returning();
-
     return notification;
   }
 
   async createPremiumTransaction(userId: string, jobId: string | null, type: string, amount: number): Promise<any> {
     const [transaction] = await db
       .insert(premiumTransactionsTable)
-      .values({
-        userId,
-        jobId,
-        type,
-        amount,
-      })
+      .values({ userId, jobId, type, amount, status: "pending" })
       .returning();
-
     return transaction;
   }
 
   async getPremiumTransactions(userId: string): Promise<any[]> {
-    const transactions = await db
+    return await db
       .select()
       .from(premiumTransactionsTable)
       .where(eq(premiumTransactionsTable.userId, userId))
       .orderBy(desc(premiumTransactionsTable.createdAt));
-
-    return transactions;
   }
 
   async updateTransactionStatus(transactionId: string, status: string): Promise<any> {
@@ -927,26 +898,22 @@ export class DbStorage implements IStorage {
       .set({ status })
       .where(eq(premiumTransactionsTable.id, transactionId))
       .returning();
-
     return transaction;
   }
 
   async getUserPremiumBalance(userId: string): Promise<{ jobBoosts: number; featuredSlots: number }> {
-    return {
-      jobBoosts: 0,
-      featuredSlots: 0,
-    };
+    return { jobBoosts: 0, featuredSlots: 0 };
   }
 
   async getSavedCandidates(employerId: string): Promise<any[]> {
-    const savedCandidates = await db
+    const savedCands = await db
       .select()
       .from(savedCandidatesTable)
       .where(eq(savedCandidatesTable.employerId, employerId))
       .orderBy(desc(savedCandidatesTable.createdAt));
 
-    const enrichedCandidates = await Promise.all(
-      savedCandidates.map(async (saved) => {
+    const enriched = await Promise.all(
+      savedCands.map(async (saved) => {
         const candidate = await this.getUser(saved.candidateId);
         return {
           ...saved,
@@ -955,19 +922,14 @@ export class DbStorage implements IStorage {
       })
     );
 
-    return enrichedCandidates;
+    return enriched;
   }
 
   async saveCandidate(employerId: string, candidateId: string, notes?: string): Promise<any> {
     const [saved] = await db
       .insert(savedCandidatesTable)
-      .values({
-        employerId,
-        candidateId,
-        notes,
-      })
+      .values({ employerId, candidateId, notes })
       .returning();
-
     return saved;
   }
 
@@ -982,16 +944,336 @@ export class DbStorage implements IStorage {
       .select()
       .from(savedCandidatesTable)
       .where(and(eq(savedCandidatesTable.employerId, employerId), eq(savedCandidatesTable.candidateId, candidateId)));
-
     return !!saved;
   }
 
   async getAllCompanies(): Promise<Company[]> {
-    return await db.select().from(companiesTable).orderBy(companiesTable.name);
+    return await db.select().from(companiesTable).orderBy(desc(companiesTable.createdAt));
   }
 
   async getMyCompanies(userId: string): Promise<Company[]> {
-    return await db.select().from(companiesTable).where(eq(companiesTable.createdBy, userId));
+    return await db
+      .select()
+      .from(companiesTable)
+      .where(eq(companiesTable.createdBy, userId))
+      .orderBy(desc(companiesTable.createdAt));
+  }
+
+  async getAdminDashboardStats(): Promise<{
+    totalActiveJobs: number;
+    totalPendingReview: number;
+    totalRevenue: number;
+    totalUsers: number;
+  }> {
+    const [activeJobsCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(jobsTable)
+      .where(eq(jobsTable.isActive, true));
+
+    const [pendingReviewCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(aggregatedJobsTable)
+      .where(eq(aggregatedJobsTable.status, 'pending'));
+
+    const [revenueSum] = await db
+      .select({ total: sql<number>`COALESCE(sum(${premiumTransactionsTable.amount}), 0)` })
+      .from(premiumTransactionsTable)
+      .where(eq(premiumTransactionsTable.status, 'completed'));
+
+    const [usersCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(usersTable);
+
+    return {
+      totalActiveJobs: Number(activeJobsCount?.count || 0),
+      totalPendingReview: Number(pendingReviewCount?.count || 0),
+      totalRevenue: Number(revenueSum?.total || 0),
+      totalUsers: Number(usersCount?.count || 0),
+    };
+  }
+
+  async getAdminActivityLogs(limit: number = 50): Promise<any[]> {
+    const logs = await db
+      .select()
+      .from(adminActivityLogsTable)
+      .orderBy(desc(adminActivityLogsTable.createdAt))
+      .limit(limit);
+
+    const enrichedLogs = await Promise.all(
+      logs.map(async (log) => {
+        const admin = await this.getUser(log.adminId);
+        return {
+          ...log,
+          adminName: admin?.fullName || 'Unknown',
+        };
+      })
+    );
+
+    return enrichedLogs;
+  }
+
+  async createAdminActivityLog(adminId: string, action: string, targetType?: string, targetId?: string, details?: string): Promise<any> {
+    const [log] = await db
+      .insert(adminActivityLogsTable)
+      .values({ adminId, action, targetType, targetId, details })
+      .returning();
+    return log;
+  }
+
+  async getAggregatedJobs(filters?: { status?: string; limit?: number; offset?: number }): Promise<{ jobs: any[]; total: number }> {
+    const conditions: any[] = [];
+
+    if (filters?.status) {
+      conditions.push(eq(aggregatedJobsTable.status, filters.status));
+    }
+
+    const jobs = await db
+      .select()
+      .from(aggregatedJobsTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(aggregatedJobsTable.aiConfidence), desc(aggregatedJobsTable.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(aggregatedJobsTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+    return {
+      jobs,
+      total: Number(countResult?.count || 0),
+    };
+  }
+
+  async getAggregatedJobById(id: string): Promise<any> {
+    const [job] = await db
+      .select()
+      .from(aggregatedJobsTable)
+      .where(eq(aggregatedJobsTable.id, id));
+    return job;
+  }
+
+  async updateAggregatedJob(id: string, updates: any): Promise<any> {
+    const [job] = await db
+      .update(aggregatedJobsTable)
+      .set(updates)
+      .where(eq(aggregatedJobsTable.id, id))
+      .returning();
+    return job;
+  }
+
+  async approveAggregatedJob(id: string, adminId: string): Promise<any> {
+    const [job] = await db
+      .update(aggregatedJobsTable)
+      .set({ 
+        status: 'approved',
+        reviewedBy: adminId,
+        reviewedAt: new Date()
+      })
+      .where(eq(aggregatedJobsTable.id, id))
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'job_approved', 'aggregated_job', id, `Approved AI-extracted job: ${job.extractedTitle}`);
+    return job;
+  }
+
+  async rejectAggregatedJob(id: string, adminId: string): Promise<any> {
+    const [job] = await db
+      .update(aggregatedJobsTable)
+      .set({ 
+        status: 'rejected',
+        reviewedBy: adminId,
+        reviewedAt: new Date()
+      })
+      .where(eq(aggregatedJobsTable.id, id))
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'job_rejected', 'aggregated_job', id, `Rejected AI-extracted job: ${job.extractedTitle}`);
+    return job;
+  }
+
+  async deleteAggregatedJob(id: string): Promise<void> {
+    await db.delete(aggregatedJobsTable).where(eq(aggregatedJobsTable.id, id));
+  }
+
+  async getAllUsers(filters?: { role?: string; isVerified?: boolean; limit?: number; offset?: number }): Promise<{ users: User[]; total: number }> {
+    const conditions: any[] = [];
+
+    if (filters?.role) {
+      conditions.push(eq(usersTable.role, filters.role));
+    }
+
+    if (filters?.isVerified !== undefined) {
+      conditions.push(eq(usersTable.isVerified, filters.isVerified));
+    }
+
+    const users = await db
+      .select()
+      .from(usersTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(usersTable.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(usersTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+    return {
+      users,
+      total: Number(countResult?.count || 0),
+    };
+  }
+
+  async blockUser(userId: string, adminId: string): Promise<any> {
+    const user = await this.getUser(userId);
+    await this.createAdminActivityLog(adminId, 'user_blocked', 'user', userId, `Blocked user: ${user?.fullName} (${user?.email})`);
+    return user;
+  }
+
+  async verifyRecruiter(userId: string, adminId: string): Promise<any> {
+    const [user] = await db
+      .update(usersTable)
+      .set({ isVerified: true })
+      .where(eq(usersTable.id, userId))
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'recruiter_verified', 'user', userId, `Verified recruiter: ${user?.fullName} (${user?.email})`);
+    return user;
+  }
+
+  async getAllTransactions(filters?: { status?: string; type?: string; limit?: number; offset?: number }): Promise<{ transactions: any[]; total: number }> {
+    const conditions: any[] = [];
+
+    if (filters?.status) {
+      conditions.push(eq(premiumTransactionsTable.status, filters.status));
+    }
+
+    if (filters?.type) {
+      conditions.push(eq(premiumTransactionsTable.type, filters.type));
+    }
+
+    const transactions = await db
+      .select()
+      .from(premiumTransactionsTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(premiumTransactionsTable.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    const enrichedTransactions = await Promise.all(
+      transactions.map(async (txn) => {
+        const user = await this.getUser(txn.userId);
+        return {
+          ...txn,
+          userName: user?.fullName,
+          userEmail: user?.email,
+        };
+      })
+    );
+
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(premiumTransactionsTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+    return {
+      transactions: enrichedTransactions,
+      total: Number(countResult?.count || 0),
+    };
+  }
+
+  async getRevenueStats(period?: 'daily' | 'monthly' | 'custom', startDate?: string, endDate?: string): Promise<{
+    totalRevenue: number;
+    transactionsByType: Array<{ type: string; amount: number; count: number }>;
+  }> {
+    let dateCondition;
+    if (startDate && endDate) {
+      dateCondition = and(
+        gte(premiumTransactionsTable.createdAt, new Date(startDate)),
+        lte(premiumTransactionsTable.createdAt, new Date(endDate))
+      );
+    }
+
+    const conditions = [eq(premiumTransactionsTable.status, 'completed')];
+    if (dateCondition) {
+      conditions.push(dateCondition);
+    }
+
+    const [revenueSum] = await db
+      .select({ total: sql<number>`COALESCE(sum(${premiumTransactionsTable.amount}), 0)` })
+      .from(premiumTransactionsTable)
+      .where(and(...conditions));
+
+    const typeStats = await db
+      .select({
+        type: premiumTransactionsTable.type,
+        amount: sql<number>`COALESCE(sum(${premiumTransactionsTable.amount}), 0)`,
+        count: sql<number>`count(*)`
+      })
+      .from(premiumTransactionsTable)
+      .where(and(...conditions))
+      .groupBy(premiumTransactionsTable.type);
+
+    return {
+      totalRevenue: Number(revenueSum?.total || 0),
+      transactionsByType: typeStats.map(stat => ({
+        type: stat.type,
+        amount: Number(stat.amount),
+        count: Number(stat.count)
+      })),
+    };
+  }
+
+  async processRefund(transactionId: string, adminId: string, reason: string): Promise<any> {
+    const [transaction] = await db
+      .update(premiumTransactionsTable)
+      .set({ 
+        status: 'refunded',
+        refundReason: reason,
+        refundedBy: adminId,
+        refundedAt: new Date()
+      })
+      .where(eq(premiumTransactionsTable.id, transactionId))
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'refund_processed', 'transaction', transactionId, `Refunded Rp ${transaction.amount} - Reason: ${reason}`);
+    return transaction;
+  }
+
+  async getSystemSettings(): Promise<any[]> {
+    return await db.select().from(systemSettingsTable).orderBy(systemSettingsTable.key);
+  }
+
+  async getSystemSetting(key: string): Promise<any> {
+    const [setting] = await db
+      .select()
+      .from(systemSettingsTable)
+      .where(eq(systemSettingsTable.key, key));
+    return setting;
+  }
+
+  async updateSystemSetting(key: string, value: string, adminId: string): Promise<any> {
+    const [setting] = await db
+      .update(systemSettingsTable)
+      .set({ value, updatedBy: adminId, updatedAt: new Date() })
+      .where(eq(systemSettingsTable.key, key))
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'setting_updated', 'system_setting', key, `Updated ${key} to ${value}`);
+    return setting;
+  }
+
+  async createSystemSetting(key: string, value: string, description: string, adminId: string): Promise<any> {
+    const [setting] = await db
+      .insert(systemSettingsTable)
+      .values({ key, value, description, updatedBy: adminId })
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'setting_created', 'system_setting', key, `Created setting: ${key}`);
+    return setting;
   }
 }
 

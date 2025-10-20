@@ -1865,6 +1865,248 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ADMIN ROUTES
+  // Middleware untuk check admin role
+  const requireAdmin = async (req: Request, res: Response, next: any) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const user = await storage.getUser(req.session.userId);
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ error: "Akses ditolak. Hanya admin yang dapat mengakses" });
+    }
+
+    next();
+  };
+
+  // Admin Dashboard Stats
+  app.get("/api/admin/dashboard/stats", requireAdmin, async (req, res) => {
+    try {
+      const stats = await storage.getAdminDashboardStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching admin stats:", error);
+      res.status(500).json({ error: "Failed to fetch dashboard stats" });
+    }
+  });
+
+  // Admin Activity Logs
+  app.get("/api/admin/activity-logs", requireAdmin, async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
+      const logs = await storage.getAdminActivityLogs(limit);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error fetching activity logs:", error);
+      res.status(500).json({ error: "Failed to fetch activity logs" });
+    }
+  });
+
+  // Aggregated Jobs (AI Review Queue)
+  app.get("/api/admin/aggregated-jobs", requireAdmin, async (req, res) => {
+    try {
+      const { status, limit, offset } = req.query;
+      const result = await storage.getAggregatedJobs({
+        status: status as string,
+        limit: limit ? parseInt(limit as string) : 50,
+        offset: offset ? parseInt(offset as string) : 0,
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching aggregated jobs:", error);
+      res.status(500).json({ error: "Failed to fetch aggregated jobs" });
+    }
+  });
+
+  app.get("/api/admin/aggregated-jobs/:id", requireAdmin, async (req, res) => {
+    try {
+      const job = await storage.getAggregatedJobById(req.params.id);
+      if (!job) {
+        return res.status(404).json({ error: "Job not found" });
+      }
+      res.json(job);
+    } catch (error) {
+      console.error("Error fetching aggregated job:", error);
+      res.status(500).json({ error: "Failed to fetch job" });
+    }
+  });
+
+  app.patch("/api/admin/aggregated-jobs/:id", requireAdmin, async (req, res) => {
+    try {
+      const job = await storage.updateAggregatedJob(req.params.id, req.body);
+      res.json(job);
+    } catch (error) {
+      console.error("Error updating aggregated job:", error);
+      res.status(500).json({ error: "Failed to update job" });
+    }
+  });
+
+  app.post("/api/admin/aggregated-jobs/:id/approve", requireAdmin, async (req, res) => {
+    try {
+      const job = await storage.approveAggregatedJob(req.params.id, req.session.userId!);
+      res.json(job);
+    } catch (error) {
+      console.error("Error approving job:", error);
+      res.status(500).json({ error: "Failed to approve job" });
+    }
+  });
+
+  app.post("/api/admin/aggregated-jobs/:id/reject", requireAdmin, async (req, res) => {
+    try {
+      const job = await storage.rejectAggregatedJob(req.params.id, req.session.userId!);
+      res.json(job);
+    } catch (error) {
+      console.error("Error rejecting job:", error);
+      res.status(500).json({ error: "Failed to reject job" });
+    }
+  });
+
+  app.delete("/api/admin/aggregated-jobs/:id", requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteAggregatedJob(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting aggregated job:", error);
+      res.status(500).json({ error: "Failed to delete job" });
+    }
+  });
+
+  // User Management
+  app.get("/api/admin/users", requireAdmin, async (req, res) => {
+    try {
+      const { role, isVerified, limit, offset } = req.query;
+      const result = await storage.getAllUsers({
+        role: role as string,
+        isVerified: isVerified ? isVerified === 'true' : undefined,
+        limit: limit ? parseInt(limit as string) : 50,
+        offset: offset ? parseInt(offset as string) : 0,
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
+  app.post("/api/admin/users/:id/block", requireAdmin, async (req, res) => {
+    try {
+      const user = await storage.blockUser(req.params.id, req.session.userId!);
+      res.json(user);
+    } catch (error) {
+      console.error("Error blocking user:", error);
+      res.status(500).json({ error: "Failed to block user" });
+    }
+  });
+
+  app.post("/api/admin/users/:id/verify", requireAdmin, async (req, res) => {
+    try {
+      const user = await storage.verifyRecruiter(req.params.id, req.session.userId!);
+      res.json(user);
+    } catch (error) {
+      console.error("Error verifying user:", error);
+      res.status(500).json({ error: "Failed to verify user" });
+    }
+  });
+
+  // Financial Management
+  app.get("/api/admin/transactions", requireAdmin, async (req, res) => {
+    try {
+      const { status, type, limit, offset } = req.query;
+      const result = await storage.getAllTransactions({
+        status: status as string,
+        type: type as string,
+        limit: limit ? parseInt(limit as string) : 50,
+        offset: offset ? parseInt(offset as string) : 0,
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      res.status(500).json({ error: "Failed to fetch transactions" });
+    }
+  });
+
+  app.get("/api/admin/revenue-stats", requireAdmin, async (req, res) => {
+    try {
+      const { period, startDate, endDate } = req.query;
+      const stats = await storage.getRevenueStats(
+        period as 'daily' | 'monthly' | 'custom',
+        startDate as string,
+        endDate as string
+      );
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching revenue stats:", error);
+      res.status(500).json({ error: "Failed to fetch revenue stats" });
+    }
+  });
+
+  app.post("/api/admin/transactions/:id/refund", requireAdmin, async (req, res) => {
+    try {
+      const { reason } = req.body;
+      if (!reason) {
+        return res.status(400).json({ error: "Refund reason is required" });
+      }
+      const transaction = await storage.processRefund(req.params.id, req.session.userId!, reason);
+      res.json(transaction);
+    } catch (error) {
+      console.error("Error processing refund:", error);
+      res.status(500).json({ error: "Failed to process refund" });
+    }
+  });
+
+  // System Settings
+  app.get("/api/admin/settings", requireAdmin, async (req, res) => {
+    try {
+      const settings = await storage.getSystemSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+      res.status(500).json({ error: "Failed to fetch settings" });
+    }
+  });
+
+  app.get("/api/admin/settings/:key", requireAdmin, async (req, res) => {
+    try {
+      const setting = await storage.getSystemSetting(req.params.key);
+      if (!setting) {
+        return res.status(404).json({ error: "Setting not found" });
+      }
+      res.json(setting);
+    } catch (error) {
+      console.error("Error fetching setting:", error);
+      res.status(500).json({ error: "Failed to fetch setting" });
+    }
+  });
+
+  app.put("/api/admin/settings/:key", requireAdmin, async (req, res) => {
+    try {
+      const { value } = req.body;
+      if (!value) {
+        return res.status(400).json({ error: "Value is required" });
+      }
+      const setting = await storage.updateSystemSetting(req.params.key, value, req.session.userId!);
+      res.json(setting);
+    } catch (error) {
+      console.error("Error updating setting:", error);
+      res.status(500).json({ error: "Failed to update setting" });
+    }
+  });
+
+  app.post("/api/admin/settings", requireAdmin, async (req, res) => {
+    try {
+      const { key, value, description } = req.body;
+      if (!key || !value) {
+        return res.status(400).json({ error: "Key and value are required" });
+      }
+      const setting = await storage.createSystemSetting(key, value, description || '', req.session.userId!);
+      res.json(setting);
+    } catch (error) {
+      console.error("Error creating setting:", error);
+      res.status(500).json({ error: "Failed to create setting" });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Setup WebSocket for real-time features

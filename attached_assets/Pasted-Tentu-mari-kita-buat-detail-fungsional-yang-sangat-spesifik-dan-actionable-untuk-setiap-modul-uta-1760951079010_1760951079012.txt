@@ -1,0 +1,56 @@
+Tentu, mari kita buat detail fungsional yang sangat spesifik dan *actionable* untuk setiap modul utama di **Dashboard Admin Pintu Kerja**, memastikan AI memahami persis apa yang harus dibangun dalam konteks *Full-Stack JS* dan **Lime Green** *branding*.
+
+### DETAIL LENGKAP FITUR WAJIB: DASHBOARD ADMIN PINTU KERJA
+
+(Skema Warna: Putih, Hitam, Aksen Lime Green)
+
+#### A. MODUL 1: DASHBOARD / RINGKASAN SISTEM
+
+| Elemen | Fungsionalitas Detail | Spesifikasi Desain |
+| :--- | :--- | :--- |
+| **Kartu Statistik Utama** | **Total Lowongan Aktif:** Jumlah iklan yang sedang tayang. **Total Pendapatan:** Metrik bulanan dari penjualan premium. **Lowongan Menunggu Review:** Angka yang sama dengan *badge* di *Header Bar*. | Kartu dengan angka besar (Hitam Tebal). Angka positif (Pendapatan/Aktif) dapat di-*highlight* dengan teks **Lime Green** atau ikon panah ke atas. |
+| **Grafik Kinerja AI** | Diagram garis yang menampilkan: 1. Jumlah Lowongan yang Ditarik AI (bulanan). 2. Persentase *Success Rate* Ekstraksi NLP. | Gunakan **Lime Green** untuk garis performa yang positif. |
+| **Log Aktivitas Terbaru** | Daftar ringkas aksi kritis Admin (misalnya, *User* diblokir, lowongan AI disetujui, transaksi *refund* diproses). | Teks Hitam, dengan *timestamp* kecil abu-abu. |
+
+#### B. MODUL 2: MODERASI KONTEN (Pusat Kontrol UVP)
+
+**Sub-Modul: Antrean AI Review (AggregatedJobQueue)**
+
+| Elemen | Fungsionalitas Detail | Spesifikasi Desain |
+| :--- | :--- | :--- |
+| **Tabel Lowongan Mentah** | Tampilan data mentah lowongan hasil *scraping*. Kolom wajib: **Judul (Ekstraksi NLP)**, **Teks Asli (Sumber)**, **URL Sumber**, **Akurasi NLP (%)**. | Tabel harus dapat diurutkan berdasarkan **Akurasi NLP** (untuk memprioritaskan yang mudah diverifikasi). |
+| **Aksi Moderasi (Tingkat Baris)** | Tombol di setiap baris data mentah: **1. Edit** (untuk koreksi manual lokasi/gaji). **2. Setujui & Publikasikan**. **3. Tolak & Hapus**. | **"Setujui & Publikasikan"** adalah tombol utama **Lime Green** (solid). |
+| **Pratinjau Sumber** | *Modal* (pop-up) yang menampilkan *screenshot* atau teks sumber asli (media sosial) saat Admin mengklik URL. | Memastikan Admin dapat memverifikasi konteks lowongan. |
+
+**Sub-Modul: Kelola Lowongan Aktif**
+
+| Elemen | Fungsionalitas Detail | Spesifikasi Desain |
+| :--- | :--- | :--- |
+| **Filter Status Lowongan** | Filter berdasarkan: Premium/Gratis, Di-*posting* Langsung, Dilaporkan Pengguna, Kadaluarsa. | |
+| **Tindakan Massal** | *Checkbox* untuk memilih beberapa lowongan sekaligus $\rightarrow$ **Tombol "Hapus Massal"** atau **"Nonaktifkan Massal"**. | Tombol peringatan menggunakan warna kontras (misalnya merah). |
+| **Verifikasi Perekrut** | Kemampuan untuk mengklik ID lowongan dan langsung melihat status verifikasi Perusahaan yang mempostingnya. | |
+
+#### C. MODUL 3: MANAJEMEN PENGGUNA
+
+| Elemen | Fungsionalitas Detail | Spesifikasi Desain |
+| :--- | :--- | :--- |
+| **Tabel Akun Perekrut** | Daftar perusahaan yang terdaftar. Kolom wajib: Nama Perusahaan, Email Perekrut, **Status Verifikasi (Ya/Tidak)**. | |
+| **Aksi Verifikasi** | Tombol **"Verifikasi Akun"** (Lime Green) setelah Admin meninjau dokumen yang diunggah Perekrut. Memblokir/menghapus akun terindikasi penipuan. | |
+| **Tabel Akun Pekerja** | Daftar kandidat. Kolom wajib: Nama, Email, Tanggal Registrasi Terakhir. | |
+| **Aksi Moderasi Pekerja** | Kemampuan untuk memblokir akun Pekerja yang melanggar ketentuan (misalnya *spam*). | |
+
+#### D. MODUL 4: MANAJEMEN KEUANGAN
+
+| Elemen | Fungsionalitas Detail | Spesifikasi Desain |
+| :--- | :--- | :--- |
+| **Laporan Pendapatan** | Filter berdasarkan periode (Harian/Bulanan/Kustom). Menampilkan total penjualan *Booster* dan Paket Slot. | Angka total menggunakan warna **Lime Green**. Tombol "Unduh Laporan CSV" (Lime Green). |
+| **Riwayat Transaksi** | Daftar lengkap semua `PaymentTransaction`. Kolom wajib: ID Transaksi, Perekrut ID, Produk (Booster/Slot), Jumlah, Status (*Success/Failed/Refund*). | Status "Success" dapat diberi label **Lime Green**. |
+| **Manajemen Refund** | Form untuk memproses *refund* dan mencatat alasannya. | |
+
+#### E. MODUL 5: SISTEM & KONFIGURASI
+
+| Elemen | Fungsionalitas Detail | Spesifikasi Desain |
+| :--- | :--- | :--- |
+| **Pengaturan Global** | Form untuk mengubah nilai *default* sistem: Harga *Booster* (Rp), Kuota Lowongan Gratis per Perekrut, Durasi *Expire* Iklan. | |
+| **Log Server & Kinerja** | Tampilan *log error* *backend* (API 500 *error*), *latency* Elasticsearch, dan *status* koneksi *database*. | Menggunakan skema warna yang didominasi abu-abu dan merah (untuk *error*). |
+| **Manajemen Integrasi** | Status API media sosial yang digunakan *Scrapper*. Tombol "Uji Koneksi" untuk layanan eksternal. | |

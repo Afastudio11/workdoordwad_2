@@ -23,6 +23,11 @@ import JobCardsDemo from "@/pages/JobCardsDemo";
 import BlogPage from "@/pages/BlogPage";
 import BlogDetailPage from "@/pages/BlogDetailPage";
 import ContactPage from "@/pages/ContactPage";
+import AdminDashboardPage from "@/pages/AdminDashboardPage";
+import AdminModerationPage from "@/pages/AdminModerationPage";
+import AdminUsersPage from "@/pages/AdminUsersPage";
+import AdminFinancialPage from "@/pages/AdminFinancialPage";
+import AdminSettingsPage from "@/pages/AdminSettingsPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -47,6 +52,11 @@ function Router() {
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:id" component={BlogDetailPage} />
       <Route path="/contact" component={ContactPage} />
+      <Route path="/admin/dashboard" component={AdminDashboardPage} />
+      <Route path="/admin/moderation" component={AdminModerationPage} />
+      <Route path="/admin/users" component={AdminUsersPage} />
+      <Route path="/admin/financial" component={AdminFinancialPage} />
+      <Route path="/admin/settings" component={AdminSettingsPage} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -148,7 +148,10 @@ export const premiumTransactions = pgTable("premium_transactions", {
   jobId: varchar("job_id").references(() => jobs.id),
   type: text("type").notNull(), // job_booster | slot_package
   amount: integer("amount").notNull(),
-  status: text("status").default("pending").notNull(), // pending | completed | failed
+  status: text("status").default("pending").notNull(), // pending | completed | failed | refunded
+  refundReason: text("refund_reason"),
+  refundedBy: varchar("refunded_by").references(() => users.id),
+  refundedAt: timestamp("refunded_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -180,6 +183,25 @@ export const savedCandidates = pgTable("saved_candidates", {
   candidateId: varchar("candidate_id").references(() => users.id).notNull(),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const adminActivityLogs = pgTable("admin_activity_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  adminId: varchar("admin_id").references(() => users.id).notNull(),
+  action: text("action").notNull(), // user_blocked | job_approved | job_rejected | refund_processed | etc
+  targetType: text("target_type"), // user | job | transaction
+  targetId: varchar("target_id"),
+  details: text("details"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const systemSettings = pgTable("system_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  description: text("description"),
+  updatedBy: varchar("updated_by").references(() => users.id),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Insert schemas
@@ -243,6 +265,16 @@ export const insertNotificationSchema = createInsertSchema(notifications).omit({
 export const insertSavedCandidateSchema = createInsertSchema(savedCandidates).omit({
   id: true,
   createdAt: true,
+});
+
+export const insertAdminActivityLogSchema = createInsertSchema(adminActivityLogs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSystemSettingSchema = createInsertSchema(systemSettings).omit({
+  id: true,
+  updatedAt: true,
 });
 
 // Register schemas dengan validasi tambahan
@@ -348,6 +380,12 @@ export type Notification = typeof notifications.$inferSelect;
 
 export type InsertSavedCandidate = z.infer<typeof insertSavedCandidateSchema>;
 export type SavedCandidate = typeof savedCandidates.$inferSelect;
+
+export type InsertAdminActivityLog = z.infer<typeof insertAdminActivityLogSchema>;
+export type AdminActivityLog = typeof adminActivityLogs.$inferSelect;
+
+export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
+export type SystemSetting = typeof systemSettings.$inferSelect;
 
 export type RegisterPekerja = z.infer<typeof registerPekerjaSchema>;
 export type RegisterPemberiKerja = z.infer<typeof registerPemberiKerjaSchema>;
