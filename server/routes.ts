@@ -2107,6 +2107,347 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // BLOG MANAGEMENT ROUTES
+  // Public blog routes
+  app.get("/api/blog", async (req, res) => {
+    try {
+      const { category, limit, offset } = req.query;
+      const result = await storage.getAllBlogPosts({
+        isPublished: true,
+        category: category as string,
+        limit: limit ? parseInt(limit as string) : 20,
+        offset: offset ? parseInt(offset as string) : 0,
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching blog posts:", error);
+      res.status(500).json({ error: "Failed to fetch blog posts" });
+    }
+  });
+
+  app.get("/api/blog/:slug", async (req, res) => {
+    try {
+      const post = await storage.getBlogPostBySlug(req.params.slug);
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+      if (!post.isPublished) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+      res.json(post);
+    } catch (error) {
+      console.error("Error fetching blog post:", error);
+      res.status(500).json({ error: "Failed to fetch blog post" });
+    }
+  });
+
+  // Admin blog routes
+  app.get("/api/admin/blog", requireAdmin, async (req, res) => {
+    try {
+      const { category, isPublished, limit, offset } = req.query;
+      const result = await storage.getAllBlogPosts({
+        isPublished: isPublished !== undefined ? isPublished === 'true' : undefined,
+        category: category as string,
+        limit: limit ? parseInt(limit as string) : 50,
+        offset: offset ? parseInt(offset as string) : 0,
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching blog posts:", error);
+      res.status(500).json({ error: "Failed to fetch blog posts" });
+    }
+  });
+
+  app.get("/api/admin/blog/:id", requireAdmin, async (req, res) => {
+    try {
+      const post = await storage.getBlogPostById(req.params.id);
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+      res.json(post);
+    } catch (error) {
+      console.error("Error fetching blog post:", error);
+      res.status(500).json({ error: "Failed to fetch blog post" });
+    }
+  });
+
+  app.post("/api/admin/blog", requireAdmin, async (req, res) => {
+    try {
+      const { slug, title, excerpt, content, heroImage, category, tags, readTime } = req.body;
+      
+      if (!slug || !title || !excerpt || !content || !category) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const post = await storage.createBlogPost({
+        slug,
+        title,
+        excerpt,
+        content,
+        heroImage,
+        category,
+        tags: tags || [],
+        readTime,
+        authorId: req.session.userId!,
+      });
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        "blog_created",
+        "blog_post",
+        post.id,
+        `Created blog post: ${title}`
+      );
+
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Error creating blog post:", error);
+      res.status(500).json({ error: "Failed to create blog post" });
+    }
+  });
+
+  app.patch("/api/admin/blog/:id", requireAdmin, async (req, res) => {
+    try {
+      const post = await storage.updateBlogPost(req.params.id, req.body);
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        "blog_updated",
+        "blog_post",
+        post.id,
+        `Updated blog post: ${post.title}`
+      );
+
+      res.json(post);
+    } catch (error) {
+      console.error("Error updating blog post:", error);
+      res.status(500).json({ error: "Failed to update blog post" });
+    }
+  });
+
+  app.post("/api/admin/blog/:id/publish", requireAdmin, async (req, res) => {
+    try {
+      const post = await storage.publishBlogPost(req.params.id);
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        "blog_published",
+        "blog_post",
+        post.id,
+        `Published blog post: ${post.title}`
+      );
+
+      res.json(post);
+    } catch (error) {
+      console.error("Error publishing blog post:", error);
+      res.status(500).json({ error: "Failed to publish blog post" });
+    }
+  });
+
+  app.post("/api/admin/blog/:id/unpublish", requireAdmin, async (req, res) => {
+    try {
+      const post = await storage.unpublishBlogPost(req.params.id);
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        "blog_unpublished",
+        "blog_post",
+        post.id,
+        `Unpublished blog post: ${post.title}`
+      );
+
+      res.json(post);
+    } catch (error) {
+      console.error("Error unpublishing blog post:", error);
+      res.status(500).json({ error: "Failed to unpublish blog post" });
+    }
+  });
+
+  app.delete("/api/admin/blog/:id", requireAdmin, async (req, res) => {
+    try {
+      const post = await storage.getBlogPostById(req.params.id);
+      if (!post) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+
+      await storage.deleteBlogPost(req.params.id);
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        "blog_deleted",
+        "blog_post",
+        req.params.id,
+        `Deleted blog post: ${post.title}`
+      );
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting blog post:", error);
+      res.status(500).json({ error: "Failed to delete blog post" });
+    }
+  });
+
+  // CONTENT PAGES MANAGEMENT ROUTES
+  // Public content pages routes
+  app.get("/api/content/:slug", async (req, res) => {
+    try {
+      const page = await storage.getContentPageBySlug(req.params.slug);
+      if (!page) {
+        return res.status(404).json({ error: "Page not found" });
+      }
+      if (!page.isPublished) {
+        return res.status(404).json({ error: "Page not found" });
+      }
+      res.json(page);
+    } catch (error) {
+      console.error("Error fetching content page:", error);
+      res.status(500).json({ error: "Failed to fetch page" });
+    }
+  });
+
+  // Admin content pages routes
+  app.get("/api/admin/content", requireAdmin, async (req, res) => {
+    try {
+      const pages = await storage.getAllContentPages();
+      res.json(pages);
+    } catch (error) {
+      console.error("Error fetching content pages:", error);
+      res.status(500).json({ error: "Failed to fetch content pages" });
+    }
+  });
+
+  app.post("/api/admin/content", requireAdmin, async (req, res) => {
+    try {
+      const { slug, title, content, metaDescription } = req.body;
+      
+      if (!slug || !title || !content) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const page = await storage.createContentPage({
+        slug,
+        title,
+        content,
+        metaDescription,
+        updatedBy: req.session.userId!,
+      });
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        "content_page_created",
+        "content_page",
+        page.id,
+        `Created content page: ${title}`
+      );
+
+      res.status(201).json(page);
+    } catch (error) {
+      console.error("Error creating content page:", error);
+      res.status(500).json({ error: "Failed to create content page" });
+    }
+  });
+
+  app.patch("/api/admin/content/:id", requireAdmin, async (req, res) => {
+    try {
+      const page = await storage.updateContentPage(req.params.id, {
+        ...req.body,
+        updatedBy: req.session.userId!,
+      });
+      
+      if (!page) {
+        return res.status(404).json({ error: "Content page not found" });
+      }
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        "content_page_updated",
+        "content_page",
+        page.id,
+        `Updated content page: ${page.title}`
+      );
+
+      res.json(page);
+    } catch (error) {
+      console.error("Error updating content page:", error);
+      res.status(500).json({ error: "Failed to update content page" });
+    }
+  });
+
+  // ANALYTICS ROUTES
+  // Public analytics (track events)
+  app.post("/api/analytics/track", async (req, res) => {
+    try {
+      const { jobId, eventType } = req.body;
+      
+      if (!jobId || !eventType) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const userId = req.session.userId || null;
+      const ipAddress = req.ip || req.headers['x-forwarded-for'] as string || '';
+      const userAgent = req.headers['user-agent'] || '';
+      const referer = req.headers.referer || req.headers.referrer as string || '';
+
+      await storage.trackJobEvent(jobId, userId, eventType, {
+        ipAddress,
+        userAgent,
+        referer,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error tracking event:", error);
+      res.status(500).json({ error: "Failed to track event" });
+    }
+  });
+
+  // Admin analytics routes
+  app.get("/api/admin/analytics/overview", requireAdmin, async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      const overview = await storage.getAnalyticsOverview(
+        startDate as string,
+        endDate as string
+      );
+      res.json(overview);
+    } catch (error) {
+      console.error("Error fetching analytics overview:", error);
+      res.status(500).json({ error: "Failed to fetch analytics" });
+    }
+  });
+
+  app.get("/api/admin/analytics/top-jobs", requireAdmin, async (req, res) => {
+    try {
+      const { limit } = req.query;
+      const topJobs = await storage.getTopJobs(
+        limit ? parseInt(limit as string) : 10
+      );
+      res.json(topJobs);
+    } catch (error) {
+      console.error("Error fetching top jobs:", error);
+      res.status(500).json({ error: "Failed to fetch top jobs" });
+    }
+  });
+
+  app.get("/api/admin/analytics/job/:id", requireAdmin, async (req, res) => {
+    try {
+      const analytics = await storage.getJobAnalytics(req.params.id);
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching job analytics:", error);
+      res.status(500).json({ error: "Failed to fetch job analytics" });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Setup WebSocket for real-time features
