@@ -125,7 +125,7 @@ export default function UserDashboardPage() {
                       onClick={() => handleTabChange(item.id)}
                       className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                          ? 'bg-gray-100 text-gray-900 border-l-4 border-primary'
                           : 'text-gray-600 hover:bg-gray-50'
                       }`}
                       data-testid={`button-nav-${item.id}`}
@@ -182,7 +182,7 @@ export default function UserDashboardPage() {
                       onClick={() => handleTabChange(item.id)}
                       className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                          ? 'bg-gray-100 text-gray-900 border-l-4 border-primary'
                           : 'text-gray-600 hover:bg-gray-50'
                       }`}
                       data-testid={`button-nav-mobile-${item.id}`}

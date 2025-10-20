@@ -64,6 +64,9 @@ export default function WishlistPage() {
   }
 
   if (isError) {
+    const errorMessage = (error as any)?.message || "";
+    const isAuthError = errorMessage.includes("401") || errorMessage.includes("authenticated");
+    
     return (
       <div className="space-y-6">
         <div>
@@ -79,17 +82,17 @@ export default function WishlistPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Terjadi Kesalahan</AlertTitle>
           <AlertDescription className="mt-2 space-y-3">
-            <p>{(error as any)?.message || "Gagal memuat wishlist. Silakan coba lagi."}</p>
+            <p>{isAuthError ? "Sesi kamu sudah habis. Silakan login kembali." : "Gagal memuat wishlist. Silakan coba lagi."}</p>
             <div className="flex flex-col sm:flex-row gap-2 mt-4">
               <Button
-                onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/wishlists"] })}
+                onClick={() => isAuthError ? window.location.href = '/login' : queryClient.invalidateQueries({ queryKey: ["/api/wishlists"] })}
                 variant="outline"
                 size="sm"
                 className="w-full sm:w-auto"
                 data-testid="button-retry"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Coba Lagi
+                {isAuthError ? "Login" : "Coba Lagi"}
               </Button>
             </div>
           </AlertDescription>
