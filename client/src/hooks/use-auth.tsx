@@ -42,6 +42,7 @@ const DEV_USERS: Record<"pekerja" | "pemberi_kerja" | "admin", User> = {
     preferredJobTypes: null,
     expectedSalaryMin: null,
     isVerified: false,
+    isActive: true,
     createdAt: new Date(),
   },
   pemberi_kerja: {
@@ -69,6 +70,7 @@ const DEV_USERS: Record<"pekerja" | "pemberi_kerja" | "admin", User> = {
     preferredJobTypes: null,
     expectedSalaryMin: null,
     isVerified: true,
+    isActive: true,
     createdAt: new Date(),
   },
   admin: {
@@ -96,6 +98,7 @@ const DEV_USERS: Record<"pekerja" | "pemberi_kerja" | "admin", User> = {
     preferredJobTypes: null,
     expectedSalaryMin: null,
     isVerified: false,
+    isActive: true,
     createdAt: new Date(),
   },
 };

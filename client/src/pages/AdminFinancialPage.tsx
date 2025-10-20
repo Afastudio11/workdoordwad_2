@@ -29,6 +29,8 @@ export default function AdminFinancialPage() {
   const { data: revenueStats } = useQuery({
     queryKey: ["/api/admin/revenue-stats"],
   });
+  
+  const revenue = (revenueStats as any) || {};
 
   const { data: transactionsData, isLoading } = useQuery({
     queryKey: ["/api/admin/transactions"],
@@ -143,12 +145,12 @@ export default function AdminFinancialPage() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-primary" data-testid="stat-total-revenue">
-                Rp {(revenueStats?.totalRevenue || 0).toLocaleString('id-ID')}
+                Rp {(revenue?.totalRevenue || 0).toLocaleString('id-ID')}
               </div>
             </CardContent>
           </Card>
 
-          {revenueStats?.transactionsByType?.map((stat: any) => (
+          {revenue?.transactionsByType?.map((stat: any) => (
             <Card
               key={stat.type}
               className="bg-white dark:bg-black border-gray-200 dark:border-gray-800"

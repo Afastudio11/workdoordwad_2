@@ -3,6 +3,7 @@ import type { Server } from "http";
 import type { IncomingMessage } from "http";
 import cookie from "cookie";
 import signature from "cookie-signature";
+import { sessionStore } from "./index";
 
 interface AuthenticatedWebSocket extends WebSocket {
   userId?: string;
@@ -90,31 +91,36 @@ export function setupWebSocket(server: Server) {
         // Handle authentication message - verify session on backend
         if (message.type === "auth" && message.userId) {
           // SECURITY: Server-side session validation
-          // In production, query session store to verify the sessionId belongs to this userId
-          // For now, we accept the userId but flag it for server-side verification
           const claimedUserId = message.userId as string;
           
-          // TODO: In production, add actual session store lookup:
-          // const session = await sessionStore.get(sessionId);
-          // if (!session || session.userId !== claimedUserId) {
-          //   ws.close(1008, "Unauthorized");
-          //   return;
-          // }
-          
-          // For now, accept the userId from the authenticated session
-          // The session cookie was already validated above
-          userId = claimedUserId;
-          ws.userId = userId;
-          sessionVerified = true;
-          
-          // Register client
-          if (!clients.has(userId)) {
-            clients.set(userId, new Set());
-          }
-          clients.get(userId)!.add(ws);
-          
-          // Send confirmation
-          ws.send(JSON.stringify({ type: "auth_success", userId }));
+          // Verify session on backend - query session store
+          sessionStore.get(sessionId, (error: any, session: any) => {
+            if (error) {
+              console.error("Session validation error:", error);
+              ws.close(1008, "Session validation failed");
+              return;
+            }
+            
+            if (!session || session.userId !== claimedUserId) {
+              console.warn("Invalid session or userId mismatch", { sessionId, claimedUserId, sessionUserId: session?.userId });
+              ws.close(1008, "Unauthorized");
+              return;
+            }
+            
+            // Session validated successfully
+            userId = claimedUserId;
+            ws.userId = userId;
+            sessionVerified = true;
+            
+            // Register client
+            if (!clients.has(userId)) {
+              clients.set(userId, new Set());
+            }
+            clients.get(userId)!.add(ws);
+            
+            // Send confirmation
+            ws.send(JSON.stringify({ type: "auth_success", userId }));
+          });
           return;
         }
 

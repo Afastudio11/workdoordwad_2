@@ -95,10 +95,7 @@ export default function RegisterPage() {
 
   const onSubmit = (data: RegisterPekerjaForm | RegisterPemberiKerjaForm) => {
     const { confirmPassword, agreeToTerms, ...registerData } = data;
-    registerMutation.mutate({
-      ...registerData,
-      role: userType,
-    });
+    registerMutation.mutate(registerData);
   };
 
   return (

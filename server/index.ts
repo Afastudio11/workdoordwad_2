@@ -22,14 +22,16 @@ app.use("/uploads", express.static("uploads"));
 
 // Session configuration
 const MemoryStoreSession = MemoryStore(session);
+export const sessionStore = new MemoryStoreSession({
+  checkPeriod: 86400000, // prune expired entries every 24h
+});
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "pintukerja-secret-key-change-in-production",
     resave: false,
     saveUninitialized: false,
-    store: new MemoryStoreSession({
-      checkPeriod: 86400000, // prune expired entries every 24h
-    }),
+    store: sessionStore,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       httpOnly: true,

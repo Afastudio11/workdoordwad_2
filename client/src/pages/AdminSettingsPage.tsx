@@ -5,7 +5,7 @@
  * - ROUTE: /admin/settings
  * - DO NOT import worker or employer components
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,14 +26,17 @@ export default function AdminSettingsPage() {
 
   const { data: allSettings, isLoading } = useQuery({
     queryKey: ["/api/admin/settings"],
-    onSuccess: (data: any[]) => {
+  });
+
+  useEffect(() => {
+    if (allSettings) {
       const settingsObj: Record<string, string> = {};
-      data?.forEach((setting) => {
+      (allSettings as any[])?.forEach((setting: any) => {
         settingsObj[setting.key] = setting.value;
       });
       setSettings(settingsObj);
-    },
-  });
+    }
+  }, [allSettings]);
 
   const { data: activityLogs } = useQuery({
     queryKey: ["/api/admin/activity-logs"],
@@ -64,7 +67,7 @@ export default function AdminSettingsPage() {
 
   const testDatabaseConnection = async () => {
     try {
-      const response = await apiRequest("/api/admin/health-check", "GET") as { database: boolean; server: boolean };
+      const response = (await apiRequest("/api/admin/health-check", "GET")) as any;
       setHealthStatus({ database: response.database, server: response.server });
       
       if (response.database) {
