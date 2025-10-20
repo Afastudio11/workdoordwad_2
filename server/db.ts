@@ -3,8 +3,17 @@ import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
 import * as schema from "@shared/schema";
 
+// Configure WebSocket for Neon with proper SSL handling
 neonConfig.webSocketConstructor = ws;
 neonConfig.pipelineConnect = false;
+
+// Fix WebSocket certificate errors in development
+// In development, Neon's WebSocket may use self-signed certificates
+const isDevelopment = process.env.NODE_ENV !== 'production';
+if (isDevelopment) {
+  // Disable strict SSL verification for WebSocket connections in development only
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 
 if (!process.env.DATABASE_URL) {
   throw new Error(

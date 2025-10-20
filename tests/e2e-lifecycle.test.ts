@@ -134,8 +134,7 @@ class E2ETestSuite {
           password: this.worker.password,
           email: this.worker.email,
           fullName: this.worker.fullName,
-          phone: this.worker.phone,
-          role: 'pekerja'
+          phone: this.worker.phone
         })
       });
 
@@ -180,7 +179,6 @@ class E2ETestSuite {
           email: this.employer.email,
           fullName: this.employer.fullName,
           phone: this.employer.phone,
-          role: 'pemberi_kerja',
           companyName: 'Test Company E2E'
         })
       });

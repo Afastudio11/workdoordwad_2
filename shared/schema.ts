@@ -337,26 +337,38 @@ export const insertJobEventSchema = createInsertSchema(jobEvents).omit({
 
 // Register schemas dengan validasi tambahan
 export const registerPekerjaSchema = insertUserSchema.extend({
-  role: z.literal("pekerja"),
   password: z.string().min(6, "Password minimal 6 karakter"),
 }).omit({
+  role: true, // Backend akan set role secara otomatis
   isVerified: true,
   cvUrl: true,
+  cvFileName: true,
   education: true,
   experience: true,
   skills: true,
+  preferredIndustries: true,
+  preferredLocations: true,
+  preferredJobTypes: true,
+  expectedSalaryMin: true,
+  isActive: true,
 });
 
 export const registerPemberiKerjaSchema = insertUserSchema.extend({
-  role: z.literal("pemberi_kerja"),
   password: z.string().min(6, "Password minimal 6 karakter"),
   companyName: z.string().min(1, "Nama perusahaan harus diisi"),
 }).omit({
+  role: true, // Backend akan set role secara otomatis
   isVerified: true,
   cvUrl: true,
+  cvFileName: true,
   education: true,
   experience: true,
   skills: true,
+  preferredIndustries: true,
+  preferredLocations: true,
+  preferredJobTypes: true,
+  expectedSalaryMin: true,
+  isActive: true,
 });
 
 export const loginSchema = z.object({
