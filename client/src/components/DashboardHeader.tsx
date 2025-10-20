@@ -72,44 +72,9 @@ export default function DashboardHeader() {
             <img src={logoImg} alt="PintuKerja" className="h-12" />
           </Link>
 
-          {/* Navigation */}
+          {/* Navigation - Removed external links for security */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/jobs">
-              <span
-                className={`text-sm cursor-pointer transition-colors ${
-                  isActive("/jobs") ? "text-white font-medium" : "text-white/80 hover:text-white"
-                }`}
-              >
-                Cari Pekerjaan
-              </span>
-            </Link>
-            <Link href="/messages">
-              <span
-                className={`text-sm cursor-pointer transition-colors ${
-                  isActive("/messages") ? "text-white font-medium" : "text-white/80 hover:text-white"
-                }`}
-              >
-                Pesan
-              </span>
-            </Link>
-            <Link href="/community">
-              <span
-                className={`text-sm cursor-pointer transition-colors ${
-                  isActive("/community") ? "text-white font-medium" : "text-white/80 hover:text-white"
-                }`}
-              >
-                Komunitas
-              </span>
-            </Link>
-            <Link href="/faq">
-              <span
-                className={`text-sm cursor-pointer transition-colors ${
-                  isActive("/faq") ? "text-white font-medium" : "text-white/80 hover:text-white"
-                }`}
-              >
-                FAQ
-              </span>
-            </Link>
+            {/* Navigation items removed to prevent users from leaving dashboard */}
           </nav>
 
           {/* Right side */}

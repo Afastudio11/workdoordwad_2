@@ -47,9 +47,7 @@ export default function EmployerDashboardHeader() {
 
   const navItems = [
     { path: "/employer/dashboard", label: "Dashboard", external: false },
-    { path: "/find-candidate", label: "Find Candidate", external: false },
-    { path: "/employer/applications", label: "Applications", external: false },
-    { path: "/contact", label: "Customer Supports", external: false },
+    // Removed external links for security - users should stay within dashboard
   ];
 
   const isActive = (path: string) => {
@@ -161,16 +159,7 @@ export default function EmployerDashboardHeader() {
                     ))
                   )}
                 </div>
-                {notifications.length > 0 && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/notifications" className="text-center justify-center text-sm text-black hover:underline cursor-pointer py-2 font-semibold">
-                        Lihat semua notifikasi
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
+                {/* Removed "Lihat semua notifikasi" link to prevent leaving dashboard */}
               </DropdownMenuContent>
             </DropdownMenu>
 
