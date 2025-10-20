@@ -50,7 +50,9 @@ export default function DashboardHeader() {
 
   const recentNotifications = notifications.slice(0, 5);
 
-  const isActive = (path: string) => location === path;
+  const isActive = (path: string) => {
+    return location === path;
+  };
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
@@ -96,37 +98,37 @@ export default function DashboardHeader() {
               Lamaran Saya
             </Link>
             <Link
-              href="/user/dashboard#wishlist"
+              href="/messages"
               className={`text-sm font-medium transition-colors ${
-                location === "/user/dashboard#wishlist"
+                isActive("/messages")
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-wishlist"
+              data-testid="nav-link-messages"
             >
-              Favorit
+              Pesan
             </Link>
             <Link
-              href="/user/dashboard#job-alert"
+              href="/faq"
               className={`text-sm font-medium transition-colors ${
-                location === "/user/dashboard#job-alert"
+                isActive("/faq")
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-job-alert"
+              data-testid="nav-link-faq"
             >
-              Job Alert
+              FAQ
             </Link>
             <Link
-              href="/user/dashboard#settings"
+              href="/contact"
               className={`text-sm font-medium transition-colors ${
-                location === "/user/dashboard#settings"
+                isActive("/contact")
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-settings"
+              data-testid="nav-link-contact"
             >
-              Pengaturan
+              Kontak
             </Link>
           </nav>
 
