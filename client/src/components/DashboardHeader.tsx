@@ -75,28 +75,30 @@ export default function DashboardHeader() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a
-              href="#overview"
-              className={`text-sm font-medium transition-colors ${
-                window.location.hash === '' || window.location.hash === '#overview'
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-dashboard"
-            >
-              Dashboard
-            </a>
-            <a
-              href="#find-job"
-              className={`text-sm font-medium transition-colors ${
-                window.location.hash === '#find-job'
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-find-job"
-            >
-              Find Job
-            </a>
+            <Link href="/user/dashboard">
+              <span
+                className={`text-sm font-medium transition-colors cursor-pointer ${
+                  isActive('/user/dashboard')
+                    ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                    : "text-gray-400 hover:text-white"
+                }`}
+                data-testid="nav-link-dashboard"
+              >
+                Dashboard
+              </span>
+            </Link>
+            <Link href="/find-job">
+              <span
+                className={`text-sm font-medium transition-colors cursor-pointer ${
+                  isActive('/find-job')
+                    ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                    : "text-gray-400 hover:text-white"
+                }`}
+                data-testid="nav-link-find-job"
+              >
+                Find Job
+              </span>
+            </Link>
             <Link href="/blog">
               <span
                 className={`text-sm font-medium transition-colors cursor-pointer ${

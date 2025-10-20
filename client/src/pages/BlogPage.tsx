@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/Header";
+import DynamicHeader from "@/components/DynamicHeader";
 import { ChevronDown } from "lucide-react";
 import article1Img from "@assets/5_1760872341106.png";
 import article2Img from "@assets/3_1760872341107.png";
@@ -40,7 +40,7 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header variant="dark" />
+      <DynamicHeader />
       
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-12 md:py-20">
         {/* Hero Section */}

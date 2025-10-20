@@ -46,9 +46,9 @@ export default function EmployerDashboardHeader() {
 
   const navItems = [
     { path: "/employer/dashboard", label: "Dashboard", external: false },
-    { path: "/employer/dashboard#my-jobs", label: "My Jobs", external: false },
-    { path: "/employer/dashboard#post-job", label: "Post Job", external: false },
-    { path: "/employer/dashboard#profile", label: "Company Profile", external: false },
+    { path: "/blog", label: "Blog", external: false },
+    { path: "/community", label: "Community", external: false },
+    { path: "/faq", label: "FAQ", external: false },
   ];
 
   const isActive = (path: string) => {
@@ -65,44 +65,14 @@ export default function EmployerDashboardHeader() {
           </Link>
 
           {/* Navigation Menu - Centered */}
-          <nav className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => {
-              if (item.external) {
-                return (
-                  <a
-                    key={item.path}
-                    href={item.path}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-medium transition-colors text-gray-400 hover:text-white"
-                    data-testid={`nav-link-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                  >
-                    {item.label}
-                  </a>
-                );
-              }
-              
-              if (item.label === "Post Job") {
-                return (
-                  <Link
-                    key={item.path}
-                    href={item.path}
-                  >
-                    <button
-                      className="px-4 py-2 bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900 font-semibold rounded-lg transition-colors text-sm"
-                      data-testid={`nav-link-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                    >
-                      {item.label}
-                    </button>
-                  </Link>
-                );
-              }
-              
-              return (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  className={`text-sm font-medium transition-colors ${
+          <nav className="hidden md:flex items-center gap-8">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                href={item.path}
+              >
+                <span
+                  className={`text-sm font-medium transition-colors cursor-pointer ${
                     isActive(item.path)
                       ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                       : "text-gray-400 hover:text-white"
@@ -110,9 +80,9 @@ export default function EmployerDashboardHeader() {
                   data-testid={`nav-link-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   {item.label}
-                </Link>
-              );
-            })}
+                </span>
+              </Link>
+            ))}
           </nav>
 
           {/* Right side */}
