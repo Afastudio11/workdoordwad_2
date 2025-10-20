@@ -8,6 +8,41 @@ Pintu Kerja is a freemium job classifieds platform targeting UMKM (small-medium 
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Updates (October 20, 2025)
+
+### Candidate Dashboard Redesign
+Implemented new candidate dashboard navigation matching user requirements with professional sidebar design:
+
+**Dashboard Pages:**
+1. **Overview**: Statistics dashboard showing total applications, pending applications, shortlisted applications, and saved jobs with activity timeline and job recommendations
+2. **Applied Jobs (Lamaran Saya)**: List of all job applications with status tracking
+3. **Favorite Jobs (Wishlist)**: Saved job listings for future application
+4. **Job Alert**: Dedicated page for job notifications and alerts matching user preferences with unread badge counter
+5. **Settings (Pengaturan Akun)**: User profile and preferences management
+
+**UI/UX Features:**
+- Clean sidebar navigation with active state highlighting (blue background for active item)
+- Notification badge on Job Alert menu item showing unread count
+- Responsive mobile menu for smaller screens
+- Statistics cards showing key metrics (total applications, pending, shortlisted, saved jobs)
+- Recent activity timeline with icons for different activity types
+- Job recommendations section based on user preferences
+- Quick action buttons for common tasks
+
+**Backend Implementation:**
+- Storage methods: `getCandidateStats()`, `getCandidateActivities()`
+- API endpoints: `/api/candidate/stats`, `/api/candidate/activities`
+- Statistics aggregation from applications and wishlists
+- Activity tracking for applications, shortlists, and saved jobs
+
+**Design Changes:**
+- Active menu item: Blue background (#EFF6FF) with blue text (#2563EB) and left border accent
+- Inactive menu item: Gray text with hover state
+- Badge styling: Dark gray background (#111827) with white text
+- Professional appearance matching modern dashboard designs
+
+**Access Route:** `/user/dashboard` (requires authentication with pekerja role)
+
 ## Recent Updates (October 18, 2025)
 
 ### Employer Dashboard Implementation
