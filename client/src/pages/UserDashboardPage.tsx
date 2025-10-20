@@ -63,6 +63,7 @@ export default function UserDashboardPage() {
 
   const navItems = [
     { id: 'overview', label: 'Overview', icon: Layers },
+    { id: 'profile', label: 'Profile', icon: User },
     { id: 'applications', label: 'Applied Jobs', icon: Briefcase },
     { id: 'wishlist', label: 'Favorite Jobs', icon: Heart },
     { id: 'job-alert', label: 'Job Alert', icon: Bell, badge: jobAlertCount },
@@ -73,6 +74,8 @@ export default function UserDashboardPage() {
     switch (activeTab) {
       case 'overview':
         return <OverviewPage />;
+      case 'profile':
+        return <ProfilePage />;
       case 'applications':
         return <ApplicationsPage />;
       case 'wishlist':

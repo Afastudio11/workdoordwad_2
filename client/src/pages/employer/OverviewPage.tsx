@@ -58,7 +58,7 @@ export default function OverviewPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Ringkasan Dashboard</h1>
-        <Link href="/employer/dashboard#jobs">
+        <Link href="/employer/dashboard#post-job">
           <Button className="bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900" data-testid="button-post-new-job">
             Pasang Lowongan Baru
           </Button>
@@ -260,7 +260,7 @@ export default function OverviewPage() {
       <Card className="p-6 border-gray-200 bg-white">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link href="/employer/dashboard#jobs">
+          <Link href="/employer/dashboard#post-job">
             <Button 
               className="w-full bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900" 
               data-testid="button-quick-post-job"
@@ -268,7 +268,7 @@ export default function OverviewPage() {
               Pasang Iklan Baru
             </Button>
           </Link>
-          <Link href="/employer/dashboard#applicants">
+          <Link href="/employer/dashboard#my-jobs">
             <Button 
               variant="outline" 
               className="w-full border-gray-300 text-gray-700" 
@@ -277,7 +277,7 @@ export default function OverviewPage() {
               Kelola Lamaran
             </Button>
           </Link>
-          <Link href="/employer/dashboard#company">
+          <Link href="/employer/dashboard#profile">
             <Button 
               variant="outline" 
               className="w-full border-gray-300 text-gray-700" 
