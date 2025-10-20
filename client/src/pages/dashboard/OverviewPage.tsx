@@ -36,15 +36,15 @@ interface RecommendedJob {
 }
 
 export default function OverviewPage() {
-  const { data: stats, isLoading: statsLoading } = useQuery<CandidateStats>({
+  const { data: stats, isLoading: statsLoading, isError: statsError } = useQuery<CandidateStats>({
     queryKey: ["/api/candidate/stats"],
   });
 
-  const { data: activities = [], isLoading: activitiesLoading } = useQuery<RecentActivity[]>({
+  const { data: activities = [], isLoading: activitiesLoading, isError: activitiesError } = useQuery<RecentActivity[]>({
     queryKey: ["/api/candidate/activities"],
   });
 
-  const { data: recommendations = [], isLoading: recommendationsLoading } = useQuery<RecommendedJob[]>({
+  const { data: recommendations = [], isLoading: recommendationsLoading, isError: recommendationsError } = useQuery<RecommendedJob[]>({
     queryKey: ["/api/recommendations"],
   });
 
@@ -85,7 +85,7 @@ export default function OverviewPage() {
             <Briefcase className="h-5 w-5 text-gray-400" />
           </div>
           <p className="text-3xl font-bold text-gray-900" data-testid="text-total-applications">
-            {statsLoading ? "..." : stats?.totalApplications || 0}
+            {statsLoading ? "..." : statsError ? "-" : stats?.totalApplications || 0}
           </p>
           <p className="text-sm text-gray-500 mt-1">Semua lamaran yang dikirim</p>
         </Card>
@@ -96,7 +96,7 @@ export default function OverviewPage() {
             <Clock className="h-5 w-5 text-gray-400" />
           </div>
           <p className="text-3xl font-bold text-gray-900" data-testid="text-pending-applications">
-            {statsLoading ? "..." : stats?.pendingApplications || 0}
+            {statsLoading ? "..." : statsError ? "-" : stats?.pendingApplications || 0}
           </p>
           <p className="text-sm text-gray-500 mt-1">Menunggu review</p>
         </Card>
@@ -107,7 +107,7 @@ export default function OverviewPage() {
             <CheckCircle className="h-5 w-5 text-gray-400" />
           </div>
           <p className="text-3xl font-bold text-gray-900" data-testid="text-shortlisted-applications">
-            {statsLoading ? "..." : stats?.shortlistedApplications || 0}
+            {statsLoading ? "..." : statsError ? "-" : stats?.shortlistedApplications || 0}
           </p>
           <p className="text-sm text-gray-500 mt-1">Lamaran di-shortlist</p>
         </Card>
@@ -118,7 +118,7 @@ export default function OverviewPage() {
             <Heart className="h-5 w-5 text-gray-400" />
           </div>
           <p className="text-3xl font-bold text-gray-900" data-testid="text-saved-jobs">
-            {statsLoading ? "..." : stats?.savedJobs || 0}
+            {statsLoading ? "..." : statsError ? "-" : stats?.savedJobs || 0}
           </p>
           <p className="text-sm text-gray-500 mt-1">Lowongan yang disimpan</p>
         </Card>
@@ -140,6 +140,11 @@ export default function OverviewPage() {
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
               ))}
+            </div>
+          ) : activitiesError ? (
+            <div className="py-8 text-center text-gray-500">
+              <Clock className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p>Gagal memuat aktivitas</p>
             </div>
           ) : activities.length === 0 ? (
             <div className="py-8 text-center text-gray-500">
@@ -181,6 +186,11 @@ export default function OverviewPage() {
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="h-20 bg-gray-100 rounded-lg animate-pulse"></div>
               ))}
+            </div>
+          ) : recommendationsError ? (
+            <div className="py-8 text-center text-gray-500">
+              <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p>Gagal memuat rekomendasi</p>
             </div>
           ) : recommendations.length === 0 ? (
             <div className="py-8 text-center text-gray-500">

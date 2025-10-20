@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { User, Briefcase, Heart, LogOut, Menu, X, Sparkles, Settings, Bell, Layers } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
@@ -32,6 +32,17 @@ export default function UserDashboardPage() {
   const jobAlertCount = notifications?.filter(n => 
     (n.type === "job_match" || n.type === "new_job_alert") && !n.isRead
   ).length || 0;
+
+  // Sync activeTab with hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      setActiveTab(hash || 'overview');
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
