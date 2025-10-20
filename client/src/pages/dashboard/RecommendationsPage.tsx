@@ -102,11 +102,6 @@ export default function RecommendationsPage() {
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Coba Lagi
               </Button>
-              <Link href="/jobs">
-                <Button variant="outline" size="sm" className="w-full sm:w-auto" data-testid="button-browse-jobs">
-                  Jelajahi Semua Lowongan
-                </Button>
-              </Link>
             </div>
           </AlertDescription>
         </Alert>
@@ -135,16 +130,9 @@ export default function RecommendationsPage() {
             Lengkapi profil kamu (keahlian, preferensi industri, dan lokasi) untuk mendapatkan rekomendasi pekerjaan yang lebih sesuai
           </p>
           <div className="flex gap-4 justify-center">
-            <Link href="/user/dashboard/settings">
-              <Button data-testid="button-complete-profile">
-                Lengkapi Profil
-              </Button>
-            </Link>
-            <Link href="/jobs">
-              <Button variant="outline" data-testid="button-browse-jobs">
-                Jelajahi Semua Lowongan
-              </Button>
-            </Link>
+            <Button onClick={() => window.location.hash = 'settings'} data-testid="button-complete-profile">
+              Lengkapi Profil
+            </Button>
           </div>
         </div>
       </div>
@@ -167,7 +155,7 @@ export default function RecommendationsPage() {
           <Card key={job.id} data-testid={`recommendation-card-${index}`} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between gap-4">
-                <Link href={`/jobs/${job.id}`} className="flex-1">
+                <div className="flex-1">
                   <Badge className="mb-3" variant="secondary">
                     <Sparkles className="w-3 h-3 mr-1" />
                     Rekomendasi
@@ -177,7 +165,7 @@ export default function RecommendationsPage() {
                       <Briefcase className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1 hover:text-gray-700 transition-colors" data-testid={`recommendation-title-${index}`}>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1" data-testid={`recommendation-title-${index}`}>
                         {job.title}
                       </h3>
                       <p className="text-gray-900" data-testid={`recommendation-company-${index}`}>
@@ -197,14 +185,14 @@ export default function RecommendationsPage() {
                     </div>
                     {job.salaryMin && job.salaryMax && (
                       <div className="flex items-center gap-1 font-semibold text-gray-900">
-                        <DollarSign className="w-4 h-4" />
+                        <DollarSign className="w-4 w-4" />
                         <span data-testid={`recommendation-salary-${index}`}>
                           {formatSalary(job.salaryMin)} - {formatSalary(job.salaryMax)}
                         </span>
                       </div>
                     )}
                   </div>
-                </Link>
+                </div>
 
                 <div className="flex flex-col gap-2">
                   <Button
@@ -239,13 +227,7 @@ export default function RecommendationsPage() {
         ))}
       </div>
 
-      <div className="text-center pt-4">
-        <Link href="/jobs">
-          <Button variant="outline">
-            Lihat Semua Lowongan
-          </Button>
-        </Link>
-      </div>
+      {/* Removed "Lihat Semua Lowongan" link to prevent users from leaving dashboard */}
     </div>
   );
 }

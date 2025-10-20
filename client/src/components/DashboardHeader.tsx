@@ -23,13 +23,12 @@ interface Notification {
   type: string;
   title: string;
   message: string;
-  linkUrl: string | null;
   isRead: boolean;
   createdAt: string;
 }
 
 export default function DashboardHeader() {
-  const [location, setLocation] = useLocation();
+  const [location] = useLocation();
   const { user, logout } = useAuth();
   const [selectedCity, setSelectedCity] = useState("Jakarta Selatan");
   const [searchQuery, setSearchQuery] = useState("");

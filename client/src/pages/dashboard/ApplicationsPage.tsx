@@ -95,11 +95,8 @@ export default function ApplicationsPage() {
           Belum Ada Lamaran
         </h3>
         <p className="text-gray-900 mb-6">
-          kamu belum melamar ke lowongan manapun
+          kamu belum melamar ke lowongan manapun. Lihat halaman rekomendasi untuk menemukan lowongan yang sesuai
         </p>
-        <Button asChild>
-          <a href="/jobs">Cari Lowongan</a>
-        </Button>
       </div>
     );
   }

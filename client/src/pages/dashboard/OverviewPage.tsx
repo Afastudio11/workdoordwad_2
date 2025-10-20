@@ -70,11 +70,6 @@ export default function OverviewPage() {
           </h1>
           <p className="text-gray-600 mt-1">Ringkasan aktivitas pencarian kerja Anda</p>
         </div>
-        <Link href="/jobs">
-          <Button className="bg-[#D4FF00] hover:bg-[#c4ef00] text-gray-900" data-testid="button-browse-jobs">
-            Cari Lowongan
-          </Button>
-        </Link>
       </div>
 
       {/* Statistics Grid */}
@@ -216,23 +211,21 @@ export default function OverviewPage() {
           ) : (
             <div className="space-y-3">
               {recommendations.slice(0, 3).map((job, index) => (
-                <Link key={job.id} href={`/jobs/${job.id}`}>
-                  <div className="p-3 rounded-lg border border-gray-200 hover:border-[#D4FF00] hover:bg-gray-50 transition-colors cursor-pointer" data-testid={`recommendation-${index}`}>
-                    <h3 className="font-semibold text-gray-900 mb-1">{job.title}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{job.company.name}</p>
-                    <div className="flex items-center gap-3 text-xs text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        <span>{job.location}</span>
-                      </div>
-                      {job.salaryMin && job.salaryMax && (
-                        <span>
-                          {formatSalary(job.salaryMin)} - {formatSalary(job.salaryMax)}
-                        </span>
-                      )}
+                <div key={job.id} className="p-3 rounded-lg border border-gray-200 hover:border-[#D4FF00] hover:bg-gray-50 transition-colors" data-testid={`recommendation-${index}`}>
+                  <h3 className="font-semibold text-gray-900 mb-1">{job.title}</h3>
+                  <p className="text-sm text-gray-600 mb-2">{job.company.name}</p>
+                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      <span>{job.location}</span>
                     </div>
+                    {job.salaryMin && job.salaryMax && (
+                      <span>
+                        {formatSalary(job.salaryMin)} - {formatSalary(job.salaryMax)}
+                      </span>
+                    )}
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}
@@ -242,13 +235,7 @@ export default function OverviewPage() {
       {/* Quick Actions */}
       <Card className="p-6 border-gray-200 bg-white">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/jobs">
-            <Button variant="outline" className="w-full justify-start" data-testid="button-find-jobs">
-              <Briefcase className="w-4 h-4 mr-2" />
-              Cari Lowongan Baru
-            </Button>
-          </Link>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button 
             variant="outline" 
             className="w-full justify-start" 

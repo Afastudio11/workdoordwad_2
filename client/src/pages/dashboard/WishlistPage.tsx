@@ -109,11 +109,8 @@ export default function WishlistPage() {
           Wishlist Kosong
         </h3>
         <p className="text-gray-900 mb-6">
-          Simpan lowongan yang menarik untuk ditinjau kemudian
+          Simpan lowongan yang menarik untuk ditinjau kemudian dari halaman rekomendasi
         </p>
-        <Button asChild>
-          <a href="/jobs">Cari Lowongan</a>
-        </Button>
       </div>
     );
   }
@@ -168,12 +165,6 @@ export default function WishlistPage() {
                   </div>
                 )}
               </div>
-
-              <Link href={`/jobs/${wishlist.jobId}`}>
-                <Button className="w-full" variant="outline" data-testid={`button-view-${index}`}>
-                  Lihat Detail
-                </Button>
-              </Link>
             </CardContent>
           </Card>
         ))}
