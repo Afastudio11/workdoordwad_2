@@ -163,14 +163,6 @@ export default function JobAlertPage() {
                       </div>
                     )}
 
-                    {/* Action Button */}
-                    {notification.linkUrl && (
-                      <Link href={notification.linkUrl}>
-                        <Button size="sm" variant="outline" data-testid={`button-view-${index}`}>
-                          Lihat Lowongan
-                        </Button>
-                      </Link>
-                    )}
                   </div>
                 </div>
               </CardContent>
