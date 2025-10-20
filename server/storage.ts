@@ -170,10 +170,37 @@ export interface IStorage {
   getSystemSetting(key: string): Promise<any>;
   updateSystemSetting(key: string, value: string, adminId: string): Promise<any>;
   createSystemSetting(key: string, value: string, description: string, adminId: string): Promise<any>;
+  
+  // Blog Management
+  getAllBlogPosts(filters?: { isPublished?: boolean; category?: string; limit?: number; offset?: number }): Promise<{ posts: any[]; total: number }>;
+  getBlogPostById(id: string): Promise<any>;
+  getBlogPostBySlug(slug: string): Promise<any>;
+  createBlogPost(post: any): Promise<any>;
+  updateBlogPost(id: string, updates: any): Promise<any>;
+  publishBlogPost(id: string): Promise<any>;
+  unpublishBlogPost(id: string): Promise<any>;
+  deleteBlogPost(id: string): Promise<void>;
+  
+  // Content Pages Management
+  getAllContentPages(): Promise<any[]>;
+  getContentPageBySlug(slug: string): Promise<any>;
+  createContentPage(page: any): Promise<any>;
+  updateContentPage(id: string, updates: any): Promise<any>;
+  
+  // Analytics
+  trackJobEvent(jobId: string, userId: string | null, eventType: string, metadata?: { ipAddress?: string; userAgent?: string; referer?: string }): Promise<any>;
+  getJobAnalytics(jobId: string): Promise<{ views: number; clicks: number; applies: number }>;
+  getTopJobs(limit?: number): Promise<Array<{ jobId: string; jobTitle: string; views: number; clicks: number; applies: number }>>;
+  getAnalyticsOverview(startDate?: string, endDate?: string): Promise<{
+    totalViews: number;
+    totalClicks: number;
+    totalApplies: number;
+    topJobs: Array<{ jobId: string; jobTitle: string; views: number; clicks: number }>;
+  }>;
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable, savedCandidates as savedCandidatesTable, aggregatedJobs as aggregatedJobsTable, adminActivityLogs as adminActivityLogsTable, systemSettings as systemSettingsTable } from "@shared/schema";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable, savedCandidates as savedCandidatesTable, aggregatedJobs as aggregatedJobsTable, adminActivityLogs as adminActivityLogsTable, systemSettings as systemSettingsTable, blogPosts as blogPostsTable, contentPages as contentPagesTable, jobEvents as jobEventsTable } from "@shared/schema";
 import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {
@@ -1310,6 +1337,234 @@ export class DbStorage implements IStorage {
     
     await this.createAdminActivityLog(adminId, 'setting_created', 'system_setting', key, `Created setting: ${key}`);
     return setting;
+  }
+
+  // Blog Management
+  async getAllBlogPosts(filters?: { isPublished?: boolean; category?: string; limit?: number; offset?: number }): Promise<{ posts: any[]; total: number }> {
+    const conditions = [];
+    
+    if (filters?.isPublished !== undefined) {
+      conditions.push(eq(blogPostsTable.isPublished, filters.isPublished));
+    }
+    if (filters?.category) {
+      conditions.push(eq(blogPostsTable.category, filters.category));
+    }
+
+    const posts = await db
+      .select()
+      .from(blogPostsTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(blogPostsTable.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(blogPostsTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+    return {
+      posts,
+      total: Number(countResult?.count || 0),
+    };
+  }
+
+  async getBlogPostById(id: string): Promise<any> {
+    const [post] = await db
+      .select()
+      .from(blogPostsTable)
+      .where(eq(blogPostsTable.id, id));
+    return post;
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<any> {
+    const [post] = await db
+      .select()
+      .from(blogPostsTable)
+      .where(eq(blogPostsTable.slug, slug));
+    return post;
+  }
+
+  async createBlogPost(post: any): Promise<any> {
+    const [newPost] = await db.insert(blogPostsTable).values(post).returning();
+    return newPost;
+  }
+
+  async updateBlogPost(id: string, updates: any): Promise<any> {
+    const [post] = await db
+      .update(blogPostsTable)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(blogPostsTable.id, id))
+      .returning();
+    return post;
+  }
+
+  async publishBlogPost(id: string): Promise<any> {
+    const [post] = await db
+      .update(blogPostsTable)
+      .set({ isPublished: true, publishedAt: new Date(), updatedAt: new Date() })
+      .where(eq(blogPostsTable.id, id))
+      .returning();
+    return post;
+  }
+
+  async unpublishBlogPost(id: string): Promise<any> {
+    const [post] = await db
+      .update(blogPostsTable)
+      .set({ isPublished: false, updatedAt: new Date() })
+      .where(eq(blogPostsTable.id, id))
+      .returning();
+    return post;
+  }
+
+  async deleteBlogPost(id: string): Promise<void> {
+    await db.delete(blogPostsTable).where(eq(blogPostsTable.id, id));
+  }
+
+  // Content Pages Management
+  async getAllContentPages(): Promise<any[]> {
+    return await db.select().from(contentPagesTable).orderBy(contentPagesTable.slug);
+  }
+
+  async getContentPageBySlug(slug: string): Promise<any> {
+    const [page] = await db
+      .select()
+      .from(contentPagesTable)
+      .where(eq(contentPagesTable.slug, slug));
+    return page;
+  }
+
+  async createContentPage(page: any): Promise<any> {
+    const [newPage] = await db.insert(contentPagesTable).values(page).returning();
+    return newPage;
+  }
+
+  async updateContentPage(id: string, updates: any): Promise<any> {
+    const [page] = await db
+      .update(contentPagesTable)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(contentPagesTable.id, id))
+      .returning();
+    return page;
+  }
+
+  // Analytics
+  async trackJobEvent(jobId: string, userId: string | null, eventType: string, metadata?: { ipAddress?: string; userAgent?: string; referer?: string }): Promise<any> {
+    const [event] = await db
+      .insert(jobEventsTable)
+      .values({
+        jobId,
+        userId,
+        eventType,
+        ipAddress: metadata?.ipAddress,
+        userAgent: metadata?.userAgent,
+        referer: metadata?.referer,
+      })
+      .returning();
+    return event;
+  }
+
+  async getJobAnalytics(jobId: string): Promise<{ views: number; clicks: number; applies: number }> {
+    const [viewsResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(jobEventsTable)
+      .where(and(eq(jobEventsTable.jobId, jobId), eq(jobEventsTable.eventType, 'view')));
+
+    const [clicksResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(jobEventsTable)
+      .where(and(eq(jobEventsTable.jobId, jobId), eq(jobEventsTable.eventType, 'click')));
+
+    const [appliesResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(jobEventsTable)
+      .where(and(eq(jobEventsTable.jobId, jobId), eq(jobEventsTable.eventType, 'apply')));
+
+    return {
+      views: Number(viewsResult?.count || 0),
+      clicks: Number(clicksResult?.count || 0),
+      applies: Number(appliesResult?.count || 0),
+    };
+  }
+
+  async getTopJobs(limit?: number): Promise<Array<{ jobId: string; jobTitle: string; views: number; clicks: number; applies: number }>> {
+    const jobStats = await db
+      .select({
+        jobId: jobEventsTable.jobId,
+        eventType: jobEventsTable.eventType,
+        count: sql<number>`count(*)`,
+      })
+      .from(jobEventsTable)
+      .groupBy(jobEventsTable.jobId, jobEventsTable.eventType)
+      .orderBy(desc(sql<number>`count(*)`))
+      .limit(limit || 10);
+
+    const jobStatsMap = new Map();
+    for (const stat of jobStats) {
+      if (!jobStatsMap.has(stat.jobId)) {
+        jobStatsMap.set(stat.jobId, { jobId: stat.jobId, views: 0, clicks: 0, applies: 0 });
+      }
+      const current = jobStatsMap.get(stat.jobId);
+      if (stat.eventType === 'view') current.views = Number(stat.count);
+      if (stat.eventType === 'click') current.clicks = Number(stat.count);
+      if (stat.eventType === 'apply') current.applies = Number(stat.count);
+    }
+
+    const topJobsWithTitles = await Promise.all(
+      Array.from(jobStatsMap.values()).map(async (stat) => {
+        const job = await this.getJobById(stat.jobId);
+        return {
+          ...stat,
+          jobTitle: job?.title || 'Unknown',
+        };
+      })
+    );
+
+    return topJobsWithTitles.slice(0, limit || 10);
+  }
+
+  async getAnalyticsOverview(startDate?: string, endDate?: string): Promise<{
+    totalViews: number;
+    totalClicks: number;
+    totalApplies: number;
+    topJobs: Array<{ jobId: string; jobTitle: string; views: number; clicks: number }>;
+  }> {
+    const conditions = [];
+    if (startDate && endDate) {
+      conditions.push(and(
+        gte(jobEventsTable.createdAt, new Date(startDate)),
+        lte(jobEventsTable.createdAt, new Date(endDate))
+      ));
+    }
+
+    const [viewsResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(jobEventsTable)
+      .where(conditions.length > 0 ? and(...conditions, eq(jobEventsTable.eventType, 'view')) : eq(jobEventsTable.eventType, 'view'));
+
+    const [clicksResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(jobEventsTable)
+      .where(conditions.length > 0 ? and(...conditions, eq(jobEventsTable.eventType, 'click')) : eq(jobEventsTable.eventType, 'click'));
+
+    const [appliesResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(jobEventsTable)
+      .where(conditions.length > 0 ? and(...conditions, eq(jobEventsTable.eventType, 'apply')) : eq(jobEventsTable.eventType, 'apply'));
+
+    const topJobs = await this.getTopJobs(5);
+
+    return {
+      totalViews: Number(viewsResult?.count || 0),
+      totalClicks: Number(clicksResult?.count || 0),
+      totalApplies: Number(appliesResult?.count || 0),
+      topJobs: topJobs.map(job => ({
+        jobId: job.jobId,
+        jobTitle: job.jobTitle,
+        views: job.views,
+        clicks: job.clicks,
+      })),
+    };
   }
 }
 
