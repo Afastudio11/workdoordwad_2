@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -67,18 +67,70 @@ export default function AdminFinancialPage() {
     }
   };
 
-  const transactions = transactionsData?.transactions || [];
+  const transactions = (transactionsData as any)?.transactions || [];
+
+  const exportToCSV = () => {
+    if (transactions.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Tidak Ada Data",
+        description: "Tidak ada transaksi untuk diekspor",
+      });
+      return;
+    }
+
+    const headers = ["ID Transaksi", "Nama Pengguna", "Email", "Produk", "Jumlah", "Status", "Tanggal"];
+    const csvData = transactions.map((txn: any) => [
+      txn.id,
+      txn.userName,
+      txn.userEmail,
+      txn.type === 'job_booster' ? 'Job Booster' : 'Slot Package',
+      txn.amount,
+      txn.status,
+      new Date(txn.createdAt).toLocaleDateString('id-ID')
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map((row: any[]) => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `transaksi-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Export Berhasil",
+      description: "Data transaksi berhasil diekspor ke CSV",
+    });
+  };
 
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-black dark:text-white" data-testid="heading-financial">
-            Manajemen Keuangan
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Laporan pendapatan dan riwayat transaksi
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-black dark:text-white" data-testid="heading-financial">
+              Manajemen Keuangan
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              Laporan pendapatan dan riwayat transaksi
+            </p>
+          </div>
+          <Button
+            onClick={exportToCSV}
+            className="bg-primary text-black hover:bg-primary/90"
+            data-testid="button-export-csv"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Unduh Laporan CSV
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

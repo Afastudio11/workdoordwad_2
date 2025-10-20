@@ -37,6 +37,9 @@ export const users = pgTable("users", {
   // Fields untuk pemberi_kerja
   isVerified: boolean("is_verified").default(false),
   
+  // Admin fields
+  isActive: boolean("is_active").default(true).notNull(),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

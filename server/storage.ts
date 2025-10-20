@@ -143,6 +143,7 @@ export interface IStorage {
   }>;
   getAdminActivityLogs(limit?: number): Promise<any[]>;
   createAdminActivityLog(adminId: string, action: string, targetType?: string, targetId?: string, details?: string): Promise<any>;
+  checkDatabaseHealth(): Promise<boolean>;
   
   // Aggregated Jobs (AI Review Queue)
   getAggregatedJobs(filters?: { status?: string; limit?: number; offset?: number }): Promise<{ jobs: any[]; total: number }>;
@@ -155,6 +156,7 @@ export interface IStorage {
   // User Management
   getAllUsers(filters?: { role?: string; isVerified?: boolean; limit?: number; offset?: number }): Promise<{ users: User[]; total: number }>;
   blockUser(userId: string, adminId: string): Promise<any>;
+  unblockUser(userId: string, adminId: string): Promise<any>;
   verifyRecruiter(userId: string, adminId: string): Promise<any>;
   
   // Financial Management
@@ -1083,6 +1085,17 @@ export class DbStorage implements IStorage {
     return log;
   }
 
+  async checkDatabaseHealth(): Promise<boolean> {
+    try {
+      // Simple query to check database connectivity
+      await db.select({ count: sql<number>`1` }).from(usersTable).limit(1);
+      return true;
+    } catch (error) {
+      console.error("Database health check failed:", error);
+      return false;
+    }
+  }
+
   async getAggregatedJobs(filters?: { status?: string; limit?: number; offset?: number }): Promise<{ jobs: any[]; total: number }> {
     const conditions: any[] = [];
 
@@ -1191,8 +1204,24 @@ export class DbStorage implements IStorage {
   }
 
   async blockUser(userId: string, adminId: string): Promise<any> {
-    const user = await this.getUser(userId);
+    const [user] = await db
+      .update(usersTable)
+      .set({ isActive: false })
+      .where(eq(usersTable.id, userId))
+      .returning();
+    
     await this.createAdminActivityLog(adminId, 'user_blocked', 'user', userId, `Blocked user: ${user?.fullName} (${user?.email})`);
+    return user;
+  }
+
+  async unblockUser(userId: string, adminId: string): Promise<any> {
+    const [user] = await db
+      .update(usersTable)
+      .set({ isActive: true })
+      .where(eq(usersTable.id, userId))
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'user_unblocked', 'user', userId, `Unblocked user: ${user?.fullName} (${user?.email})`);
     return user;
   }
 

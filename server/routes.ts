@@ -1896,10 +1896,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const logs = await storage.getAdminActivityLogs(limit);
-      res.json(logs);
+      res.json({ logs, total: logs.length });
     } catch (error) {
       console.error("Error fetching activity logs:", error);
       res.status(500).json({ error: "Failed to fetch activity logs" });
+    }
+  });
+
+  // Health Check
+  app.get("/api/admin/health-check", requireAdmin, async (req, res) => {
+    try {
+      const dbStatus = await storage.checkDatabaseHealth();
+      res.json({
+        database: dbStatus,
+        server: true,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error checking health:", error);
+      res.status(500).json({ 
+        database: false, 
+        server: true,
+        error: "Health check failed" 
+      });
     }
   });
 
@@ -1996,6 +2015,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error blocking user:", error);
       res.status(500).json({ error: "Failed to block user" });
+    }
+  });
+
+  app.post("/api/admin/users/:id/unblock", requireAdmin, async (req, res) => {
+    try {
+      const user = await storage.unblockUser(req.params.id, req.session.userId!);
+      res.json(user);
+    } catch (error) {
+      console.error("Error unblocking user:", error);
+      res.status(500).json({ error: "Failed to unblock user" });
     }
   });
 

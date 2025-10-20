@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Ban } from "lucide-react";
+import { Check, Ban, LockOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -65,8 +65,25 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleUnblock = async (userId: string, userName: string) => {
+    try {
+      await apiRequest(`/api/admin/users/${userId}/unblock`, "POST");
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      toast({
+        title: "User Dibuka Blokirnya",
+        description: `${userName} telah dibuka blokirnya`,
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Gagal Membuka Blokir",
+        description: error.message || "Terjadi kesalahan saat membuka blokir user",
+      });
+    }
+  };
+
   const isLoading = activeTab === "recruiter" ? loadingRecruiters : loadingWorkers;
-  const users = activeTab === "recruiter" ? recruiters?.users || [] : workers?.users || [];
+  const users = activeTab === "recruiter" ? (recruiters as any)?.users || [] : (workers as any)?.users || [];
 
   return (
     <AdminLayout>
@@ -122,6 +139,9 @@ export default function AdminUsersPage() {
                             Email
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
+                            Status Akun
+                          </TableHead>
+                          <TableHead className="text-black dark:text-white font-semibold">
                             Status Verifikasi
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
@@ -144,6 +164,16 @@ export default function AdminUsersPage() {
                               </TableCell>
                               <TableCell>
                                 <Badge
+                                  variant={user.isActive ? "default" : "destructive"}
+                                  className={
+                                    user.isActive ? "bg-primary text-black" : ""
+                                  }
+                                >
+                                  {user.isActive ? "Aktif" : "Diblokir"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Badge
                                   variant={user.isVerified ? "default" : "secondary"}
                                   className={
                                     user.isVerified ? "bg-primary text-black" : ""
@@ -157,7 +187,7 @@ export default function AdminUsersPage() {
                               </TableCell>
                               <TableCell>
                                 <div className="flex items-center gap-2">
-                                  {!user.isVerified && (
+                                  {!user.isVerified && user.isActive && (
                                     <Button
                                       size="sm"
                                       className="bg-primary text-black hover:bg-primary/90"
@@ -168,15 +198,27 @@ export default function AdminUsersPage() {
                                       Verifikasi
                                     </Button>
                                   )}
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() => handleBlock(user.id, user.fullName)}
-                                    data-testid={`button-block-${user.id}`}
-                                  >
-                                    <Ban className="w-4 h-4 mr-1" />
-                                    Blokir
-                                  </Button>
+                                  {user.isActive ? (
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => handleBlock(user.id, user.fullName)}
+                                      data-testid={`button-block-${user.id}`}
+                                    >
+                                      <Ban className="w-4 h-4 mr-1" />
+                                      Blokir
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      size="sm"
+                                      className="bg-primary text-black hover:bg-primary/90"
+                                      onClick={() => handleUnblock(user.id, user.fullName)}
+                                      data-testid={`button-unblock-${user.id}`}
+                                    >
+                                      <LockOpen className="w-4 h-4 mr-1" />
+                                      Buka Blokir
+                                    </Button>
+                                  )}
                                 </div>
                               </TableCell>
                             </TableRow>
@@ -184,7 +226,7 @@ export default function AdminUsersPage() {
                         ) : (
                           <TableRow>
                             <TableCell
-                              colSpan={5}
+                              colSpan={6}
                               className="text-center text-gray-500 dark:text-gray-500 py-8"
                             >
                               Tidak ada data perekrut
@@ -223,6 +265,9 @@ export default function AdminUsersPage() {
                             Email
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
+                            Status Akun
+                          </TableHead>
+                          <TableHead className="text-black dark:text-white font-semibold">
                             Tanggal Registrasi
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
@@ -240,26 +285,48 @@ export default function AdminUsersPage() {
                               <TableCell className="text-gray-600 dark:text-gray-400">
                                 {user.email}
                               </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={user.isActive ? "default" : "destructive"}
+                                  className={
+                                    user.isActive ? "bg-primary text-black" : ""
+                                  }
+                                >
+                                  {user.isActive ? "Aktif" : "Diblokir"}
+                                </Badge>
+                              </TableCell>
                               <TableCell className="text-gray-600 dark:text-gray-400">
                                 {new Date(user.createdAt).toLocaleDateString('id-ID')}
                               </TableCell>
                               <TableCell>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => handleBlock(user.id, user.fullName)}
-                                  data-testid={`button-block-${user.id}`}
-                                >
-                                  <Ban className="w-4 h-4 mr-1" />
-                                  Blokir
-                                </Button>
+                                {user.isActive ? (
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => handleBlock(user.id, user.fullName)}
+                                    data-testid={`button-block-${user.id}`}
+                                  >
+                                    <Ban className="w-4 h-4 mr-1" />
+                                    Blokir
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    className="bg-primary text-black hover:bg-primary/90"
+                                    onClick={() => handleUnblock(user.id, user.fullName)}
+                                    data-testid={`button-unblock-${user.id}`}
+                                  >
+                                    <LockOpen className="w-4 h-4 mr-1" />
+                                    Buka Blokir
+                                  </Button>
+                                )}
                               </TableCell>
                             </TableRow>
                           ))
                         ) : (
                           <TableRow>
                             <TableCell
-                              colSpan={4}
+                              colSpan={5}
                               className="text-center text-gray-500 dark:text-gray-500 py-8"
                             >
                               Tidak ada data pekerja
