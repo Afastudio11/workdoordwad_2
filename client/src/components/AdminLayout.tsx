@@ -34,7 +34,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  if (!user || (user.role !== 'admin' && !DEV_MODE)) {
+  const hasAccess = DEV_MODE || (user && user.role === 'admin');
+  
+  if (!hasAccess) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white dark:bg-black">
         <div className="text-center">
@@ -64,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </h1>
           </Link>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {user.fullName}
+            {user?.fullName || "Development Admin"}
           </p>
         </div>
 
