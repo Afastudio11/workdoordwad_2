@@ -1341,7 +1341,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      await storage.deleteJobTemplate(req.params.id, req.session.userId);
+      await storage.deleteJobTemplate(req.params.id);
       res.json({ message: "Template dihapus" });
     } catch (error) {
       console.error("Error deleting job template:", error);

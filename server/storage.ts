@@ -32,6 +32,8 @@ export interface IStorage {
   createJob(job: InsertJob): Promise<Job>;
   updateJob(jobId: string, updates: Partial<Job>): Promise<Job | undefined>;
   deleteJob(jobId: string): Promise<void>;
+  bulkDeleteJobs(jobIds: string[]): Promise<void>;
+  bulkUpdateJobs(jobIds: string[], updates: Partial<Job>): Promise<void>;
   getJobApplications(jobId: string): Promise<(Application & { user: User })[]>;
   
   // Companies
@@ -93,6 +95,11 @@ export interface IStorage {
   createApplicationNote(note: InsertApplicantNote): Promise<ApplicantNote>;
   updateApplicationNote(noteId: string, note: string): Promise<ApplicantNote | undefined>;
   deleteApplicationNote(noteId: string): Promise<void>;
+  
+  // Job Templates
+  getJobTemplatesByUser(userId: string): Promise<JobTemplate[]>;
+  createJobTemplate(template: InsertJobTemplate): Promise<JobTemplate>;
+  deleteJobTemplate(templateId: string): Promise<void>;
   
   // Messages
   getUserConversations(userId: string): Promise<Array<{
@@ -372,6 +379,17 @@ export class DbStorage implements IStorage {
 
   async deleteJob(jobId: string): Promise<void> {
     await db.delete(jobsTable).where(eq(jobsTable.id, jobId));
+  }
+
+  async bulkDeleteJobs(jobIds: string[]): Promise<void> {
+    await db.delete(jobsTable).where(inArray(jobsTable.id, jobIds));
+  }
+
+  async bulkUpdateJobs(jobIds: string[], updates: Partial<Job>): Promise<void> {
+    await db
+      .update(jobsTable)
+      .set(updates)
+      .where(inArray(jobsTable.id, jobIds));
   }
 
   async getJobApplications(jobId: string): Promise<(Application & { user: User })[]> {
@@ -811,6 +829,24 @@ export class DbStorage implements IStorage {
 
   async deleteApplicationNote(noteId: string): Promise<void> {
     await db.delete(applicantNotesTable).where(eq(applicantNotesTable.id, noteId));
+  }
+
+  async getJobTemplatesByUser(userId: string): Promise<JobTemplate[]> {
+    const templates = await db
+      .select()
+      .from(jobTemplatesTable)
+      .where(eq(jobTemplatesTable.userId, userId))
+      .orderBy(desc(jobTemplatesTable.createdAt));
+    return templates;
+  }
+
+  async createJobTemplate(insertTemplate: InsertJobTemplate): Promise<JobTemplate> {
+    const [template] = await db.insert(jobTemplatesTable).values(insertTemplate).returning();
+    return template;
+  }
+
+  async deleteJobTemplate(templateId: string): Promise<void> {
+    await db.delete(jobTemplatesTable).where(eq(jobTemplatesTable.id, templateId));
   }
 
   async getUserConversations(userId: string): Promise<Array<{
