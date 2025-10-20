@@ -16,6 +16,10 @@ export default function HomePage() {
         setLocation("/employer/dashboard");
       } else if (user.role === "admin") {
         setLocation("/admin/dashboard");
+      } else {
+        // Fallback for unexpected roles: redirect to login
+        console.warn("Unexpected user role:", user.role);
+        setLocation("/login");
       }
     }
   }, [isAuthenticated, user, setLocation]);

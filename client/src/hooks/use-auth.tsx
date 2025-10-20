@@ -121,29 +121,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: () => apiRequest("/api/auth/logout", "POST"),
-    onSuccess: () => {
-      queryClient.setQueryData(["/api/auth/me"], null);
+    onError: () => {
+      // On error, restore user state (optimistic update failed)
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      if (DEV_MODE) {
-        setDevUserState(null);
-        localStorage.removeItem("dev_user_role");
-      }
-      setLocation("/");
     },
   });
 
   const logout = () => {
+    // Optimistically clear cache BEFORE making API call to prevent race condition
+    queryClient.setQueryData(["/api/auth/me"], null);
+    queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+    
     if (DEV_MODE && devUser) {
       // Clear dev user state
       setDevUserState(null);
       localStorage.removeItem("dev_user_role");
-      // Clear query cache to ensure user is logged out
-      queryClient.setQueryData(["/api/auth/me"], null);
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       // Redirect to homepage
       setLocation("/");
     } else {
+      // Make logout API call, but user state is already cleared
       logoutMutation.mutate();
+      // Redirect immediately after clearing cache (not waiting for API response)
+      setLocation("/");
     }
   };
 
