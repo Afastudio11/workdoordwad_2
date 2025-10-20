@@ -204,6 +204,45 @@ export const systemSettings = pgTable("system_settings", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const blogPosts = pgTable("blog_posts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  excerpt: text("excerpt").notNull(),
+  content: text("content").notNull(), // HTML content from WYSIWYG
+  heroImage: text("hero_image"),
+  category: text("category").notNull(), // Newsletter | Tips | Insight
+  tags: text("tags").array(),
+  readTime: text("read_time"), // e.g., "7 min read"
+  authorId: varchar("author_id").references(() => users.id).notNull(),
+  isPublished: boolean("is_published").default(false).notNull(),
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const contentPages = pgTable("content_pages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: text("slug").notNull().unique(), // privacy-policy | terms-of-service | about-us
+  title: text("title").notNull(),
+  content: text("content").notNull(), // HTML content
+  metaDescription: text("meta_description"),
+  isPublished: boolean("is_published").default(true).notNull(),
+  updatedBy: varchar("updated_by").references(() => users.id),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const jobEvents = pgTable("job_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  jobId: varchar("job_id").references(() => jobs.id).notNull(),
+  userId: varchar("user_id").references(() => users.id), // nullable for anonymous views
+  eventType: text("event_type").notNull(), // view | click | apply
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  referer: text("referer"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -275,6 +314,22 @@ export const insertAdminActivityLogSchema = createInsertSchema(adminActivityLogs
 export const insertSystemSettingSchema = createInsertSchema(systemSettings).omit({
   id: true,
   updatedAt: true,
+});
+
+export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertContentPageSchema = createInsertSchema(contentPages).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertJobEventSchema = createInsertSchema(jobEvents).omit({
+  id: true,
+  createdAt: true,
 });
 
 // Register schemas dengan validasi tambahan
@@ -386,6 +441,15 @@ export type AdminActivityLog = typeof adminActivityLogs.$inferSelect;
 
 export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
 export type SystemSetting = typeof systemSettings.$inferSelect;
+
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+export type BlogPost = typeof blogPosts.$inferSelect;
+
+export type InsertContentPage = z.infer<typeof insertContentPageSchema>;
+export type ContentPage = typeof contentPages.$inferSelect;
+
+export type InsertJobEvent = z.infer<typeof insertJobEventSchema>;
+export type JobEvent = typeof jobEvents.$inferSelect;
 
 export type RegisterPekerja = z.infer<typeof registerPekerjaSchema>;
 export type RegisterPemberiKerja = z.infer<typeof registerPemberiKerjaSchema>;
