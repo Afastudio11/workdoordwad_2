@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
-import LandingPage from "@/pages/LandingPage";
+import HomePage from "@/pages/HomePage";
 import UserDashboardPage from "@/pages/UserDashboardPage";
 import EmployerDashboardPage from "@/pages/EmployerDashboardPage";
 import FindCandidatePage from "@/pages/FindCandidatePage";
@@ -34,8 +34,7 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={LandingPage} />
-      <Route path="/jobs" component={NewJobDashboardPage} />
+      <Route path="/" component={HomePage} />
       <Route path="/demo" component={JobCardsDemo} />
       <Route path="/user/dashboard" component={UserDashboardPage} />
       <Route path="/employer/dashboard" component={EmployerDashboardPage} />

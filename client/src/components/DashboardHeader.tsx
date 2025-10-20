@@ -87,17 +87,6 @@ export default function DashboardHeader() {
               Home
             </Link>
             <Link
-              href="/jobs"
-              className={`text-sm font-medium transition-colors ${
-                isActive("/jobs")
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-find-job"
-            >
-              Find Job
-            </Link>
-            <Link
               href="/find-employers"
               className={`text-sm font-medium transition-colors ${
                 isActive("/find-employers")
@@ -109,37 +98,26 @@ export default function DashboardHeader() {
               Find Employers
             </Link>
             <Link
-              href="/user/dashboard"
+              href="/community"
               className={`text-sm font-medium transition-colors ${
-                isActive("/user/dashboard")
+                isActive("/community")
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-dashboard"
+              data-testid="nav-link-community"
             >
-              Dashboard
+              Community
             </Link>
             <Link
-              href="/user/dashboard#job-alert"
+              href="/messages"
               className={`text-sm font-medium transition-colors ${
-                location === "/user/dashboard#job-alert"
+                isActive("/messages")
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-job-alerts"
+              data-testid="nav-link-messages"
             >
-              Job Alerts
-            </Link>
-            <Link
-              href="/contact"
-              className={`text-sm font-medium transition-colors ${
-                isActive("/contact")
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-customer-supports"
-            >
-              Customer Supports
+              Messages
             </Link>
           </nav>
 
