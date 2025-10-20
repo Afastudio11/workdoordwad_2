@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, FileCheck, Users, DollarSign, Settings, LogOut, Search, Bell, AlertTriangle } from "lucide-react";
+import { LayoutDashboard, FileCheck, Users, DollarSign, Settings, LogOut, Search, Bell, AlertTriangle, BookOpen, FileText, BarChart } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -15,6 +15,9 @@ const navigation = [
   { name: "Moderasi Konten", href: "/admin/moderation", icon: FileCheck },
   { name: "Manajemen User", href: "/admin/users", icon: Users },
   { name: "Keuangan", href: "/admin/financial", icon: DollarSign },
+  { name: "Blog Manager", href: "/admin/blog", icon: BookOpen },
+  { name: "Content Pages", href: "/admin/content", icon: FileText },
+  { name: "Analytics", href: "/admin/analytics", icon: BarChart },
   { name: "Sistem/Log", href: "/admin/settings", icon: Settings },
 ];
 

@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS A WORKER-ONLY PAGE
+ * - MUST USE: DashboardHeader/DynamicHeader (NOT AdminLayout or EmployerDashboardHeader)
+ * - ROLE REQUIRED: pekerja (worker/job seeker)
+ * - ROUTE: /dashboard/notifications
+ * - DO NOT import admin or employer components
+ */
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Bell, BellOff, Check, CheckCheck, Trash2, AlertCircle, Loader2, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";

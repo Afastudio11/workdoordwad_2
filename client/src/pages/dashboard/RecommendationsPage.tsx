@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS A WORKER-ONLY PAGE
+ * - MUST USE: DashboardHeader/DynamicHeader (NOT AdminLayout or EmployerDashboardHeader)
+ * - ROLE REQUIRED: pekerja (worker/job seeker)
+ * - ROUTE: /dashboard/recommendations
+ * - DO NOT import admin or employer components
+ */
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Briefcase, MapPin, Heart, Zap, Sparkles, DollarSign, AlertCircle, RefreshCw } from "lucide-react";
 import { Link } from "wouter";

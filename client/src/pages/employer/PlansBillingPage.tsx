@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS AN EMPLOYER-ONLY PAGE
+ * - MUST USE: EmployerDashboardHeader/RecruiterLayout (NOT AdminLayout or DashboardHeader)
+ * - ROLE REQUIRED: pemberi_kerja (employer/recruiter)
+ * - ROUTE: /employer/plans-billing
+ * - DO NOT import admin or worker components
+ */
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

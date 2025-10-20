@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS AN EMPLOYER-ONLY PAGE
+ * - MUST USE: EmployerDashboardHeader/RecruiterLayout (NOT AdminLayout or DashboardHeader)
+ * - ROLE REQUIRED: pemberi_kerja (employer/recruiter)
+ * - ROUTE: /find-candidates
+ * - DO NOT import admin or worker components
+ */
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

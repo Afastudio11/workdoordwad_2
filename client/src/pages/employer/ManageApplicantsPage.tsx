@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS AN EMPLOYER-ONLY PAGE
+ * - MUST USE: EmployerDashboardHeader/RecruiterLayout (NOT AdminLayout or DashboardHeader)
+ * - ROLE REQUIRED: pemberi_kerja (employer/recruiter)
+ * - ROUTE: /employer/manage-applicants
+ * - DO NOT import admin or worker components
+ */
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Search, Filter, User, Loader2, FileText, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap, Award, X, MessageSquare, Plus, Trash2, Send, Download } from "lucide-react";

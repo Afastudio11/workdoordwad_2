@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS A SHARED PAGE (Worker + Employer)
+ * - MUST USE: DynamicHeader (adapts based on user role)
+ * - ROLE REQUIRED: pekerja OR pemberi_kerja
+ * - ROUTE: /messages
+ * - DO NOT import AdminLayout
+ */
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Search, Send, MoreVertical, ArrowLeft, MessageSquare, WifiOff, Loader2, AlertCircle } from "lucide-react";

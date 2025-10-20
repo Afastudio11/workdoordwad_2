@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS A WORKER-ONLY PAGE
+ * - MUST USE: DashboardHeader/DynamicHeader (NOT AdminLayout or EmployerDashboardHeader)
+ * - ROLE REQUIRED: pekerja (worker/job seeker)
+ * - ROUTE: /dashboard/overview
+ * - DO NOT import admin or employer components
+ */
 import { useQuery } from "@tanstack/react-query";
 import { Briefcase, Heart, Clock, CheckCircle, Users, TrendingUp, MapPin } from "lucide-react";
 import { Card } from "@/components/ui/card";

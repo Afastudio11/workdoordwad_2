@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS A WORKER-ONLY PAGE
+ * - MUST USE: DashboardHeader/DynamicHeader (NOT AdminLayout or EmployerDashboardHeader)
+ * - ROLE REQUIRED: pekerja (worker/job seeker)
+ * - ROUTE: /dashboard/job-alert
+ * - DO NOT import admin or employer components
+ */
 import { useQuery } from "@tanstack/react-query";
 import { Bell, Briefcase, MapPin, DollarSign, Clock, Settings as SettingsIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";

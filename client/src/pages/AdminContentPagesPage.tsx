@@ -1,8 +1,15 @@
+/**
+ * IMPORTANT: THIS IS AN ADMIN-ONLY PAGE
+ * - MUST USE: AdminLayout (NOT DashboardHeader or DynamicHeader)
+ * - ROLE REQUIRED: admin
+ * - ROUTE: /admin/content
+ * - DO NOT import worker or employer components
+ */
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import DynamicHeader from "@/components/DynamicHeader";
+import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -120,12 +127,10 @@ export default function AdminContentPagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <DynamicHeader />
-      
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2" data-testid="page-title">
+    <AdminLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-black dark:text-white mb-2" data-testid="page-title">
             Content Pages Manager
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
@@ -198,9 +203,8 @@ export default function AdminContentPagesPage() {
             ))}
           </div>
         )}
-      </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingPage ? "Edit Content Page" : "Buat Content Page Baru"}</DialogTitle>
@@ -306,7 +310,8 @@ export default function AdminContentPagesPage() {
             </form>
           </Form>
         </DialogContent>
-      </Dialog>
-    </div>
+        </Dialog>
+      </div>
+    </AdminLayout>
   );
 }

@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS AN EMPLOYER-ONLY PAGE
+ * - MUST USE: EmployerDashboardHeader/RecruiterLayout (NOT AdminLayout or DashboardHeader)
+ * - ROLE REQUIRED: pemberi_kerja (employer/recruiter)
+ * - ROUTE: /employer/overview
+ * - DO NOT import admin or worker components
+ */
 import { useQuery } from "@tanstack/react-query";
 import { Briefcase, Users, TrendingUp, Clock, Calendar, FileText, UserCheck, CheckCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";

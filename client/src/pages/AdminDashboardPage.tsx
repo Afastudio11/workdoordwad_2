@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS AN ADMIN-ONLY PAGE
+ * - MUST USE: AdminLayout (NOT DashboardHeader or DynamicHeader)
+ * - ROLE REQUIRED: admin
+ * - ROUTE: /admin/dashboard
+ * - DO NOT import worker or employer components
+ */
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import AdminLayout from "@/components/AdminLayout";

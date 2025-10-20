@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS A WORKER-ONLY PAGE
+ * - MUST USE: DashboardHeader/DynamicHeader (NOT AdminLayout or EmployerDashboardHeader)
+ * - ROLE REQUIRED: pekerja (worker/job seeker)
+ * - ROUTE: /dashboard/applications
+ * - DO NOT import admin or employer components
+ */
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";

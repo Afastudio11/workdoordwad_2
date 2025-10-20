@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS AN EMPLOYER-ONLY PAGE
+ * - MUST USE: EmployerDashboardHeader/RecruiterLayout (NOT AdminLayout or DashboardHeader)
+ * - ROLE REQUIRED: pemberi_kerja (employer/recruiter)
+ * - ROUTE: /employer/dashboard
+ * - DO NOT import admin or worker components
+ */
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { LayoutDashboard, User, PlusCircle, Briefcase, Bookmark, CreditCard, Building2, Settings as SettingsIcon, LogOut, Menu, X } from "lucide-react";

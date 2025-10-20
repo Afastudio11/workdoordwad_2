@@ -1,6 +1,13 @@
+/**
+ * IMPORTANT: THIS IS AN ADMIN-ONLY PAGE
+ * - MUST USE: AdminLayout (NOT DashboardHeader or DynamicHeader)
+ * - ROLE REQUIRED: admin
+ * - ROUTE: /admin/analytics
+ * - DO NOT import worker or employer components
+ */
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import DynamicHeader from "@/components/DynamicHeader";
+import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Eye, MousePointer, Send, TrendingUp } from "lucide-react";
@@ -95,13 +102,11 @@ export default function AdminAnalyticsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <DynamicHeader />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex justify-between items-center">
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2" data-testid="page-title">
+            <h1 className="text-3xl font-bold text-black dark:text-white mb-2" data-testid="page-title">
               Analytics Dashboard
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
@@ -286,6 +291,6 @@ export default function AdminAnalyticsPage() {
           </>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 }

@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS A WORKER-ONLY PAGE
+ * - MUST USE: DashboardHeader/DynamicHeader (NOT AdminLayout or EmployerDashboardHeader)
+ * - ROLE REQUIRED: pekerja (worker/job seeker)
+ * - ROUTE: /jobs
+ * - DO NOT import admin or employer components
+ */
 import { useState } from "react";
 import { Search, Loader2, AlertCircle } from "lucide-react";
 import JobCard from "@/components/JobCard";

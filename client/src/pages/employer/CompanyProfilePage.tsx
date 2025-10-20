@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: THIS IS AN EMPLOYER-ONLY PAGE
+ * - MUST USE: EmployerDashboardHeader/RecruiterLayout (NOT AdminLayout or DashboardHeader)
+ * - ROLE REQUIRED: pemberi_kerja (employer/recruiter)
+ * - ROUTE: /employer/company-profile
+ * - DO NOT import admin or worker components
+ */
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Building2, Loader2, Save } from "lucide-react";
