@@ -76,48 +76,59 @@ export default function DashboardHeader() {
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <Link
+              href="/"
+              className={`text-sm font-medium transition-colors ${
+                isActive("/")
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-home"
+            >
+              Home
+            </Link>
+            <Link
+              href="/jobs"
+              className={`text-sm font-medium transition-colors ${
+                isActive("/jobs")
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-find-job"
+            >
+              Find Job
+            </Link>
+            <Link
+              href="/find-employers"
+              className={`text-sm font-medium transition-colors ${
+                isActive("/find-employers")
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-find-employers"
+            >
+              Find Employers
+            </Link>
+            <Link
               href="/user/dashboard"
               className={`text-sm font-medium transition-colors ${
                 isActive("/user/dashboard")
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-overview"
+              data-testid="nav-link-dashboard"
             >
-              Beranda
+              Dashboard
             </Link>
             <Link
-              href="/user/dashboard#applications"
+              href="/user/dashboard#job-alert"
               className={`text-sm font-medium transition-colors ${
-                location === "/user/dashboard#applications"
+                location === "/user/dashboard#job-alert"
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-applications"
+              data-testid="nav-link-job-alerts"
             >
-              Lamaran Saya
-            </Link>
-            <Link
-              href="/messages"
-              className={`text-sm font-medium transition-colors ${
-                isActive("/messages")
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-messages"
-            >
-              Pesan
-            </Link>
-            <Link
-              href="/faq"
-              className={`text-sm font-medium transition-colors ${
-                isActive("/faq")
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-faq"
-            >
-              FAQ
+              Job Alerts
             </Link>
             <Link
               href="/contact"
@@ -126,9 +137,9 @@ export default function DashboardHeader() {
                   ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
                   : "text-gray-400 hover:text-white"
               }`}
-              data-testid="nav-link-contact"
+              data-testid="nav-link-customer-supports"
             >
-              Kontak
+              Customer Supports
             </Link>
           </nav>
 

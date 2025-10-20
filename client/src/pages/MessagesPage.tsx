@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Search, Send, MoreVertical, ArrowLeft, MessageSquare, WifiOff, Loader2, AlertCircle } from "lucide-react";
-import DashboardHeader from "@/components/DashboardHeader";
+import DynamicHeader from "@/components/DynamicHeader";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { formatDistanceToNow } from "date-fns";
@@ -161,7 +161,7 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
+      <DynamicHeader />
       
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
         <div className="flex items-center justify-between mb-6">

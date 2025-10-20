@@ -8,6 +8,7 @@ import LandingPage from "@/pages/LandingPage";
 import UserDashboardPage from "@/pages/UserDashboardPage";
 import EmployerDashboardPage from "@/pages/EmployerDashboardPage";
 import FindCandidatePage from "@/pages/FindCandidatePage";
+import FindEmployersPage from "@/pages/FindEmployersPage";
 import EmployerApplicationsPage from "@/pages/EmployerApplicationsPage";
 import NewJobDashboardPage from "@/pages/NewJobDashboardPage";
 import QuickAccessPage from "@/pages/QuickAccessPage";
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/user/dashboard" component={UserDashboardPage} />
       <Route path="/employer/dashboard" component={EmployerDashboardPage} />
       <Route path="/find-candidate" component={FindCandidatePage} />
+      <Route path="/find-employers" component={FindEmployersPage} />
       <Route path="/employer/applications" component={EmployerApplicationsPage} />
       <Route path="/quick-access" component={QuickAccessPage} />
       <Route path="/messages" component={MessagesPage} />

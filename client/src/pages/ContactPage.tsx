@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
-import EmployerDashboardHeader from "@/components/EmployerDashboardHeader";
+import DynamicHeader from "@/components/DynamicHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +32,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <EmployerDashboardHeader />
+      <DynamicHeader />
       
       <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-16">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
