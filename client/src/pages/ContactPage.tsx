@@ -40,13 +40,13 @@ export default function ContactPage() {
           <div className="space-y-8">
             <div>
               <h1 className="text-5xl font-bold text-gray-900 mb-6" data-testid="page-title">
-                Get in touch with us
+                Hubungi Kami
               </h1>
               
               <p className="text-lg text-gray-600 leading-relaxed">
-                We're here to help! Whether you have a question about our services, 
-                need assistance with your account, or want to provide feedback, 
-                our team is ready to assist you.
+                Kami siap membantu! Apakah Anda memiliki pertanyaan tentang layanan kami, 
+                membutuhkan bantuan dengan akun Anda, atau ingin memberikan feedback, 
+                tim kami siap membantu Anda.
               </p>
             </div>
 
@@ -54,21 +54,21 @@ export default function ContactPage() {
               <div>
                 <h3 className="text-sm font-medium text-gray-500 mb-2">Email:</h3>
                 <a 
-                  href="mailto:hello@finpro.com" 
+                  href="mailto:support@pintukerja.com" 
                   className="text-2xl font-semibold text-gray-900 hover:text-gray-700 transition-colors"
                   data-testid="contact-email"
                 >
-                  hello@finpro.com
+                  support@pintukerja.com
                 </a>
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Phone:</h3>
+                <h3 className="text-sm font-medium text-gray-500 mb-2">Telepon:</h3>
                 <p className="text-2xl font-semibold text-gray-900" data-testid="contact-phone">
-                  +1 234 567 78
+                  +62 21 1234 5678
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Available Monday to Friday, 9 AM - 6 PM GMT
+                  Tersedia Senin - Jumat, 09:00 - 18:00 WIB
                 </p>
               </div>
             </div>
@@ -90,12 +90,12 @@ export default function ContactPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
-                    First Name
+                    Nama Depan
                   </label>
                   <Input
                     id="firstName"
                     type="text"
-                    placeholder="Enter your first name..."
+                    placeholder="Masukkan nama depan Anda..."
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     className="bg-white border-gray-200 rounded-lg h-12 px-4"
@@ -106,12 +106,12 @@ export default function ContactPage() {
 
                 <div className="space-y-2">
                   <label htmlFor="lastName" className="text-sm font-medium text-gray-700">
-                    Last Name
+                    Nama Belakang
                   </label>
                   <Input
                     id="lastName"
                     type="text"
-                    placeholder="Enter your last name..."
+                    placeholder="Masukkan nama belakang Anda..."
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     className="bg-white border-gray-200 rounded-lg h-12 px-4"
@@ -128,7 +128,7 @@ export default function ContactPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email address..."
+                  placeholder="Masukkan alamat email Anda..."
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="bg-white border-gray-200 rounded-lg h-12 px-4"
@@ -139,11 +139,11 @@ export default function ContactPage() {
 
               <div className="space-y-2">
                 <label htmlFor="message" className="text-sm font-medium text-gray-700">
-                  How can we help you?
+                  Bagaimana kami bisa membantu Anda?
                 </label>
                 <Textarea
                   id="message"
-                  placeholder="Enter your message..."
+                  placeholder="Masukkan pesan Anda..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="bg-white border-gray-200 rounded-lg min-h-[160px] px-4 py-3 resize-none"
@@ -160,7 +160,7 @@ export default function ContactPage() {
                   className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-10 py-6 text-base font-medium"
                   data-testid="button-send-message"
                 >
-                  {isSubmitting ? "Sending..." : "Send Message"}
+                  {isSubmitting ? "Mengirim..." : "Kirim Pesan"}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
