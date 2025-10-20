@@ -19,48 +19,59 @@ export default function PlansBillingPage() {
 
   const plans = [
     {
+      id: "standard",
+      name: "Standard",
+      price: "Rp 149.000",
+      priceColor: "text-orange-600",
+      features: [
+        { text: "1 Bulan Masa Aktif", enabled: true },
+        { text: "5 Job Posting Reguler", enabled: true },
+        { text: "Job Posting Premium", enabled: false },
+        { text: "Job Invitation", enabled: false },
+        { text: "Talent Search", enabled: false },
+        { text: "Unlimited Job Applications", enabled: true },
+      ],
+    },
+    {
       id: "basic",
       name: "Basic",
-      price: "Free",
-      description: "Perfect for getting started",
+      price: "Rp 249.000",
+      priceColor: "text-pink-600",
       features: [
-        "Post up to 3 jobs per month",
-        "Basic applicant tracking",
-        "Email notifications",
-        "Standard support",
+        { text: "3 Bulan Masa Aktif", enabled: true },
+        { text: "10 Job Posting Reguler", enabled: true },
+        { text: "+1 Job Posting Premium", enabled: true },
+        { text: "20 Job Invitation", enabled: true },
+        { text: "Talent Search", enabled: true },
+        { text: "Unlimited Job Applications", enabled: true },
       ],
-      current: true,
+    },
+    {
+      id: "medium",
+      name: "Medium",
+      price: "Rp 499.000",
+      priceColor: "text-purple-600",
+      features: [
+        { text: "6 Bulan Masa Aktif", enabled: true },
+        { text: "20 Job Posting Reguler", enabled: true },
+        { text: "+3 Job Posting Premium", enabled: true },
+        { text: "50 Job Invitation", enabled: true },
+        { text: "Talent Search", enabled: true },
+        { text: "Unlimited Job Applications", enabled: true },
+      ],
     },
     {
       id: "professional",
       name: "Professional",
-      price: "Rp 500,000",
-      period: "/month",
-      description: "For growing businesses",
+      price: "Rp 999.000",
+      priceColor: "text-blue-600",
       features: [
-        "Post unlimited jobs",
-        "Advanced applicant tracking",
-        "Priority email & chat support",
-        "Analytics dashboard",
-        "Featured job postings (5/month)",
-        "Save unlimited candidates",
-      ],
-      popular: true,
-    },
-    {
-      id: "enterprise",
-      name: "Enterprise",
-      price: "Rp 1,500,000",
-      period: "/month",
-      description: "For large organizations",
-      features: [
-        "Everything in Professional",
-        "Dedicated account manager",
-        "Custom branding",
-        "API access",
-        "Unlimited featured postings",
-        "Advanced analytics & reporting",
-        "Team collaboration tools",
+        { text: "12 Bulan Masa Aktif", enabled: true },
+        { text: "50 Job Posting Reguler", enabled: true },
+        { text: "+7 Job Posting Premium", enabled: true },
+        { text: "150 Job Invitation", enabled: true },
+        { text: "Talent Search", enabled: true },
+        { text: "Unlimited Job Applications", enabled: true },
       ],
     },
   ];
@@ -76,30 +87,17 @@ export default function PlansBillingPage() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {plans.map((plan) => (
           <Card
             key={plan.id}
-            className={`relative ${plan.popular ? 'border-[#D4FF00] border-2' : ''}`}
+            className="relative bg-white shadow-sm hover:shadow-md transition-shadow"
             data-testid={`card-plan-${plan.id}`}
           >
-            {plan.popular && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="bg-[#D4FF00] text-gray-900">
-                  <Star className="w-3 h-3 mr-1" />
-                  Most Popular
-                </Badge>
-              </div>
-            )}
-            
             <CardHeader>
-              <CardTitle className="text-xl">{plan.name}</CardTitle>
-              <CardDescription>{plan.description}</CardDescription>
+              <CardTitle className="text-xl font-bold text-black">{plan.name}</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold">{plan.price}</span>
-                {plan.period && (
-                  <span className="text-gray-600">{plan.period}</span>
-                )}
+                <span className={`text-4xl font-bold ${plan.priceColor}`}>{plan.price}</span>
               </div>
             </CardHeader>
             
@@ -107,19 +105,20 @@ export default function PlansBillingPage() {
               <ul className="space-y-3">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-2 text-sm">
-                    <Check className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-                    <span>{feature}</span>
+                    {feature.enabled ? (
+                      <span className="text-black font-medium">{feature.text}</span>
+                    ) : (
+                      <span className="text-gray-400 line-through">{feature.text}</span>
+                    )}
                   </li>
                 ))}
               </ul>
 
               <Button
-                className="w-full"
-                variant={plan.current ? "outline" : "default"}
-                disabled={plan.current}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 data-testid={`button-select-${plan.id}`}
               >
-                {plan.current ? "Current Plan" : "Upgrade"}
+                Coba Sekarang
               </Button>
             </CardContent>
           </Card>
