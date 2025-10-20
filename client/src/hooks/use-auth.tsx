@@ -128,14 +128,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setDevUserState(null);
         localStorage.removeItem("dev_user_role");
       }
-      setLocation("/login");
+      setLocation("/");
     },
   });
 
   const logout = () => {
     if (DEV_MODE && devUser) {
+      // Clear dev user state
       setDevUserState(null);
       localStorage.removeItem("dev_user_role");
+      // Clear query cache to ensure user is logged out
+      queryClient.setQueryData(["/api/auth/me"], null);
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      // Redirect to homepage
       setLocation("/");
     } else {
       logoutMutation.mutate();
