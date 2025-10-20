@@ -163,9 +163,9 @@ export default function AdminContentPagesPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <Badge className="bg-blue-500">Content Page</Badge>
+                        <Badge className="bg-gray-700 dark:bg-gray-300 text-white dark:text-black">Content Page</Badge>
                         {page.isPublished ? (
-                          <Badge className="bg-green-500">Published</Badge>
+                          <Badge className="bg-black dark:bg-white text-white dark:text-black">Published</Badge>
                         ) : (
                           <Badge variant="secondary">Draft</Badge>
                         )}

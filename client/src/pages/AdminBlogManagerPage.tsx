@@ -265,7 +265,7 @@ export default function AdminBlogManagerPage() {
                       <div className="flex items-center gap-2 mb-2">
                         <Badge variant="outline">{post.category}</Badge>
                         {post.isPublished ? (
-                          <Badge className="bg-green-500">Published</Badge>
+                          <Badge className="bg-black dark:bg-white text-white dark:text-black">Published</Badge>
                         ) : (
                           <Badge variant="secondary">Draft</Badge>
                         )}
@@ -314,7 +314,7 @@ export default function AdminBlogManagerPage() {
                         }}
                         data-testid={`button-delete-${post.id}`}
                       >
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                        <Trash2 className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                       </Button>
                     </div>
                   </div>

@@ -26,7 +26,7 @@ interface TopJob {
   applies: number;
 }
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1'];
+const COLORS = ['#000000', '#404040', '#666666', '#808080', '#999999', '#b3b3b3'];
 
 export default function AdminAnalyticsPage() {
   const [timeRange, setTimeRange] = useState<string>("7");
@@ -55,29 +55,29 @@ export default function AdminAnalyticsPage() {
       title: "Total Views",
       value: overview?.totalViews?.toLocaleString() || "0",
       icon: Eye,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100 dark:bg-blue-900",
+      color: "text-gray-600 dark:text-gray-400",
+      bgColor: "bg-gray-50 dark:bg-gray-900",
     },
     {
       title: "Total Clicks",
       value: overview?.totalClicks?.toLocaleString() || "0",
       icon: MousePointer,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100 dark:bg-purple-900",
+      color: "text-gray-600 dark:text-gray-400",
+      bgColor: "bg-gray-50 dark:bg-gray-900",
     },
     {
       title: "Total Applications",
       value: overview?.totalApplies?.toLocaleString() || "0",
       icon: Send,
-      color: "text-green-600",
-      bgColor: "bg-green-100 dark:bg-green-900",
+      color: "text-gray-600 dark:text-gray-400",
+      bgColor: "bg-gray-50 dark:bg-gray-900",
     },
     {
       title: "Conversion Rate",
       value: `${conversionRate}%`,
       icon: TrendingUp,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100 dark:bg-orange-900",
+      color: "text-gray-600 dark:text-gray-400",
+      bgColor: "bg-gray-50 dark:bg-gray-900",
     },
   ];
 

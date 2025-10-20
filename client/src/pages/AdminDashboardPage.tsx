@@ -81,16 +81,16 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <div className="flex items-end justify-between">
                   <div>
-                    <div className="text-3xl font-bold text-primary" data-testid="stat-revenue">
+                    <div className="text-3xl font-bold text-black dark:text-white" data-testid="stat-revenue">
                       Rp {(stats?.totalRevenue || 0).toLocaleString('id-ID')}
                     </div>
                     <div className="flex items-center gap-1 mt-2 text-sm">
-                      <TrendingUp className="w-4 h-4 text-primary" />
-                      <span className="text-primary font-medium">+13.54%</span>
+                      <TrendingUp className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <span className="text-gray-900 dark:text-gray-100 font-medium">+13.54%</span>
                       <span className="text-gray-500">dari bulan lalu</span>
                     </div>
                   </div>
-                  <DollarSign className="w-10 h-10 text-primary opacity-20" />
+                  <DollarSign className="w-10 h-10 text-gray-300 dark:text-gray-700" />
                 </div>
               </CardContent>
             </Card>
@@ -104,14 +104,14 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <div className="flex items-end justify-between">
                   <div>
-                    <div className="text-3xl font-bold text-primary" data-testid="stat-active-jobs">
+                    <div className="text-3xl font-bold text-black dark:text-white" data-testid="stat-active-jobs">
                       {stats?.totalActiveJobs || 0}
                     </div>
                     <div className="flex items-center gap-1 mt-2 text-sm">
                       <span className="text-gray-500">+156 bulan ini</span>
                     </div>
                   </div>
-                  <Briefcase className="w-10 h-10 text-primary opacity-20" />
+                  <Briefcase className="w-10 h-10 text-gray-300 dark:text-gray-700" />
                 </div>
               </CardContent>
             </Card>
@@ -125,14 +125,14 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <div className="flex items-end justify-between">
                   <div>
-                    <div className="text-3xl font-bold text-yellow-600" data-testid="stat-pending-review">
+                    <div className="text-3xl font-bold text-black dark:text-white" data-testid="stat-pending-review">
                       {stats?.totalPendingReview || 0}
                     </div>
                     <div className="flex items-center gap-1 mt-2 text-sm">
                       <span className="text-gray-500">Menunggu persetujuan</span>
                     </div>
                   </div>
-                  <Clock className="w-10 h-10 text-yellow-600 opacity-20" />
+                  <Clock className="w-10 h-10 text-gray-300 dark:text-gray-700" />
                 </div>
               </CardContent>
             </Card>
@@ -146,14 +146,14 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <div className="flex items-end justify-between">
                   <div>
-                    <div className="text-3xl font-bold text-blue-600" data-testid="stat-users">
+                    <div className="text-3xl font-bold text-black dark:text-white" data-testid="stat-users">
                       {stats?.totalUsers || 0}
                     </div>
                     <div className="flex items-center gap-1 mt-2 text-sm">
                       <span className="text-gray-500">Perekrut & Pekerja</span>
                     </div>
                   </div>
-                  <Users className="w-10 h-10 text-blue-600 opacity-20" />
+                  <Users className="w-10 h-10 text-gray-300 dark:text-gray-700" />
                 </div>
               </CardContent>
             </Card>
@@ -161,43 +161,43 @@ export default function AdminDashboardPage() {
 
           {/* Quick Status Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 border-red-200 dark:border-red-800">
+            <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <Shield className="w-8 h-8 text-red-600" />
+                  <Shield className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                 </div>
-                <div className="text-2xl font-bold text-red-600">0</div>
-                <div className="text-xs text-red-700 dark:text-red-300 mt-1">Users Diblokir</div>
+                <div className="text-2xl font-bold text-black dark:text-white">0</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Users Diblokir</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950 dark:to-yellow-900 border-yellow-200 dark:border-yellow-800">
+            <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <FileWarning className="w-8 h-8 text-yellow-600" />
+                  <FileWarning className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                 </div>
-                <div className="text-2xl font-bold text-yellow-600">0</div>
-                <div className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">Verifikasi Tertunda</div>
+                <div className="text-2xl font-bold text-black dark:text-white">0</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Verifikasi Tertunda</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 border-red-200 dark:border-red-800">
+            <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <AlertCircle className="w-8 h-8 text-red-600" />
+                  <AlertCircle className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                 </div>
-                <div className="text-2xl font-bold text-red-600">0</div>
-                <div className="text-xs text-red-700 dark:text-red-300 mt-1">Error Log Backend</div>
+                <div className="text-2xl font-bold text-black dark:text-white">0</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Error Log Backend</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-primary/10 to-primary/20 border-primary/30">
+            <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <Users className="w-8 h-8 text-primary" />
+                  <Users className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                 </div>
-                <div className="text-2xl font-bold text-primary">{stats?.totalUsers || 0}</div>
-                <div className="text-xs text-gray-700 dark:text-gray-300 mt-1">Total Users</div>
+                <div className="text-2xl font-bold text-black dark:text-white">{stats?.totalUsers || 0}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total Users</div>
               </CardContent>
             </Card>
           </div>
@@ -208,7 +208,7 @@ export default function AdminDashboardPage() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-black dark:text-white">Transaksi Keuangan</CardTitle>
                 <Link href="/admin/financial">
-                  <Button variant="ghost" size="sm" className="text-primary hover:text-primary/90">
+                  <Button variant="ghost" size="sm" className="text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300">
                     Lihat Semua <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </Link>
@@ -223,8 +223,8 @@ export default function AdminDashboardPage() {
                       className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <DollarSign className="w-5 h-5 text-primary" />
+                        <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                          <DollarSign className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                         </div>
                         <div>
                           <p className="text-sm font-medium text-black dark:text-white">
@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-primary">
+                        <p className="text-sm font-bold text-black dark:text-white">
                           Rp {(transaction.amount || 0).toLocaleString('id-ID')}
                         </p>
                         <Badge 
@@ -262,26 +262,26 @@ export default function AdminDashboardPage() {
           <Card className="bg-white dark:bg-black border-gray-200 dark:border-gray-800">
             <CardHeader>
               <CardTitle className="text-black dark:text-white text-lg flex items-center gap-2">
-                <Clock className="w-5 h-5 text-yellow-600" />
+                <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 Aksi Wajib & Peringatan
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Link href="/admin/moderation">
-                <div className="p-4 rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950 hover:bg-yellow-100 dark:hover:bg-yellow-900 cursor-pointer transition-colors">
+                <div className="p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-yellow-500 text-white flex items-center justify-center text-xs font-bold">
+                      <div className="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs font-bold">
                         {stats?.totalPendingReview || 0}
                       </div>
-                      <span className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+                      <span className="text-sm font-medium text-black dark:text-white">
                         Lowongan Baru Review
                       </span>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-yellow-600" />
+                    <ArrowRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                   </div>
-                  <Progress value={46} className="h-2 bg-yellow-200 dark:bg-yellow-800" />
-                  <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-2">46% progress</p>
+                  <Progress value={46} className="h-2 bg-gray-200 dark:bg-gray-700" />
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">46% progress</p>
                 </div>
               </Link>
 
@@ -333,7 +333,7 @@ export default function AdminDashboardPage() {
           <Card className="bg-white dark:bg-black border-gray-200 dark:border-gray-800">
             <CardHeader>
               <CardTitle className="text-black dark:text-white text-lg flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-primary" />
+                <TrendingUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 Activity Log
               </CardTitle>
             </CardHeader>
@@ -346,8 +346,8 @@ export default function AdminDashboardPage() {
                       className="flex items-start gap-3 pb-3 border-b border-gray-100 dark:border-gray-800 last:border-0"
                       data-testid={`activity-log-${log.id}`}
                     >
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                        <CheckCircle className="w-4 h-4 text-primary" />
+                      <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0 mt-1">
+                        <CheckCircle className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-black dark:text-white line-clamp-2">
