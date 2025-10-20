@@ -71,9 +71,63 @@ export default function DashboardHeader() {
             <img src={logoImg} alt="PintuKerja" className="h-12" />
           </Link>
 
-          {/* Navigation - Removed external links for security */}
+          {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {/* Navigation items removed to prevent users from leaving dashboard */}
+            <Link
+              href="/user/dashboard"
+              className={`text-sm font-medium transition-colors ${
+                isActive("/user/dashboard")
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-overview"
+            >
+              Beranda
+            </Link>
+            <Link
+              href="/user/dashboard#applications"
+              className={`text-sm font-medium transition-colors ${
+                location === "/user/dashboard#applications"
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-applications"
+            >
+              Lamaran Saya
+            </Link>
+            <Link
+              href="/user/dashboard#wishlist"
+              className={`text-sm font-medium transition-colors ${
+                location === "/user/dashboard#wishlist"
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-wishlist"
+            >
+              Favorit
+            </Link>
+            <Link
+              href="/user/dashboard#job-alert"
+              className={`text-sm font-medium transition-colors ${
+                location === "/user/dashboard#job-alert"
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-job-alert"
+            >
+              Job Alert
+            </Link>
+            <Link
+              href="/user/dashboard#settings"
+              className={`text-sm font-medium transition-colors ${
+                location === "/user/dashboard#settings"
+                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                  : "text-gray-400 hover:text-white"
+              }`}
+              data-testid="nav-link-settings"
+            >
+              Pengaturan
+            </Link>
           </nav>
 
           {/* Right side */}

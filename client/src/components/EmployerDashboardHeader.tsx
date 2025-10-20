@@ -46,7 +46,11 @@ export default function EmployerDashboardHeader() {
 
   const navItems = [
     { path: "/employer/dashboard", label: "Dashboard", external: false },
-    // Removed external links for security - users should stay within dashboard
+    { path: "/employer/dashboard#my-jobs", label: "Lowongan Saya", external: false },
+    { path: "/employer/dashboard#post-job", label: "Pasang Lowongan", external: false },
+    { path: "/employer/dashboard#applicants", label: "Pelamar", external: false },
+    { path: "/employer/dashboard#saved-candidates", label: "Kandidat Tersimpan", external: false },
+    { path: "/employer/dashboard#profile", label: "Profil Perusahaan", external: false },
   ];
 
   const isActive = (path: string) => {
