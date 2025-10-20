@@ -19,9 +19,6 @@ import RecommendationsPage from "./dashboard/RecommendationsPage";
 import SettingsPage from "./dashboard/SettingsPage";
 import NotificationsPage from "./dashboard/NotificationsPage";
 import JobAlertPage from "./dashboard/JobAlertPage";
-import BlogPage from "./BlogPage";
-import CommunityPage from "./CommunityPage";
-import FAQPage from "./FAQPage";
 import FindJobContent from "@/components/FindJobContent";
 import { Badge } from "@/components/ui/badge";
 import type { Notification } from "@shared/schema";
@@ -98,12 +95,6 @@ export default function UserDashboardPage() {
         return <SettingsPage />;
       case 'find-job':
         return <FindJobContent />;
-      case 'blog':
-        return <BlogPage />;
-      case 'community':
-        return <CommunityPage />;
-      case 'faq':
-        return <FAQPage />;
       default:
         return <OverviewPage />;
     }

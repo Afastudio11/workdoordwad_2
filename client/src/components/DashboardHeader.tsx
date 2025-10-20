@@ -97,39 +97,42 @@ export default function DashboardHeader() {
             >
               Find Job
             </a>
-            <a
-              href="#blog"
-              className={`text-sm font-medium transition-colors ${
-                window.location.hash === '#blog'
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-blog"
-            >
-              Blog
-            </a>
-            <a
-              href="#community"
-              className={`text-sm font-medium transition-colors ${
-                window.location.hash === '#community'
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-community"
-            >
-              Community
-            </a>
-            <a
-              href="#faq"
-              className={`text-sm font-medium transition-colors ${
-                window.location.hash === '#faq'
-                  ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              data-testid="nav-link-faq"
-            >
-              FAQ
-            </a>
+            <Link href="/blog">
+              <span
+                className={`text-sm font-medium transition-colors cursor-pointer ${
+                  isActive('/blog')
+                    ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                    : "text-gray-400 hover:text-white"
+                }`}
+                data-testid="nav-link-blog"
+              >
+                Blog
+              </span>
+            </Link>
+            <Link href="/community">
+              <span
+                className={`text-sm font-medium transition-colors cursor-pointer ${
+                  isActive('/community')
+                    ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                    : "text-gray-400 hover:text-white"
+                }`}
+                data-testid="nav-link-community"
+              >
+                Community
+              </span>
+            </Link>
+            <Link href="/faq">
+              <span
+                className={`text-sm font-medium transition-colors cursor-pointer ${
+                  isActive('/faq')
+                    ? "text-white border-b-2 border-[#D4FF00] pb-0.5"
+                    : "text-gray-400 hover:text-white"
+                }`}
+                data-testid="nav-link-faq"
+              >
+                FAQ
+              </span>
+            </Link>
           </nav>
 
           {/* Right side */}
