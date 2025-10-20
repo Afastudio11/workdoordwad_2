@@ -3,12 +3,26 @@ import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Briefcase, Users, Clock, DollarSign, TrendingUp } from "lucide-react";
 
+interface AdminStats {
+  totalActiveJobs: number;
+  totalPendingReview: number;
+  totalRevenue: number;
+  totalUsers: number;
+}
+
+interface ActivityLog {
+  id: string;
+  details: string;
+  adminName: string;
+  createdAt: string;
+}
+
 export default function AdminDashboardPage() {
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading } = useQuery<AdminStats>({
     queryKey: ["/api/admin/dashboard/stats"],
   });
 
-  const { data: activityLogs, isLoading: logsLoading } = useQuery({
+  const { data: activityLogs, isLoading: logsLoading } = useQuery<ActivityLog[]>({
     queryKey: ["/api/admin/activity-logs"],
   });
 
@@ -96,7 +110,7 @@ export default function AdminDashboardPage() {
           <CardContent>
             <div className="space-y-4" data-testid="activity-log-list">
               {activityLogs && activityLogs.length > 0 ? (
-                activityLogs.slice(0, 10).map((log: any) => (
+                activityLogs.slice(0, 10).map((log) => (
                   <div
                     key={log.id}
                     className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800"
