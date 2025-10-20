@@ -1,0 +1,65 @@
+PEMBANGUNAN DASHBOARD PEKERJA PINTU KERJA
+
+Judul Proyek: Pintu Kerja - Dashboard Pekerja (Kandidat)
+
+Tujuan Akhir: Merancang Full-Stack Blueprint dan spesifikasi UI/UX untuk Dashboard Pekerja Pintu Kerja, berfokus pada skalabilitas, model freemium, dan fitur agregasi AI yang unik.
+
+1. Model Bisnis & Spesifikasi Teknis
+
+    Model Bisnis: Freemium Job Classifieds.
+
+    Target: Kandidat (Pekerja) dan Perekrut UMKM/Grey/Blue Collar.
+
+    Tech Stack: Full-Stack JavaScript (Next.js/React.js untuk Frontend SSR; Node.js/Express untuk Backend API) dengan PostgreSQL dan Elasticsearch (untuk pencarian).
+
+    Warna Desain:
+
+        Background Utama: Putih (#FFFFFF).
+
+        Font Utama: Hitam (#000000).
+
+        Warna Ornamen/Aksen (Lime Green): Digunakan untuk semua CTA, highlight aktif, dan ikon merek.
+
+2. Fitur Wajib Integrasi AI
+
+Sistem harus mampu menampilkan dua jenis lowongan, dengan lowongan agregasi AI menjadi Unique Value Proposition (UVP) utama:
+
+    Fungsi AI: AI Scrapper (berjalan asinkron) menarik lowongan kerja dari media sosial, menggunakan NLP untuk mengekstrak Judul Posisi, Lokasi, dan Keterampilan.
+
+    Fitur Wajib: Dashboard Admin harus memiliki queue untuk verifikasi lowongan hasil AI sebelum tayang.
+
+3. Detail Desain UI/UX (Header, Filter, Kartu)
+
+A. HEADER BAR (Sticky Navigation)
+
+    Desain & Warna: Background Putih dengan shadow tipis. Ikon dan teks berwarna Hitam, kecuali aksen logo dan tombol pencarian yang menggunakan Lime Green.
+
+    Fungsi Kiri/Tengah: [Logo Pintu Kerja], Kolom Pencarian Global (Always Visible), Link "Cari Lowongan" (Link Home), Link "Lowongan Tersimpan" (Wishlist).
+
+    Fungsi Kanan (Akun): Ikon Notifikasi (dengan badge Lime Green untuk update), Ikon Profil (Dropdown ke Riwayat Lamaran dan Profil Saya).
+
+B. PANEL FILTER SAMPING KIRI
+
+    Desain & Warna: Background Putih. Judul kategori Hitam Bold. Checkbox/radio button menggunakan aksen Lime Green saat aktif/terpilih. Tombol "Terapkan Filter" berwarna Lime Green Solid (Teks Putih).
+
+    Kategori Wajib:
+
+        Lokasi (Searchable, mendukung Radius/Remote).
+
+        Tipe Pekerjaan (Full-time, Part-time, Magang, dll.).
+
+        Rentang Gaji Bulanan (Menggunakan Range Slider yang di-highlight Lime Green).
+
+        [FITUR UVP] Sumber Lowongan: Filter untuk memilih antara "Perekrut Resmi" dan "Agregasi AI (Komunitas)".
+
+C. KARTU LOWONGAN (JOB CARD)
+
+    Desain & Warna: Background Putih dengan shadow lembut. Teks Utama Hitam Tebal untuk keterbacaan tinggi.
+
+    Chip Keterampilan (Skill Tags): Datar, menggunakan border tipis atau background abu-abu muda dengan aksen Lime Green pada tepiannya. (Data diambil dari hasil ekstraksi NLP AI).
+
+    Label UVP: Tambahkan label kecil di sudut kartu lowongan hasil agregasi AI (e.g., chip Lime Green dengan teks Putih "AI Source").
+
+    CTA: Tombol "Details" atau "Details / Lamar Cepat" harus menggunakan warna Lime Green (Solid atau Outline).
+
+    Ikon Simpan: Ikon bookmark berubah warna menjadi Lime Green saat lowongan disimpan.

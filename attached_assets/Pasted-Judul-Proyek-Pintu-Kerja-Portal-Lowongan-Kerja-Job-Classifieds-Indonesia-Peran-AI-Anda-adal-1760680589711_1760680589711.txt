@@ -1,0 +1,63 @@
+Judul Proyek: Pintu Kerja - Portal Lowongan Kerja (Job Classifieds) Indonesia
+
+Peran AI: Anda adalah Full-Stack Developer dan Product Architect. Tugas Anda adalah merancang struktur database, tech stack, dan blueprint fungsionalitas utama untuk Pintu Kerja.
+
+1. Model Bisnis & Target Pengguna
+
+    Model: Freemium (Iklan dasar gratis, fitur peningkatan visibilitas berbayar).
+
+    Target Utama:
+
+        Perekrut/Perusahaan: Mencari talenta blue/grey collar (non-eksekutif) dan UMKM yang sensitif terhadap biaya.
+
+        Kandidat: Pencari kerja dengan fokus pada lowongan yang cepat dan real-time dari berbagai sumber (termasuk media sosial).
+
+    Value Proposition: "Rekrutmen Cepat, Tanpa Ribet, Terjangkau, dengan Lowongan dari Berbagai Sumber (Termasuk Media Sosial)."
+
+2. Fitur Utama (Minimum Viable Product/MVP)
+
+A. Untuk Perusahaan (Perekrut)
+
+    Pemasangan Iklan: Formulir posting yang sederhana (Posisi, Lokasi, Deskripsi, Kontak).
+
+    Dashboard Perekrut: Melihat lowongan aktif/tutup dan daftar pelamar.
+
+    Monetisasi: Fitur Booster (Iklan Unggulan/ Featured) dan Bump (naikkan ke atas) dengan integrasi Payment Gateway.
+
+B. Untuk Kandidat (Pencari Kerja)
+
+    Pencarian & Filter: Mesin pencari berbasis Lokasi, Industri, dan Kata Kunci.
+
+    Quick Apply: Kemampuan untuk melamar ke lowongan menggunakan CV yang sudah diunggah ke profil (meminimalkan pengisian ulang data).
+
+    Riwayat Lamaran: Melacak status lamaran.
+
+3. Integrasi AI (Fitur Pembeda Utama)
+
+Sistem harus menyertakan modul untuk mengagregasi lowongan dari luar platform:
+
+    Tujuan: Mengambil, memproses, dan menayangkan lowongan kerja yang diposting di media sosial (misalnya Twitter atau Grup Facebook).
+
+    Proses AI:
+
+        Data Scraping: Mengambil teks mentah dari sumber media sosial.
+
+        NLP (Natural Language Processing): Menganalisis teks untuk:
+
+            Mengidentifikasi apakah postingan adalah lowongan kerja (Klasifikasi).
+
+            Mengekstrak entitas penting (Posisi, Perusahaan, Lokasi, Kualifikasi).
+
+        Filtering: Otomatis memindahkan lowongan teragregasi ke Review Queue (untuk verifikasi human editor sebelum tayang).
+
+4. Permintaan Output dari AI
+
+Berdasarkan blueprint di atas, hasilkan:
+
+    Struktur Tech Stack yang Direkomendasikan: (Contoh: Backend Python/Django atau PHP/Laravel, Frontend React/Vue, Database PostgreSQL/MySQL).
+
+    Model Database Sederhana: (Entitas utama: User, CompanyProfile, JobListing, Application, PaymentTransaction, AggregatedJobQueue).
+
+    Rancangan Endpoint API Utama: (Contoh: /api/jobs/create, /api/jobs/search, /api/ai/scrape-data).
+
+    Saran Implementasi AI: Jelaskan secara ringkas library atau layanan yang bisa digunakan untuk NLP dan web scraping.

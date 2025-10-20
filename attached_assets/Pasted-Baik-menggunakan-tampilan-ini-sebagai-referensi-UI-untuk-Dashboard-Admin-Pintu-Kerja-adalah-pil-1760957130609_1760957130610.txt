@@ -1,0 +1,72 @@
+Baik, menggunakan tampilan ini sebagai referensi UI untuk **Dashboard Admin Pintu Kerja** adalah pilihan yang sangat baik, karena tata letaknya berorientasi pada data (*analytics*), *task management* (*To-do List*), dan *transaction log*.
+
+Berikut adalah *prompt* terperinci dan terstruktur untuk Replit, menggabungkan desain referensi dengan kebutuhan fungsionalitas pengawasan, pendapatan, dan *troubleshooting* sistem, sambil menekankan aspek keamanan.
+
+---
+
+# PROMPT SPESIFIKASI FINAL: DASHBOARD ADMIN PINTU KERJA (REPLIT)
+
+**Peran AI:** Anda adalah **DevOps/Full-Stack Architect** yang merancang *blueprint* *Dashboard* Admin Pintu Kerja. Desain UI harus meniru tata letak **referensi gambar (orientasi data/kartu/tabel)**, tetapi fungsionalitasnya harus mencakup **semua kebutuhan operasional dan *troubleshooting* sistem**.
+
+**Tech Stack Fokus:** Node.js / Next.js / React, PostgreSQL, Elasticsearch.
+
+### 1. Desain UI/UX dan Skema Warna
+
+* **Adaptasi Desain:** Adopsi tata letak tiga kolom (statistik, manajemen tugas/log, tabel aktivitas) dari gambar referensi.
+* **Warna Aksen:** Pertahankan skema **Lime Green** (Aksen) dan Hitam (Teks), menggantikan warna biru/ungu pada referensi. *Lime Green* digunakan untuk indikator positif (sukses, aktif, pendapatan, tombol aksi utama).
+* **Navigasi Samping (Sidebar):** Harus memiliki ikon vertikal (seperti di referensi) yang mewakili modul utama: **Ringkasan (Home)**, **Moderasi Konten**, **Manajemen Pengguna**, **Keuangan/Transaksi**, dan **Sistem/Log**.
+
+### 2. Header Bar (Akses Cepat Admin)
+
+Rancang *header* sesuai dengan kebutuhan pengawasan tertinggi:
+
+* **Pencarian Cepat:** *Search Bar* harus berfungsi untuk mencari **Global ID** (Transaksi ID, Lowongan ID, User ID) di seluruh sistem.
+* **Aksi Kritis (Icon Bar):** Ikon harus mencakup: **Antrean Review (Moderasi)**, **Peringatan Sistem (Error Log)**, dan **Pengaturan Global**.
+* **Notifikasi & Profil:** Tampilkan nama Admin dan *dropdown* untuk **Log Aktivitas Admin** dan **Pengaturan Keamanan**.
+
+### 3. Modul Utama (Ringkasan Analitik & Statistik)
+
+Ganti kartu statistik di referensi dengan metrik operasional yang relevan:
+
+| Kartu Referensi | Adaptasi Pintu Kerja (Metrik Kunci) | Keterangan Fungsional |
+| :--- | :--- | :--- |
+| **Total Balance ($17,351)** | **Total Pendapatan (Bulan Ini)** | Metrik uang masuk dari penjualan *Booster* dan Slot Premium (Warna **Lime Green** untuk pertumbuhan). |
+| **Investments (611)** | **Total Lowongan Premium Aktif** | Jumlah iklan yang saat ini di-*boost* / berbayar (Indikator keberhasilan monetisasi). |
+| **Total Invitation (74)** | **Antrean Moderasi AI** | Jumlah lowongan yang baru di-*scrape* dan menunggu persetujuan/verifikasi Admin. |
+| **My Asset ($552,221)** | **Total Lowongan Aktif (Semua Sumber)** | Jumlah total iklan di *platform* (Langsung + Agregasi AI). |
+| **Asset Kecil (Figma/Sketch)** | **Kartu Status Cepat:** **Users Diblokir** (Merah), **Verifikasi Perusahaan Tertunda** (Kuning), **Error Log Backend** (Merah). | *Quick view* pada masalah yang memerlukan intervensi segera. |
+
+---
+
+### 4. Modul Manajemen Inti (Fungsionalitas *Troubleshooting*)
+
+Adaptasi elemen *To-do List* dan *Transaction Log* menjadi pusat kontrol:
+
+#### A. Panel Manajemen Masalah (*To-do List* Adaptasi)
+
+* **Judul:** **Aksi Wajib & Peringatan Sistem**
+* **Isi:** Daftar prioritas tugas yang membutuhkan intervensi Admin:
+    1.  **Lowongan Baru Menunggu Review (Hasil AI):** Link ke *AggregatedJobQueue*.
+    2.  **Laporan Penipuan Baru:** Link ke *list* laporan yang diajukan Kandidat.
+    3.  **Permintaan *Refund* Tertunda:** Link ke *queue* transaksi yang menunggu persetujuan *refund*.
+    4.  **Verifikasi Perusahaan Tertunda:** Link ke dokumen legalitas yang perlu dicek.
+
+#### B. Tabel Utama (*Transaction & Activity Log*)
+
+* **Tabel 1: Transaksi Keuangan** (Adaptasi dari *Transactions* di referensi)
+    * **Kolom Wajib:** Tanggal, ID Transaksi, Tipe (Booster, Slot), Jumlah (Rp), **Status**.
+    * **Fungsi:** *Search bar* di atas tabel untuk mencari berdasarkan ID atau jumlah. Tombol *Export CSV* (warna **Lime Green**) untuk laporan keuangan bulanan.
+
+* **Tabel 2: Log Sistem Kritis (*Activity Log* Adaptasi)**
+    * **Kolom Wajib:** Waktu, Pengguna (ID Admin/Sistem), Aksi, Status.
+    * **Fungsi:** Mencatat semua *event* penting: Server *restart*, API *error* (500), Perekrut diblokir, Admin menyetujui lowongan AI.
+
+---
+
+### 5. Keamanan dan Validasi
+
+* **Otentikasi Aman:** Pastikan *dashboard* ini hanya dapat diakses setelah otentikasi **2FA (Two-Factor Authentication)**.
+* **Permissions:** Hak akses ke *endpoint* API Admin harus ketat dan terpisah dari API Perekrut/Pekerja.
+* **Validasi Data:** Setiap aksi (Setujui Lowongan, Blokir Akun) harus mencatat **ID Admin** yang melakukan perubahan untuk tujuan *audit* dan akuntabilitas.
+
+**Permintaan Output AI:** Hasilkan *blueprint* *frontend* (komponen React/Next.js) dan *endpoint* API Node.js yang diperlukan untuk mendukung fungsionalitas dan tata letak di atas, dengan *styling* yang mengacu pada skema warna **Lime Green** dan *design language* referensi gambar.

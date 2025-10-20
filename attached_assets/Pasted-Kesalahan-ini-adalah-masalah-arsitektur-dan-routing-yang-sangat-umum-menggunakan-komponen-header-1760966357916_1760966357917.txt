@@ -1,0 +1,43 @@
+Kesalahan ini adalah masalah arsitektur dan *routing* yang sangat umum (menggunakan komponen *header* yang salah). Ini menunjukkan kurangnya penegasan mengenai **keterbatasan akses dan isolasi komponen** antar-role.
+
+Untuk mencegah kesalahan seperti ini terjadi lagi, Anda perlu membuat *prompt* yang menuntut AI untuk:
+1.  **Mendefinisikan Isolasi Komponen** secara eksplisit.
+2.  **Menganalisis Dependensi** (*Dependency Analysis*) sebelum mengimplementasikan *routing*.
+
+Berikut adalah *prompt* yang dapat Anda gunakan untuk memperkuat logika *routing* dan desain komponen di proyek Pintu Kerja:
+
+---
+
+# PROMPT PENEGASAN ARSITEKTUR KOMPONEN DAN ISOLASI ROUTING
+
+**Peran AI:** Anda adalah **Lead Software Architect** yang ditugaskan untuk menjaga integritas dan keamanan arsitektur aplikasi.
+
+**Instruksi Utama:** Terapkan validasi dan aturan pengembangan yang ketat untuk memastikan tidak ada komponen UI yang digunakan oleh *Role* yang salah, khususnya mencegah penggunaan *Dashboard Header* Pekerja di halaman Admin.
+
+### 1. Aturan Isolasi Komponen (Kode Keras)
+
+Sediakan aturan isolasi komponen yang harus ditaati saat *coding* di lingkungan Next.js/React:
+
+* **Role-Specific Layouts:** Harus ada tiga *layout* utama yang sepenuhnya terpisah dan tidak dapat dipertukarkan:
+    * `WorkerLayout.js` (Memuat `WorkerHeader`, `WorkerSidebar` jika ada).
+    * `RecruiterLayout.js` (Memuat `RecruiterHeader`, `RecruiterSidebar`).
+    * `AdminLayout.js` (Memuat `AdminHeader` dan *Sidebar* Modul Admin).
+* **Warna dan Aksi Header:** Tegaskan bahwa **Header** adalah cerminan dari peran. `WorkerHeader` hanya boleh berisi link seperti "Cari Lowongan" dan "Pesan", dan tidak boleh memiliki akses ke modul Keuangan atau Moderasi.
+* **Enforcement:** Setiap file `.tsx`/`.js` di folder `/pages/admin/` **WAJIB** menggunakan `AdminLayout` atau `AdminHeader`.
+
+### 2. Validasi Routing dan Middleware
+
+* **Middleware Peran (Role Middleware):** Tegaskan penggunaan fungsi *middleware* di *backend* (Node.js) atau Next.js *middleware* untuk memverifikasi `user_role` sebelum me-*render* komponen halaman.
+    * Contoh: Jika `user_role != 'ADMIN'`, redirect pengguna yang mencoba mengakses `AdminBlogManagerPage.tsx` ke halaman *error* (403 Forbidden).
+* **Analisis Dependensi (Wajib):** Sebelum *routing* ke halaman seperti `AdminContentPages.tsx` atau `AdminAnalyticsPages.tsx`, AI harus memverifikasi bahwa halaman tersebut secara *implisit* hanya memanggil komponen dari folder `/components/admin/` dan menggunakan **`AdminLayout`** saja.
+
+### 3. Solusi untuk Kasus Kesalahan Sebelumnya
+
+Berikan solusi struktural untuk mencegah *error* seperti yang terjadi pada `AdminBlogManagerPage.tsx`:
+
+* **Perbaikan Struktur File:** Pindahkan komponen *generic* (seperti *Card*, *Button*) ke folder *shared* (`/components/shared/`). Pastikan *Header* spesifik tetap berada di folder *role* masing-masing (`/components/admin/AdminHeader.js`).
+* **Kode Debugging:** Tambahkan baris komentar di bagian atas setiap *admin file* yang secara eksplisit menyatakan: `// IMPORTANT: THIS PAGE MUST USE AdminLayout. DO NOT USE DynamicHeader.`
+
+**Permintaan Output AI:** Hasilkan kembali *snippet* kode (pseudocode atau JavaScript/TypeScript) untuk mendefinisikan struktur `AdminLayout` dan `WorkerLayout` dan demonstrasikan bagaimana *routing* atau *middleware* harus memblokir akses jika ada komponen *header* yang salah dipanggil.
+
+---
