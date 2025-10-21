@@ -1,35 +1,36 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import article1Img from "@assets/5_1760872341106.png";
 import article2Img from "@assets/3_1760872341107.png";
 import article3Img from "@assets/4_1760872341107.png";
 
-const articles = [
-  {
-    id: 1,
-    title: "Tips Menulis CV yang Menarik Perhatian Recruiter",
-    date: "29 Juni 2024",
-    readTime: "6 menit baca",
-    image: article1Img
-  },
-  {
-    id: 2,
-    title: "Cara Memaksimalkan Peluang Diterima Kerja",
-    date: "29 Juni 2024",
-    readTime: "6 menit baca",
-    image: article2Img
-  },
-  {
-    id: 3,
-    title: "Strategi Interview yang Efektif untuk Fresh Graduate",
-    date: "29 Juni 2024",
-    readTime: "6 menit baca",
-    image: article3Img
-  }
-];
+const defaultImages: Record<string, string> = {
+  "Newsletter": article1Img,
+  "Tips": article2Img,
+  "Insight": article3Img,
+  "Success Stories": article1Img,
+};
+
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  heroImage: string | null;
+  category: string;
+  readTime: string | null;
+  publishedAt: string;
+}
 
 export default function AIInnovationSection() {
   const [activeTab, setActiveTab] = useState("articles");
+  
+  const { data: blogData, isLoading } = useQuery<{ posts: BlogPost[]; total: number }>({
+    queryKey: ["/api/blog", { limit: 3 }],
+  });
+
+  const articles = blogData?.posts || [];
 
   return (
     <section className="py-12 md:py-20 bg-gray-50">
@@ -74,32 +75,61 @@ export default function AIInnovationSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {articles.map((article) => (
-            <Link key={article.id} href={`/blog/${article.id}`}>
-              <div
-                className="group cursor-pointer"
-                data-testid={`article-card-${article.id}`}
-              >
-                <div className="mb-4 overflow-hidden rounded-2xl aspect-[4/3]">
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-black mb-2 sm:mb-3 transition-colors">
-                  {article.title}
-                </h3>
-                <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
-                  <span>{article.date}</span>
-                  <span>•</span>
-                  <span>{article.readTime}</span>
-                </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="mb-4 bg-gray-200 rounded-2xl aspect-[4/3]"></div>
+                <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
               </div>
-            </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : articles.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {articles.map((article) => {
+              const articleImage = article.heroImage || defaultImages[article.category] || article1Img;
+              const publishedDate = new Date(article.publishedAt).toLocaleDateString("id-ID", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              });
+              
+              return (
+                <Link key={article.id} href={`/blog/${article.slug}`}>
+                  <div
+                    className="group cursor-pointer"
+                    data-testid={`article-card-${article.id}`}
+                  >
+                    <div className="mb-4 overflow-hidden rounded-2xl aspect-[4/3]">
+                      <img
+                        src={articleImage}
+                        alt={article.title}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-bold text-black mb-2 sm:mb-3 transition-colors">
+                      {article.title}
+                    </h3>
+                    <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
+                      <span>{publishedDate}</span>
+                      {article.readTime && (
+                        <>
+                          <span>•</span>
+                          <span>{article.readTime} baca</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-600">Belum ada artikel tersedia.</p>
+          </div>
+        )}
       </div>
     </section>
   );

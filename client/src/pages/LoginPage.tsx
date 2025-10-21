@@ -133,9 +133,9 @@ export default function LoginPage() {
                 />
                 <span className="ml-2 text-sm text-gray-900">Ingat saya</span>
               </label>
-              <a href="#" className="text-sm text-gray-900 hover:underline font-bold" data-testid="link-forgot-password">
+              <Link href="/contact" className="text-sm text-gray-900 hover:underline font-bold" data-testid="link-forgot-password">
                 Lupa kata sandi?
-              </a>
+              </Link>
             </div>
 
             <Button

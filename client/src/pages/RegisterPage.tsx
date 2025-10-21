@@ -325,9 +325,9 @@ export default function RegisterPage() {
                     </FormControl>
                     <label className="text-sm text-gray-900">
                       Saya telah membaca dan menyetujui{" "}
-                      <a href="#" className="text-gray-900 hover:underline font-bold">
+                      <Link href="/page/terms-of-service" className="text-gray-900 hover:underline font-bold" target="_blank">
                         Ketentuan Layanan
-                      </a>
+                      </Link>
                     </label>
                   </div>
                   <FormMessage />

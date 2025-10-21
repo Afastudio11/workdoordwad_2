@@ -8,7 +8,7 @@ const footerLinks = {
     { label: "Kontak", href: "/contact" }
   ],
   pencariKerja: [
-    { label: "Cari Lowongan", href: "/jobs" },
+    { label: "Cari Lowongan", href: "/find-job" },
     { label: "Tips Karir", href: "/blog" },
     { label: "FAQ", href: "/faq" }
   ],
@@ -80,10 +80,10 @@ export default function Footer() {
             © 2025 PintuKerja.com. Semua hak dilindungi.
           </p>
           <div className="flex items-center gap-6">
-            <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">
+            <Link href="/page/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors">
               Kebijakan Privasi
             </Link>
-            <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">
+            <Link href="/page/terms-of-service" className="text-sm text-gray-400 hover:text-white transition-colors">
               Syarat & Ketentuan
             </Link>
           </div>

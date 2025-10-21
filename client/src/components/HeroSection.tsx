@@ -1,14 +1,28 @@
 import { Search } from "lucide-react";
 import { useState, type KeyboardEvent } from "react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import cityscapeImg from "@assets/Cari Pekerjaan Kamu Disini,(1)_1760686523490.png";
 import starburstImg from "@assets/0d231d(1)_1760687086089.png";
-
-const popularJobs = ["Pemasaran Penjualan", "Insinyur Perangkat Lunak", "Pengembang Web"];
 
 export default function HeroSection() {
   const [keyword, setKeyword] = useState("");
   const [, setLocation] = useLocation();
+  
+  const { data: trendingData } = useQuery<{ jobs: any[]; total: number }>({
+    queryKey: ["/api/jobs/trending"],
+  });
+  
+  const hasJobs = (trendingData?.total || 0) > 0;
+  
+  const popularJobs = hasJobs 
+    ? Array.from(new Set(
+        trendingData?.jobs
+          ?.slice(0, 3)
+          .map((job) => job.title || job.industry)
+          .filter(Boolean) || []
+      )).slice(0, 3)
+    : [];
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -62,22 +76,24 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 mb-4">
-            <span className="text-gray-400 text-xs md:text-sm">Pekerjaan Populer Saat ini:</span>
-            <div className="flex flex-wrap justify-center gap-2">
-              {popularJobs.map((job, index) => (
-                <button 
-                  key={index}
-                  onClick={() => handleJobTagClick(job)}
-                  className="px-3 md:px-4 py-1.5 text-white text-xs md:text-sm rounded-full hover:border-primary hover:border transition-colors cursor-pointer"
-                  style={{ backgroundColor: '#484946' }}
-                  data-testid={`tag-job-${index}`}
-                >
-                  {job}
-                </button>
-              ))}
+          {hasJobs && popularJobs.length > 0 && (
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 mb-4">
+              <span className="text-gray-400 text-xs md:text-sm">Pekerjaan Populer Saat ini:</span>
+              <div className="flex flex-wrap justify-center gap-2">
+                {popularJobs.map((job, index) => (
+                  <button 
+                    key={index}
+                    onClick={() => handleJobTagClick(job)}
+                    className="px-3 md:px-4 py-1.5 text-white text-xs md:text-sm rounded-full hover:border-primary hover:border transition-colors cursor-pointer"
+                    style={{ backgroundColor: '#484946' }}
+                    data-testid={`tag-job-${index}`}
+                  >
+                    {job}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Hero Image - Cityscape */}
