@@ -10,6 +10,10 @@ Pintu Kerja is a freemium job classifieds platform designed for UMKM (small-medi
 - Implemented trending jobs algorithm with popularity scoring
 - Enhanced view count tracking and analytics
 - Updated storage layer to support source, isActive, and isFeatured filters
+- Fixed pagination: Changed from 9 to 20 jobs per page with server-side pagination
+- Implemented smart pagination UI with ellipsis for large page counts
+- Fixed filter mapping: Indonesian labels (Waktu Penuh, Paruh Waktu, etc) now correctly map to database values (full-time, part-time, etc)
+- Added auto-reset to page 1 when filters change
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.

@@ -233,6 +233,13 @@ export default function NewJobDashboardPage() {
                       const maxJuta = (max / 1000000).toFixed(1);
                       return `Rp${minJuta}-${maxJuta}jt/bln`;
                     };
+
+                    const jobTypeLabel: Record<string, string> = {
+                      "full-time": "Penuh Waktu",
+                      "part-time": "Paruh Waktu",
+                      "contract": "Kontrak",
+                      "freelance": "Freelance",
+                    };
                     
                     return (
                       <JobCard
@@ -245,6 +252,7 @@ export default function NewJobDashboardPage() {
                         salary={formatSalary(job.salaryMin, job.salaryMax)}
                         location={job.location}
                         bgColor={getJobCardColor(index)}
+                        jobType={jobTypeLabel[job.jobType] || job.jobType}
                       />
                     );
                   })}
