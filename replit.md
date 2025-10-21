@@ -4,6 +4,20 @@
 Pintu Kerja is a freemium job classifieds platform designed for UMKM (small-medium businesses) and blue/grey collar job seekers in Indonesia. Its unique selling proposition lies in AI-powered job aggregation from social media (primarily Instagram) and a mobile-first, minimalist design inspired by Glassdoor. The platform's core mission is to provide "Rekrutmen Cepat, Tanpa Ribet, Terjangkau" (Fast, Simple, Affordable Recruitment). The project aims to streamline recruitment processes for businesses and simplify job searching for individuals, leveraging technology for efficiency and accessibility.
 
 ## Recent Changes (October 21, 2025)
+
+### E2E Testing Framework Implementation
+- **Implemented comprehensive Playwright testing framework** with 8 test suites covering:
+  - Job seeker user journeys (Fresh Graduate, Experienced Professional, Job Hopper)
+  - Employer workflows (Startup, Corporate, SME) including 3 free job slots and subscription flow
+  - Cross-user interactions and real-time notifications
+  - Performance testing (100+ jobs, concurrent users, slow network simulation)
+  - Security testing (SQL injection, XSS, file upload, rate limiting, CSRF)
+  - Edge cases and error handling
+- **Created test helpers** for authentication, job operations, and profile management
+- **Added test scripts** to package.json: `npm test`, `npm run test:ui`, `npm run test:headed`
+- **Created test data generation**: `npm run generate:test-data`
+- **Documentation**: See `TESTING.md` for complete testing guide
+
 ### Database & Content Synchronization Fixes
 - **Fixed blog data inconsistency**: Seeded database with 3 published blog posts to match landing page articles
 - **Updated AIInnovationSection**: Changed from hardcoded articles to fetch from `/api/blog` endpoint
@@ -73,6 +87,14 @@ Future plans include AI integration for aggregating job listings from social med
 - **TypeScript**: Type safety.
 - **ESBuild**: Production build bundling.
 - **Tailwind CSS**: Utility-first styling.
+- **Playwright**: End-to-end testing framework.
+
+### Testing Infrastructure
+- **Playwright E2E Tests**: Comprehensive automated testing covering all user journeys
+- **Test Coverage**: Job seekers, employers, cross-user interactions, performance, security, edge cases
+- **Test Helpers**: Reusable utilities for authentication, job operations, and profile management
+- **Test Data**: Pre-configured test users and automated test file generation
+- **CI/CD Ready**: Tests can run in continuous integration pipelines
 
 ### Fonts & Assets
 - **Google Fonts (Inter)**: Primary typeface.

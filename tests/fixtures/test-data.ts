@@ -1,7 +1,10 @@
+// Generate unique email addresses per test run to avoid collisions
+const timestamp = Date.now();
+
 export const TEST_USERS = {
   jobSeekers: {
     freshGraduate: {
-      email: 'freshgrad.test@email.com',
+      email: `freshgrad.test.${timestamp}@email.com`,
       password: 'TestPassword123!',
       name: 'Budi Santoso',
       phone: '081234567890',
@@ -13,7 +16,7 @@ export const TEST_USERS = {
       education: 'S1 Teknik Informatika - Universitas Indonesia',
     },
     experiencedProfessional: {
-      email: 'senior.test@email.com',
+      email: `senior.test.${timestamp}@email.com`,
       password: 'TestPassword123!',
       name: 'Sarah Wijaya',
       phone: '081234567891',
@@ -25,7 +28,7 @@ export const TEST_USERS = {
       education: 'S1 Ilmu Komputer - ITB',
     },
     jobHopper: {
-      email: 'jobhopper.test@email.com',
+      email: `jobhopper.test.${timestamp}@email.com`,
       password: 'TestPassword123!',
       name: 'Ahmad Prakoso',
       phone: '081234567892',
@@ -39,7 +42,7 @@ export const TEST_USERS = {
   },
   employers: {
     startup: {
-      email: 'startup.hr@email.com',
+      email: `startup.hr.${timestamp}@email.com`,
       password: 'TestPassword123!',
       name: 'HR TechStart',
       phone: '081234567893',
@@ -52,7 +55,7 @@ export const TEST_USERS = {
       location: 'Jakarta Selatan',
     },
     corporate: {
-      email: 'corporate.hr@email.com',
+      email: `corporate.hr.${timestamp}@email.com`,
       password: 'TestPassword123!',
       name: 'HR PT Maju Bersama',
       phone: '081234567894',
@@ -65,7 +68,7 @@ export const TEST_USERS = {
       location: 'Jakarta Pusat',
     },
     sme: {
-      email: 'sme.owner@email.com',
+      email: `sme.owner.${timestamp}@email.com`,
       password: 'TestPassword123!',
       name: 'Owner CV Usaha Mandiri',
       phone: '081234567895',

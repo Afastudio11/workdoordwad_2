@@ -6,6 +6,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : 1,
+  globalSetup: './tests/setup/global-setup.ts',
+  globalTeardown: './tests/setup/global-teardown.ts',
   reporter: [
     ['html', { outputFolder: 'test-reports/html' }],
     ['json', { outputFile: 'test-reports/results.json' }],

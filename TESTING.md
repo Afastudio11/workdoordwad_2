@@ -32,10 +32,12 @@ This E2E testing suite uses **Playwright** to test the complete user journey for
 npx playwright install
 ```
 
-### 2. Generate Test Data
+### 2. Generate Test Data Files
 ```bash
 npm run generate:test-data
 ```
+
+This creates dummy PDFs, images, and other test files needed for upload tests.
 
 ### 3. Start the Application
 ```bash
@@ -53,6 +55,8 @@ npm run test:ui
 # Run in headed mode (see browser)
 npm run test:headed
 ```
+
+**Note**: Test data (users, jobs, applications) is automatically cleaned up before and after each test run, so tests can be run repeatedly without conflicts.
 
 ## 📁 Test Structure
 
@@ -367,16 +371,18 @@ When adding new tests:
 
 ## 📝 Test Data
 
-Pre-configured test users:
+Pre-configured test users (unique per test run):
 
 **Job Seekers:**
-- `freshgrad.test@email.com` - Fresh Graduate
-- `senior.test@email.com` - Experienced Professional
-- `jobhopper.test@email.com` - Job Hopper
+- `freshgrad.test.{timestamp}@email.com` - Fresh Graduate
+- `senior.test.{timestamp}@email.com` - Experienced Professional
+- `jobhopper.test.{timestamp}@email.com` - Job Hopper
 
 **Employers:**
-- `startup.hr@email.com` - Startup Company
-- `corporate.hr@email.com` - Corporate Company
-- `sme.owner@email.com` - SME Owner
+- `startup.hr.{timestamp}@email.com` - Startup Company
+- `corporate.hr.{timestamp}@email.com` - Corporate Company
+- `sme.owner.{timestamp}@email.com` - SME Owner
 
 All passwords: `TestPassword123!`
+
+**Note**: Test users are automatically generated with unique timestamps to avoid collisions between test runs. Test data is automatically cleaned up before and after each test run.
