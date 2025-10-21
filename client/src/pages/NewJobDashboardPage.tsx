@@ -258,25 +258,27 @@ export default function NewJobDashboardPage() {
                       size="sm"
                       onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
+                      data-testid="button-prev-page"
                     >
                       Sebelumnya
                     </Button>
                     <div className="flex items-center gap-1">
-                      {currentPage > 1 && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setCurrentPage(1)}
-                        >
-                          1
-                        </Button>
-                      )}
-                      {currentPage > 2 && totalPages > 3 && (
+                      <Button
+                        variant={currentPage === 1 ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(1)}
+                        className={currentPage === 1 ? "bg-[#D4FF00] text-gray-900 hover:bg-[#c4ef00]" : ""}
+                        data-testid="button-page-1"
+                      >
+                        1
+                      </Button>
+                      {currentPage > 3 && totalPages > 5 && (
                         <span className="px-2 text-gray-500">...</span>
                       )}
                       {Array.from({ length: totalPages }, (_, i) => i + 1)
                         .filter(page => {
                           if (page === 1 || page === totalPages) return false;
+                          if (totalPages <= 5) return true;
                           return Math.abs(page - currentPage) <= 1;
                         })
                         .map((page) => (
@@ -286,18 +288,21 @@ export default function NewJobDashboardPage() {
                             size="sm"
                             onClick={() => setCurrentPage(page)}
                             className={currentPage === page ? "bg-[#D4FF00] text-gray-900 hover:bg-[#c4ef00]" : ""}
+                            data-testid={`button-page-${page}`}
                           >
                             {page}
                           </Button>
                         ))}
-                      {currentPage < totalPages - 1 && totalPages > 3 && (
+                      {currentPage < totalPages - 2 && totalPages > 5 && (
                         <span className="px-2 text-gray-500">...</span>
                       )}
-                      {currentPage < totalPages && (
+                      {totalPages > 1 && (
                         <Button
-                          variant="outline"
+                          variant={currentPage === totalPages ? "default" : "outline"}
                           size="sm"
                           onClick={() => setCurrentPage(totalPages)}
+                          className={currentPage === totalPages ? "bg-[#D4FF00] text-gray-900 hover:bg-[#c4ef00]" : ""}
+                          data-testid={`button-page-${totalPages}`}
                         >
                           {totalPages}
                         </Button>
@@ -308,6 +313,7 @@ export default function NewJobDashboardPage() {
                       size="sm"
                       onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages}
+                      data-testid="button-next-page"
                     >
                       Selanjutnya
                     </Button>
