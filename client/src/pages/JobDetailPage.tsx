@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { Briefcase, MapPin, Clock, GraduationCap, DollarSign, Building2, Instagram, ArrowLeft, AlertCircle, RefreshCw, Mail, Phone, Globe } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 
 interface Job {
   id: string;
@@ -41,11 +41,21 @@ export default function JobDetailPage() {
   const params = useParams<{ id: string }>();
   const jobId = params.id;
   const [showCompanyDialog, setShowCompanyDialog] = useState(false);
+  const viewTracked = useRef(false);
 
   const { data: job, isLoading, isError, error } = useQuery<Job>({
     queryKey: [`/api/jobs/${jobId}`],
     enabled: !!jobId,
   });
+
+  useEffect(() => {
+    if (jobId && job && !viewTracked.current) {
+      viewTracked.current = true;
+      apiRequest(`/api/jobs/${jobId}/view`, "POST").catch(err => 
+        console.error("Failed to track view:", err)
+      );
+    }
+  }, [jobId, job]);
 
   const formatSalary = (min: number | null, max: number | null) => {
     if (!min && !max) return "Negosiasi";

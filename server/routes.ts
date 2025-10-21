@@ -363,40 +363,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { limit = "6" } = req.query;
       const limitNum = parseInt(limit as string);
       
-      const allJobs = await storage.getJobs({ limit: 100, offset: 0 });
+      const recentJobs = await storage.getJobs({ limit: 30, offset: 0 });
       
-      const jobsWithScore = await Promise.all(
-        allJobs.jobs.map(async (job) => {
-          const applications = await storage.getJobApplications(job.id);
-          const applicationCount = applications.length;
-          
-          const daysOld = Math.floor(
-            (Date.now() - new Date(job.createdAt).getTime()) / (1000 * 60 * 60 * 24)
-          );
-          
-          const recencyMultiplier = Math.max(0, 30 - daysOld);
-          
-          const featuredBonus = job.isFeatured ? 50 : 0;
-          
-          const viewCount = job.viewCount || 0;
-          
-          const popularityScore =
-            applicationCount * 5 +
-            viewCount * 0.3 +
-            recencyMultiplier +
-            featuredBonus;
-          
-          return {
-            ...job,
-            popularityScore,
-            stats: {
-              applicationCount,
-              viewCount,
-              daysOld,
-            },
-          };
-        })
+      const applicationCountPromises = recentJobs.jobs.map(async (job) => ({
+        jobId: job.id,
+        count: (await storage.getJobApplications(job.id)).length
+      }));
+      
+      const applicationCounts = await Promise.all(applicationCountPromises);
+      const applicationCountsMap = new Map(
+        applicationCounts.map(({ jobId, count }) => [jobId, count])
       );
+      
+      const jobsWithScore = recentJobs.jobs.map((job) => {
+        const applicationCount = applicationCountsMap.get(job.id) || 0;
+        
+        const daysOld = Math.floor(
+          (Date.now() - new Date(job.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+        );
+        
+        const recencyMultiplier = Math.max(0, 30 - daysOld);
+        const featuredBonus = job.isFeatured ? 50 : 0;
+        const viewCount = job.viewCount || 0;
+        
+        const popularityScore =
+          applicationCount * 5 +
+          viewCount * 0.3 +
+          recencyMultiplier +
+          featuredBonus;
+        
+        return {
+          ...job,
+          popularityScore,
+          stats: {
+            applicationCount,
+            viewCount,
+            daysOld,
+          },
+        };
+      });
       
       jobsWithScore.sort((a, b) => b.popularityScore - a.popularityScore);
       
