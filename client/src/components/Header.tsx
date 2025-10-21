@@ -51,7 +51,7 @@ export default function Header({ variant = "dark" }: HeaderProps) {
             <Link href="/" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-beranda">
               Beranda
             </Link>
-            <Link href="/jobs" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-pekerjaan">
+            <Link href="/register" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-pekerjaan">
               Cari Pekerjaan
             </Link>
             <Link href="/quick-access" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-quick-access">
@@ -135,7 +135,7 @@ export default function Header({ variant = "dark" }: HeaderProps) {
             <Link href="/" className={`block text-base ${textClass}`} data-testid="mobile-link-beranda">
               Beranda
             </Link>
-            <Link href="/jobs" className={`block text-base ${textClass}`} data-testid="mobile-link-cari-pekerjaan">
+            <Link href="/register" className={`block text-base ${textClass}`} data-testid="mobile-link-cari-pekerjaan">
               Cari Pekerjaan
             </Link>
             <Link href="/quick-access" className={`block text-base ${textClass}`} data-testid="mobile-link-quick-access">
