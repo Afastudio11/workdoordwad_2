@@ -4,6 +4,9 @@ import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { id as localeId } from "date-fns/locale";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface Job {
   id: string;
@@ -27,6 +30,9 @@ export default function JobCircularsSection() {
   const [category, setCategory] = useState("Pengembangan Web");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [, setLocation] = useLocation();
+  const [showApplyDialog, setShowApplyDialog] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const { toast } = useToast();
 
   const { data: jobsData, isLoading } = useQuery<{ jobs: Job[], total: number }>({
     queryKey: ["/api/jobs/trending", { limit: 6 }],
@@ -201,13 +207,16 @@ export default function JobCircularsSection() {
                 </div>
 
                 {/* Apply Button */}
-                <Link 
-                  href={`/jobs/${job.id}`}
+                <button
+                  onClick={() => {
+                    setSelectedJob(job);
+                    setShowApplyDialog(true);
+                  }}
                   className="block w-full py-2.5 bg-black text-white font-medium text-sm rounded-md hover:bg-gray-800 transition-colors text-center"
                   data-testid={`button-apply-${index}`}
                 >
                   Lamar Sekarang
-                </Link>
+                </button>
               </div>
             ))}
           </div>
@@ -216,7 +225,7 @@ export default function JobCircularsSection() {
         {/* Load More Button */}
         <div className="text-center mt-12">
           <Link 
-            href="/jobs"
+            href="/register"
             className="inline-block w-full md:w-auto px-16 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors"
             data-testid="button-load-more"
           >
@@ -224,6 +233,62 @@ export default function JobCircularsSection() {
           </Link>
         </div>
       </div>
+
+      {/* Apply Job Dialog */}
+      <Dialog open={showApplyDialog} onOpenChange={setShowApplyDialog}>
+        <DialogContent className="max-w-md" data-testid="dialog-apply-job">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Lamar Pekerjaan</DialogTitle>
+            <DialogDescription>
+              Silakan daftar atau masuk untuk melamar pekerjaan ini
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedJob && (
+            <div className="space-y-4">
+              {/* Job Info */}
+              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                <h3 className="font-semibold text-lg mb-2">{selectedJob.title}</h3>
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  <Briefcase className="h-4 w-4" />
+                  <span>{selectedJob.company.name}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  <MapPin className="h-4 w-4" />
+                  <span>{selectedJob.location}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <DollarSign className="h-4 w-4" />
+                  <span>{formatSalary(selectedJob.salaryMin, selectedJob.salaryMax)}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <Link href="/register">
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={() => setShowApplyDialog(false)}
+                    data-testid="button-register-apply"
+                  >
+                    Daftar untuk Melamar
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => setShowApplyDialog(false)}
+                    data-testid="button-login-apply"
+                  >
+                    Sudah punya akun? Masuk
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

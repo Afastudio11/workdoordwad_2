@@ -2104,11 +2104,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         offset,
       });
 
+      // Get stats by counting from separate queries
+      const aiResult = await storage.getJobs({ source: "ai" });
+      const directResult = await storage.getJobs({ source: "direct" });
+      const activeResult = await storage.getJobs({ isActive: true });
+
       res.json({
         jobs: result.jobs,
         total: result.total,
         page: pageNum,
         totalPages: Math.ceil(result.total / limitNum),
+        stats: {
+          aiJobs: aiResult.total,
+          directJobs: directResult.total,
+          activeJobs: activeResult.total,
+        },
       });
     } catch (error) {
       console.error("Error fetching admin jobs:", error);

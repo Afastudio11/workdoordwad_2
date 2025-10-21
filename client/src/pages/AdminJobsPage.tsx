@@ -50,6 +50,11 @@ interface JobsResponse {
   total: number;
   page: number;
   totalPages: number;
+  stats?: {
+    aiJobs: number;
+    directJobs: number;
+    activeJobs: number;
+  };
 }
 
 export default function AdminJobsPage() {
@@ -118,9 +123,9 @@ export default function AdminJobsPage() {
   };
 
   const jobs = data?.jobs || [];
-  const aiJobs = jobs.filter((j) => j.source === "ai").length;
-  const directJobs = jobs.filter((j) => j.source === "direct").length;
-  const activeJobs = jobs.filter((j) => j.isActive).length;
+  const aiJobs = data?.stats?.aiJobs || 0;
+  const directJobs = data?.stats?.directJobs || 0;
+  const activeJobs = data?.stats?.activeJobs || 0;
 
   return (
     <AdminLayout>

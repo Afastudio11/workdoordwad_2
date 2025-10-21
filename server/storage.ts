@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Job, type InsertJob, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist, type ApplicantNote, type InsertApplicantNote, type JobTemplate, type InsertJobTemplate } from "@shared/schema";
+import { type User, type InsertUser, type Job, type InsertJob, type Company, type InsertCompany, type Application, type InsertApplication, type Wishlist, type ApplicantNote, type InsertApplicantNote, type JobTemplate, type InsertJobTemplate, type ErrorLog, type InsertErrorLog, type VerificationRequest, type InsertVerificationRequest, type FraudReport, type InsertFraudReport } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // modify the interface with any CRUD methods
@@ -199,10 +199,25 @@ export interface IStorage {
     totalApplies: number;
     topJobs: Array<{ jobId: string; jobTitle: string; views: number; clicks: number }>;
   }>;
+  
+  // Error Logs
+  createErrorLog(log: any): Promise<any>;
+  getErrorLogs(filters?: { level?: string; resolved?: boolean; limit?: number; offset?: number }): Promise<{ logs: any[]; total: number }>;
+  resolveErrorLog(logId: string, adminId: string): Promise<any>;
+  
+  // Verification Requests  
+  createVerificationRequest(request: any): Promise<any>;
+  getVerificationRequests(filters?: { subjectType?: string; status?: string; limit?: number; offset?: number }): Promise<{ requests: any[]; total: number }>;
+  updateVerificationRequest(requestId: string, adminId: string, status: string, reviewNotes?: string): Promise<any>;
+  
+  // Fraud Reports
+  createFraudReport(report: any): Promise<any>;
+  getFraudReports(filters?: { status?: string; targetType?: string; limit?: number; offset?: number }): Promise<{ reports: any[]; total: number }>;
+  updateFraudReport(reportId: string, adminId: string, status: string, resolutionNotes?: string): Promise<any>;
 }
 
 import { db } from "./db";
-import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable, savedCandidates as savedCandidatesTable, aggregatedJobs as aggregatedJobsTable, adminActivityLogs as adminActivityLogsTable, systemSettings as systemSettingsTable, blogPosts as blogPostsTable, contentPages as contentPagesTable, jobEvents as jobEventsTable } from "@shared/schema";
+import { users as usersTable, jobs as jobsTable, companies as companiesTable, applications as applicationsTable, wishlists as wishlistsTable, applicantNotes as applicantNotesTable, jobTemplates as jobTemplatesTable, messages as messagesTable, notifications as notificationsTable, premiumTransactions as premiumTransactionsTable, savedCandidates as savedCandidatesTable, aggregatedJobs as aggregatedJobsTable, adminActivityLogs as adminActivityLogsTable, systemSettings as systemSettingsTable, blogPosts as blogPostsTable, contentPages as contentPagesTable, jobEvents as jobEventsTable, errorLogs as errorLogsTable, verificationRequests as verificationRequestsTable, fraudReports as fraudReportsTable } from "@shared/schema";
 import { eq, and, or, ilike, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export class DbStorage implements IStorage {

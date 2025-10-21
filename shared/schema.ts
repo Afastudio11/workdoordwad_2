@@ -39,6 +39,8 @@ export const users = pgTable("users", {
   
   // Admin fields
   isActive: boolean("is_active").default(true).notNull(),
+  blockedUntil: timestamp("blocked_until"),
+  blockedReason: text("blocked_reason"),
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -54,6 +56,8 @@ export const companies = pgTable("companies", {
   contactPhone: text("contact_phone"),
   logo: text("logo"),
   employeeCount: text("employee_count"),
+  isVerified: boolean("is_verified").default(false),
+  verifiedAt: timestamp("verified_at"),
   createdBy: varchar("created_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -245,6 +249,53 @@ export const jobEvents = pgTable("job_events", {
   userAgent: text("user_agent"),
   referer: text("referer"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Error Logs Table
+export const errorLogs = pgTable("error_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  level: text("level").notNull(), // error | warn | info
+  service: text("service").default("backend").notNull(),
+  endpoint: text("endpoint"),
+  statusCode: integer("status_code"),
+  message: text("message").notNull(),
+  stack: text("stack"),
+  meta: text("meta"), // JSON string for additional context
+  resolvedAt: timestamp("resolved_at"),
+  resolvedBy: varchar("resolved_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Verification Requests Table
+export const verificationRequests = pgTable("verification_requests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  subjectType: text("subject_type").notNull(), // user | company
+  subjectId: varchar("subject_id").notNull(),
+  status: text("status").default("pending").notNull(), // pending | approved | rejected
+  submittedBy: varchar("submitted_by").references(() => users.id).notNull(),
+  reviewerId: varchar("reviewer_id").references(() => users.id),
+  documents: text("documents"), // JSON array of document URLs
+  notes: text("notes"),
+  reviewNotes: text("review_notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewed_at"),
+});
+
+// Fraud Reports Table
+export const fraudReports = pgTable("fraud_reports", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  reporterId: varchar("reporter_id").references(() => users.id).notNull(),
+  targetType: text("target_type").notNull(), // job | company | user
+  targetId: varchar("target_id").notNull(),
+  reason: text("reason").notNull(), // fake_job | scam | inappropriate | spam | other
+  description: text("description").notNull(),
+  evidenceUrls: text("evidence_urls").array(),
+  status: text("status").default("pending").notNull(), // pending | in_review | resolved | dismissed
+  resolutionNotes: text("resolution_notes"),
+  resolvedBy: varchar("resolved_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  resolvedAt: timestamp("resolved_at"),
 });
 
 // Insert schemas
@@ -466,6 +517,30 @@ export type ContentPage = typeof contentPages.$inferSelect;
 
 export type InsertJobEvent = z.infer<typeof insertJobEventSchema>;
 export type JobEvent = typeof jobEvents.$inferSelect;
+
+// Error Log schemas
+export const insertErrorLogSchema = createInsertSchema(errorLogs).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertErrorLog = z.infer<typeof insertErrorLogSchema>;
+export type ErrorLog = typeof errorLogs.$inferSelect;
+
+// Verification Request schemas
+export const insertVerificationRequestSchema = createInsertSchema(verificationRequests).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertVerificationRequest = z.infer<typeof insertVerificationRequestSchema>;
+export type VerificationRequest = typeof verificationRequests.$inferSelect;
+
+// Fraud Report schemas
+export const insertFraudReportSchema = createInsertSchema(fraudReports).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertFraudReport = z.infer<typeof insertFraudReportSchema>;
+export type FraudReport = typeof fraudReports.$inferSelect;
 
 export type RegisterPekerja = z.infer<typeof registerPekerjaSchema>;
 export type RegisterPemberiKerja = z.infer<typeof registerPemberiKerjaSchema>;
