@@ -48,7 +48,7 @@ export default function NewJobDashboardPage() {
   });
   const [sortBy, setSortBy] = useState("last_updated");
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 20;
+  const jobsPerPage = 21;
 
   const queryParams = new URLSearchParams({
     page: currentPage.toString(),
@@ -173,12 +173,12 @@ export default function NewJobDashboardPage() {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
           {/* Sidebar */}
-          <div className="lg:col-span-3 space-y-4 md:space-y-6">
+          <div className="lg:col-span-2 space-y-4 md:space-y-6">
             <FilterSidebar onFilterChange={setFilters} />
           </div>
 
           {/* Job Listings */}
-          <div className="lg:col-span-9">
+          <div className="lg:col-span-10">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-black">Pekerjaan Tersedia</h2>
