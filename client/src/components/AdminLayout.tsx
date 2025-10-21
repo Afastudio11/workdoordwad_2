@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, FileCheck, Users, DollarSign, Settings, LogOut, Search, Bell, AlertTriangle, BookOpen, FileText, BarChart } from "lucide-react";
+import { LayoutDashboard, FileCheck, Users, DollarSign, Settings, LogOut, Search, Bell, AlertTriangle, BookOpen, FileText, BarChart, Briefcase } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -12,6 +12,7 @@ const DEV_MODE = import.meta.env.VITE_DEV_BYPASS_AUTH === "true" || import.meta.
 
 const navigation = [
   { name: "Ringkasan", href: "/admin/dashboard", icon: LayoutDashboard },
+  { name: "Kelola Loker", href: "/admin/jobs", icon: Briefcase },
   { name: "Moderasi Konten", href: "/admin/moderation", icon: FileCheck },
   { name: "Manajemen User", href: "/admin/users", icon: Users },
   { name: "Keuangan", href: "/admin/financial", icon: DollarSign },

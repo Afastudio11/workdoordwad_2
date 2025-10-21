@@ -32,6 +32,7 @@ import AdminSettingsPage from "@/pages/AdminSettingsPage";
 import AdminBlogManagerPage from "@/pages/AdminBlogManagerPage";
 import AdminContentPagesPage from "@/pages/AdminContentPagesPage";
 import AdminAnalyticsPage from "@/pages/AdminAnalyticsPage";
+import AdminJobsPage from "@/pages/AdminJobsPage";
 import ContentPage from "@/pages/ContentPage";
 import NotFound from "@/pages/not-found";
 
@@ -60,6 +61,7 @@ function Router() {
       <Route path="/contact" component={ContactPage} />
       <Route path="/page/:slug" component={ContentPage} />
       <Route path="/admin/dashboard" component={AdminDashboardPage} />
+      <Route path="/admin/jobs" component={AdminJobsPage} />
       <Route path="/admin/moderation" component={AdminModerationPage} />
       <Route path="/admin/users" component={AdminUsersPage} />
       <Route path="/admin/financial" component={AdminFinancialPage} />

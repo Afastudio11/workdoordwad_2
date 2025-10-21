@@ -2068,6 +2068,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin Job Management
+  app.get("/api/admin/jobs", requireAdmin, async (req, res) => {
+    try {
+      const { 
+        source, 
+        isActive, 
+        isFeatured,
+        keyword, 
+        location, 
+        page = "1", 
+        limit = "50" 
+      } = req.query;
+      
+      const pageNum = parseInt(page as string);
+      const limitNum = parseInt(limit as string);
+      const offset = (pageNum - 1) * limitNum;
+
+      const result = await storage.getJobs({
+        keyword: keyword as string,
+        location: location as string,
+        source: source as string,
+        isActive: isActive === "true" ? true : isActive === "false" ? false : undefined,
+        isFeatured: isFeatured === "true" ? true : isFeatured === "false" ? false : undefined,
+        sortBy: "createdAt",
+        limit: limitNum,
+        offset,
+      });
+
+      res.json({
+        jobs: result.jobs,
+        total: result.total,
+        page: pageNum,
+        totalPages: Math.ceil(result.total / limitNum),
+      });
+    } catch (error) {
+      console.error("Error fetching admin jobs:", error);
+      res.status(500).json({ error: "Failed to fetch jobs" });
+    }
+  });
+
+  app.patch("/api/admin/jobs/:id", requireAdmin, async (req, res) => {
+    try {
+      const job = await storage.updateJob(req.params.id, req.body);
+      res.json(job);
+    } catch (error) {
+      console.error("Error updating job:", error);
+      res.status(500).json({ error: "Failed to update job" });
+    }
+  });
+
+  app.delete("/api/admin/jobs/:id", requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteJob(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting job:", error);
+      res.status(500).json({ error: "Failed to delete job" });
+    }
+  });
+
   // User Management
   app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {
