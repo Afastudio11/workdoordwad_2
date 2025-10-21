@@ -5,7 +5,7 @@
  * - ROUTE: /find-job
  * - DO NOT import admin or employer components
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Loader2, AlertCircle } from "lucide-react";
 import JobCard from "@/components/JobCard";
 import FilterSidebar, { type FilterState } from "@/components/FilterSidebar";
@@ -35,6 +35,8 @@ interface Job {
 interface JobsResponse {
   jobs: Job[];
   total: number;
+  page: number;
+  totalPages: number;
 }
 
 export default function NewJobDashboardPage() {
@@ -46,26 +48,43 @@ export default function NewJobDashboardPage() {
   });
   const [sortBy, setSortBy] = useState("last_updated");
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 9;
+  const jobsPerPage = 20;
+
+  const queryParams = new URLSearchParams({
+    page: currentPage.toString(),
+    limit: jobsPerPage.toString(),
+    sortBy: sortBy,
+  });
+
+  if (searchKeyword) queryParams.append("keyword", searchKeyword);
+  if (salaryRange[0]) queryParams.append("salaryMin", salaryRange[0].toString());
+  if (salaryRange[1]) queryParams.append("salaryMax", salaryRange[1].toString());
+  
+  const allJobTypes = [...filters.workingSchedule, ...filters.employmentType];
+  if (allJobTypes.length > 0) {
+    allJobTypes.forEach(type => {
+      if (type) queryParams.append("jobType", type);
+    });
+  }
 
   const { data, isLoading, error } = useQuery<JobsResponse>({
-    queryKey: ["/api/jobs", { 
-      keyword: searchKeyword,
-      salaryMin: salaryRange[0],
-      salaryMax: salaryRange[1],
-      jobType: filters.workingSchedule.join(","),
-      sortBy 
-    }],
+    queryKey: ["/api/jobs", currentPage, searchKeyword, salaryRange, filters, sortBy],
+    queryFn: async () => {
+      const res = await fetch(`/api/jobs?${queryParams}`);
+      if (!res.ok) throw new Error("Failed to fetch jobs");
+      return res.json();
+    },
   });
 
   const jobs = data?.jobs || [];
   const totalJobs = data?.total || 0;
+  const totalPages = Math.ceil(totalJobs / jobsPerPage);
   
-  // Pagination
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const currentJobs = jobs;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchKeyword, salaryRange, filters]);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -243,17 +262,46 @@ export default function NewJobDashboardPage() {
                       Sebelumnya
                     </Button>
                     <div className="flex items-center gap-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      {currentPage > 1 && (
                         <Button
-                          key={page}
-                          variant={currentPage === page ? "default" : "outline"}
+                          variant="outline"
                           size="sm"
-                          onClick={() => setCurrentPage(page)}
-                          className={currentPage === page ? "bg-[#D4FF00] text-gray-900 hover:bg-[#c4ef00]" : ""}
+                          onClick={() => setCurrentPage(1)}
                         >
-                          {page}
+                          1
                         </Button>
-                      ))}
+                      )}
+                      {currentPage > 2 && totalPages > 3 && (
+                        <span className="px-2 text-gray-500">...</span>
+                      )}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        .filter(page => {
+                          if (page === 1 || page === totalPages) return false;
+                          return Math.abs(page - currentPage) <= 1;
+                        })
+                        .map((page) => (
+                          <Button
+                            key={page}
+                            variant={currentPage === page ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(page)}
+                            className={currentPage === page ? "bg-[#D4FF00] text-gray-900 hover:bg-[#c4ef00]" : ""}
+                          >
+                            {page}
+                          </Button>
+                        ))}
+                      {currentPage < totalPages - 1 && totalPages > 3 && (
+                        <span className="px-2 text-gray-500">...</span>
+                      )}
+                      {currentPage < totalPages && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(totalPages)}
+                        >
+                          {totalPages}
+                        </Button>
+                      )}
                     </div>
                     <Button
                       variant="outline"

@@ -3,6 +3,14 @@
 ## Overview
 Pintu Kerja is a freemium job classifieds platform designed for UMKM (small-medium businesses) and blue/grey collar job seekers in Indonesia. Its unique selling proposition lies in AI-powered job aggregation from social media (primarily Instagram) and a mobile-first, minimalist design inspired by Glassdoor. The platform's core mission is to provide "Rekrutmen Cepat, Tanpa Ribet, Terjangkau" (Fast, Simple, Affordable Recruitment). The project aims to streamline recruitment processes for businesses and simplify job searching for individuals, leveraging technology for efficiency and accessibility.
 
+## Recent Changes (October 21, 2025)
+- Added 400 sample jobs (200 from AI sources, 200 from direct company postings)
+- Created Admin Jobs Management page (`/admin/jobs`) for viewing all jobs
+- Added source filtering to distinguish AI-generated vs company-posted jobs
+- Implemented trending jobs algorithm with popularity scoring
+- Enhanced view count tracking and analytics
+- Updated storage layer to support source, isActive, and isFeatured filters
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 

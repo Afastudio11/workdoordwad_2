@@ -247,6 +247,9 @@ export class DbStorage implements IStorage {
     experience?: string;
     salaryMin?: number;
     salaryMax?: number;
+    source?: string;
+    isActive?: boolean;
+    isFeatured?: boolean;
     sortBy?: string;
     limit?: number;
     offset?: number;
@@ -254,7 +257,12 @@ export class DbStorage implements IStorage {
     let query = db.select().from(jobsTable).where(eq(jobsTable.isActive, true));
 
     // Apply filters
-    const conditions: any[] = [eq(jobsTable.isActive, true)];
+    const conditions: any[] = [];
+
+    // isActive filter - only add if explicitly specified
+    if (filters?.isActive !== undefined) {
+      conditions.push(eq(jobsTable.isActive, filters.isActive));
+    }
 
     if (filters?.keyword) {
       conditions.push(
@@ -281,6 +289,14 @@ export class DbStorage implements IStorage {
       conditions.push(eq(jobsTable.experience, filters.experience));
     }
 
+    if (filters?.source) {
+      conditions.push(eq(jobsTable.source, filters.source));
+    }
+
+    if (filters?.isFeatured !== undefined) {
+      conditions.push(eq(jobsTable.isFeatured, filters.isFeatured));
+    }
+
     if (filters?.salaryMin !== undefined) {
       conditions.push(gte(jobsTable.salaryMin, filters.salaryMin));
     }
@@ -289,13 +305,23 @@ export class DbStorage implements IStorage {
       conditions.push(lte(jobsTable.salaryMax, filters.salaryMax));
     }
 
-    const jobs = await db
-      .select()
-      .from(jobsTable)
-      .where(and(...conditions))
-      .orderBy(desc(jobsTable.createdAt))
-      .limit(filters?.limit || 50)
-      .offset(filters?.offset || 0);
+    let jobs;
+    if (conditions.length > 0) {
+      jobs = await db
+        .select()
+        .from(jobsTable)
+        .where(and(...conditions))
+        .orderBy(desc(jobsTable.createdAt))
+        .limit(filters?.limit || 50)
+        .offset(filters?.offset || 0);
+    } else {
+      jobs = await db
+        .select()
+        .from(jobsTable)
+        .orderBy(desc(jobsTable.createdAt))
+        .limit(filters?.limit || 50)
+        .offset(filters?.offset || 0);
+    }
 
     const enrichedJobs = await Promise.all(
       jobs.map(async (job) => {
@@ -307,10 +333,17 @@ export class DbStorage implements IStorage {
       })
     );
 
-    const [countResult] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(jobsTable)
-      .where(and(...conditions));
+    let countResult;
+    if (conditions.length > 0) {
+      [countResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(jobsTable)
+        .where(and(...conditions));
+    } else {
+      [countResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(jobsTable);
+    }
 
     return {
       jobs: enrichedJobs as (Job & { company: Company })[],

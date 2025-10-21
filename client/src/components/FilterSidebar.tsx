@@ -11,6 +11,13 @@ export interface FilterState {
   employmentType: string[];
 }
 
+const jobTypeMapping: Record<string, string> = {
+  "Waktu Penuh": "full-time",
+  "Paruh Waktu": "part-time",
+  "Kontrak": "contract",
+  "Freelance": "freelance",
+};
+
 export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   const [showWorkingSchedule, setShowWorkingSchedule] = useState(true);
   const [showEmploymentType, setShowEmploymentType] = useState(true);
@@ -51,20 +58,20 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
           </button>
           {showWorkingSchedule && (
             <div className="space-y-3">
-              {["Waktu Penuh", "Paruh Waktu", "Magang", "Kerja Proyek", "Sukarela"].map((item) => (
-                <div key={item} className="flex items-center space-x-2">
+              {Object.keys(jobTypeMapping).map((label) => (
+                <div key={label} className="flex items-center space-x-2">
                   <Checkbox
-                    id={`schedule-${item}`}
-                    checked={filters.workingSchedule.includes(item)}
+                    id={`schedule-${label}`}
+                    checked={filters.workingSchedule.includes(jobTypeMapping[label])}
                     onCheckedChange={(checked) =>
-                      handleFilterChange("workingSchedule", item, checked as boolean)
+                      handleFilterChange("workingSchedule", jobTypeMapping[label], checked as boolean)
                     }
                   />
                   <label
-                    htmlFor={`schedule-${item}`}
+                    htmlFor={`schedule-${label}`}
                     className="text-sm text-gray-700 cursor-pointer"
                   >
-                    {item}
+                    {label}
                   </label>
                 </div>
               ))}
@@ -72,47 +79,6 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
           )}
         </div>
 
-        {/* Employment type */}
-        <div>
-          <button
-            onClick={() => setShowEmploymentType(!showEmploymentType)}
-            className="flex items-center justify-between w-full mb-3"
-          >
-            <span className="text-sm font-medium text-black">Tipe Pekerjaan</span>
-            {showEmploymentType ? (
-              <ChevronUp className="h-4 w-4 text-gray-600" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-gray-600" />
-            )}
-          </button>
-          {showEmploymentType && (
-            <div className="space-y-3">
-              {[
-                "Hari Penuh",
-                "Jadwal Fleksibel",
-                "Kerja Shift",
-                "Kerja Jarak Jauh",
-                "Metode Shift",
-              ].map((item) => (
-                <div key={item} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`type-${item}`}
-                    checked={filters.employmentType.includes(item)}
-                    onCheckedChange={(checked) =>
-                      handleFilterChange("employmentType", item, checked as boolean)
-                    }
-                  />
-                  <label
-                    htmlFor={`type-${item}`}
-                    className="text-sm text-gray-700 cursor-pointer"
-                  >
-                    {item}
-                  </label>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
