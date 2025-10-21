@@ -49,6 +49,22 @@ export default function AdminDashboardPage() {
     queryKey: ["/api/admin/transactions", { limit: 10 }],
   });
 
+  const { data: errorLogsData } = useQuery<{ logs?: any[]; total: number }>({
+    queryKey: ["/api/admin/error-logs", { resolved: false, limit: 1 }],
+  });
+
+  const { data: verificationRequestsData } = useQuery<{ requests?: any[]; total: number }>({
+    queryKey: ["/api/admin/verification-requests", { status: "pending", limit: 1 }],
+  });
+
+  const { data: fraudReportsData } = useQuery<{ reports?: any[]; total: number }>({
+    queryKey: ["/api/admin/fraud-reports", { status: "pending", limit: 1 }],
+  });
+
+  const { data: blockedUsersData } = useQuery<{ users?: any[]; total: number }>({
+    queryKey: ["/api/admin/users", { limit: 1000 }],
+  });
+
   if (statsLoading || logsLoading) {
     return (
       <AdminLayout>
@@ -61,6 +77,10 @@ export default function AdminDashboardPage() {
 
   const pendingJobs = moderationData?.jobs || [];
   const recentTransactions = transactionsData?.transactions || [];
+  const blockedUsersCount = blockedUsersData?.users?.filter(u => !u.isActive || u.blockedUntil).length || 0;
+  const pendingVerificationsCount = verificationRequestsData?.total || 0;
+  const errorLogsCount = errorLogsData?.total || 0;
+  const pendingFraudReportsCount = fraudReportsData?.total || 0;
 
   return (
     <AdminLayout>
@@ -173,7 +193,7 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between mb-2">
                   <Shield className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                 </div>
-                <div className="text-2xl font-bold text-black dark:text-white">0</div>
+                <div className="text-2xl font-bold text-black dark:text-white" data-testid="stat-blocked-users">{blockedUsersCount}</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Users Diblokir</div>
               </CardContent>
             </Card>
@@ -183,7 +203,7 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between mb-2">
                   <FileWarning className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                 </div>
-                <div className="text-2xl font-bold text-black dark:text-white">0</div>
+                <div className="text-2xl font-bold text-black dark:text-white" data-testid="stat-pending-verifications">{pendingVerificationsCount}</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Verifikasi Tertunda</div>
               </CardContent>
             </Card>
@@ -193,7 +213,7 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between mb-2">
                   <AlertCircle className="w-8 h-8 text-gray-600 dark:text-gray-400" />
                 </div>
-                <div className="text-2xl font-bold text-black dark:text-white">0</div>
+                <div className="text-2xl font-bold text-black dark:text-white" data-testid="stat-error-logs">{errorLogsCount}</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Error Log Backend</div>
               </CardContent>
             </Card>
@@ -295,15 +315,17 @@ export default function AdminDashboardPage() {
               <div className="p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs font-bold">
-                      0
+                    <div className={`w-8 h-8 rounded-full ${pendingFraudReportsCount > 0 ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-gray-400 text-white'} flex items-center justify-center text-xs font-bold`}>
+                      {pendingFraudReportsCount}
                     </div>
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       Laporan Penipuan Baru
                     </span>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Tidak ada laporan tertunda</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {pendingFraudReportsCount > 0 ? `${pendingFraudReportsCount} laporan tertunda` : 'Tidak ada laporan tertunda'}
+                </p>
               </div>
 
               <div className="p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
@@ -323,15 +345,17 @@ export default function AdminDashboardPage() {
               <div className="p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs font-bold">
-                      0
+                    <div className={`w-8 h-8 rounded-full ${pendingVerificationsCount > 0 ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-gray-400 text-white'} flex items-center justify-center text-xs font-bold`}>
+                      {pendingVerificationsCount}
                     </div>
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       Verifikasi Perusahaan
                     </span>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Semua terverifikasi</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {pendingVerificationsCount > 0 ? `${pendingVerificationsCount} menunggu verifikasi` : 'Semua terverifikasi'}
+                </p>
               </div>
             </CardContent>
           </Card>

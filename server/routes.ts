@@ -2632,6 +2632,187 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ERROR LOGS MANAGEMENT ROUTES
+  app.get("/api/admin/error-logs", requireAdmin, async (req, res) => {
+    try {
+      const { level, resolved, limit, offset } = req.query;
+      const result = await storage.getErrorLogs({
+        level: level as string,
+        resolved: resolved === 'true' ? true : resolved === 'false' ? false : undefined,
+        limit: limit ? parseInt(limit as string) : 50,
+        offset: offset ? parseInt(offset as string) : 0,
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching error logs:", error);
+      res.status(500).json({ error: "Failed to fetch error logs" });
+    }
+  });
+
+  app.post("/api/admin/error-logs/:id/resolve", requireAdmin, async (req, res) => {
+    try {
+      const log = await storage.resolveErrorLog(req.params.id, req.session.userId!);
+      
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        "error_resolved",
+        "error_log",
+        req.params.id,
+        `Resolved error log`
+      );
+
+      res.json(log);
+    } catch (error) {
+      console.error("Error resolving error log:", error);
+      res.status(500).json({ error: "Failed to resolve error log" });
+    }
+  });
+
+  // VERIFICATION REQUESTS MANAGEMENT ROUTES
+  app.get("/api/admin/verification-requests", requireAdmin, async (req, res) => {
+    try {
+      const { subjectType, status, limit, offset } = req.query;
+      const result = await storage.getVerificationRequests({
+        subjectType: subjectType as string,
+        status: status as string,
+        limit: limit ? parseInt(limit as string) : 50,
+        offset: offset ? parseInt(offset as string) : 0,
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching verification requests:", error);
+      res.status(500).json({ error: "Failed to fetch verification requests" });
+    }
+  });
+
+  app.post("/api/admin/verification-requests", requireAdmin, async (req, res) => {
+    try {
+      const { subjectType, subjectId, documents, notes } = req.body;
+      
+      if (!subjectType || !subjectId) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const request = await storage.createVerificationRequest({
+        subjectType,
+        subjectId,
+        submittedBy: req.session.userId!,
+        documents: documents ? JSON.stringify(documents) : null,
+        notes,
+      });
+
+      res.status(201).json(request);
+    } catch (error) {
+      console.error("Error creating verification request:", error);
+      res.status(500).json({ error: "Failed to create verification request" });
+    }
+  });
+
+  app.patch("/api/admin/verification-requests/:id", requireAdmin, async (req, res) => {
+    try {
+      const { status, reviewNotes } = req.body;
+      
+      if (!status) {
+        return res.status(400).json({ error: "Status is required" });
+      }
+
+      const request = await storage.updateVerificationRequest(
+        req.params.id,
+        req.session.userId!,
+        status,
+        reviewNotes
+      );
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        `verification_${status}`,
+        "verification_request",
+        req.params.id,
+        `${status === 'approved' ? 'Approved' : 'Rejected'} verification request`
+      );
+
+      res.json(request);
+    } catch (error) {
+      console.error("Error updating verification request:", error);
+      res.status(500).json({ error: "Failed to update verification request" });
+    }
+  });
+
+  // FRAUD REPORTS MANAGEMENT ROUTES
+  app.get("/api/admin/fraud-reports", requireAdmin, async (req, res) => {
+    try {
+      const { status, targetType, limit, offset } = req.query;
+      const result = await storage.getFraudReports({
+        status: status as string,
+        targetType: targetType as string,
+        limit: limit ? parseInt(limit as string) : 50,
+        offset: offset ? parseInt(offset as string) : 0,
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching fraud reports:", error);
+      res.status(500).json({ error: "Failed to fetch fraud reports" });
+    }
+  });
+
+  app.post("/api/admin/fraud-reports", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const { targetType, targetId, reason, description, evidenceUrls } = req.body;
+      
+      if (!targetType || !targetId || !reason || !description) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const report = await storage.createFraudReport({
+        reporterId: req.session.userId,
+        targetType,
+        targetId,
+        reason,
+        description,
+        evidenceUrls: evidenceUrls || [],
+      });
+
+      res.status(201).json(report);
+    } catch (error) {
+      console.error("Error creating fraud report:", error);
+      res.status(500).json({ error: "Failed to create fraud report" });
+    }
+  });
+
+  app.patch("/api/admin/fraud-reports/:id", requireAdmin, async (req, res) => {
+    try {
+      const { status, resolutionNotes } = req.body;
+      
+      if (!status) {
+        return res.status(400).json({ error: "Status is required" });
+      }
+
+      const report = await storage.updateFraudReport(
+        req.params.id,
+        req.session.userId!,
+        status,
+        resolutionNotes
+      );
+
+      await storage.createAdminActivityLog(
+        req.session.userId!,
+        `fraud_report_${status}`,
+        "fraud_report",
+        req.params.id,
+        `Updated fraud report status to ${status}`
+      );
+
+      res.json(report);
+    } catch (error) {
+      console.error("Error updating fraud report:", error);
+      res.status(500).json({ error: "Failed to update fraud report" });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Setup WebSocket for real-time features

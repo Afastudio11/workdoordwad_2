@@ -1643,6 +1643,167 @@ export class DbStorage implements IStorage {
       })),
     };
   }
+
+  // Error Logs
+  async createErrorLog(log: any): Promise<any> {
+    const [errorLog] = await db.insert(errorLogsTable).values(log).returning();
+    return errorLog;
+  }
+
+  async getErrorLogs(filters?: { level?: string; resolved?: boolean; limit?: number; offset?: number }): Promise<{ logs: any[]; total: number }> {
+    const conditions = [];
+    
+    if (filters?.level) {
+      conditions.push(eq(errorLogsTable.level, filters.level));
+    }
+    
+    if (filters?.resolved !== undefined) {
+      if (filters.resolved) {
+        conditions.push(sql`${errorLogsTable.resolvedAt} IS NOT NULL`);
+      } else {
+        conditions.push(sql`${errorLogsTable.resolvedAt} IS NULL`);
+      }
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(errorLogsTable)
+      .where(whereClause);
+
+    const logs = await db
+      .select()
+      .from(errorLogsTable)
+      .where(whereClause)
+      .orderBy(desc(errorLogsTable.timestamp))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    return {
+      logs,
+      total: Number(countResult?.count || 0),
+    };
+  }
+
+  async resolveErrorLog(logId: string, adminId: string): Promise<any> {
+    const [log] = await db
+      .update(errorLogsTable)
+      .set({ resolvedAt: new Date(), resolvedBy: adminId })
+      .where(eq(errorLogsTable.id, logId))
+      .returning();
+    return log;
+  }
+
+  // Verification Requests
+  async createVerificationRequest(request: any): Promise<any> {
+    const [verificationRequest] = await db
+      .insert(verificationRequestsTable)
+      .values(request)
+      .returning();
+    return verificationRequest;
+  }
+
+  async getVerificationRequests(filters?: { subjectType?: string; status?: string; limit?: number; offset?: number }): Promise<{ requests: any[]; total: number }> {
+    const conditions = [];
+    
+    if (filters?.subjectType) {
+      conditions.push(eq(verificationRequestsTable.subjectType, filters.subjectType));
+    }
+    
+    if (filters?.status) {
+      conditions.push(eq(verificationRequestsTable.status, filters.status));
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(verificationRequestsTable)
+      .where(whereClause);
+
+    const requests = await db
+      .select()
+      .from(verificationRequestsTable)
+      .where(whereClause)
+      .orderBy(desc(verificationRequestsTable.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    return {
+      requests,
+      total: Number(countResult?.count || 0),
+    };
+  }
+
+  async updateVerificationRequest(requestId: string, adminId: string, status: string, reviewNotes?: string): Promise<any> {
+    const [request] = await db
+      .update(verificationRequestsTable)
+      .set({
+        status,
+        reviewerId: adminId,
+        reviewedAt: new Date(),
+        reviewNotes,
+      })
+      .where(eq(verificationRequestsTable.id, requestId))
+      .returning();
+    return request;
+  }
+
+  // Fraud Reports
+  async createFraudReport(report: any): Promise<any> {
+    const [fraudReport] = await db
+      .insert(fraudReportsTable)
+      .values(report)
+      .returning();
+    return fraudReport;
+  }
+
+  async getFraudReports(filters?: { status?: string; targetType?: string; limit?: number; offset?: number }): Promise<{ reports: any[]; total: number }> {
+    const conditions = [];
+    
+    if (filters?.status) {
+      conditions.push(eq(fraudReportsTable.status, filters.status));
+    }
+    
+    if (filters?.targetType) {
+      conditions.push(eq(fraudReportsTable.targetType, filters.targetType));
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(fraudReportsTable)
+      .where(whereClause);
+
+    const reports = await db
+      .select()
+      .from(fraudReportsTable)
+      .where(whereClause)
+      .orderBy(desc(fraudReportsTable.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    return {
+      reports,
+      total: Number(countResult?.count || 0),
+    };
+  }
+
+  async updateFraudReport(reportId: string, adminId: string, status: string, resolutionNotes?: string): Promise<any> {
+    const [report] = await db
+      .update(fraudReportsTable)
+      .set({
+        status,
+        resolvedBy: adminId,
+        resolvedAt: new Date(),
+        resolutionNotes,
+      })
+      .where(eq(fraudReportsTable.id, reportId))
+      .returning();
+    return report;
+  }
 }
 
 export const storage = new DbStorage();
