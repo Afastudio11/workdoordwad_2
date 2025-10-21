@@ -1,7 +1,16 @@
-import { MapPin, Building2, Clock } from "lucide-react";
-import { Link } from "wouter";
+import { MapPin, Building2, Clock, Calendar, DollarSign, Briefcase, FileText } from "lucide-react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface JobCardProps {
   id: string;
@@ -29,60 +38,209 @@ export default function JobCard({
   jobType = "Penuh Waktu",
 }: JobCardProps) {
   const category = tags[0] || "Umum";
+  const [showDetailDialog, setShowDetailDialog] = useState(false);
+
+  const { data: jobDetail, isLoading } = useQuery({
+    queryKey: ["/api/jobs", id],
+    enabled: showDetailDialog,
+  });
+
+  const job = jobDetail as any;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all" data-testid={`card-job-${id}`}>
-      <div className="flex items-start gap-3 mb-4">
-        {companyLogo ? (
-          <img 
-            src={companyLogo} 
-            alt={`${company} logo`}
-            className="w-12 h-12 object-cover rounded-lg border border-gray-200"
-            data-testid={`img-company-logo-${id}`}
-          />
-        ) : (
-          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
-            <Building2 className="h-6 w-6 text-gray-400" />
-          </div>
-        )}
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-black mb-2" data-testid={`text-job-title-${id}`}>{title}</h3>
-          <div className="flex items-center gap-1 text-sm text-gray-600 mb-1">
-            <MapPin className="h-4 w-4" />
-            <span data-testid={`text-location-${id}`}>{location}</span>
+    <>
+      <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all" data-testid={`card-job-${id}`}>
+        <div className="flex items-start gap-3 mb-4">
+          {companyLogo ? (
+            <img 
+              src={companyLogo} 
+              alt={`${company} logo`}
+              className="w-12 h-12 object-cover rounded-lg border border-gray-200"
+              data-testid={`img-company-logo-${id}`}
+            />
+          ) : (
+            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+              <Building2 className="h-6 w-6 text-gray-400" />
+            </div>
+          )}
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-black mb-2" data-testid={`text-job-title-${id}`}>{title}</h3>
+            <div className="flex items-center gap-1 text-sm text-gray-600 mb-1">
+              <MapPin className="h-4 w-4" />
+              <span data-testid={`text-location-${id}`}>{location}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex items-center gap-1 text-sm text-gray-700 mb-3">
-        <Building2 className="h-4 w-4" />
-        <span data-testid={`text-company-${id}`}>{company}</span>
-      </div>
-
-      <div className="flex items-center gap-3 text-sm text-gray-600 mb-3">
-        <div className="flex items-center gap-1">
-          <Clock className="h-4 w-4" />
-          <span>{date}</span>
+        <div className="flex items-center gap-1 text-sm text-gray-700 mb-3">
+          <Building2 className="h-4 w-4" />
+          <span data-testid={`text-company-${id}`}>{company}</span>
         </div>
-        <Badge variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-200">
-          {jobType}
-        </Badge>
-      </div>
 
-      <div className="text-sm text-gray-700 mb-4">
-        <span>{category}</span>
-        <span className="mx-2">•</span>
-        <span className="font-semibold text-black" data-testid={`text-salary-${id}`}>{salary}</span>
-      </div>
+        <div className="flex items-center gap-3 text-sm text-gray-600 mb-3">
+          <div className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            <span>{date}</span>
+          </div>
+          <Badge variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-200">
+            {jobType}
+          </Badge>
+        </div>
 
-      <Link href={`/jobs/${id}`}>
+        <div className="text-sm text-gray-700 mb-4">
+          <span>{category}</span>
+          <span className="mx-2">•</span>
+          <span className="font-semibold text-black" data-testid={`text-salary-${id}`}>{salary}</span>
+        </div>
+
         <Button 
+          onClick={() => setShowDetailDialog(true)}
           className="w-full bg-black text-white hover:bg-gray-800 rounded-full font-medium"
           data-testid={`button-apply-${id}`}
         >
           Lamar Sekarang
         </Button>
-      </Link>
-    </div>
+      </div>
+
+      {/* Job Detail Dialog */}
+      <Dialog open={showDetailDialog} onOpenChange={setShowDetailDialog}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-black dark:text-white">
+              {isLoading ? "Memuat..." : job?.title}
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
+              {isLoading ? "Mengambil detail pekerjaan..." : `${job?.company?.name} • ${job?.location}`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : job ? (
+            <div className="space-y-6 py-4">
+              {/* Company Info */}
+              <div className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                {job.company?.logo ? (
+                  <img 
+                    src={job.company.logo} 
+                    alt={`${job.company.name} logo`}
+                    className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                    <Building2 className="h-8 w-8 text-gray-400" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-black dark:text-white">{job.company?.name}</h3>
+                  {job.company?.industry && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{job.company.industry}</p>
+                  )}
+                  {job.company?.location && (
+                    <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      <MapPin className="h-4 w-4" />
+                      <span>{job.company.location}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Job Details */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Gaji</p>
+                    <p className="font-semibold text-black dark:text-white">{job.salary || salary}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <Briefcase className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Tipe Pekerjaan</p>
+                    <p className="font-semibold text-black dark:text-white">{job.jobType || jobType}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Lokasi</p>
+                    <p className="font-semibold text-black dark:text-white">{job.location}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Diposting</p>
+                    <p className="font-semibold text-black dark:text-white">{date}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              {job.description && (
+                <div>
+                  <h4 className="font-bold text-black dark:text-white mb-3 flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    Deskripsi Pekerjaan
+                  </h4>
+                  <div 
+                    className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.description }}
+                  />
+                </div>
+              )}
+
+              {/* Requirements */}
+              {job.requirements && (
+                <div>
+                  <h4 className="font-bold text-black dark:text-white mb-3">Persyaratan</h4>
+                  <div 
+                    className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.requirements }}
+                  />
+                </div>
+              )}
+
+              {/* Company Description */}
+              {job.company?.description && (
+                <div className="border-t pt-4">
+                  <h4 className="font-bold text-black dark:text-white mb-3">Tentang Perusahaan</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {job.company.description}
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Detail pekerjaan tidak ditemukan</p>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowDetailDialog(false)}
+              className="border-gray-200 dark:border-gray-800"
+            >
+              Tutup
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowDetailDialog(false);
+                console.log("Melamar pekerjaan:", id);
+              }}
+              className="bg-black text-white hover:bg-gray-800"
+              disabled={isLoading}
+            >
+              Lanjutkan Melamar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
