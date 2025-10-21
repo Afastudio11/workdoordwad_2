@@ -1,0 +1,368 @@
+# Prompt E2E Testing Website Rumah Loker
+
+## Konteks Project
+Saya memiliki website rumah loker yang mempertemukan pencari kerja dengan pemberi kerja. Website ini memiliki fitur-fitur utama:
+- Registrasi dan login untuk 2 tipe user (pencari kerja & pemberi kerja)
+- Pemberi kerja mendapat 3 slot gratis untuk posting lowongan
+- Setelah 3 slot habis, pemberi kerja harus berlangganan
+- Pencari kerja bisa melamar lowongan
+- Pemberi kerja bisa melihat kandidat yang melamar
+
+## Tugas Testing E2E
+
+### 1. Setup Testing Environment
+- Gunakan Playwright atau Cypress untuk automated testing
+- Buat 6 akun test (3 pencari kerja, 3 pemberi kerja)
+- Siapkan data test yang realistis
+
+### 2. Test Scenarios untuk PENCARI KERJA
+
+#### User Pencari Kerja 1 - "Fresh Graduate"
+```
+Email: freshgrad.test@email.com
+Nama: Budi Santoso
+Scenario:
+1. Registrasi dengan data lengkap
+2. Verifikasi email (jika ada)
+3. Login ke dashboard
+4. Lengkapi profil (upload CV, foto, bio)
+5. Browse lowongan kerja
+6. Gunakan filter (lokasi, gaji, jenis pekerjaan)
+7. Simpan 3 lowongan ke favorit
+8. Apply ke 2 lowongan dengan cover letter berbeda
+9. Cek status lamaran
+10. Update profil
+11. Logout
+```
+
+#### User Pencari Kerja 2 - "Experienced Professional"
+```
+Email: senior.test@email.com
+Nama: Sarah Wijaya
+Scenario:
+1. Registrasi cepat via Google/LinkedIn (jika ada)
+2. Import data dari LinkedIn (jika ada)
+3. Setup job alert dengan kriteria spesifik
+4. Search lowongan dengan keyword kombinasi
+5. Apply ke 5 lowongan berbeda
+6. Upload portfolio/dokumen tambahan
+7. Cek notifikasi
+8. Withdraw 1 application
+9. Update preferensi pekerjaan
+10. Test responsive di mobile view
+```
+
+#### User Pencari Kerja 3 - "Job Hopper"
+```
+Email: jobhopper.test@email.com
+Nama: Ahmad Prakoso
+Scenario:
+1. Registrasi dengan data minimal
+2. Skip beberapa step profil
+3. Langsung apply tanpa lengkapi profil
+4. Dapat notifikasi untuk lengkapi profil
+5. Lengkapi profil bertahap
+6. Apply ke 10+ lowongan (test pagination)
+7. Test search dengan typo
+8. Test filter yang tidak ada hasil
+9. Report lowongan mencurigakan
+10. Delete account dan re-register
+```
+
+### 3. Test Scenarios untuk PEMBERI KERJA
+
+#### User Pemberi Kerja 1 - "Startup"
+```
+Email: startup.hr@email.com
+Company: TechStart Indonesia
+Scenario:
+1. Registrasi sebagai pemberi kerja
+2. Verifikasi dokumen perusahaan (jika ada)
+3. Setup company profile lengkap
+4. Post lowongan pertama (Software Developer)
+5. Post lowongan kedua (UI/UX Designer)
+6. Post lowongan ketiga (Marketing Manager)
+7. Cek kandidat yang masuk
+8. Filter & sort kandidat
+9. Download CV kandidat
+10. Shortlist 5 kandidat
+11. Reject 2 kandidat dengan template message
+12. Coba post lowongan ke-4 (harus muncul prompt upgrade)
+13. Lihat paket berlangganan
+14. JANGAN upgrade dulu
+```
+
+#### User Pemberi Kerja 2 - "Corporate"
+```
+Email: corporate.hr@email.com
+Company: PT Maju Bersama
+Scenario:
+1. Registrasi dengan data perusahaan lengkap
+2. Post 3 lowongan sekaligus (bulk posting)
+3. Edit lowongan yang sudah dipost
+4. Close 1 lowongan
+5. Re-open lowongan yang di-close
+6. Lihat analytics per lowongan
+7. Export data kandidat ke Excel/CSV
+8. Coba post lowongan ke-4
+9. Pilih paket berlangganan Premium
+10. Simulasi pembayaran (test payment gateway)
+11. Post 5 lowongan tambahan setelah upgrade
+12. Test fitur premium (highlight listing, dll)
+13. Schedule interview dengan kandidat (jika ada)
+```
+
+#### User Pemberi Kerja 3 - "SME"
+```
+Email: sme.owner@email.com
+Company: CV Usaha Mandiri
+Scenario:
+1. Registrasi dengan error handling (salah format, dll)
+2. Post lowongan dengan minimum info
+3. Save as draft
+4. Continue draft dan publish
+5. Terima 20+ aplikasi (test performance)
+6. Bulk action kandidat (reject all, shortlist all)
+7. Search kandidat dengan filter complex
+8. Duplicate lowongan existing
+9. Post sampai limit 3
+10. Test upgrade dengan metode pembayaran berbeda
+11. Cancel subscription (jika ada)
+12. Downgrade ke free plan
+```
+
+### 4. Test Cross-User Interactions
+
+```
+Scenario Interaksi:
+1. Pemberi Kerja 1 post lowongan → Pencari Kerja 1,2,3 apply
+2. Pemberi Kerja 1 shortlist Pencari 1 → Pencari 1 dapat notifikasi
+3. Pemberi Kerja 1 reject Pencari 2 → Pencari 2 dapat notifikasi
+4. Pencari 3 withdraw application → Pemberi 1 lihat status updated
+5. Test real-time update (websocket jika ada)
+6. Test email notification delivery
+7. Test in-app notification
+```
+
+### 5. Performance & Security Testing
+
+```
+Performance Tests:
+- Load 100 job listings bersamaan
+- Upload CV size 10MB
+- Search dengan 1000+ hasil
+- Concurrent user: 6 users aktif bersamaan
+- Response time setiap halaman < 3 detik
+- Test di network slow 3G
+
+Security Tests:
+- SQL Injection di search box
+- XSS di form input
+- CSRF token validation
+- File upload validation (only PDF, DOC)
+- Rate limiting untuk apply job
+- Password strength enforcement
+- Session timeout
+- Unauthorized access attempts
+```
+
+### 6. Responsive & Browser Testing
+
+```
+Devices:
+- Desktop: Chrome, Firefox, Safari, Edge
+- Tablet: iPad, Android Tablet
+- Mobile: iPhone 12, Samsung Galaxy S21
+- Test orientation change
+- Test offline mode handling
+```
+
+### 7. Edge Cases & Error Handling
+
+```
+Test Cases:
+1. Register dengan email yang sudah ada
+2. Login dengan password salah 5x
+3. Apply job yang sudah closed
+4. Upload file corrupt
+5. Payment gagal saat upgrade
+6. Internet putus saat submit form
+7. Browser back button setelah submit
+8. Multiple tab same user
+9. Session expired handling
+10. 404 page handling
+```
+
+### 8. Reporting Format
+
+Buat laporan dengan format:
+
+```markdown
+# E2E Test Report - Rumah Loker Website
+
+## Executive Summary
+- Total Test Cases: X
+- Passed: X
+- Failed: X
+- Blocked: X
+- Success Rate: X%
+
+## Critical Issues Found
+1. [CRITICAL] Issue description
+   - Steps to reproduce
+   - Expected result
+   - Actual result
+   - Screenshot/Video
+   - Suggested fix
+
+## Test Results by Module
+
+### Registration & Authentication
+✅ Pencari Kerja Registration
+❌ Pemberi Kerja Email Verification - [Issue: timeout]
+✅ Login with valid credentials
+⚠️ Password reset - [Warning: slow response]
+
+### Job Posting (Pemberi Kerja)
+[Detail results...]
+
+### Job Application (Pencari Kerja)
+[Detail results...]
+
+### Payment & Subscription
+[Detail results...]
+
+## Performance Metrics
+- Average page load: X seconds
+- Slowest page: X (X seconds)
+- API response time: X ms average
+
+## Recommendations
+1. Priority 1 (Critical - Fix immediately)
+2. Priority 2 (High - Fix before launch)
+3. Priority 3 (Medium - Can fix post-launch)
+4. Priority 4 (Low - Nice to have)
+
+## Test Environment
+- URL: [website-url]
+- Test Date: [date]
+- Browser/Device: [details]
+- Test Data: [cleanup required?]
+```
+
+### 9. Automation Script Structure
+
+```javascript
+// Struktur test automation yang harus dibuat
+
+describe('Rumah Loker E2E Tests', () => {
+  
+  beforeAll(async () => {
+    // Setup test data
+    // Clear previous test data
+  });
+
+  describe('Pencari Kerja Flow', () => {
+    test('Fresh Graduate Complete Journey', async () => {
+      // Implementation
+    });
+    
+    test('Experienced Professional Journey', async () => {
+      // Implementation
+    });
+    
+    test('Job Hopper Journey', async () => {
+      // Implementation
+    });
+  });
+
+  describe('Pemberi Kerja Flow', () => {
+    test('Startup HR Journey', async () => {
+      // Implementation
+    });
+    
+    test('Corporate HR with Premium', async () => {
+      // Implementation
+    });
+    
+    test('SME Owner Journey', async () => {
+      // Implementation
+    });
+  });
+
+  describe('Integration Tests', () => {
+    test('Job Post to Application Flow', async () => {
+      // Implementation
+    });
+    
+    test('Payment and Upgrade Flow', async () => {
+      // Implementation
+    });
+  });
+
+  describe('Edge Cases', () => {
+    // All edge case tests
+  });
+
+  afterAll(async () => {
+    // Cleanup test data
+    // Generate report
+  });
+});
+```
+
+## Instruksi untuk Replit
+
+1. **Setup Project:**
+   - Install Playwright: `npm install @playwright/test`
+   - Buat folder structure: `/tests`, `/reports`, `/test-data`
+
+2. **Run Tests:**
+   ```bash
+   # Run all tests
+   npx playwright test
+
+   # Run dengan UI mode untuk debugging
+   npx playwright test --ui
+
+   # Run specific test
+   npx playwright test -g "Pencari Kerja"
+
+   # Generate report
+   npx playwright show-report
+   ```
+
+3. **Jika Menemukan Bug:**
+   - Screenshot otomatis saat test gagal
+   - Log detail error ke console
+   - Buat ticket/issue dengan template
+   - Suggest fix jika memungkinkan
+
+4. **Auto-fix untuk Issues Umum:**
+   ```javascript
+   // Jika timeout, auto-retry dengan wait longer
+   // Jika element not found, check alternative selectors
+   // Jika API error, log request/response detail
+   ```
+
+## Success Criteria
+
+Website dianggap LULUS testing jika:
+- ✅ Success rate > 95%
+- ✅ No critical bugs
+- ✅ All payment flows work
+- ✅ Page load < 3 seconds
+- ✅ Mobile responsive 100%
+- ✅ Core user journeys complete without error
+- ✅ Data integrity maintained
+- ✅ Security tests passed
+
+## Output yang Diharapkan
+
+1. Test report lengkap dalam format HTML dan Markdown
+2. Screenshots untuk setiap failed test
+3. Video recording untuk critical user journeys
+4. Performance metrics dashboard
+5. List of bugs dengan prioritas
+6. Suggested fixes untuk setiap issue
+7. Test data cleanup script
