@@ -27,7 +27,6 @@ const categories = ["Desainer", "Pengembang Web", "Insinyur Perangkat Lunak", "D
 
 export default function JobCircularsSection() {
   const [keyword, setKeyword] = useState("");
-  const [category, setCategory] = useState("Pengembangan Web");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const [showApplyDialog, setShowApplyDialog] = useState(false);
@@ -41,8 +40,7 @@ export default function JobCircularsSection() {
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (keyword) params.append("keyword", keyword);
-    if (category) params.append("category", category);
-    setLocation(`/jobs${params.toString() ? `?${params.toString()}` : ""}`);
+    setLocation(`/find-job${params.toString() ? `?${params.toString()}` : ""}`);
   };
 
   const handleCategoryClick = (cat: string) => {
@@ -96,16 +94,6 @@ export default function JobCircularsSection() {
                 onChange={(e) => setKeyword(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <select 
-                className="px-4 py-2.5 bg-transparent text-black text-sm border-l border-gray-200 focus:outline-none cursor-pointer"
-                data-testid="select-category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option>Pengembangan Web</option>
-                <option>Desain</option>
-                <option>Pemasaran</option>
-              </select>
               <button 
                 className="w-10 h-10 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors flex items-center justify-center flex-shrink-0"
                 data-testid="button-search"
