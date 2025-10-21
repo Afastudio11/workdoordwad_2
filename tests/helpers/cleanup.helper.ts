@@ -47,7 +47,7 @@ export class CleanupHelper {
     try {
       const query = `
         DELETE FROM applications 
-        WHERE user_id IN (
+        WHERE applicant_id IN (
           SELECT id FROM users WHERE email LIKE '%@email.com%'
         )
       `;
