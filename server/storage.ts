@@ -1015,7 +1015,28 @@ export class DbStorage implements IStorage {
   }
 
   async getUserPremiumBalance(userId: string): Promise<{ jobBoosts: number; featuredSlots: number }> {
-    return { jobBoosts: 0, featuredSlots: 0 };
+    const transactions = await db
+      .select()
+      .from(premiumTransactionsTable)
+      .where(eq(premiumTransactionsTable.userId, userId));
+
+    let jobBoosts = 0;
+    let featuredSlots = 0;
+
+    for (const transaction of transactions) {
+      if (transaction.status === "completed") {
+        if (transaction.type === "job_booster") {
+          jobBoosts += transaction.amount;
+        } else if (transaction.type === "slot_package") {
+          featuredSlots += transaction.amount;
+        }
+      }
+    }
+
+    return { 
+      jobBoosts: Math.max(0, jobBoosts),
+      featuredSlots: Math.max(0, featuredSlots)
+    };
   }
 
   async getSavedCandidates(employerId: string): Promise<any[]> {

@@ -189,17 +189,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication API - Register Admin (only for first admin or by existing admin)
   app.post("/api/auth/register/admin", async (req, res) => {
     try {
-      // Check if this is bootstrap (first admin) or authenticated admin creating new admin
-      const isBootstrap = !req.session.userId;
-      
-      if (!isBootstrap && req.session.userId) {
+      // Check if user is authenticated
+      if (req.session.userId) {
         // If user is authenticated, must be admin to create new admin
         const currentUser = await storage.getUser(req.session.userId);
         if (!currentUser || currentUser.role !== "admin") {
           return res.status(403).json({ error: "Hanya admin yang dapat membuat akun admin baru" });
         }
       } else {
-        // Bootstrap: Check if any admin already exists
+        // Bootstrap scenario: Check if any admin already exists
         const existingAdmins = await storage.getUsersByRole("admin");
         if (existingAdmins.length > 0) {
           return res.status(403).json({ error: "Admin sudah ada. Silakan login sebagai admin untuk membuat admin baru" });
@@ -855,7 +853,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/applications/:id/status", async (req, res) => {
+  app.patch("/api/applications/:id/status", async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -1946,13 +1944,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ADMIN ROUTES
   // Middleware untuk check admin role
   const requireAdmin = async (req: Request, res: Response, next: any) => {
-    const DEV_MODE = process.env.NODE_ENV === 'development';
-    
-    if (DEV_MODE) {
-      next();
-      return;
-    }
-    
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
