@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings2, Save, Database, Activity, AlertCircle, CheckCircle } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Settings2, Save, Database, Activity, AlertCircle, CheckCircle, FileWarning } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -23,6 +24,8 @@ export default function AdminSettingsPage() {
   const { toast } = useToast();
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [healthStatus, setHealthStatus] = useState<Record<string, boolean>>({});
+  const [errorLogLevel, setErrorLogLevel] = useState<string>("all");
+  const [errorLogResolved, setErrorLogResolved] = useState<string>("all");
 
   const { data: allSettings, isLoading } = useQuery({
     queryKey: ["/api/admin/settings"],
@@ -40,6 +43,17 @@ export default function AdminSettingsPage() {
 
   const { data: activityLogs } = useQuery({
     queryKey: ["/api/admin/activity-logs"],
+  });
+
+  const { data: errorLogsData, isLoading: errorLogsLoading } = useQuery({
+    queryKey: [
+      "/api/admin/error-logs",
+      {
+        level: errorLogLevel !== "all" ? errorLogLevel : undefined,
+        resolved: errorLogResolved === "true" ? true : errorLogResolved === "false" ? false : undefined,
+        limit: 100,
+      },
+    ],
   });
 
   const handleUpdateSetting = async (key: string) => {
@@ -92,7 +106,25 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const handleResolveError = async (errorLogId: string) => {
+    try {
+      await apiRequest(`/api/admin/error-logs/${errorLogId}/resolve`, "POST");
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/error-logs"] });
+      toast({
+        title: "Error Log Diselesaikan",
+        description: "Error log telah ditandai sebagai selesai",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Gagal Menyelesaikan Error",
+        description: error.message || "Terjadi kesalahan saat menyelesaikan error log",
+      });
+    }
+  };
+
   const logs = (activityLogs as any)?.logs || [];
+  const errorLogs = (errorLogsData as any)?.logs || [];
 
   if (isLoading) {
     return (
@@ -133,6 +165,14 @@ export default function AdminSettingsPage() {
             >
               <Activity className="w-4 h-4 mr-2" />
               System Health
+            </TabsTrigger>
+            <TabsTrigger
+              value="error-logs"
+              className="data-[state=active]:bg-white dark:data-[state=active]:bg-black"
+              data-testid="tab-error-logs"
+            >
+              <FileWarning className="w-4 h-4 mr-2" />
+              Error Logs
             </TabsTrigger>
             <TabsTrigger
               value="logs"
@@ -303,6 +343,148 @@ export default function AdminSettingsPage() {
                     </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="error-logs">
+            <Card className="bg-white dark:bg-black border-gray-200 dark:border-gray-800">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-black dark:text-white flex items-center gap-2">
+                    <FileWarning className="w-5 h-5 text-primary" />
+                    Error Logs Backend
+                  </CardTitle>
+                  <div className="flex gap-2">
+                    <Select value={errorLogLevel} onValueChange={setErrorLogLevel}>
+                      <SelectTrigger className="w-[140px] bg-white dark:bg-black">
+                        <SelectValue placeholder="Level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Semua Level</SelectItem>
+                        <SelectItem value="error">Error</SelectItem>
+                        <SelectItem value="warning">Warning</SelectItem>
+                        <SelectItem value="info">Info</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={errorLogResolved} onValueChange={setErrorLogResolved}>
+                      <SelectTrigger className="w-[140px] bg-white dark:bg-black">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Semua Status</SelectItem>
+                        <SelectItem value="false">Belum Selesai</SelectItem>
+                        <SelectItem value="true">Selesai</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {errorLogsLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : (
+                  <div className="rounded-md border border-gray-200 dark:border-gray-800">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-gray-50 dark:bg-gray-900">
+                          <TableHead className="text-black dark:text-white font-semibold">
+                            Waktu
+                          </TableHead>
+                          <TableHead className="text-black dark:text-white font-semibold">
+                            Level
+                          </TableHead>
+                          <TableHead className="text-black dark:text-white font-semibold">
+                            Message
+                          </TableHead>
+                          <TableHead className="text-black dark:text-white font-semibold">
+                            Stack Trace
+                          </TableHead>
+                          <TableHead className="text-black dark:text-white font-semibold">
+                            Status
+                          </TableHead>
+                          <TableHead className="text-black dark:text-white font-semibold">
+                            Aksi
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {errorLogs.length > 0 ? (
+                          errorLogs.map((log: any) => (
+                            <TableRow key={log.id} data-testid={`error-log-${log.id}`}>
+                              <TableCell className="text-gray-600 dark:text-gray-400">
+                                {new Date(log.createdAt).toLocaleString('id-ID')}
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    log.level === 'error'
+                                      ? "destructive"
+                                      : log.level === 'warning'
+                                      ? "secondary"
+                                      : "default"
+                                  }
+                                  className={
+                                    log.level === 'info' ? "bg-primary text-black" : ""
+                                  }
+                                >
+                                  {log.level.toUpperCase()}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="max-w-md">
+                                <p className="text-black dark:text-white font-medium truncate">
+                                  {log.message}
+                                </p>
+                              </TableCell>
+                              <TableCell className="max-w-xs">
+                                <p className="text-gray-600 dark:text-gray-400 text-xs truncate font-mono">
+                                  {log.stackTrace || 'N/A'}
+                                </p>
+                              </TableCell>
+                              <TableCell>
+                                {log.resolved ? (
+                                  <Badge className="bg-primary text-black">
+                                    <CheckCircle className="w-3 h-3 mr-1" />
+                                    Selesai
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="secondary">
+                                    <AlertCircle className="w-3 h-3 mr-1" />
+                                    Belum Selesai
+                                  </Badge>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {!log.resolved && (
+                                  <Button
+                                    size="sm"
+                                    className="bg-primary text-black hover:bg-primary/90"
+                                    onClick={() => handleResolveError(log.id)}
+                                    data-testid={`button-resolve-${log.id}`}
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-1" />
+                                    Tandai Selesai
+                                  </Button>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell
+                              colSpan={6}
+                              className="text-center text-gray-500 dark:text-gray-500 py-8"
+                            >
+                              Tidak ada error log
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

@@ -33,6 +33,8 @@ import AdminBlogManagerPage from "@/pages/AdminBlogManagerPage";
 import AdminContentPagesPage from "@/pages/AdminContentPagesPage";
 import AdminAnalyticsPage from "@/pages/AdminAnalyticsPage";
 import AdminJobsPage from "@/pages/AdminJobsPage";
+import AdminVerificationPage from "@/pages/AdminVerificationPage";
+import AdminFraudReportsPage from "@/pages/AdminFraudReportsPage";
 import ContentPage from "@/pages/ContentPage";
 import NotFound from "@/pages/not-found";
 
@@ -66,6 +68,8 @@ function Router() {
       <Route path="/admin/users" component={AdminUsersPage} />
       <Route path="/admin/financial" component={AdminFinancialPage} />
       <Route path="/admin/settings" component={AdminSettingsPage} />
+      <Route path="/admin/verifications" component={AdminVerificationPage} />
+      <Route path="/admin/fraud-reports" component={AdminFraudReportsPage} />
       <Route path="/admin/blog" component={AdminBlogManagerPage} />
       <Route path="/admin/content" component={AdminContentPagesPage} />
       <Route path="/admin/analytics" component={AdminAnalyticsPage} />
