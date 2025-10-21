@@ -76,6 +76,7 @@ export const jobs = pgTable("jobs", {
   source: text("source").default("direct").notNull(), // direct | instagram | aggregated
   sourceUrl: text("source_url"),
   postedBy: varchar("posted_by").references(() => users.id),
+  viewCount: integer("view_count").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

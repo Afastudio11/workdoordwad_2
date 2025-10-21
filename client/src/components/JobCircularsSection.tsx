@@ -1,69 +1,24 @@
 import { MapPin, Clock, Search, Briefcase, DollarSign } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
+import { id as localeId } from "date-fns/locale";
 
-const jobCirculars = [
-  {
-    company: "Apple Inc.",
-    position: "Senior UI Designer",
-    location: "Jakarta, Indonesia",
-    type: "Waktu Penuh",
-    category: "Pengembangan Web",
-    salary: "Rp 8-10 juta",
-    postedTime: "5 Jam yang Lalu",
-    logo: "🍎"
-  },
-  {
-    company: "Fiverr",
-    position: "PHP Developer",
-    location: "Bandung, Indonesia",
-    type: "Waktu Penuh",
-    category: "Desain Grafis",
-    salary: "Rp 7-9 juta",
-    postedTime: "5 Jam yang Lalu",
-    logo: "🎯"
-  },
-  {
-    company: "Behance",
-    position: "Senior Software Engineer",
-    location: "Surabaya, Indonesia",
-    type: "Waktu Penuh",
-    category: "Rekayasa Perangkat Lunak",
-    salary: "Rp 10-15 juta",
-    postedTime: "5 Jam yang Lalu",
-    logo: "🔷"
-  },
-  {
-    company: "Apple Inc.",
-    position: "User Experience Researcher",
-    location: "Jakarta, Indonesia",
-    type: "Waktu Penuh",
-    category: "Pengembangan Web",
-    salary: "Rp 9-12 juta",
-    postedTime: "5 Jam yang Lalu",
-    logo: "🍎"
-  },
-  {
-    company: "Apple Inc.",
-    position: "Project Manager",
-    location: "Jakarta, Indonesia",
-    type: "Waktu Penuh",
-    category: "Pengembangan Web",
-    salary: "Rp 12-18 juta",
-    postedTime: "5 Jam yang Lalu",
-    logo: "🍎"
-  },
-  {
-    company: "Behance",
-    position: "Product Designer",
-    location: "Yogyakarta, Indonesia",
-    type: "Waktu Penuh",
-    category: "Desain Produk",
-    salary: "Rp 7-10 juta",
-    postedTime: "5 Jam yang Lalu",
-    logo: "🔷"
-  }
-];
+interface Job {
+  id: string;
+  title: string;
+  location: string;
+  jobType: string;
+  industry?: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  createdAt: string;
+  company: {
+    name: string;
+    logo?: string;
+  };
+}
 
 const categories = ["Desainer", "Pengembang Web", "Insinyur Perangkat Lunak", "Dokter", "Pemasaran"];
 
@@ -72,6 +27,10 @@ export default function JobCircularsSection() {
   const [category, setCategory] = useState("Pengembangan Web");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [, setLocation] = useLocation();
+
+  const { data: jobsData, isLoading } = useQuery<{ jobs: Job[], total: number }>({
+    queryKey: ["/api/jobs/trending", { limit: 6 }],
+  });
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -84,12 +43,32 @@ export default function JobCircularsSection() {
     setActiveCategory(cat);
   };
 
+  const jobs = jobsData?.jobs || [];
   const filteredJobs = activeCategory
-    ? jobCirculars.filter(job => 
-        job.position.toLowerCase().includes(activeCategory.toLowerCase()) ||
-        job.category.toLowerCase().includes(activeCategory.toLowerCase())
+    ? jobs.filter(job => 
+        job.title.toLowerCase().includes(activeCategory.toLowerCase()) ||
+        job.industry?.toLowerCase().includes(activeCategory.toLowerCase())
       )
-    : jobCirculars;
+    : jobs;
+  
+  const formatSalary = (min?: number, max?: number) => {
+    if (!min && !max) return "Negosiasi";
+    if (min && max) {
+      return `Rp ${(min / 1000000).toFixed(0)}-${(max / 1000000).toFixed(0)} juta`;
+    }
+    if (min) return `Rp ${(min / 1000000).toFixed(0)} juta+`;
+    return "Negosiasi";
+  };
+
+  const formatJobType = (type: string) => {
+    const types: Record<string, string> = {
+      "full-time": "Waktu Penuh",
+      "part-time": "Paruh Waktu",
+      "contract": "Kontrak",
+      "freelance": "Freelance"
+    };
+    return types[type] || type;
+  };
 
   return (
     <section className="py-12 md:py-20 bg-white">
@@ -162,65 +141,77 @@ export default function JobCircularsSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredJobs.map((job, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-md transition-all duration-300"
-              data-testid={`job-card-${index}`}
-            >
-              {/* Position and Location */}
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold text-black mb-2">
-                  {job.position}
-                </h3>
-                <div className="flex items-center gap-1 text-sm text-gray-500">
-                  <MapPin className="h-3.5 w-3.5" />
-                  <span>{job.location}</span>
-                </div>
-              </div>
-              
-              {/* Company */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="text-2xl">{job.logo}</div>
-                <span className="text-sm font-medium text-black">{job.company}</span>
-              </div>
-
-              {/* Time and Type */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center gap-1 text-xs text-gray-500">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span>{job.postedTime}</span>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-gray-500">
-                  <Briefcase className="h-3.5 w-3.5" />
-                  <span>{job.type}</span>
-                </div>
-              </div>
-
-              {/* Category and Salary */}
-              <div className="flex items-center gap-2 mb-5">
-                <div className="flex items-center gap-1 text-xs text-gray-500">
-                  <Briefcase className="h-3.5 w-3.5" />
-                  <span>{job.category}</span>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-gray-500">
-                  <DollarSign className="h-3.5 w-3.5" />
-                  <span>{job.salary}</span>
-                </div>
-              </div>
-
-              {/* Apply Button */}
-              <Link 
-                href="/register"
-                className="block w-full py-2.5 bg-black text-white font-medium text-sm rounded-md hover:bg-gray-800 transition-colors text-center"
-                data-testid={`button-apply-${index}`}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-gray-500">Memuat lowongan...</div>
+          </div>
+        ) : filteredJobs.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Belum ada lowongan tersedia</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredJobs.map((job, index) => (
+              <div
+                key={job.id}
+                className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-md transition-all duration-300"
+                data-testid={`job-card-${index}`}
               >
-                Lamar Sekarang
-              </Link>
-            </div>
-          ))}
-        </div>
+                {/* Position and Location */}
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-black mb-2">
+                    {job.title}
+                  </h3>
+                  <div className="flex items-center gap-1 text-sm text-gray-500">
+                    <MapPin className="h-3.5 w-3.5" />
+                    <span>{job.location}</span>
+                  </div>
+                </div>
+                
+                {/* Company */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="text-2xl">🏢</div>
+                  <span className="text-sm font-medium text-black">{job.company.name}</span>
+                </div>
+
+                {/* Time and Type */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true, locale: localeId })}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <Briefcase className="h-3.5 w-3.5" />
+                    <span>{formatJobType(job.jobType)}</span>
+                  </div>
+                </div>
+
+                {/* Category and Salary */}
+                <div className="flex items-center gap-2 mb-5">
+                  {job.industry && (
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <Briefcase className="h-3.5 w-3.5" />
+                      <span>{job.industry}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <DollarSign className="h-3.5 w-3.5" />
+                    <span>{formatSalary(job.salaryMin, job.salaryMax)}</span>
+                  </div>
+                </div>
+
+                {/* Apply Button */}
+                <Link 
+                  href={`/jobs/${job.id}`}
+                  className="block w-full py-2.5 bg-black text-white font-medium text-sm rounded-md hover:bg-gray-800 transition-colors text-center"
+                  data-testid={`button-apply-${index}`}
+                >
+                  Lamar Sekarang
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Load More Button */}
         <div className="text-center mt-12">

@@ -358,6 +358,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/jobs/trending", async (req, res) => {
+    try {
+      const { limit = "6" } = req.query;
+      const limitNum = parseInt(limit as string);
+      
+      const allJobs = await storage.getJobs({ limit: 100, offset: 0 });
+      
+      const jobsWithScore = await Promise.all(
+        allJobs.jobs.map(async (job) => {
+          const applications = await storage.getJobApplications(job.id);
+          const applicationCount = applications.length;
+          
+          const daysOld = Math.floor(
+            (Date.now() - new Date(job.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+          );
+          
+          const recencyMultiplier = Math.max(0, 30 - daysOld);
+          
+          const featuredBonus = job.isFeatured ? 50 : 0;
+          
+          const viewCount = job.viewCount || 0;
+          
+          const popularityScore =
+            applicationCount * 5 +
+            viewCount * 0.3 +
+            recencyMultiplier +
+            featuredBonus;
+          
+          return {
+            ...job,
+            popularityScore,
+            stats: {
+              applicationCount,
+              viewCount,
+              daysOld,
+            },
+          };
+        })
+      );
+      
+      jobsWithScore.sort((a, b) => b.popularityScore - a.popularityScore);
+      
+      const trendingJobs = jobsWithScore.slice(0, limitNum);
+      
+      res.json({
+        jobs: trendingJobs,
+        total: trendingJobs.length,
+      });
+    } catch (error) {
+      console.error("Error fetching trending jobs:", error);
+      res.status(500).json({ error: "Failed to fetch trending jobs" });
+    }
+  });
+
+  app.post("/api/jobs/:id/view", async (req, res) => {
+    try {
+      const job = await storage.getJobById(req.params.id);
+      
+      if (!job) {
+        return res.status(404).json({ error: "Job not found" });
+      }
+      
+      const newViewCount = (job.viewCount || 0) + 1;
+      await storage.updateJob(job.id, { viewCount: newViewCount });
+      
+      res.json({ viewCount: newViewCount });
+    } catch (error) {
+      console.error("Error updating view count:", error);
+      res.status(500).json({ error: "Failed to update view count" });
+    }
+  });
+
   app.get("/api/jobs/:id", async (req, res) => {
     try {
       const job = await storage.getJobById(req.params.id);
