@@ -228,7 +228,7 @@ export default function RegisterEmployerPage() {
           title: "Registrasi Berhasil!",
           description: "Akun Anda telah dibuat. Selamat datang di Pintu Kerja!",
         });
-        navigate("/dashboard/employer");
+        navigate("/employer/dashboard");
       } else {
         const error = await response.json();
         throw new Error(error.error || "Registrasi gagal");
