@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupWebSocket, broadcastNotification } from "./websocket";
 import { csrfProtection } from "./csrf";
+import { sanitizeHtml, sanitizePlainText } from "./sanitize";
 import bcrypt from "bcrypt";
 import multer from "multer";
 import path from "path";
@@ -28,6 +29,7 @@ import {
 declare module "express-session" {
   interface SessionData {
     userId: string;
+    viewedJobs?: Record<string, number>;
   }
 }
 
@@ -205,6 +207,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const existingAdmins = await storage.getUsersByRole("admin");
         if (existingAdmins.length > 0) {
           return res.status(403).json({ error: "Admin sudah ada. Silakan login sebagai admin untuk membuat admin baru" });
+        }
+        
+        // First admin creation requires bootstrap token
+        const bootstrapToken = req.body.bootstrapToken || req.headers['x-bootstrap-token'];
+        const expectedToken = process.env.ADMIN_BOOTSTRAP_TOKEN;
+        
+        if (!expectedToken) {
+          return res.status(500).json({ error: "Server configuration error: ADMIN_BOOTSTRAP_TOKEN not set" });
+        }
+        
+        if (bootstrapToken !== expectedToken) {
+          return res.status(403).json({ error: "Invalid bootstrap token" });
         }
       }
 
@@ -422,12 +436,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/jobs/:id/view", async (req, res) => {
     try {
+      // Validate job ID format
+      if (!req.params.id || typeof req.params.id !== 'string') {
+        return res.status(400).json({ error: "Invalid job ID" });
+      }
+
       const job = await storage.getJobById(req.params.id);
       
       if (!job) {
         return res.status(404).json({ error: "Job not found" });
       }
       
+      // Session-based view tracking to prevent spam
+      if (!req.session.viewedJobs) {
+        req.session.viewedJobs = {};
+      }
+      
+      const lastViewed = req.session.viewedJobs[req.params.id];
+      const now = Date.now();
+      const VIEW_COOLDOWN_MS = 60 * 1000; // 1 minute cooldown per job
+      
+      // Check if user viewed this job recently
+      if (lastViewed && (now - lastViewed) < VIEW_COOLDOWN_MS) {
+        // Return current count without incrementing
+        return res.json({ viewCount: job.viewCount || 0, message: "View already counted" });
+      }
+      
+      // Update session tracking
+      req.session.viewedJobs[req.params.id] = now;
+      
+      // Increment view count
       const newViewCount = (job.viewCount || 0) + 1;
       await storage.updateJob(job.id, { viewCount: newViewCount });
       
@@ -485,10 +523,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const validatedData = insertJobSchema.parse(req.body);
-      const job = await storage.createJob({
+      
+      const sanitizedData = {
         ...validatedData,
+        description: sanitizeHtml(validatedData.description),
+        requirements: validatedData.requirements ? sanitizeHtml(validatedData.requirements) : null,
         postedBy: req.session.userId,
-      });
+      };
+      
+      const job = await storage.createJob(sanitizedData);
 
       res.status(201).json(job);
     } catch (error: any) {
@@ -519,7 +562,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate input to prevent SQL injection
       const validatedData = updateJobSchema.parse(req.body);
       
-      const updatedJob = await storage.updateJob(req.params.id, validatedData);
+      const sanitizedData: any = { ...validatedData };
+      if (validatedData.description) {
+        sanitizedData.description = sanitizeHtml(validatedData.description);
+      }
+      if (validatedData.requirements) {
+        sanitizedData.requirements = sanitizeHtml(validatedData.requirements);
+      }
+      
+      const updatedJob = await storage.updateJob(req.params.id, sanitizedData);
       res.json(updatedJob);
     } catch (error: any) {
       console.error("Error updating job:", error);
@@ -969,9 +1020,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Note cannot be empty" });
       }
 
+      const sanitizedNote = sanitizeHtml(note.trim());
+
       const newNote = await storage.createApplicationNote({
         applicationId: req.params.id,
-        note: note.trim(),
+        note: sanitizedNote,
         createdBy: req.session.userId,
       });
 
@@ -1007,7 +1060,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Note cannot be empty" });
       }
 
-      const updatedNote = await storage.updateApplicationNote(req.params.id, note.trim());
+      const sanitizedNote = sanitizeHtml(note.trim());
+      const updatedNote = await storage.updateApplicationNote(req.params.id, sanitizedNote);
       res.json(updatedNote);
     } catch (error) {
       console.error("Error updating note:", error);
@@ -1085,7 +1139,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate input to prevent SQL injection
       const validatedData = updateCompanySchema.parse(req.body);
       
-      const updatedCompany = await storage.updateCompany(company.id, validatedData);
+      const sanitizedData: any = { ...validatedData };
+      if (validatedData.description) {
+        sanitizedData.description = sanitizeHtml(validatedData.description);
+      }
+      
+      const updatedCompany = await storage.updateCompany(company.id, sanitizedData);
       res.json(updatedCompany);
     } catch (error: any) {
       console.error("Error updating company:", error);
@@ -1123,7 +1182,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const validatedData = updateProfileSchema.parse(req.body);
-      const updatedUser = await storage.updateUserProfile(req.session.userId, validatedData);
+      
+      const sanitizedData: any = { ...validatedData };
+      if (validatedData.bio) {
+        sanitizedData.bio = sanitizePlainText(validatedData.bio);
+      }
+      if (validatedData.address) {
+        sanitizedData.address = sanitizePlainText(validatedData.address);
+      }
+      
+      const updatedUser = await storage.updateUserProfile(req.session.userId, sanitizedData);
       
       if (!updatedUser) {
         return res.status(404).json({ error: "User not found" });
@@ -1292,7 +1360,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         jobId: validatedData.jobId,
         applicantId: req.session.userId,
         cvUrl: user.cvUrl,
-        coverLetter: validatedData.coverLetter,
+        coverLetter: validatedData.coverLetter ? sanitizeHtml(validatedData.coverLetter) : null,
       });
 
       res.status(201).json(application);
@@ -1545,10 +1613,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Data tidak lengkap" });
       }
 
+      const sanitizedContent = sanitizePlainText(content);
+      
       const message = await storage.sendMessage(
         req.session.userId,
         receiverId,
-        content,
+        sanitizedContent,
         applicationId,
         jobId
       );
