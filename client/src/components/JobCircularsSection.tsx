@@ -1,4 +1,4 @@
-import { MapPin, Clock, Search, Briefcase, DollarSign } from "lucide-react";
+import { MapPin, Clock, Search, Briefcase, Coins } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -189,7 +189,7 @@ export default function JobCircularsSection() {
                     </div>
                   )}
                   <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <DollarSign className="h-3.5 w-3.5" />
+                    <Coins className="h-3.5 w-3.5" />
                     <span>{formatSalary(job.salaryMin, job.salaryMax)}</span>
                   </div>
                 </div>
@@ -246,7 +246,7 @@ export default function JobCircularsSection() {
                   <span>{selectedJob.location}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <DollarSign className="h-4 w-4" />
+                  <Coins className="h-4 w-4" />
                   <span>{formatSalary(selectedJob.salaryMin, selectedJob.salaryMax)}</span>
                 </div>
               </div>

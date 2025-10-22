@@ -62,7 +62,7 @@ export default function OverviewPage() {
       case "shortlist":
         return <CheckCircle className="h-5 w-5 text-green-500" />;
       case "saved":
-        return <Heart className="h-5 w-5 text-[#D4FF00]" />;
+        return <Heart className="h-5 w-5 text-black dark:text-[#D4FF00]" />;
       default:
         return <Clock className="h-5 w-5 text-gray-500" />;
     }
@@ -81,7 +81,11 @@ export default function OverviewPage() {
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="p-6 border-gray-200 bg-white">
+        <Card 
+          className="p-6 border-gray-200 bg-white cursor-pointer hover:border-[#D4FF00] hover:shadow-md transition-all"
+          onClick={() => window.location.hash = 'applications'}
+          data-testid="card-total-applications"
+        >
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-600">Total Lamaran</h3>
             <Briefcase className="h-5 w-5 text-gray-400" />
@@ -92,7 +96,11 @@ export default function OverviewPage() {
           <p className="text-sm text-gray-500 mt-1">Semua lamaran yang dikirim</p>
         </Card>
 
-        <Card className="p-6 border-gray-200 bg-white">
+        <Card 
+          className="p-6 border-gray-200 bg-white cursor-pointer hover:border-[#D4FF00] hover:shadow-md transition-all"
+          onClick={() => window.location.hash = 'applications'}
+          data-testid="card-pending-applications"
+        >
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-600">Sedang Diproses</h3>
             <Clock className="h-5 w-5 text-gray-400" />
@@ -103,7 +111,11 @@ export default function OverviewPage() {
           <p className="text-sm text-gray-500 mt-1">Menunggu review</p>
         </Card>
 
-        <Card className="p-6 border-gray-200 bg-white">
+        <Card 
+          className="p-6 border-gray-200 bg-white cursor-pointer hover:border-[#D4FF00] hover:shadow-md transition-all"
+          onClick={() => window.location.hash = 'applications'}
+          data-testid="card-shortlisted-applications"
+        >
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-600">Diundang Interview</h3>
             <CheckCircle className="h-5 w-5 text-gray-400" />
@@ -114,7 +126,11 @@ export default function OverviewPage() {
           <p className="text-sm text-gray-500 mt-1">Lamaran di-shortlist</p>
         </Card>
 
-        <Card className="p-6 border-gray-200 bg-white">
+        <Card 
+          className="p-6 border-gray-200 bg-white cursor-pointer hover:border-[#D4FF00] hover:shadow-md transition-all"
+          onClick={() => window.location.hash = 'wishlist'}
+          data-testid="card-saved-jobs"
+        >
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-600">Pekerjaan Favorit</h3>
             <Heart className="h-5 w-5 text-gray-400" />
@@ -269,15 +285,15 @@ export default function OverviewPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Tips Pencarian Kerja</h2>
         <ul className="space-y-3 text-sm text-gray-700">
           <li className="flex items-start gap-2">
-            <span className="text-[#D4FF00] mt-1">●</span>
+            <span className="text-black mt-1">●</span>
             <span>Perbarui profil dan CV Anda secara berkala untuk menarik perhatian recruiter</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-[#D4FF00] mt-1">●</span>
+            <span className="text-black mt-1">●</span>
             <span>Kirim lamaran yang disesuaikan dengan setiap posisi untuk meningkatkan peluang</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-[#D4FF00] mt-1">●</span>
+            <span className="text-black mt-1">●</span>
             <span>Aktifkan notifikasi job alert untuk mendapat informasi lowongan terbaru</span>
           </li>
         </ul>

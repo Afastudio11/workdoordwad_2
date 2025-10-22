@@ -6,7 +6,7 @@
  * - DO NOT import admin or employer components
  */
 import { useQuery } from "@tanstack/react-query";
-import { Bell, Briefcase, MapPin, DollarSign, Clock, Settings as SettingsIcon } from "lucide-react";
+import { Bell, Briefcase, MapPin, Coins, Clock, Settings as SettingsIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -160,7 +160,7 @@ export default function JobAlertPage() {
                           </div>
                           {notification.job.salaryMin && notification.job.salaryMax && (
                             <div className="flex items-center gap-1">
-                              <DollarSign className="w-3 h-3" />
+                              <Coins className="w-3 h-3" />
                               <span>
                                 {formatSalary(notification.job.salaryMin)} - {formatSalary(notification.job.salaryMax)}
                               </span>

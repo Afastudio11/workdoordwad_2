@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Eye, Edit, Trash2, MapPin, DollarSign } from "lucide-react";
+import { Briefcase, Eye, Edit, Trash2, MapPin, Coins } from "lucide-react";
 import { Link } from "wouter";
 import type { Job, Company } from "@shared/schema";
 
@@ -92,7 +92,7 @@ export default function MyJobsPage() {
                   </div>
                   {(job.salaryMin || job.salaryMax) && (
                     <div className="flex items-center gap-1">
-                      <DollarSign className="w-4 h-4" />
+                      <Coins className="w-4 h-4" />
                       {job.salaryMin && job.salaryMax
                         ? `Rp ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
                         : job.salaryMin

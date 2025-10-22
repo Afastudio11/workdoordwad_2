@@ -1,4 +1,4 @@
-import { MapPin, Building2, Clock, Calendar, DollarSign, Briefcase, FileText } from "lucide-react";
+import { MapPin, Building2, Clock, Calendar, Coins, Briefcase, FileText } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -150,28 +150,28 @@ export default function JobCard({
               {/* Job Details */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <DollarSign className="h-5 w-5 text-primary" />
+                  <Coins className="h-5 w-5 text-black dark:text-primary" />
                   <div>
                     <p className="caption">Gaji</p>
                     <p className="font-semibold text-heading">{job.salary || salary}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <Briefcase className="h-5 w-5 text-primary" />
+                  <Briefcase className="h-5 w-5 text-black dark:text-primary" />
                   <div>
                     <p className="caption">Tipe Pekerjaan</p>
                     <p className="font-semibold text-heading">{job.jobType || jobType}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <MapPin className="h-5 w-5 text-primary" />
+                  <MapPin className="h-5 w-5 text-black dark:text-primary" />
                   <div>
                     <p className="caption">Lokasi</p>
                     <p className="font-semibold text-heading">{job.location}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                  <Calendar className="h-5 w-5 text-primary" />
+                  <Calendar className="h-5 w-5 text-black dark:text-primary" />
                   <div>
                     <p className="caption">Diposting</p>
                     <p className="font-semibold text-heading">{date}</p>
@@ -183,7 +183,7 @@ export default function JobCard({
               {job.description && (
                 <div>
                   <h4 className="heading-4 text-heading mb-3 flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-primary" />
+                    <FileText className="h-5 w-5 text-black dark:text-primary" />
                     Deskripsi Pekerjaan
                   </h4>
                   <div 

@@ -6,7 +6,7 @@
  * - DO NOT import admin or employer components
  */
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Briefcase, MapPin, Heart, Zap, Sparkles, DollarSign, AlertCircle, RefreshCw } from "lucide-react";
+import { Briefcase, MapPin, Heart, Zap, Sparkles, Coins, AlertCircle, RefreshCw } from "lucide-react";
 import { Link } from "wouter";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -168,8 +168,8 @@ export default function RecommendationsPage() {
                     Rekomendasi
                   </Badge>
                   <div className="flex items-start gap-4 mb-3">
-                    <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Briefcase className="w-6 h-6 text-primary" />
+                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Briefcase className="w-6 h-6 text-black" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-1" data-testid={`recommendation-title-${index}`}>
@@ -192,7 +192,7 @@ export default function RecommendationsPage() {
                     </div>
                     {job.salaryMin && job.salaryMax && (
                       <div className="flex items-center gap-1 font-semibold text-gray-900">
-                        <DollarSign className="w-4 w-4" />
+                        <Coins className="w-4 w-4" />
                         <span data-testid={`recommendation-salary-${index}`}>
                           {formatSalary(job.salaryMin)} - {formatSalary(job.salaryMax)}
                         </span>

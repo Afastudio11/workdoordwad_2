@@ -1,4 +1,4 @@
-import { Clock, Sparkles, DollarSign, Smartphone } from "lucide-react";
+import { Clock, Sparkles, Coins, Smartphone } from "lucide-react";
 
 const features = [
   {
@@ -12,7 +12,7 @@ const features = [
     description: "AI mengumpulkan lowongan dari Instagram, diverifikasi tim editor"
   },
   {
-    icon: DollarSign,
+    icon: Coins,
     title: "Gratis Selamanya",
     description: "Posting lowongan tanpa biaya untuk UMKM Indonesia"
   },
@@ -43,7 +43,7 @@ export default function FeaturesSection() {
               data-testid={`feature-card-${index}`}
             >
               <div className="flex-shrink-0">
-                <feature.icon className="h-8 w-8 text-primary" />
+                <feature.icon className="h-8 w-8 text-white" />
               </div>
               <div>
                 <h3 className="heading-4 text-white mb-2" data-testid={`feature-title-${index}`}>

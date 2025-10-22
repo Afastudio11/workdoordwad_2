@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Briefcase, Users, Clock, DollarSign, TrendingUp, AlertCircle, 
+  Briefcase, Users, Clock, Coins, TrendingUp, AlertCircle, 
   CheckCircle, ArrowRight, Eye, Shield, FileWarning 
 } from "lucide-react";
 
@@ -117,7 +117,7 @@ export default function AdminDashboardPage() {
                       <span className="text-gray-500">dari bulan lalu</span>
                     </div>
                   </div>
-                  <DollarSign className="w-10 h-10 text-gray-300 dark:text-gray-700" />
+                  <Coins className="w-10 h-10 text-gray-300 dark:text-gray-700" />
                 </div>
               </CardContent>
             </Card>
@@ -251,7 +251,7 @@ export default function AdminDashboardPage() {
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                          <DollarSign className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                          <Coins className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                         </div>
                         <div>
                           <p className="text-sm font-medium text-black dark:text-white">

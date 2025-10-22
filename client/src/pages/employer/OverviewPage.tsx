@@ -55,7 +55,7 @@ export default function OverviewPage() {
       case "status_change":
         return <CheckCircle className="h-5 w-5 text-green-500" />;
       case "new_job":
-        return <Briefcase className="h-5 w-5 text-[#D4FF00]" />;
+        return <Briefcase className="h-5 w-5 text-black" />;
       default:
         return <Clock className="h-5 w-5 text-gray-500" />;
     }
@@ -301,15 +301,15 @@ export default function OverviewPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-3">Tips Rekrutmen</h2>
         <ul className="space-y-2 text-sm text-gray-700">
           <li className="flex items-start gap-2">
-            <span className="text-[#D4FF00] mt-1">●</span>
+            <span className="text-black mt-1">●</span>
             <span>Perbarui lowongan secara berkala untuk meningkatkan visibilitas</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-[#D4FF00] mt-1">●</span>
+            <span className="text-black mt-1">●</span>
             <span>Tanggapi lamaran dalam 48 jam untuk mendapatkan kandidat terbaik</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-[#D4FF00] mt-1">●</span>
+            <span className="text-black mt-1">●</span>
             <span>Gunakan deskripsi pekerjaan yang jelas dan detail untuk menarik kandidat yang tepat</span>
           </li>
         </ul>

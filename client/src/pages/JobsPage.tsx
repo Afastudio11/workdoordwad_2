@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Loader2, MapPin, Briefcase, DollarSign } from "lucide-react";
+import { Search, Loader2, MapPin, Briefcase, Coins } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import Header from "@/components/Header";
@@ -124,7 +124,7 @@ export default function JobsPage() {
                         </div>
                         {(job.salaryMin || job.salaryMax) && (
                           <div className="flex items-center gap-1">
-                            <DollarSign className="h-4 w-4" />
+                            <Coins className="h-4 w-4" />
                             <span>{formatSalary(job.salaryMin, job.salaryMax)}</span>
                           </div>
                         )}

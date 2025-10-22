@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import { 
   Briefcase, Search, Filter, Eye, MapPin, Building2, 
-  Calendar, DollarSign, Trash2, ToggleLeft, ToggleRight,
+  Calendar, Coins, Trash2, ToggleLeft, ToggleRight,
   ChevronLeft, ChevronRight
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -319,7 +319,7 @@ export default function AdminJobsPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
-                              <DollarSign className="w-4 h-4" />
+                              <Coins className="w-4 h-4" />
                               {formatSalary(job.salaryMin, job.salaryMax)}
                             </div>
                           </TableCell>

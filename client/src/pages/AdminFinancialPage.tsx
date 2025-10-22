@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DollarSign, Download } from "lucide-react";
+import { Coins, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -141,7 +141,7 @@ export default function AdminFinancialPage() {
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Total Pendapatan
               </CardTitle>
-              <DollarSign className="w-5 h-5 text-primary" />
+              <Coins className="w-5 h-5 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-primary" data-testid="stat-total-revenue">

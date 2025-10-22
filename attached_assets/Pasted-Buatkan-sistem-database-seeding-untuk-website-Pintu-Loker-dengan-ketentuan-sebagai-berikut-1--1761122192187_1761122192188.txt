@@ -1,0 +1,87 @@
+Buatkan sistem database seeding untuk website "Pintu Loker" dengan ketentuan sebagai berikut:
+
+## 1. Buat 3 Akun Testing Permanen
+Buat seeder/migration file yang otomatis membuat 3 akun dengan role berbeda:
+
+### Akun 1 - Admin
+- Email: admin@pintuloker.com
+- Password: Admin123!
+- Role: Administrator
+- Nama: Admin Pintu Loker
+- Status: Active
+
+### Akun 2 - Pemberi Kerja (Employer)
+- Email: employer@company.com
+- Password: Employer123!
+- Role: Employer
+- Nama Perusahaan: PT Teknologi Maju
+- Nama PIC: Budi Santoso
+- No. Telepon: 081234567890
+- Status: Active & Verified
+
+### Akun 3 - Pekerja (Job Seeker)
+- Email: pekerja@email.com
+- Password: Pekerja123!
+- Role: Job Seeker
+- Nama: Siti Nurhaliza
+- No. Telepon: 082345678901
+- Pendidikan: S1 Teknik Informatika
+- Status: Active
+
+## 2. Buat 90 Lowongan Kerja (Job Seeding)
+Buat seeder yang menggenerate 90 lowongan kerja dengan data yang beragam:
+
+### Variasi Data yang Dibutuhkan:
+- **Posisi**: Web Developer, Mobile Developer, UI/UX Designer, Data Analyst, Digital Marketing, Content Writer, Sales Executive, Customer Service, Accounting, HRD, Project Manager, Product Manager, Backend Developer, Frontend Developer, Full Stack Developer, DevOps Engineer, QA Tester, Business Analyst, Graphic Designer, Video Editor, Social Media Specialist, SEO Specialist, dll (buat variasi 30 posisi berbeda, masing-masing muncul 3x)
+
+- **Perusahaan**: Buat 30 nama perusahaan berbeda (startup tech, UMKM, corporate, agency, dll)
+
+- **Lokasi**: Jakarta, Surabaya, Bandung, Yogyakarta, Semarang, Medan, Bali, Makassar, Malang, Tangerang, Bekasi, Bogor, Depok, Solo (distribusi merata)
+
+- **Tipe Pekerjaan**: Full Time, Part Time, Freelance, Internship, Contract (distribusi: 50 Full Time, 15 Part Time, 10 Freelance, 10 Internship, 5 Contract)
+
+- **Level**: Entry Level, Junior, Mid Level, Senior, Manager (distribusi merata)
+
+- **Gaji**: Range 3.000.000 - 20.000.000 (sesuaikan dengan level dan posisi, jangan gunakan simbol dollar)
+
+- **Deskripsi**: Buat deskripsi pekerjaan yang realistis untuk setiap posisi (minimal 100 kata)
+
+- **Kualifikasi**: Buat 5-8 poin kualifikasi untuk setiap posisi
+
+- **Status**: 70 lowongan aktif, 15 closed, 5 pending moderation
+
+- **Tanggal Posting**: Distribusikan dari 60 hari yang lalu hingga hari ini
+
+- **Deadline**: 30-90 hari dari tanggal posting
+
+- **Sumber**: 60 lowongan dari perusahaan manual, 30 lowongan dari AI scraping (tandai dengan flag berbeda)
+
+## 3. Implementasi Permanent Seeding
+### Buat File Seeder/Migration yang:
+- Otomatis berjalan saat pertama kali setup database
+- Mengecek apakah data sudah ada (jangan duplikat ketika re-import)
+- Bisa dijalankan manual dengan command (contoh: `npm run seed` atau `php artisan db:seed`)
+- Menyimpan password dengan hashing yang aman (bcrypt/argon2)
+
+### Struktur File:
+- Pisahkan file seeder: `users.seeder.js/php`, `jobs.seeder.js/php`
+- Buat dokumentasi cara menjalankan seeder
+- Tambahkan script di package.json atau composer.json untuk easy execution
+
+## 4. Data Tambahan (Optional tapi Direkomendasikan)
+- Buat 10-15 data aplikasi lamaran dari akun pekerja ke berbagai lowongan (untuk testing dashboard pekerja)
+- Buat 5-10 lowongan yang difavoritkan oleh pekerja
+- Buat notifikasi sample untuk masing-masing role
+
+## 5. Backup & Export
+- Buat file SQL dump atau JSON export dari database hasil seeding
+- Sertakan instruksi cara import database jika pindah ke Replit baru
+- Pastikan data bisa di-reset ke kondisi awal dengan mudah
+
+## 6. Output yang Diharapkan
+- File seeder lengkap dengan kode yang bisa langsung dijalankan
+- File README.md dengan instruksi setup dan cara menjalankan seeder
+- List credentials untuk login (email & password ketiga akun)
+- Dokumentasi struktur database
+
+Prioritaskan membuat data yang realistis dan beragam agar bisa digunakan untuk testing dan demo yang baik.
