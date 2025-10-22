@@ -36,6 +36,7 @@ import AdminAnalyticsPage from "@/pages/AdminAnalyticsPage";
 import AdminJobsPage from "@/pages/AdminJobsPage";
 import AdminVerificationPage from "@/pages/AdminVerificationPage";
 import AdminFraudReportsPage from "@/pages/AdminFraudReportsPage";
+import AdminCompaniesPage from "@/pages/AdminCompaniesPage";
 import ContentPage from "@/pages/ContentPage";
 import JobsPage from "@/pages/JobsPage";
 import NotFound from "@/pages/not-found";
@@ -184,6 +185,12 @@ function Router() {
       <Route path="/admin/analytics">
         <ProtectedRoute allowedRoles={["admin"]}>
           <AdminAnalyticsPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/companies">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminCompaniesPage />
         </ProtectedRoute>
       </Route>
       

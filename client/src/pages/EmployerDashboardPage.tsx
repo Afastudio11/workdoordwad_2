@@ -16,7 +16,6 @@ import PostJobPage from "./employer/PostJobPage";
 import MyJobsPage from "./employer/MyJobsPage";
 import SavedCandidatesPage from "./employer/SavedCandidatesPage";
 import PlansBillingPage from "./employer/PlansBillingPage";
-import AllCompaniesPage from "./employer/AllCompaniesPage";
 import EmployerSettingsPage from "./employer/EmployerSettingsPage";
 
 export default function EmployerDashboardPage() {
@@ -52,7 +51,6 @@ export default function EmployerDashboardPage() {
     { id: 'my-jobs', label: 'My Jobs', icon: Briefcase },
     { id: 'saved-candidates', label: 'Saved Candidate', icon: Bookmark },
     { id: 'plans-billing', label: 'Plans & Billing', icon: CreditCard },
-    { id: 'all-companies', label: 'All Companies', icon: Building2 },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
@@ -70,8 +68,6 @@ export default function EmployerDashboardPage() {
         return <SavedCandidatesPage />;
       case 'plans-billing':
         return <PlansBillingPage />;
-      case 'all-companies':
-        return <AllCompaniesPage />;
       case 'settings':
         return <EmployerSettingsPage />;
       default:

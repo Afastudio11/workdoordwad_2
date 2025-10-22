@@ -56,6 +56,7 @@ export const companies = pgTable("companies", {
   contactPhone: text("contact_phone"),
   logo: text("logo"),
   employeeCount: text("employee_count"),
+  subscriptionPlan: text("subscription_plan").default("free"), // free | standard | basic | medium | professional
   isVerified: boolean("is_verified").default(false),
   verifiedAt: timestamp("verified_at"),
   createdBy: varchar("created_by").references(() => users.id),

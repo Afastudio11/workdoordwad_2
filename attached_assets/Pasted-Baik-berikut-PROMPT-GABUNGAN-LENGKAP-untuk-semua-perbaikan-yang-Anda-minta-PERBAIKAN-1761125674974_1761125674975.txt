@@ -1,0 +1,645 @@
+Baik, berikut **PROMPT GABUNGAN LENGKAP** untuk semua perbaikan yang Anda minta:
+
+---
+
+```
+PERBAIKAN LENGKAP SISTEM DASHBOARD & BILLING WEBSITE PINTU KERJA
+
+Lakukan perbaikan menyeluruh pada sistem dashboard dan billing dengan prioritas berikut:
+
+═══════════════════════════════════════════════════════════
+BAGIAN 1: PERBAIKAN DASHBOARD ADMIN - FULL FUNCTIONALITY
+═══════════════════════════════════════════════════════════
+
+## 1. Kartu Statistik Utama - Buat Semua Interaktif & Clickable
+
+### Card 1: Total Pendapatan (Bulan Ini)
+**Tampilan:** Rp 0 | +13.54% dari bulan lalu
+
+**Fitur yang harus ada:**
+- **Klik card** → Redirect ke halaman "Financial Management" dengan detail:
+  - Tabel transaksi bulan ini (tanggal, nama pemberi kerja, paket, jumlah, status)
+  - Filter by: date range, payment method, status
+  - Export to CSV/Excel
+  - Chart revenue per minggu/hari
+  
+- **Icon edit di card** → Quick modal untuk:
+  - Manual input transaksi (untuk payment offline)
+  - Edit transaksi existing
+  - Mark payment as paid/failed
+
+---
+
+### Card 2: Total Lowongan Premium Aktif
+**Tampilan:** 30 lowongan | +156 bulan ini
+
+**Fitur yang harus ada:**
+- **Klik card** → Redirect ke halaman "Premium Jobs Management" dengan:
+  - List semua lowongan premium dengan filter (company, status, plan type)
+  - Bulk actions: Deactivate, Extend duration, Change to featured
+  - Search by job title, company name
+  
+- **Icon edit di card** → Quick actions dropdown untuk boost job atau extend duration
+
+---
+
+### Card 3: Antrean Moderasi AI
+**Tampilan:** 0 | Menunggu persetujuan
+
+**Fitur yang harus ada:**
+- **Klik card** → Redirect ke halaman "AI Moderation Queue" dengan:
+  - List lowongan yang di-scrape AI dan menunggu approval
+  - Preview: source platform, raw data, translated data
+  - Action buttons: Approve, Edit & Approve, Reject, Report as Spam
+  - Bulk approve/reject
+  - Filter by: source platform, date scraped, confidence score
+  
+- **Settings icon** → Configure AI scraper:
+  - Enable/disable auto-scraping per platform (LinkedIn, Instagram, Facebook, Telegram)
+  - Set scraping schedule (daily, weekly)
+  - Confidence threshold untuk auto-approve
+  - Keyword blacklist untuk filter spam
+
+---
+
+### Card 4: Total User
+**Tampilan:** 3 | Perekrut & Pekerja
+
+**Fitur yang harus ada:**
+- **Klik card** → Redirect ke halaman "User Management" dengan 3 tab:
+  
+  **Tab 1: Job Seekers**
+  - List semua pekerja (nama, email, phone, join date, status, total aplikasi)
+  - Search & filter (by city, education, experience)
+  - Actions: View profile, Suspend, Delete, Send notification
+  - Export user data
+  
+  **Tab 2: Employers**
+  - List semua pemberi kerja (company, PIC, subscription plan, status, total jobs posted)
+  - Search & filter (by industry, plan type, status)
+  - Actions: View profile, Approve/Reject registration, Change plan, Suspend, Delete
+  - Manual activate/deactivate subscription
+  
+  **Tab 3: Admins**
+  - List admin accounts
+  - Add new admin
+  - Edit admin permissions (super admin, moderator, finance)
+
+---
+
+### Card 5-8 (Bottom Section):
+
+**Users Diblokir (0)** → Klik untuk halaman "Blocked Users" dengan list dan unblock option
+
+**Verifikasi Tertunda (0)** → Klik untuk halaman "Pending Verifications" untuk approve/reject employer registration
+
+**Error Log Backend (0)** → Klik untuk halaman "System Error Logs" dengan filter dan export
+
+**Total Users (3)** → Sama seperti Card 4
+
+---
+
+## 2. Panel Kanan: "Aksi Wajib & Peringatan" - Fully Functional
+
+### Lowongan Baru Review (0 | 46% progress)
+- Tampilkan **COUNT REAL dari database** lowongan yang belum direview
+- Progress bar = (reviewed / total new jobs) × 100%
+- **Klik item** → Redirect ke queue moderasi
+- **Button "Review Sekarang"** yang berfungsi
+
+### Laporan Penipuan Baru (0)
+- Tampilkan **COUNT REAL** laporan penipuan dari users
+- **Klik** → Halaman "Fraud Reports" dengan list dan actions (investigate, block, resolve)
+
+### Permintaan Refund (0)
+- Tampilkan **COUNT REAL** permintaan refund
+- **Klik** → Halaman "Refund Requests" dengan actions (approve/reject, process refund)
+
+### Verifikasi Perusahaan (0)
+- Tampilkan **COUNT REAL** perusahaan pending
+- **Klik** → Halaman verifikasi employer
+
+---
+
+## 3. Activity Log - Real-Time
+
+**Tampilkan log aktivitas real-time:**
+- Format: "[Time] [User/Admin] melakukan [Action] pada [Object]"
+- Contoh: "14:23 | Admin John approved PT Teknologi Maju"
+- Auto-refresh setiap 10 detik
+- Filter by: action type, user role, date range
+- **Klik log item** → Detail modal
+- Export log to CSV
+
+---
+
+## 4. HAPUS "All Companies" dari Dashboard Employer
+
+**PENTING:** Fitur "All Companies" TIDAK BOLEH ADA di dashboard employer.
+
+**Pindahkan ke Dashboard Admin** dengan menu baru:
+- Menu sidebar admin: "📁 Company Directory"
+- Halaman menampilkan:
+  - List semua perusahaan yang terdaftar
+  - Search by name, industry, location
+  - Filter by: subscription plan, status, employee count
+  - View company profile
+  - Actions (admin only): Edit, Suspend, Delete, Change plan
+  - Export company data
+
+**Hapus dari Employer Dashboard:**
+- Remove menu "All Companies" dari sidebar employer
+- Remove semua routes terkait all companies di employer section
+- Employer hanya bisa melihat profil perusahaan SENDIRI
+
+---
+
+## 5. Menu Sidebar Admin Dashboard Lengkap
+
+```
+Dashboard Admin
+├── 📊 Overview (Home)
+├── 💰 Financial Management
+│   ├── Transactions
+│   ├── Revenue Reports
+│   ├── Refund Management
+│   └── Invoices
+├── 💼 Job Management
+│   ├── All Jobs
+│   ├── Premium Jobs
+│   ├── AI Moderation Queue
+│   ├── Reported Jobs
+│   └── Categories
+├── 👥 User Management
+│   ├── Job Seekers
+│   ├── Employers
+│   ├── Admins
+│   ├── Blocked Users
+│   └── Pending Verifications
+├── 📁 Company Directory ← FITUR BARU (pindahan dari employer)
+├── 🤖 AI Scraper Settings
+│   ├── Configure Platforms
+│   ├── Scraping Schedule
+│   └── AI Logs
+├── 📝 Blog Management
+├── 📧 Email Management
+├── ⚙️ System Settings
+├── 📊 Analytics & Reports
+├── 🔒 Security & Logs
+│   ├── Activity Logs
+│   ├── Error Logs
+│   └── Login History
+└── 🆘 Support & Help
+```
+
+---
+
+═══════════════════════════════════════════════════════════
+BAGIAN 2: PERBAIKAN PLANS & BILLING - WARNA & FUNGSIONALITAS
+═══════════════════════════════════════════════════════════
+
+## 1. Ubah Skema Warna Pricing Cards
+
+**HAPUS semua warna lama (orange, pink, purple, blue)**
+**GANTI dengan skema warna brand: Lime (#c0ff00) + Hitam + Putih**
+
+### Card 1: Standard (Gratis)
+- Harga "Rp 149.000" → Warna **HITAM** (#000000)
+- Border: Light gray (#e0e0e0)
+- Background: Putih (#ffffff)
+- Button "Coba Sekarang": Outline border hitam, text hitam
+- Button hover: Background hitam, text putih
+
+### Card 2: Basic
+- Harga "Rp 249.000" → Warna **HITAM** (#000000)
+- Border: Medium gray (#d0d0d0)
+- Background: Putih
+- Button: Background **LIME** (#c0ff00), text hitam bold
+- Button hover: Darker lime (#b0ef00)
+
+### Card 3: Medium (RECOMMENDED) ⭐
+- Harga "Rp 499.000" → Warna **HITAM** (#000000)
+- Border: **LIME** (#c0ff00) dengan 3px (tebal untuk highlight)
+- Background: Putih
+- Shadow: 0 8px 24px rgba(192, 255, 0, 0.3) (lime glow effect)
+- Badge "RECOMMENDED" pojok kanan atas: Background LIME, text hitam bold
+- Button: Background **LIME**, text hitam bold, shadow besar
+- Button hover: Darker lime, scale(1.05)
+- **CARD INI HARUS PALING MENONJOL** (scale sedikit lebih besar atau raised)
+
+### Card 4: Professional
+- Harga "Rp 999.000" → Warna **HITAM** (#000000)
+- Border: Dark gray (#999999)
+- Background: Putih
+- Button: Background **LIME**, text hitam
+- Button hover: Darker lime
+
+### Konsistensi Global:
+- Background halaman: Putih (#ffffff) atau light gray (#f8f8f8)
+- Heading "Plans & Billing": Hitam, bold
+- Subheading: Dark gray (#666666)
+- Text fitur aktif: Hitam (#1a1a1a)
+- Text fitur disabled: Light gray (#cccccc) dengan strikethrough
+- Button: Border-radius 8px, padding 14px 32px
+
+---
+
+## 2. Build Fungsionalitas Billing Lengkap
+
+### A. Banner Subscription Aktif (untuk Employer)
+
+Tampilkan di atas pricing cards:
+```
+<div class="current-subscription-banner">
+  <div class="subscription-info">
+    <h3>Paket Aktif: <span class="plan-name">Basic</span></h3>
+    <p>Masa aktif hingga: <strong>22 Januari 2026</strong></p>
+    <p>Status: <span class="badge-active">Aktif</span></p>
+  </div>
+  
+  <div class="subscription-stats">
+    <div class="stat-item">
+      <label>Job Posting Terpakai</label>
+      <div class="progress-bar">
+        <div class="progress" style="width: 60%"></div>
+      </div>
+      <span>6 / 10 Reguler</span>
+    </div>
+    
+    <div class="stat-item">
+      <label>Job Posting Premium</label>
+      <span>1 / 1 Premium</span>
+    </div>
+    
+    <div class="stat-item">
+      <label>Job Invitation</label>
+      <span>5 / 20</span>
+    </div>
+  </div>
+  
+  <button class="btn-upgrade">Upgrade Paket</button>
+</div>
+```
+
+---
+
+### B. Tombol "Coba Sekarang" Harus Berfungsi
+
+**Ketika user klik "Coba Sekarang":**
+
+**1. Jika user BELUM LOGIN:**
+- Redirect ke registrasi dengan pre-selected plan:
+  ```
+  /register/employer?plan=basic&duration=monthly
+  ```
+
+**2. Jika user SUDAH LOGIN (Employer):**
+
+**Jika upgrade (paket lebih tinggi):**
+- Redirect ke **Halaman Checkout** dengan:
+  
+```
+<div class="checkout-page">
+  <h2>Checkout Upgrade Paket</h2>
+  
+  <div class="order-summary">
+    <table>
+      <tr>
+        <td>Paket yang dipilih</td>
+        <td><strong>Medium</strong></td>
+      </tr>
+      <tr>
+        <td>Durasi</td>
+        <td>
+          <select name="duration" id="duration-select">
+            <option value="1">1 Bulan - Rp 499.000</option>
+            <option value="3">3 Bulan - Rp 1.399.000 (Hemat 6%)</option>
+            <option value="6">6 Bulan - Rp 2.699.000 (Hemat 10%)</option>
+            <option value="12">12 Bulan - Rp 4.999.000 (Hemat 16%)</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>Paket saat ini (Basic)</td>
+        <td>Sisa 23 hari</td>
+      </tr>
+      <tr>
+        <td>Prorate credit</td>
+        <td class="discount">- Rp 45.000</td>
+      </tr>
+      <tr class="total">
+        <td><strong>Total Pembayaran</strong></td>
+        <td><strong>Rp 4.954.000</strong></td>
+      </tr>
+    </table>
+  </div>
+  
+  <div class="payment-methods">
+    <h3>Pilih Metode Pembayaran</h3>
+    
+    <label class="payment-option">
+      <input type="radio" name="payment" value="bank_transfer" checked>
+      <div class="option-content">
+        <span>Transfer Bank</span>
+        <div class="bank-logos">
+          <img src="/icons/bca.png" alt="BCA">
+          <img src="/icons/mandiri.png" alt="Mandiri">
+          <img src="/icons/bni.png" alt="BNI">
+          <img src="/icons/bri.png" alt="BRI">
+        </div>
+      </div>
+    </label>
+    
+    <label class="payment-option">
+      <input type="radio" name="payment" value="ewallet">
+      <div class="option-content">
+        <span>E-Wallet</span>
+        <div class="ewallet-logos">
+          <img src="/icons/gopay.png" alt="GoPay">
+          <img src="/icons/ovo.png" alt="OVO">
+          <img src="/icons/dana.png" alt="Dana">
+          <img src="/icons/shopeepay.png" alt="ShopeePay">
+        </div>
+      </div>
+    </label>
+    
+    <label class="payment-option">
+      <input type="radio" name="payment" value="va">
+      <div class="option-content">
+        <span>Virtual Account</span>
+      </div>
+    </label>
+    
+    <label class="payment-option">
+      <input type="radio" name="payment" value="qris">
+      <div class="option-content">
+        <span>QRIS</span>
+        <img src="/icons/qris.png" alt="QRIS">
+      </div>
+    </label>
+  </div>
+  
+  <button class="btn-proceed-payment">Lanjutkan Pembayaran</button>
+</div>
+```
+
+**Setelah klik "Lanjutkan Pembayaran":**
+- Generate invoice & payment instruction
+- Kirim email dengan detail pembayaran
+- Redirect ke halaman "Payment Status" dengan:
+  - Payment instructions (nomor rekening/VA/QRIS code)
+  - Upload bukti transfer (jika bank transfer)
+  - Countdown timer untuk pembayaran
+  - Status: Pending Payment
+
+**Jika downgrade (paket lebih rendah):**
+- Tampilkan modal konfirmasi:
+  ```
+  "Anda sudah berlangganan paket [Current Plan]. 
+  Downgrade akan berlaku setelah masa aktif berakhir pada [Tanggal].
+  Apakah Anda yakin?"
+  
+  [Ya, Downgrade] [Batal]
+  ```
+
+---
+
+### C. Payment Gateway Integration
+
+**Gunakan Midtrans atau Xendit:**
+
+```
+// Server-side
+const midtransClient = require('midtrans-client');
+
+let snap = new midtransClient.Snap({
+  isProduction: false,
+  serverKey: process.env.MIDTRANS_SERVER_KEY
+});
+
+let parameter = {
+  transaction_details: {
+    order_id: 'ORDER-' + Date.now(),
+    gross_amount: finalPrice
+  },
+  customer_details: {
+    first_name: req.user.name,
+    email: req.user.email,
+    phone: req.user.phone
+  },
+  item_details: [{
+    id: subscriptionPlan,
+    price: finalPrice,
+    quantity: 1,
+    name: `Subscription ${planName} - ${duration} months`
+  }]
+};
+
+snap.createTransaction(parameter)
+  .then((transaction) => {
+    let transactionToken = transaction.token;
+    res.json({ token: transactionToken });
+  });
+
+// Client-side
+snap.pay(transactionToken, {
+  onSuccess: function(result){
+    // Update subscription status
+    window.location.href = '/payment/success';
+  },
+  onPending: function(result){
+    window.location.href = '/payment/pending';
+  },
+  onError: function(result){
+    alert('Payment failed');
+  }
+});
+```
+
+---
+
+### D. Database Schema untuk Billing
+
+**Tabel employers - tambahkan fields:**
+```
+ALTER TABLE employers ADD COLUMN (
+  subscription_plan ENUM('free', 'standard', 'basic', 'medium', 'professional') DEFAULT 'free',
+  subscription_duration ENUM('monthly', 'quarterly', 'semiannual', 'yearly'),
+  subscription_start_date DATE,
+  subscription_end_date DATE,
+  job_post_quota INT DEFAULT 5,
+  job_post_used INT DEFAULT 0,
+  premium_post_quota INT DEFAULT 0,
+  premium_post_used INT DEFAULT 0,
+  job_invitation_quota INT DEFAULT 0,
+  job_invitation_used INT DEFAULT 0,
+  auto_renew BOOLEAN DEFAULT FALSE
+);
+```
+
+**Tabel subscriptions (baru):**
+```
+CREATE TABLE subscriptions (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  employer_id INT,
+  plan_type VARCHAR(50),
+  duration VARCHAR(20),
+  original_price DECIMAL(10,2),
+  discount_amount DECIMAL(10,2),
+  final_price DECIMAL(10,2),
+  payment_status ENUM('pending', 'paid', 'failed', 'expired', 'refunded'),
+  payment_method VARCHAR(50),
+  transaction_id VARCHAR(100),
+  invoice_number VARCHAR(50),
+  started_at DATETIME,
+  expired_at DATETIME,
+  auto_renew BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (employer_id) REFERENCES employers(id)
+);
+```
+
+**Tabel payments (baru):**
+```
+CREATE TABLE payments (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  subscription_id INT,
+  amount DECIMAL(10,2),
+  payment_method VARCHAR(50),
+  payment_proof VARCHAR(500), -- path untuk bukti transfer manual
+  status ENUM('pending', 'success', 'failed', 'refunded'),
+  paid_at DATETIME,
+  refunded_at DATETIME,
+  refund_reason TEXT,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (subscription_id) REFERENCES subscriptions(id)
+);
+```
+
+---
+
+### E. Email Notifications
+
+**Buat email templates untuk:**
+
+1. **Invoice & Payment Instructions** (setelah checkout)
+2. **Payment Confirmation** (setelah pembayaran berhasil)
+3. **Subscription Activated** (setelah admin approve payment)
+4. **Subscription Expiry Warning** (7 hari, 3 hari, 1 hari sebelum expired)
+5. **Subscription Expired** (saat subscription habis)
+6. **Refund Processed** (jika refund disetujui)
+
+---
+
+### F. Admin Features untuk Manage Billing
+
+**Di Admin Dashboard → Financial Management:**
+
+- **Approve/Reject Manual Payments** (bank transfer)
+- **View All Transactions** dengan filter & export
+- **Process Refunds** dengan approval workflow
+- **Manually Extend/Activate Subscription** (untuk special cases)
+- **View Revenue Reports** (daily, weekly, monthly, yearly)
+- **Set Promo Codes/Discounts** (optional)
+
+---
+
+═══════════════════════════════════════════════════════════
+BAGIAN 3: PERMISSION SYSTEM & SECURITY
+═══════════════════════════════════════════════════════════
+
+## 1. Role-Based Access Control (RBAC)
+
+### Super Admin (Full Access)
+- Akses semua fitur
+- CRUD semua data
+- Manage admin accounts
+- Delete users/companies
+- System settings
+
+### Moderator
+- Approve/reject jobs
+- Manage users (view, suspend, tapi tidak delete)
+- Handle fraud reports
+- NO akses ke financial & system settings
+
+### Finance Admin
+- Manage transactions & refunds
+- View revenue reports
+- Approve payments
+- NO akses ke user management & job moderation
+
+### Implementasi Middleware:
+```
+function checkPermission(action) {
+  return (req, res, next) => {
+    const userRole = req.session.admin.role;
+    const permissions = {
+      'super_admin': ['*'], // All permissions
+      'moderator': ['view_jobs', 'approve_jobs', 'view_users', 'suspend_users'],
+      'finance': ['view_transactions', 'approve_payments', 'view_revenue']
+    };
+    
+    if (permissions[userRole].includes('*') || 
+        permissions[userRole].includes(action)) {
+      next();
+    } else {
+      res.status(403).json({ error: 'Access denied' });
+    }
+  };
+}
+
+// Usage
+router.delete('/admin/users/:id', 
+  checkPermission('delete_users'), 
+  deleteUser
+);
+```
+
+---
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+1. ✅ Dashboard Admin dengan semua card CLICKABLE & functional
+2. ✅ Halaman management lengkap untuk setiap modul
+3. ✅ "All Companies" dipindah dari Employer ke Admin dashboard
+4. ✅ Pricing cards dengan warna Lime + Hitam + Putih (konsisten brand)
+5. ✅ Billing system lengkap dengan checkout & payment gateway
+6. ✅ Database schema untuk subscriptions & payments
+7. ✅ Email templates untuk billing notifications
+8. ✅ Admin panel untuk manage payments & refunds
+9. ✅ Permission system untuk berbagai role admin
+10. ✅ Real-time activity log dengan WebSocket (optional)
+11. ✅ Export data ke CSV/Excel di setiap halaman management
+12. ✅ Responsive design untuk semua halaman
+13. ✅ Documentation lengkap untuk setiap fitur
+
+**PRIORITAS:**
+1. Pindahkan "All Companies" dari Employer ke Admin (URGENT)
+2. Ubah warna pricing cards sesuai brand (URGENT)
+3. Build fungsi billing & checkout (HIGH)
+4. Buat semua card dashboard admin clickable (HIGH)
+5. Permission system & RBAC (MEDIUM)
+6. Real-time features dengan WebSocket (LOW)
+
+Pastikan SEMUA fitur benar-benar FUNGSIONAL, bukan hanya tampilan visual. Semua angka harus real dari database, semua button harus bekerja, dan admin harus bisa mengakses & mengedit semua aspek sistem dengan mudah.
+```
+
+***
+
+**Catatan:** Prompt ini menggabungkan semua perbaikan yang Anda minta: dashboard admin yang fully functional, perbaikan billing dengan warna yang sesuai brand (lime + hitam + putih), dan pemindahan fitur "All Companies" dari employer dashboard ke admin dashboard.
+
+[1](https://docsbot.ai/prompts/tags?tag=Dashboard)
+[2](https://kumparan.com/berita-hari-ini/kumpulan-prompt-gemini-ai-untuk-membantu-berbagai-pekerjaan-25q34h2Yz1N)
+[3](https://dribbble.com/tags/job-portal-dashboard)
+[4](https://www.figma.com/community/file/1352010217606824108/jobie-job-portal-admin-dashboard-figma-template)
+[5](https://docsbot.ai/prompts/technical/admin-dashboard-design-recommendation)
+[6](https://www.abservetech.com/blog/a-guide-to-developing-the-best-job-portal-script/)
+[7](https://www.youtube.com/watch?v=EqaDFM1__3U)
+[8](https://talentpools.io/kb/admin-dashboard-overview/)
+[9](https://www.youtube.com/watch?v=LfUXyaMJolw)
+[10](https://github.com/mohit-s96/react-job-portal-dashboard)
