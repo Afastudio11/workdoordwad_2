@@ -22,6 +22,7 @@ import { seedJobs } from "./03-jobs.seed";
 import { seedApplications } from "./04-applications.seed";
 import { seedWishlists } from "./05-wishlists.seed";
 import { seedNotifications } from "./06-notifications.seed";
+import { seedBlogPosts } from "./07-blog.seed";
 
 async function runAllSeeders() {
   console.log("\n🚀 Starting database seeding...\n");
@@ -37,6 +38,7 @@ async function runAllSeeders() {
     await seedApplications();
     await seedWishlists();
     await seedNotifications();
+    await seedBlogPosts();
 
     const endTime = Date.now();
     const duration = ((endTime - startTime) / 1000).toFixed(2);
@@ -67,7 +69,8 @@ async function runAllSeeders() {
     console.log("   ✓ 90 job listings created");
     console.log("   ✓ 15 job applications created");
     console.log("   ✓ 10 wishlists created");
-    console.log("   ✓ 10 notifications created\n");
+    console.log("   ✓ 10 notifications created");
+    console.log("   ✓ 6 blog posts created\n");
 
     process.exit(0);
   } catch (error) {
