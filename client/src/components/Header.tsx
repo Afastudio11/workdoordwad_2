@@ -51,10 +51,10 @@ export default function Header({ variant = "dark" }: HeaderProps) {
             <Link href="/" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-beranda">
               Beranda
             </Link>
-            <Link href="/register" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-pekerjaan">
+            <Link href={isAuthenticated ? "/find-job" : "/login"} className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-pekerjaan">
               Cari Pekerjaan
             </Link>
-            <Link href="/hiring" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-kandidat">
+            <Link href={isAuthenticated ? "/hiring" : "/login"} className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-kandidat">
               Cari Kandidat
             </Link>
             <Link href="/blog" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-blog">
@@ -132,10 +132,10 @@ export default function Header({ variant = "dark" }: HeaderProps) {
             <Link href="/" className={`block text-base ${textClass}`} data-testid="mobile-link-beranda">
               Beranda
             </Link>
-            <Link href="/register" className={`block text-base ${textClass}`} data-testid="mobile-link-cari-pekerjaan">
+            <Link href={isAuthenticated ? "/find-job" : "/login"} className={`block text-base ${textClass}`} data-testid="mobile-link-cari-pekerjaan">
               Cari Pekerjaan
             </Link>
-            <Link href="/hiring" className={`block text-base ${textClass}`} data-testid="mobile-link-cari-kandidat">
+            <Link href={isAuthenticated ? "/hiring" : "/login"} className={`block text-base ${textClass}`} data-testid="mobile-link-cari-kandidat">
               Cari Kandidat
             </Link>
             <Link href="/blog" className={`block text-base ${textClass}`} data-testid="mobile-link-blog">
