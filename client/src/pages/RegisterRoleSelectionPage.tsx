@@ -130,10 +130,8 @@ export default function RegisterRoleSelectionPage() {
         <div className="text-center mt-8">
           <p className="body-small text-muted-foreground">
             Sudah punya akun?{" "}
-            <Link href="/login">
-              <a className="text-primary hover:underline font-medium" data-testid="link-login">
-                Masuk di sini
-              </a>
+            <Link href="/login" className="text-primary hover:underline font-medium" data-testid="link-login">
+              Masuk di sini
             </Link>
           </p>
         </div>

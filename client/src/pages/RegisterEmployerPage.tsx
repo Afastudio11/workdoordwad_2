@@ -215,7 +215,7 @@ export default function RegisterEmployerPage() {
                         <div className="space-y-1 leading-none">
                           <FormLabel className="cursor-pointer">
                             Saya setuju dengan{" "}
-                            <Link href="/terms"><a className="text-primary hover:underline">Syarat & Ketentuan</a></Link>
+                            <Link href="/terms" className="text-primary hover:underline">Syarat & Ketentuan</Link>
                           </FormLabel>
                           <FormMessage />
                         </div>
