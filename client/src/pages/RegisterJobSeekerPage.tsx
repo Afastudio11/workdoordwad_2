@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link } from "wouter";
-import { ArrowLeft, ArrowRight, Loader2, Mail, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Mail, CheckCircle2, Upload, X } from "lucide-react";
 import Header from "@/components/Header";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import { Button } from "@/components/ui/button";
@@ -48,8 +48,6 @@ const step3Schema = z.object({
   graduationYear: z.string().min(4, "Tahun lulus harus diisi"),
   employmentStatus: z.string().min(1, "Status pekerjaan harus dipilih"),
   yearsOfExperience: z.string().min(1, "Pengalaman kerja harus dipilih"),
-  cvUrl: z.string().optional(),
-  photoUrl: z.string().optional(),
 });
 
 type Step1Data = z.infer<typeof step1Schema>;
@@ -69,6 +67,8 @@ export default function RegisterJobSeekerPage() {
   const [formData, setFormData] = useState<Partial<Step1Data & Step2Data & Step3Data>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
 
   const steps = ["Informasi Akun", "Data Pribadi", "Pendidikan & Profesional"];
 
@@ -106,8 +106,6 @@ export default function RegisterJobSeekerPage() {
       graduationYear: formData.graduationYear || "",
       employmentStatus: formData.employmentStatus || "",
       yearsOfExperience: formData.yearsOfExperience || "",
-      cvUrl: formData.cvUrl || "",
-      photoUrl: formData.photoUrl || "",
     },
   });
 
@@ -127,25 +125,44 @@ export default function RegisterJobSeekerPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await apiRequest("/api/auth/register", "POST", {
+      let cvUrl = "";
+      let photoUrl = "";
+
+      if (cvFile || photoFile) {
+        const uploadFormData = new FormData();
+        if (cvFile) uploadFormData.append("cv", cvFile);
+        if (photoFile) uploadFormData.append("photo", photoFile);
+
+        // Get CSRF token from cookie or meta tag
+        const csrfTokenResponse = await fetch("/api/csrf-token", {
+          credentials: "include",
+        });
+        const csrfData = await csrfTokenResponse.json();
+
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            "x-csrf-token": csrfData.csrfToken,
+          },
+          body: uploadFormData,
+          credentials: "include",
+        });
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          cvUrl = uploadData.cvUrl || "";
+          photoUrl = uploadData.photoUrl || "";
+        } else {
+          throw new Error("Gagal mengupload file");
+        }
+      }
+
+      const response = await apiRequest("/api/auth/register/pekerja", "POST", {
         username: completeData.email?.split('@')[0] || "",
         email: completeData.email,
         password: completeData.password,
         fullName: completeData.fullName,
         phone: completeData.phone,
-        dateOfBirth: completeData.dateOfBirth,
-        gender: completeData.gender,
-        city: completeData.city,
-        address: completeData.address,
-        role: "pekerja",
-        lastEducation: data.lastEducation,
-        major: data.major,
-        institution: data.institution,
-        graduationYear: data.graduationYear,
-        employmentStatus: data.employmentStatus,
-        yearsOfExperience: data.yearsOfExperience,
-        cvUrl: data.cvUrl,
-        photoUrl: data.photoUrl,
       });
 
       if (response.ok) {
@@ -177,7 +194,7 @@ export default function RegisterJobSeekerPage() {
           <Card className="text-center">
             <CardHeader>
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                <Mail className="w-10 h-10 text-primary" />
+                <Mail className="w-10 h-10 text-foreground" />
               </div>
               <CardTitle className="heading-2 text-heading">
                 Verifikasi Email Anda
@@ -301,7 +318,7 @@ export default function RegisterJobSeekerPage() {
                         <div className="space-y-1 leading-none">
                           <FormLabel className="cursor-pointer">
                             Saya setuju dengan{" "}
-                            <Link href="/terms" className="text-primary hover:underline">Syarat & Ketentuan</Link>
+                            <Link href="/terms" className="text-foreground hover:underline">Syarat & Ketentuan</Link>
                           </FormLabel>
                           <FormMessage />
                         </div>
@@ -588,37 +605,103 @@ export default function RegisterJobSeekerPage() {
                   </div>
 
                   <div className="space-y-4 pt-4 border-t border-border">
-                    <Label className="text-base">Opsional</Label>
+                    <Label className="text-base text-foreground">Upload Dokumen (Opsional)</Label>
                     
-                    <FormField
-                      control={form3.control}
-                      name="cvUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Upload CV/Resume (URL)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://drive.google.com/..." {...field} data-testid="input-cv-url" />
-                          </FormControl>
-                          <p className="text-xs text-muted-foreground">Masukkan link Google Drive, Dropbox, atau hosting lainnya (PDF, max 2MB)</p>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="space-y-2">
+                      <Label htmlFor="cv-upload" className="text-foreground">Upload CV/Resume</Label>
+                      <div className="flex items-center gap-3">
+                        <label htmlFor="cv-upload" className="cursor-pointer">
+                          <div className="flex items-center gap-2 px-4 py-2 border border-input rounded-md hover:bg-accent transition-colors">
+                            <Upload className="h-4 w-4 text-foreground" />
+                            <span className="text-sm text-foreground">Pilih File</span>
+                          </div>
+                          <Input
+                            id="cv-upload"
+                            type="file"
+                            accept=".pdf"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 2 * 1024 * 1024) {
+                                  toast({
+                                    title: "File terlalu besar",
+                                    description: "Ukuran file CV maksimal 2MB",
+                                    variant: "destructive",
+                                  });
+                                  return;
+                                }
+                                setCvFile(file);
+                              }
+                            }}
+                            data-testid="input-cv-upload"
+                          />
+                        </label>
+                        {cvFile && (
+                          <div className="flex items-center gap-2 flex-1 px-3 py-2 bg-muted rounded-md">
+                            <span className="text-sm text-foreground truncate">{cvFile.name}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setCvFile(null)}
+                              className="h-6 w-6 p-0"
+                            >
+                              <X className="h-4 w-4 text-foreground" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">PDF, max 2MB</p>
+                    </div>
 
-                    <FormField
-                      control={form3.control}
-                      name="photoUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Upload Foto Profil (URL)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://..." {...field} data-testid="input-photo-url" />
-                          </FormControl>
-                          <p className="text-xs text-muted-foreground">Masukkan link foto profil (JPG/PNG, max 1MB)</p>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="space-y-2">
+                      <Label htmlFor="photo-upload" className="text-foreground">Upload Foto Profil</Label>
+                      <div className="flex items-center gap-3">
+                        <label htmlFor="photo-upload" className="cursor-pointer">
+                          <div className="flex items-center gap-2 px-4 py-2 border border-input rounded-md hover:bg-accent transition-colors">
+                            <Upload className="h-4 w-4 text-foreground" />
+                            <span className="text-sm text-foreground">Pilih File</span>
+                          </div>
+                          <Input
+                            id="photo-upload"
+                            type="file"
+                            accept="image/jpeg,image/png,image/jpg"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 1 * 1024 * 1024) {
+                                  toast({
+                                    title: "File terlalu besar",
+                                    description: "Ukuran file foto maksimal 1MB",
+                                    variant: "destructive",
+                                  });
+                                  return;
+                                }
+                                setPhotoFile(file);
+                              }
+                            }}
+                            data-testid="input-photo-upload"
+                          />
+                        </label>
+                        {photoFile && (
+                          <div className="flex items-center gap-2 flex-1 px-3 py-2 bg-muted rounded-md">
+                            <span className="text-sm text-foreground truncate">{photoFile.name}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setPhotoFile(null)}
+                              className="h-6 w-6 p-0"
+                            >
+                              <X className="h-4 w-4 text-foreground" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">JPG/PNG, max 1MB</p>
+                    </div>
                   </div>
 
                   <div className="flex gap-3 pt-4">
@@ -661,7 +744,7 @@ export default function RegisterJobSeekerPage() {
           <p className="body-small text-muted-foreground">
             Sudah punya akun?{" "}
             <Link href="/login">
-              <a className="text-primary hover:underline font-medium">Masuk di sini</a>
+              <a className="text-foreground hover:underline font-medium">Masuk di sini</a>
             </Link>
           </p>
         </div>

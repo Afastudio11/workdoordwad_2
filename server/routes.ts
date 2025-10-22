@@ -80,6 +80,95 @@ const uploadCV = multer({
   },
 });
 
+// Configure multer for photo uploads
+const photoStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/photos");
+  },
+  filename: (req, file, cb) => {
+    let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    if (!allowedExtensions.includes(ext)) {
+      ext = '.jpg';
+    }
+    const uniqueName = `${randomUUID()}${ext}`;
+    cb(null, uniqueName);
+  },
+});
+
+const uploadPhoto = multer({
+  storage: photoStorage,
+  limits: { 
+    fileSize: 1 * 1024 * 1024, // 1MB limit
+    files: 1
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    
+    if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Hanya file JPG dan PNG yang diperbolehkan"));
+    }
+  },
+});
+
+// Combined upload middleware for CV and photo
+const uploadFields = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      if (file.fieldname === 'cv') {
+        cb(null, "uploads/cv");
+      } else if (file.fieldname === 'photo') {
+        cb(null, "uploads/photos");
+      } else {
+        cb(new Error("Invalid field name"), '');
+      }
+    },
+    filename: (req, file, cb) => {
+      let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+      if (file.fieldname === 'cv') {
+        const allowedExtensions = ['.pdf', '.doc', '.docx'];
+        if (!allowedExtensions.includes(ext)) ext = '.pdf';
+      } else if (file.fieldname === 'photo') {
+        const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+        if (!allowedExtensions.includes(ext)) ext = '.jpg';
+      }
+      const uniqueName = `${randomUUID()}${ext}`;
+      cb(null, uniqueName);
+    },
+  }),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // Max 5MB
+    files: 2
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === 'cv') {
+      const allowedMimeTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const ext = path.extname(file.originalname).toLowerCase();
+      const allowedExtensions = ['.pdf', '.doc', '.docx'];
+      if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+        cb(null, true);
+      } else {
+        cb(new Error("CV hanya boleh file PDF, DOC, atau DOCX"));
+      }
+    } else if (file.fieldname === 'photo') {
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      const ext = path.extname(file.originalname).toLowerCase();
+      const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+      if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+        cb(null, true);
+      } else {
+        cb(new Error("Foto hanya boleh file JPG atau PNG"));
+      }
+    } else {
+      cb(new Error("Field tidak valid"));
+    }
+  },
+}).fields([{ name: 'cv', maxCount: 1 }, { name: 'photo', maxCount: 1 }]);
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get current user
   app.get("/api/auth/me", async (req, res) => {
@@ -95,6 +184,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     const { password, ...userWithoutPassword } = user;
     res.json(userWithoutPassword);
+  });
+
+  // File upload endpoint for CV and photo
+  app.post("/api/upload", uploadFields, (req, res) => {
+    try {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      const response: { cvUrl?: string; photoUrl?: string } = {};
+
+      if (files.cv && files.cv[0]) {
+        response.cvUrl = `/uploads/cv/${files.cv[0].filename}`;
+      }
+
+      if (files.photo && files.photo[0]) {
+        response.photoUrl = `/uploads/photos/${files.photo[0].filename}`;
+      }
+
+      res.json(response);
+    } catch (error: any) {
+      console.error("Error uploading files:", error);
+      res.status(500).json({ error: "Gagal mengupload file" });
+    }
   });
 
   // Authentication API - Register Pekerja

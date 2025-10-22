@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Link } from "wouter";
-import { ArrowLeft, ArrowRight, Loader2, Mail, CheckCircle2 } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { ArrowLeft, ArrowRight, Loader2, Mail, CheckCircle2, Zap, Users, TrendingUp, Building2, Check } from "lucide-react";
 import Header from "@/components/Header";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import { Button } from "@/components/ui/button";
@@ -67,12 +67,93 @@ const cities = [
   "Yogyakarta", "Malang", "Denpasar", "Balikpapan", "Pontianak", "Manado"
 ];
 
+interface PlanFeature {
+  text: string;
+  included: boolean;
+}
+
+interface PricingPlan {
+  id: string;
+  name: string;
+  tagline: string;
+  price: number | string;
+  badge?: string;
+  isPopular?: boolean;
+  features: PlanFeature[];
+  icon: any;
+}
+
+const plans: PricingPlan[] = [
+  {
+    id: "free",
+    name: "GRATIS",
+    tagline: "Untuk Memulai",
+    price: 0,
+    badge: "Cocok untuk UMKM",
+    icon: Zap,
+    features: [
+      { text: "Posting 3 lowongan kerja per bulan", included: true },
+      { text: "Dashboard pemberi kerja dasar", included: true },
+      { text: "Durasi lowongan: 30 hari", included: true },
+      { text: "Badge Featured", included: false },
+      { text: "Analytics", included: false },
+    ],
+  },
+  {
+    id: "starter",
+    name: "STARTER",
+    tagline: "Untuk Bisnis Berkembang",
+    price: 199000,
+    badge: "Populer",
+    isPopular: true,
+    icon: Users,
+    features: [
+      { text: "Posting 10 lowongan kerja per bulan", included: true },
+      { text: "Badge \"Featured\" di 3 lowongan", included: true },
+      { text: "Analytics dasar (views, aplikasi)", included: true },
+      { text: "Durasi lowongan: 45 hari", included: true },
+      { text: "Support email & chat (1 hari kerja)", included: true },
+    ],
+  },
+  {
+    id: "professional",
+    name: "PROFESSIONAL",
+    tagline: "Solusi Terbaik untuk Perekrutan",
+    price: 399000,
+    badge: "RECOMMENDED",
+    icon: TrendingUp,
+    features: [
+      { text: "Posting 30 lowongan kerja per bulan", included: true },
+      { text: "Badge \"Featured\" & \"Urgent\" unlimited", included: true },
+      { text: "Analytics lengkap + demografi kandidat", included: true },
+      { text: "Akses database CV (100 CV/bulan)", included: true },
+      { text: "Support prioritas (<6 jam)", included: true },
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "ENTERPRISE",
+    tagline: "Untuk Korporasi & Perusahaan Besar",
+    price: "Hubungi Kami",
+    badge: "Custom Solution",
+    icon: Building2,
+    features: [
+      { text: "Posting UNLIMITED lowongan kerja", included: true },
+      { text: "Dedicated Account Manager", included: true },
+      { text: "Database CV kandidat UNLIMITED", included: true },
+      { text: "API integration untuk ATS", included: true },
+      { text: "Support 24/7 prioritas tertinggi", included: true },
+    ],
+  },
+];
+
 export default function RegisterEmployerPage() {
-  const [, navigate] = useState();
+  const [, navigate] = useLocation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<Step1Data & Step2Data & Step3Data>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string>("free");
 
   const steps = ["Informasi Akun", "Data Perusahaan", "Kontak & Alamat", "Pilih Paket"];
 
@@ -125,6 +206,42 @@ export default function RegisterEmployerPage() {
   const handleStep3Submit = (data: Step3Data) => {
     setFormData({ ...formData, ...data });
     setCurrentStep(4);
+  };
+
+  const handleFinalSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      const completeData = formData;
+      
+      // Register user + create company
+      const response = await apiRequest("/api/auth/register/pemberi-kerja", "POST", {
+        username: completeData.email?.split('@')[0] || "",
+        email: completeData.email,
+        password: completeData.password,
+        fullName: completeData.picName,
+        phone: completeData.contactPhone,
+        companyName: completeData.companyName,
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Registrasi Berhasil!",
+          description: "Akun Anda telah dibuat. Selamat datang di Pintu Kerja!",
+        });
+        navigate("/dashboard/employer");
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || "Registrasi gagal");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Gagal",
+        description: error.message || "Terjadi kesalahan saat registrasi",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -220,7 +337,7 @@ export default function RegisterEmployerPage() {
                         <div className="space-y-1 leading-none">
                           <FormLabel className="cursor-pointer">
                             Saya setuju dengan{" "}
-                            <Link href="/terms" className="text-primary hover:underline">Syarat & Ketentuan</Link>
+                            <Link href="/terms" className="text-foreground hover:underline">Syarat & Ketentuan</Link>
                           </FormLabel>
                           <FormMessage />
                         </div>
@@ -549,40 +666,129 @@ export default function RegisterEmployerPage() {
           </Card>
         )}
 
-        {/* Step 4: Pilih Paket - This will redirect to PricingPage */}
+        {/* Step 4: Pilih Paket */}
         {currentStep === 4 && (
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="heading-2">Pilih Paket Layanan</CardTitle>
-              <CardDescription className="text-base mt-2">
-                Anda akan diarahkan ke halaman pemilihan paket
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center py-8">
-              <Link href={`/pricing?userData=${encodeURIComponent(JSON.stringify({...formData, role: 'pemberi_kerja'}))}`}>
-                <Button className="btn-cta-primary" data-testid="button-to-pricing">
-                  Lihat Paket Layanan
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="heading-2 text-heading mb-2">Pilih Paket Layanan</h2>
+              <p className="body-base text-muted-foreground">
+                Pilih paket yang sesuai dengan kebutuhan perusahaan Anda
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {plans.map((plan) => {
+                const Icon = plan.icon;
+                const isSelected = selectedPlan === plan.id;
+                
+                return (
+                  <Card 
+                    key={plan.id}
+                    className={`relative cursor-pointer transition-all ${
+                      isSelected 
+                        ? 'border-2 border-foreground shadow-lg' 
+                        : 'hover:border-muted-foreground'
+                    } ${plan.isPopular ? 'border-primary/50' : ''}`}
+                    onClick={() => setSelectedPlan(plan.id)}
+                    data-testid={`plan-${plan.id}`}
+                  >
+                    {plan.badge && (
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <span className="px-3 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
+                          {plan.badge}
+                        </span>
+                      </div>
+                    )}
+                    <CardHeader className="text-center space-y-4 pt-8">
+                      <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Icon className="w-6 h-6 text-foreground" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-2xl font-bold text-foreground">{plan.name}</CardTitle>
+                        <p className="text-sm text-muted-foreground mt-1">{plan.tagline}</p>
+                      </div>
+                      <div className="pt-4">
+                        {typeof plan.price === 'number' ? (
+                          <>
+                            <div className="text-3xl font-bold text-foreground">
+                              {plan.price === 0 ? 'Rp 0' : `Rp ${plan.price.toLocaleString('id-ID')}`}
+                            </div>
+                            <div className="text-sm text-muted-foreground">per bulan</div>
+                          </>
+                        ) : (
+                          <div className="text-2xl font-bold text-foreground">{plan.price}</div>
+                        )}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        {plan.features.map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <Check className={`h-5 w-5 flex-shrink-0 ${
+                              feature.included ? 'text-foreground' : 'text-muted-foreground opacity-30'
+                            }`} />
+                            <span className={`text-sm ${
+                              feature.included ? 'text-foreground' : 'text-muted-foreground line-through'
+                            }`}>
+                              {feature.text}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <Button 
+                        className={`w-full ${isSelected ? 'bg-foreground text-background' : 'bg-muted text-foreground'}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedPlan(plan.id);
+                        }}
+                        data-testid={`button-select-${plan.id}`}
+                      >
+                        {isSelected ? 'Terpilih' : 'Pilih Paket'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            <div className="flex gap-3 pt-4">
               <Button
-                variant="ghost"
+                type="button"
+                variant="outline"
                 onClick={() => setCurrentStep(3)}
-                className="mt-4"
+                className="w-full"
                 data-testid="button-back-step-4"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Kembali
               </Button>
-            </CardContent>
-          </Card>
+              <Button 
+                onClick={handleFinalSubmit}
+                disabled={isSubmitting}
+                className="w-full btn-cta-primary"
+                data-testid="button-complete-registration"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Mendaftar...
+                  </>
+                ) : (
+                  <>
+                    Selesaikan Registrasi
+                    <CheckCircle2 className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         )}
 
         <div className="text-center mt-6">
           <p className="body-small text-muted-foreground">
             Sudah punya akun?{" "}
             <Link href="/login">
-              <a className="text-primary hover:underline font-medium">Masuk di sini</a>
+              <a className="text-foreground hover:underline font-medium">Masuk di sini</a>
             </Link>
           </p>
         </div>

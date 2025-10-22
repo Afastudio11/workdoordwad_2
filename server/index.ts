@@ -11,6 +11,7 @@ import { attachCsrfToken } from "./csrf";
 // Ensure upload directories exist
 try {
   mkdirSync(join(process.cwd(), "uploads", "cv"), { recursive: true });
+  mkdirSync(join(process.cwd(), "uploads", "photos"), { recursive: true });
 } catch (err) {
   console.error("Failed to create upload directories:", err);
 }

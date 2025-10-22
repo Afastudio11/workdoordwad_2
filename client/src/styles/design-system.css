@@ -202,7 +202,7 @@
   }
   
   .text-link {
-    @apply text-primary hover:underline;
+    @apply text-foreground hover:underline;
   }
 
   /* ============================================
