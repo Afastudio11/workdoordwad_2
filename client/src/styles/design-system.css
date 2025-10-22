@@ -1,0 +1,237 @@
+/**
+ * PINTU KERJA DESIGN SYSTEM
+ * Consistent spacing, typography, and component utilities
+ */
+
+@layer components {
+  /* ============================================
+   * SPACING UTILITIES
+   * Based on spacing scale: 2, 4, 6, 8, 12, 16, 24
+   * ============================================ */
+  
+  .section-padding {
+    @apply py-12 md:py-24;
+  }
+  
+  .section-padding-sm {
+    @apply py-8 md:py-16;
+  }
+  
+  .section-padding-lg {
+    @apply py-16 md:py-32;
+  }
+  
+  .container-padding {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+  
+  .card-padding {
+    @apply p-6;
+  }
+  
+  .card-padding-sm {
+    @apply p-4;
+  }
+  
+  .card-padding-lg {
+    @apply p-8;
+  }
+
+  /* ============================================
+   * TYPOGRAPHY SYSTEM
+   * Consistent heading and text styles
+   * ============================================ */
+  
+  .heading-1 {
+    @apply text-3xl md:text-5xl font-semibold tracking-tight;
+  }
+  
+  .heading-2 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+  
+  .heading-3 {
+    @apply text-xl md:text-2xl font-medium;
+  }
+  
+  .heading-4 {
+    @apply text-lg md:text-xl font-medium;
+  }
+  
+  .body-large {
+    @apply text-lg leading-relaxed;
+  }
+  
+  .body-normal {
+    @apply text-base leading-relaxed;
+  }
+  
+  .body-small {
+    @apply text-sm leading-normal;
+  }
+  
+  .caption {
+    @apply text-xs uppercase tracking-wide text-muted-foreground;
+  }
+
+  /* ============================================
+   * BUTTON SYSTEM
+   * Consistent button styles beyond default variants
+   * ============================================ */
+  
+  .btn-cta-large {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-all;
+  }
+  
+  .btn-cta-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition-all;
+  }
+  
+  .btn-cta-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border-2 border-border bg-background text-foreground font-medium hover:bg-muted transition-all;
+  }
+
+  /* ============================================
+   * CARD SYSTEM
+   * Consistent card containers
+   * ============================================ */
+  
+  .card-base {
+    @apply bg-card border border-card-border rounded-xl shadow-sm;
+  }
+  
+  .card-interactive {
+    @apply card-base hover:shadow-md transition-all duration-300;
+  }
+  
+  .card-elevated {
+    @apply card-base shadow-md;
+  }
+
+  /* ============================================
+   * LAYOUT CONTAINERS
+   * Consistent max-width containers
+   * ============================================ */
+  
+  .container-marketing {
+    @apply max-w-6xl mx-auto container-padding;
+  }
+  
+  .container-dashboard {
+    @apply max-w-7xl mx-auto container-padding;
+  }
+  
+  .container-form {
+    @apply max-w-xl mx-auto container-padding;
+  }
+  
+  .container-content {
+    @apply max-w-4xl mx-auto container-padding;
+  }
+
+  /* ============================================
+   * FORM ELEMENTS
+   * Consistent form spacing and styling
+   * ============================================ */
+  
+  .form-group {
+    @apply space-y-2;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-foreground;
+  }
+  
+  .form-input {
+    @apply w-full px-4 py-3 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring;
+  }
+  
+  .form-error {
+    @apply text-sm text-destructive mt-1;
+  }
+
+  /* ============================================
+   * GRID SYSTEMS
+   * Consistent grid layouts
+   * ============================================ */
+  
+  .grid-2-cols {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+  
+  .grid-3-cols {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+  
+  .grid-4-cols {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
+
+  /* ============================================
+   * RESPONSIVE SPACING
+   * Consistent spacing between sections
+   * ============================================ */
+  
+  .section-gap {
+    @apply space-y-8 md:space-y-12;
+  }
+  
+  .section-gap-sm {
+    @apply space-y-4 md:space-y-6;
+  }
+  
+  .section-gap-lg {
+    @apply space-y-12 md:space-y-16;
+  }
+
+  /* ============================================
+   * TEXT COLORS
+   * Consistent text color utilities
+   * ============================================ */
+  
+  .text-heading {
+    @apply text-foreground;
+  }
+  
+  .text-body {
+    @apply text-foreground;
+  }
+  
+  .text-muted {
+    @apply text-muted-foreground;
+  }
+  
+  .text-link {
+    @apply text-primary hover:underline;
+  }
+
+  /* ============================================
+   * FOCUS STATES
+   * Consistent focus indicators
+   * ============================================ */
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+
+  /* ============================================
+   * LOADING STATES
+   * Consistent loading spinners
+   * ============================================ */
+  
+  .spinner {
+    @apply animate-spin rounded-full border-b-2 border-primary;
+  }
+  
+  .spinner-sm {
+    @apply spinner h-4 w-4;
+  }
+  
+  .spinner-md {
+    @apply spinner h-8 w-8;
+  }
+  
+  .spinner-lg {
+    @apply spinner h-12 w-12;
+  }
+}

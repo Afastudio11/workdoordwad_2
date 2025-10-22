@@ -1,0 +1,56 @@
+Tolong analisis dan perbaiki konsistensi UI/UX di seluruh aplikasi web ini:
+
+## Layout & Spacing
+1. **Jarak antar elemen**: Identifikasi padding dan margin yang tidak konsisten antar halaman
+2. **Line spacing**: Perbaiki line-height yang berbeda-beda pada paragraf dan text
+3. **Section spacing**: Standardisasi jarak antar section (header, content, footer)
+4. **Button spacing**: Samakan jarak antar button dalam satu group
+5. **Form spacing**: Konsistenkan jarak antar input field, label, dan error messages
+6. **Card/Container spacing**: Perbaiki padding internal dan margin eksternal cards
+
+## Typography
+1. **Font sizes**: Buat konsisten ukuran font untuk:
+   - Headings (h1, h2, h3, h4, h5, h6)
+   - Body text
+   - Captions dan small text
+   - Button text
+2. **Font weights**: Standardisasi bold, regular, light antar halaman
+3. **Font families**: Pastikan semua menggunakan font yang sama
+4. **Text alignment**: Konsistenkan alignment (left, center, right)
+
+## Colors & Theme
+1. Identifikasi warna yang tidak konsisten untuk:
+   - Primary buttons
+   - Secondary buttons
+   - Links
+   - Success/error/warning messages
+   - Background colors
+   - Text colors
+2. Buat color palette yang konsisten
+
+## Components
+1. **Buttons**: Samakan ukuran, padding, border-radius, hover effects
+2. **Input fields**: Konsistenkan height, padding, border, focus state
+3. **Cards**: Standardisasi shadow, border-radius, padding
+4. **Modals**: Samakan ukuran, positioning, animation
+5. **Navigation**: Konsistenkan spacing dan styling menu items
+6. **Icons**: Pastikan ukuran dan spacing icons konsisten
+
+## Responsive Design
+1. Periksa breakpoints yang tidak konsisten
+2. Identifikasi elemen yang overlap atau terpotong di mobile
+3. Perbaiki spacing yang berlebihan atau terlalu sempit di berbagai screen size
+
+## Recommendations
+Setelah analisis, buatkan:
+1. File CSS/style terpisah dengan variable untuk spacing, colors, typography
+2. Daftar class utility yang bisa digunakan ulang
+3. Design system sederhana (spacing scale, color palette, typography scale)
+
+Untuk setiap masalah yang ditemukan, berikan:
+- Lokasi file dan baris kode
+- Screenshot atau deskripsi visual issue
+- Kode perbaikan yang konsisten
+- Saran best practice untuk maintainability
+
+Prioritaskan perbaikan yang paling mempengaruhi user experience.
