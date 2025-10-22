@@ -97,8 +97,6 @@ export default function UserDashboardPage() {
     }
   };
 
-  const DEV_MODE = import.meta.env.VITE_DEV_BYPASS_AUTH === "true" || import.meta.env.MODE === "development";
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
@@ -110,7 +108,18 @@ export default function UserDashboardPage() {
     );
   }
 
-  if (!DEV_MODE && (!user || user.role !== 'pekerja')) {
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-black">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (user.role !== 'pekerja') {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
         <div className="text-center">

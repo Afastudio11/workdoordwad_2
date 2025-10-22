@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import HomePage from "@/pages/HomePage";
 import UserDashboardPage from "@/pages/UserDashboardPage";
 import EmployerDashboardPage from "@/pages/EmployerDashboardPage";
@@ -43,36 +44,147 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/demo" component={JobCardsDemo} />
-      <Route path="/user/dashboard" component={UserDashboardPage} />
-      <Route path="/find-job" component={NewJobDashboardPage} />
-      <Route path="/employer/dashboard" component={EmployerDashboardPage} />
-      <Route path="/find-candidate" component={FindCandidatePage} />
-      <Route path="/find-employers" component={FindEmployersPage} />
-      <Route path="/employer/applications" component={EmployerApplicationsPage} />
-      <Route path="/quick-access" component={QuickAccessPage} />
-      <Route path="/messages" component={MessagesPage} />
-      <Route path="/hiring" component={HiringPage} />
-      <Route path="/community" component={CommunityPage} />
-      <Route path="/faq" component={FAQPage} />
-      <Route path="/notifications" component={NotificationsPage} />
-      <Route path="/jobs/:id" component={JobDetailPage} />
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogDetailPage} />
       <Route path="/contact" component={ContactPage} />
       <Route path="/page/:slug" component={ContentPage} />
-      <Route path="/admin/dashboard" component={AdminDashboardPage} />
-      <Route path="/admin/jobs" component={AdminJobsPage} />
-      <Route path="/admin/moderation" component={AdminModerationPage} />
-      <Route path="/admin/users" component={AdminUsersPage} />
-      <Route path="/admin/financial" component={AdminFinancialPage} />
-      <Route path="/admin/settings" component={AdminSettingsPage} />
-      <Route path="/admin/verifications" component={AdminVerificationPage} />
-      <Route path="/admin/fraud-reports" component={AdminFraudReportsPage} />
-      <Route path="/admin/blog" component={AdminBlogManagerPage} />
-      <Route path="/admin/content" component={AdminContentPagesPage} />
-      <Route path="/admin/analytics" component={AdminAnalyticsPage} />
+      <Route path="/jobs/:id" component={JobDetailPage} />
+      <Route path="/faq" component={FAQPage} />
+      
+      <Route path="/user/dashboard">
+        <ProtectedRoute allowedRoles={["pekerja"]}>
+          <UserDashboardPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/find-job">
+        <ProtectedRoute allowedRoles={["pekerja"]}>
+          <NewJobDashboardPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/notifications">
+        <ProtectedRoute allowedRoles={["pekerja", "pemberi_kerja", "admin"]}>
+          <NotificationsPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/messages">
+        <ProtectedRoute allowedRoles={["pekerja", "pemberi_kerja"]}>
+          <MessagesPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/employer/dashboard">
+        <ProtectedRoute allowedRoles={["pemberi_kerja"]}>
+          <EmployerDashboardPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/find-candidate">
+        <ProtectedRoute allowedRoles={["pemberi_kerja"]}>
+          <FindCandidatePage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/find-employers">
+        <ProtectedRoute allowedRoles={["pekerja"]}>
+          <FindEmployersPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/employer/applications">
+        <ProtectedRoute allowedRoles={["pemberi_kerja"]}>
+          <EmployerApplicationsPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/quick-access">
+        <ProtectedRoute allowedRoles={["pekerja", "pemberi_kerja"]}>
+          <QuickAccessPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/hiring">
+        <ProtectedRoute allowedRoles={["pemberi_kerja"]}>
+          <HiringPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/community">
+        <ProtectedRoute allowedRoles={["pekerja", "pemberi_kerja"]}>
+          <CommunityPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/dashboard">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminDashboardPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/jobs">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminJobsPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/moderation">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminModerationPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/users">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminUsersPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/financial">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminFinancialPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/settings">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminSettingsPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/verifications">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminVerificationPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/fraud-reports">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminFraudReportsPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/blog">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminBlogManagerPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/content">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminContentPagesPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/analytics">
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <AdminAnalyticsPage />
+        </ProtectedRoute>
+      </Route>
+      
       <Route component={NotFound} />
     </Switch>
   );
