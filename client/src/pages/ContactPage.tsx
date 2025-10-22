@@ -31,7 +31,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <DynamicHeader />
       
       <div className="max-w-[1400px] mx-auto px-6 md:px-8 py-16">
@@ -85,11 +85,11 @@ export default function ContactPage() {
           </div>
 
           {/* Right Column - Contact Form */}
-          <div className="bg-gray-50 rounded-3xl p-10 lg:p-12">
+          <div className="bg-muted rounded-3xl p-10 lg:p-12">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                <div className="form-group">
+                  <label htmlFor="firstName" className="form-label">
                     Nama Depan
                   </label>
                   <Input
@@ -98,14 +98,14 @@ export default function ContactPage() {
                     placeholder="Masukkan nama depan Anda..."
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="bg-white border-gray-200 rounded-lg h-12 px-4"
+                    className="form-input h-12"
                     required
                     data-testid="input-first-name"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                <div className="form-group">
+                  <label htmlFor="lastName" className="form-label">
                     Nama Belakang
                   </label>
                   <Input
@@ -114,15 +114,15 @@ export default function ContactPage() {
                     placeholder="Masukkan nama belakang Anda..."
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="bg-white border-gray-200 rounded-lg h-12 px-4"
+                    className="form-input h-12"
                     required
                     data-testid="input-last-name"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
                   Email
                 </label>
                 <Input
@@ -131,14 +131,14 @@ export default function ContactPage() {
                   placeholder="Masukkan alamat email Anda..."
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="bg-white border-gray-200 rounded-lg h-12 px-4"
+                  className="form-input h-12"
                   required
                   data-testid="input-email"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium text-gray-700">
+              <div className="form-group">
+                <label htmlFor="message" className="form-label">
                   Bagaimana kami bisa membantu Anda?
                 </label>
                 <Textarea
@@ -146,7 +146,7 @@ export default function ContactPage() {
                   placeholder="Masukkan pesan Anda..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="bg-white border-gray-200 rounded-lg min-h-[160px] px-4 py-3 resize-none"
+                  className="form-input min-h-[160px] resize-none"
                   required
                   data-testid="input-message"
                 />

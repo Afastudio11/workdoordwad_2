@@ -33,7 +33,7 @@ export default function AIInnovationSection() {
   const articles = blogData?.posts || [];
 
   return (
-    <section className="py-12 md:py-20 bg-gray-50">
+    <section className="py-12 md:py-20 bg-muted/30">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
         <div className="flex flex-col lg:flex-row justify-between items-start mb-8 md:mb-12">
           <div className="mb-6 md:mb-8 lg:mb-0">
@@ -69,7 +69,7 @@ export default function AIInnovationSection() {
           </div>
 
           <div className="w-full lg:max-w-md">
-            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+            <p className="body-base text-muted-foreground">
               Bukan ahli? Jangan khawatir! Kami punya panduan dan artikel lengkap tentang praktik terbaik dan tips dalam merekrut karyawan.
             </p>
           </div>
@@ -79,9 +79,9 @@ export default function AIInnovationSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse">
-                <div className="mb-4 bg-gray-200 rounded-2xl aspect-[4/3]"></div>
-                <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="mb-4 bg-muted rounded-2xl aspect-[4/3]"></div>
+                <div className="h-6 bg-muted rounded mb-2"></div>
+                <div className="h-4 bg-muted rounded w-3/4"></div>
               </div>
             ))}
           </div>
@@ -108,10 +108,10 @@ export default function AIInnovationSection() {
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
                       />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-black mb-2 sm:mb-3 transition-colors">
+                    <h3 className="heading-4 text-heading mb-2 sm:mb-3 transition-colors">
                       {article.title}
                     </h3>
-                    <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
+                    <div className="flex items-center gap-2 sm:gap-3 caption">
                       <span>{publishedDate}</span>
                       {article.readTime && (
                         <>
@@ -127,7 +127,7 @@ export default function AIInnovationSection() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600">Belum ada artikel tersedia.</p>
+            <p className="text-muted-foreground">Belum ada artikel tersedia.</p>
           </div>
         )}
       </div>

@@ -56,11 +56,11 @@ export default function HeroSection() {
           </h1>
 
           <div className="max-w-2xl mx-auto mb-5">
-            <div className="relative rounded-full p-1.5 md:p-2 flex items-center gap-2 md:gap-3" style={{ backgroundColor: '#484946' }}>
+            <div className="relative rounded-full p-1.5 md:p-2 flex items-center gap-2 md:gap-3 bg-white/10 backdrop-blur-sm">
               <input
                 type="text"
                 placeholder="Cari Pekerjaan..."
-                className="flex-1 px-4 md:px-6 py-2.5 md:py-3 bg-transparent border-0 focus:outline-none focus:ring-0 text-white placeholder:text-gray-400 text-sm md:text-base"
+                className="flex-1 px-4 md:px-6 py-2.5 md:py-3 bg-transparent border-0 focus:outline-none focus:ring-0 text-white placeholder:text-white/60 text-sm md:text-base"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -71,21 +71,20 @@ export default function HeroSection() {
                 className="p-2.5 md:p-3 bg-primary rounded-full hover:bg-primary/90 transition-colors flex items-center justify-center shrink-0"
                 data-testid="button-search"
               >
-                <Search className="h-5 w-5 md:h-6 md:w-6 text-black" />
+                <Search className="h-5 w-5 md:h-6 md:w-6 text-primary-foreground" />
               </button>
             </div>
           </div>
 
           {hasJobs && popularJobs.length > 0 && (
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 mb-4">
-              <span className="text-gray-400 text-xs md:text-sm">Pekerjaan Populer Saat ini:</span>
+              <span className="text-white/60 text-xs md:text-sm">Pekerjaan Populer Saat ini:</span>
               <div className="flex flex-wrap justify-center gap-2">
                 {popularJobs.map((job, index) => (
                   <button 
                     key={index}
                     onClick={() => handleJobTagClick(job)}
-                    className="px-3 md:px-4 py-1.5 text-white text-xs md:text-sm rounded-full hover:border-primary hover:border transition-colors cursor-pointer"
-                    style={{ backgroundColor: '#484946' }}
+                    className="px-3 md:px-4 py-1.5 text-white text-xs md:text-sm rounded-full hover:border-primary hover:border transition-colors cursor-pointer bg-white/10 backdrop-blur-sm"
                     data-testid={`tag-job-${index}`}
                   >
                     {job}
@@ -115,26 +114,26 @@ export default function HeroSection() {
               <span className="text-white font-semibold text-xs md:text-sm">Bisnis</span>
             </div>
             
-            <div className="h-4 md:h-6 w-px bg-gray-600"></div>
+            <div className="h-4 md:h-6 w-px bg-white/20"></div>
             
             <div className="flex-1 overflow-hidden">
               <div className="flex animate-marquee gap-4 md:gap-12">
                 <div className="flex items-center gap-4 md:gap-12 shrink-0">
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
                     </svg>
                     <span>Luminous</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                     </svg>
                     <span>Lightbox</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <circle cx="12" cy="12" r="3"/>
                       <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
@@ -142,21 +141,21 @@ export default function HeroSection() {
                     <span>FocalPoint</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <circle cx="12" cy="12" r="10"/>
                     </svg>
                     <span>Polymath</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M3 12h8M13 12h8M3 6h18M3 18h18"/>
                     </svg>
                     <span>Alt+Shift</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                     </svg>
@@ -166,21 +165,21 @@ export default function HeroSection() {
                 
                 {/* Duplicate for seamless loop */}
                 <div className="flex items-center gap-4 md:gap-12 shrink-0">
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
                     </svg>
                     <span>Luminous</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                     </svg>
                     <span>Lightbox</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <circle cx="12" cy="12" r="3"/>
                       <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
@@ -188,21 +187,21 @@ export default function HeroSection() {
                     <span>FocalPoint</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <circle cx="12" cy="12" r="10"/>
                     </svg>
                     <span>Polymath</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M3 12h8M13 12h8M3 6h18M3 18h18"/>
                     </svg>
                     <span>Alt+Shift</span>
                   </div>
                   
-                  <div className="text-gray-400 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
+                  <div className="text-white/60 font-medium text-sm md:text-lg flex items-center gap-1 md:gap-2">
                     <svg className="w-4 h-4 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                     </svg>

@@ -31,7 +31,7 @@ export default function FeaturesSection() {
           <h2 className="heading-2 text-white mb-4">
             Get things Done with Minimal Effort
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-white/60 max-w-2xl mx-auto">
             Platform yang dirancang untuk mempermudah proses rekrutmen dan pencarian kerja
           </p>
         </div>
@@ -49,7 +49,7 @@ export default function FeaturesSection() {
                 <h3 className="heading-4 text-white mb-2" data-testid={`feature-title-${index}`}>
                   {feature.title}
                 </h3>
-                <p className="text-gray-400 leading-relaxed" data-testid={`feature-description-${index}`}>
+                <p className="text-white/60 leading-relaxed" data-testid={`feature-description-${index}`}>
                   {feature.description}
                 </p>
               </div>

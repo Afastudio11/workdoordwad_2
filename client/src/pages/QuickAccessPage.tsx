@@ -19,14 +19,14 @@ export default function QuickAccessPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-12">
           <h1 className="heading-1 text-foreground mb-4">Akses Cepat</h1>
           <p className="text-muted-foreground">Pilih role untuk mengakses dashboard yang sesuai</p>
           {DEV_MODE && (
-            <div className="mt-4 inline-block px-4 py-2 bg-yellow-100 border border-yellow-400 rounded-lg">
-              <p className="text-sm font-medium text-yellow-800">
+            <div className="mt-4 inline-block px-4 py-2 bg-primary/10 border border-primary rounded-lg">
+              <p className="text-sm font-medium text-foreground">
                 🛠️ Mode Development: Auto-login aktif
               </p>
             </div>
@@ -40,8 +40,8 @@ export default function QuickAccessPage() {
             data-testid="link-access-pekerja"
           >
             <div className="flex flex-col items-center text-center">
-              <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
-                <User className="h-8 w-8 text-gray-700" />
+              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4 group-hover:bg-muted/80 transition-colors">
+                <User className="h-8 w-8 text-foreground" />
               </div>
               <h3 className="heading-4 text-foreground mb-2">Pekerja</h3>
               <p className="text-sm text-muted-foreground mb-6">
@@ -59,8 +59,8 @@ export default function QuickAccessPage() {
             data-testid="link-access-pemberi"
           >
             <div className="flex flex-col items-center text-center">
-              <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
-                <Briefcase className="h-8 w-8 text-gray-700" />
+              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4 group-hover:bg-muted/80 transition-colors">
+                <Briefcase className="h-8 w-8 text-foreground" />
               </div>
               <h3 className="heading-4 text-foreground mb-2">Pemberi Kerja</h3>
               <p className="text-sm text-muted-foreground mb-6">
@@ -78,8 +78,8 @@ export default function QuickAccessPage() {
             data-testid="link-access-admin"
           >
             <div className="flex flex-col items-center text-center">
-              <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
-                <Shield className="h-8 w-8 text-gray-700" />
+              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4 group-hover:bg-muted/80 transition-colors">
+                <Shield className="h-8 w-8 text-foreground" />
               </div>
               <h3 className="heading-4 text-foreground mb-2">Admin</h3>
               <p className="text-sm text-muted-foreground mb-6">
@@ -93,7 +93,7 @@ export default function QuickAccessPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/" className="text-sm text-black hover:underline font-semibold" data-testid="link-back-home">
+          <Link href="/" className="text-sm text-foreground hover:underline font-semibold" data-testid="link-back-home">
             ← Kembali ke Halaman Utama
           </Link>
         </div>

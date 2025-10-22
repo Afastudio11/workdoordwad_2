@@ -55,7 +55,7 @@ export default function JobCard({
             <img 
               src={companyLogo} 
               alt={`${company} logo`}
-              className="w-12 h-12 object-cover rounded-lg border border-gray-200"
+              className="w-12 h-12 object-cover rounded-lg border border-border"
               data-testid={`img-company-logo-${id}`}
             />
           ) : (
@@ -106,10 +106,10 @@ export default function JobCard({
       <Dialog open={showDetailDialog} onOpenChange={setShowDetailDialog}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-black dark:text-white">
+            <DialogTitle className="heading-2 text-heading">
               {isLoading ? "Memuat..." : job?.title}
             </DialogTitle>
-            <DialogDescription className="text-gray-600 dark:text-gray-400">
+            <DialogDescription className="text-muted-foreground">
               {isLoading ? "Mengambil detail pekerjaan..." : `${job?.company?.name} • ${job?.location}`}
             </DialogDescription>
           </DialogHeader>
@@ -121,25 +121,25 @@ export default function JobCard({
           ) : job ? (
             <div className="space-y-6 py-4">
               {/* Company Info */}
-              <div className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
                 {job.company?.logo ? (
                   <img 
                     src={job.company.logo} 
                     alt={`${job.company.name} logo`}
-                    className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                    className="w-16 h-16 object-cover rounded-lg border border-border"
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
-                    <Building2 className="h-8 w-8 text-gray-400" />
+                  <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center border border-border">
+                    <Building2 className="h-8 w-8 text-muted-foreground" />
                   </div>
                 )}
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-black dark:text-white">{job.company?.name}</h3>
+                  <h3 className="heading-4 text-heading">{job.company?.name}</h3>
                   {job.company?.industry && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{job.company.industry}</p>
+                    <p className="body-small text-muted-foreground">{job.company.industry}</p>
                   )}
                   {job.company?.location && (
-                    <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <div className="flex items-center gap-1 body-small text-muted-foreground mt-1">
                       <MapPin className="h-4 w-4" />
                       <span>{job.company.location}</span>
                     </div>
@@ -149,32 +149,32 @@ export default function JobCard({
 
               {/* Job Details */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                   <DollarSign className="h-5 w-5 text-primary" />
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Gaji</p>
-                    <p className="font-semibold text-black dark:text-white">{job.salary || salary}</p>
+                    <p className="caption">Gaji</p>
+                    <p className="font-semibold text-heading">{job.salary || salary}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                   <Briefcase className="h-5 w-5 text-primary" />
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Tipe Pekerjaan</p>
-                    <p className="font-semibold text-black dark:text-white">{job.jobType || jobType}</p>
+                    <p className="caption">Tipe Pekerjaan</p>
+                    <p className="font-semibold text-heading">{job.jobType || jobType}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                   <MapPin className="h-5 w-5 text-primary" />
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Lokasi</p>
-                    <p className="font-semibold text-black dark:text-white">{job.location}</p>
+                    <p className="caption">Lokasi</p>
+                    <p className="font-semibold text-heading">{job.location}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                   <Calendar className="h-5 w-5 text-primary" />
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Diposting</p>
-                    <p className="font-semibold text-black dark:text-white">{date}</p>
+                    <p className="caption">Diposting</p>
+                    <p className="font-semibold text-heading">{date}</p>
                   </div>
                 </div>
               </div>
@@ -182,12 +182,12 @@ export default function JobCard({
               {/* Description */}
               {job.description && (
                 <div>
-                  <h4 className="font-bold text-black dark:text-white mb-3 flex items-center gap-2">
+                  <h4 className="heading-4 text-heading mb-3 flex items-center gap-2">
                     <FileText className="h-5 w-5 text-primary" />
                     Deskripsi Pekerjaan
                   </h4>
                   <div 
-                    className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed prose prose-sm max-w-none"
+                    className="body-small text-muted-foreground leading-relaxed prose prose-sm max-w-none"
                     dangerouslySetInnerHTML={{ __html: job.description }}
                   />
                 </div>
@@ -196,9 +196,9 @@ export default function JobCard({
               {/* Requirements */}
               {job.requirements && (
                 <div>
-                  <h4 className="font-bold text-black dark:text-white mb-3">Persyaratan</h4>
+                  <h4 className="heading-4 text-heading mb-3">Persyaratan</h4>
                   <div 
-                    className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed prose prose-sm max-w-none"
+                    className="body-small text-muted-foreground leading-relaxed prose prose-sm max-w-none"
                     dangerouslySetInnerHTML={{ __html: job.requirements }}
                   />
                 </div>
@@ -206,9 +206,9 @@ export default function JobCard({
 
               {/* Company Description */}
               {job.company?.description && (
-                <div className="border-t pt-4">
-                  <h4 className="font-bold text-black dark:text-white mb-3">Tentang Perusahaan</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <div className="border-t border-border pt-4">
+                  <h4 className="heading-4 text-heading mb-3">Tentang Perusahaan</h4>
+                  <p className="body-small text-muted-foreground leading-relaxed">
                     {job.company.description}
                   </p>
                 </div>
@@ -216,7 +216,7 @@ export default function JobCard({
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-500">Detail pekerjaan tidak ditemukan</p>
+              <p className="text-muted-foreground">Detail pekerjaan tidak ditemukan</p>
             </div>
           )}
 
@@ -224,7 +224,6 @@ export default function JobCard({
             <Button 
               variant="outline" 
               onClick={() => setShowDetailDialog(false)}
-              className="border-gray-200 dark:border-gray-800"
             >
               Tutup
             </Button>
@@ -233,7 +232,7 @@ export default function JobCard({
                 setShowDetailDialog(false);
                 console.log("Melamar pekerjaan:", id);
               }}
-              className="bg-black text-white hover:bg-gray-800"
+              className="btn-cta-primary"
               disabled={isLoading}
             >
               Lanjutkan Melamar

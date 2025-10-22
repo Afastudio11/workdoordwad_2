@@ -42,7 +42,7 @@ export default function HiringPage() {
   const activeJobsCount = jobs.filter(j => j.isActive).length;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <EmployerDashboardHeader />
 
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
@@ -91,11 +91,11 @@ export default function HiringPage() {
 
         <div className="mb-6">
           <div className="relative mb-4">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <input
               type="text"
               placeholder="Cari lowongan..."
-              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="w-full pl-12 pr-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               data-testid="input-search-jobs"
@@ -141,7 +141,7 @@ export default function HiringPage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : isError ? (
           <Alert variant="destructive" data-testid="error-alert">
@@ -164,35 +164,35 @@ export default function HiringPage() {
             </AlertDescription>
           </Alert>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="card-base overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-muted border-b border-border">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left caption uppercase tracking-wider">
                       Judul Lowongan
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left caption uppercase tracking-wider">
                       Lokasi
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left caption uppercase tracking-wider">
                       Tipe
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left caption uppercase tracking-wider">
                       Industri
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left caption uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left caption uppercase tracking-wider">
                       Diposting
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left caption uppercase tracking-wider">
                       Aksi
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-border">
                   {filteredJobs.map((job) => {
                     const status: "active" | "closed" = job.isActive ? "active" : "closed";
                     const postedDate = formatDistanceToNow(new Date(job.createdAt), { 
@@ -201,18 +201,18 @@ export default function HiringPage() {
                     });
                     
                     return (
-                      <tr key={job.id} className="hover:bg-gray-50" data-testid={`job-row-${job.id}`}>
+                      <tr key={job.id} className="hover:bg-muted/50" data-testid={`job-row-${job.id}`}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{job.title}</div>
+                          <div className="body-small font-medium text-heading">{job.title}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{job.location}</div>
+                          <div className="body-small text-muted-foreground">{job.location}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{job.jobType}</div>
+                          <div className="body-small text-muted-foreground">{job.jobType}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{job.industry || "-"}</div>
+                          <div className="body-small text-muted-foreground">{job.industry || "-"}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(status)}`}>
@@ -220,10 +220,10 @@ export default function HiringPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{postedDate}</div>
+                          <div className="body-small text-muted-foreground">{postedDate}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <button className="text-gray-600 hover:text-gray-900" data-testid={`button-actions-${job.id}`}>
+                          <button className="text-muted-foreground hover:text-foreground" data-testid={`button-actions-${job.id}`}>
                             <MoreVertical className="h-5 w-5" />
                           </button>
                         </td>
@@ -237,8 +237,8 @@ export default function HiringPage() {
         )}
 
         {!isLoading && filteredJobs.length === 0 && (
-          <div className="text-center py-12 bg-white border border-gray-200 rounded-lg">
-            <p className="text-gray-500">Tidak ada lowongan ditemukan</p>
+          <div className="text-center py-12 card-base">
+            <p className="text-muted-foreground">Tidak ada lowongan ditemukan</p>
           </div>
         )}
       </div>
