@@ -54,9 +54,6 @@ export default function Header({ variant = "dark" }: HeaderProps) {
             <Link href="/register" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-pekerjaan">
               Cari Pekerjaan
             </Link>
-            <Link href="/quick-access" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-quick-access">
-              Akses Cepat
-            </Link>
             <Link href="/hiring" className={`text-sm ${textClass} ${textHoverClass} transition-colors`} data-testid="link-cari-kandidat">
               Cari Kandidat
             </Link>
@@ -137,9 +134,6 @@ export default function Header({ variant = "dark" }: HeaderProps) {
             </Link>
             <Link href="/register" className={`block text-base ${textClass}`} data-testid="mobile-link-cari-pekerjaan">
               Cari Pekerjaan
-            </Link>
-            <Link href="/quick-access" className={`block text-base ${textClass}`} data-testid="mobile-link-quick-access">
-              Akses Cepat
             </Link>
             <Link href="/hiring" className={`block text-base ${textClass}`} data-testid="mobile-link-cari-kandidat">
               Cari Kandidat

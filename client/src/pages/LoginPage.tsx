@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import Header from "@/components/Header";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
@@ -40,9 +40,22 @@ export default function LoginPage() {
         title: "Berhasil masuk!",
         description: "kamu berhasil login ke akun kamu",
       });
-      // Small delay to ensure session is set
-      await new Promise(resolve => setTimeout(resolve, 100));
-      setLocation("/jobs");
+      
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      
+      const userData = await queryClient.fetchQuery({
+        queryKey: ["/api/auth/me"],
+      }) as any;
+      
+      if (userData?.role === "pekerja") {
+        setLocation("/user/dashboard");
+      } else if (userData?.role === "pemberi_kerja") {
+        setLocation("/employer/dashboard");
+      } else if (userData?.role === "admin") {
+        setLocation("/admin/dashboard");
+      } else {
+        setLocation("/");
+      }
     },
     onError: (error: any) => {
       toast({
