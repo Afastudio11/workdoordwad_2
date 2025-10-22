@@ -1,6 +1,6 @@
 import { db } from "../../server/db";
 import { jobs, companies, users } from "../../shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function seedJobs() {
   console.log("🌱 Seeding jobs...");
@@ -197,13 +197,26 @@ export async function seedJobs() {
   }
 
   // Insert jobs in batches
-  // Note: We allow duplicate titles from different companies (realistic scenario)
+  // Note: We check for existing jobs by title AND company to avoid exact duplicates
+  // Different companies can still post jobs with the same title (realistic)
   let createdCount = 0;
   for (const job of jobsData) {
-    await db.insert(jobs).values(job);
-    createdCount++;
-    if (createdCount % 10 === 0) {
-      console.log(`  ✓ Created ${createdCount} jobs...`);
+    // Check if this exact job (same title + company) already exists
+    const existing = await db
+      .select()
+      .from(jobs)
+      .where(and(
+        eq(jobs.title, job.title),
+        eq(jobs.companyId, job.companyId)
+      ))
+      .limit(1);
+
+    if (existing.length === 0) {
+      await db.insert(jobs).values(job);
+      createdCount++;
+      if (createdCount % 10 === 0) {
+        console.log(`  ✓ Created ${createdCount} jobs...`);
+      }
     }
   }
 

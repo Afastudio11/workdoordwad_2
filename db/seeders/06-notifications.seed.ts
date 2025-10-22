@@ -1,6 +1,6 @@
 import { db } from "../../server/db";
 import { notifications, users } from "../../shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function seedNotifications() {
   console.log("🌱 Seeding notifications...");
@@ -124,8 +124,21 @@ export async function seedNotifications() {
   let createdCount = 0;
 
   for (const notification of notificationsData) {
-    await db.insert(notifications).values(notification);
-    createdCount++;
+    // Check if notification already exists (by userId, type, and title)
+    const existing = await db
+      .select()
+      .from(notifications)
+      .where(and(
+        eq(notifications.userId, notification.userId),
+        eq(notifications.type, notification.type),
+        eq(notifications.title, notification.title)
+      ))
+      .limit(1);
+
+    if (existing.length === 0) {
+      await db.insert(notifications).values(notification);
+      createdCount++;
+    }
   }
 
   console.log(`✅ Notifications seeding completed: ${createdCount} notifications created\n`);
