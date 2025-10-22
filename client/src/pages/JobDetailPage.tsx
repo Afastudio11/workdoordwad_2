@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
-import { Briefcase, MapPin, Clock, GraduationCap, DollarSign, Building2, Instagram, ArrowLeft, AlertCircle, RefreshCw, Mail, Phone, Globe } from "lucide-react";
+import { Briefcase, MapPin, Clock, GraduationCap, Wallet, Building2, Instagram, ArrowLeft, AlertCircle, RefreshCw, Mail, Phone, Globe, Bookmark, Calendar } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -207,57 +207,43 @@ export default function JobDetailPage() {
             {job.company.name}
           </div>
 
-          <div className="border-y border-gray-200 py-4 my-4 md:my-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-              <div data-testid="job-location">
-                <div className="flex items-center gap-2 text-gray-500 mb-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>Lokasi</span>
+          <div className="bg-gray-50 rounded-lg p-4 md:p-6 my-4 md:my-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg p-4 border border-gray-200" data-testid="job-salary">
+                <div className="flex items-center gap-2 text-gray-500 mb-2">
+                  <Wallet className="h-5 w-5 text-black" />
+                  <span className="text-sm uppercase tracking-wide">GAJI</span>
                 </div>
-                <div className="font-medium text-gray-900">{job.location}</div>
-              </div>
-              
-              <div data-testid="job-type">
-                <div className="flex items-center gap-2 text-gray-500 mb-1">
-                  <Briefcase className="h-4 w-4" />
-                  <span>Tipe</span>
+                <div className="text-lg font-semibold text-gray-900">
+                  {formatSalary(job.salaryMin, job.salaryMax)}/bln
                 </div>
-                <div className="font-medium text-gray-900">{job.jobType}</div>
               </div>
 
-              {job.experience && (
-                <div data-testid="job-experience">
-                  <div className="flex items-center gap-2 text-gray-500 mb-1">
-                    <Clock className="h-4 w-4" />
-                    <span>Pengalaman</span>
-                  </div>
-                  <div className="font-medium text-gray-900">{job.experience}</div>
+              <div className="bg-white rounded-lg p-4 border border-gray-200" data-testid="job-type">
+                <div className="flex items-center gap-2 text-gray-500 mb-2">
+                  <Briefcase className="h-5 w-5 text-black" />
+                  <span className="text-sm uppercase tracking-wide">TIPE PEKERJAAN</span>
                 </div>
-              )}
+                <div className="text-lg font-semibold text-gray-900 capitalize">{job.jobType}</div>
+              </div>
 
-              {job.education && (
-                <div data-testid="job-education">
-                  <div className="flex items-center gap-2 text-gray-500 mb-1">
-                    <GraduationCap className="h-4 w-4" />
-                    <span>Pendidikan</span>
-                  </div>
-                  <div className="font-medium text-gray-900">{job.education}</div>
+              <div className="bg-white rounded-lg p-4 border border-gray-200" data-testid="job-location">
+                <div className="flex items-center gap-2 text-gray-500 mb-2">
+                  <MapPin className="h-5 w-5 text-black" />
+                  <span className="text-sm uppercase tracking-wide">LOKASI</span>
                 </div>
-              )}
+                <div className="text-lg font-semibold text-gray-900">{job.location}</div>
+              </div>
+
+              <div className="bg-white rounded-lg p-4 border border-gray-200" data-testid="job-posted">
+                <div className="flex items-center gap-2 text-gray-500 mb-2">
+                  <Calendar className="h-5 w-5 text-black" />
+                  <span className="text-sm uppercase tracking-wide">DIPOSTING</span>
+                </div>
+                <div className="text-lg font-semibold text-gray-900">{formatDate(job.createdAt)}</div>
+              </div>
             </div>
           </div>
-
-          {(job.salaryMin || job.salaryMax) && (
-            <div className="mb-4 md:mb-6">
-              <div className="flex items-center gap-2 text-gray-500 mb-2">
-                <DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="text-xs sm:text-sm">Gaji</span>
-              </div>
-              <div className="text-xl sm:text-2xl font-semibold text-gray-900" data-testid="job-salary">
-                {formatSalary(job.salaryMin, job.salaryMax)}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="mb-6 md:mb-8">
@@ -301,23 +287,30 @@ export default function JobDetailPage() {
 
         <div className="border-t border-gray-200 pt-4 md:pt-6 mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="text-xs sm:text-sm text-gray-500">
-              <p data-testid="job-posted-date">Diposting: {formatDate(job.createdAt)}</p>
-              {job.source === "instagram" && job.sourceUrl && (
-                <div className="flex items-center gap-2 mt-2 text-blue-600">
-                  <Instagram className="h-4 w-4" />
-                  <span>Lowongan dari Instagram</span>
-                </div>
-              )}
-            </div>
+            {job.source === "instagram" && job.sourceUrl && (
+              <div className="flex items-center gap-2 text-blue-600 text-sm">
+                <Instagram className="h-4 w-4" />
+                <span>Lowongan dari Instagram</span>
+              </div>
+            )}
             
-            <button 
-              className="w-full sm:w-auto px-6 md:px-8 py-3 bg-primary text-primary-foreground text-sm md:text-base font-medium rounded-md hover:bg-primary/90 transition-colors min-h-[44px]"
-              onClick={() => setShowCompanyDialog(true)}
-              data-testid="button-apply"
-            >
-              Lamar Sekarang
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 sm:ml-auto">
+              <button 
+                className="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 text-gray-900 text-sm md:text-base font-medium rounded-lg hover:bg-gray-50 transition-colors min-h-[44px] flex items-center justify-center gap-2"
+                data-testid="button-save"
+              >
+                <Bookmark className="h-5 w-5" />
+                Simpan
+              </button>
+              
+              <button 
+                className="w-full sm:w-auto px-6 md:px-8 py-3 bg-primary text-primary-foreground text-sm md:text-base font-medium rounded-lg hover:bg-primary/90 transition-colors min-h-[44px]"
+                onClick={() => setShowCompanyDialog(true)}
+                data-testid="button-apply"
+              >
+                Lamar Sekarang
+              </button>
+            </div>
           </div>
         </div>
       </div>

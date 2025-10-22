@@ -37,6 +37,7 @@ import AdminJobsPage from "@/pages/AdminJobsPage";
 import AdminVerificationPage from "@/pages/AdminVerificationPage";
 import AdminFraudReportsPage from "@/pages/AdminFraudReportsPage";
 import ContentPage from "@/pages/ContentPage";
+import JobsPage from "@/pages/JobsPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -50,6 +51,7 @@ function Router() {
       <Route path="/blog/:slug" component={BlogDetailPage} />
       <Route path="/contact" component={ContactPage} />
       <Route path="/page/:slug" component={ContentPage} />
+      <Route path="/jobs" component={JobsPage} />
       <Route path="/jobs/:id" component={JobDetailPage} />
       <Route path="/faq" component={FAQPage} />
       
