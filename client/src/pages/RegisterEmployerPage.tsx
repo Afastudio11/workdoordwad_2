@@ -48,8 +48,8 @@ const step3Schema = z.object({
   whatsappNumber: z.string().min(10, "Nomor WhatsApp tidak valid"),
   city: z.string().min(1, "Kota harus dipilih"),
   address: z.string().min(10, "Alamat minimal 10 karakter"),
-  logo: z.string().optional(),
-  legalDocUrl: z.string().optional(),
+  logo: z.string().url("Format URL tidak valid").min(1, "Logo perusahaan wajib diisi"),
+  legalDocUrl: z.string().url("Format URL tidak valid").min(1, "Dokumen legalitas wajib diisi"),
 });
 
 type Step1Data = z.infer<typeof step1Schema>;
@@ -611,14 +611,14 @@ export default function RegisterEmployerPage() {
                   />
 
                   <div className="space-y-4 pt-4 border-t border-border">
-                    <Label className="text-base">Opsional</Label>
+                    <Label className="text-base font-semibold">Dokumen Perusahaan (Wajib)</Label>
                     
                     <FormField
                       control={form3.control}
                       name="logo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Upload Logo Perusahaan (URL)</FormLabel>
+                          <FormLabel>Upload Logo Perusahaan (URL) *</FormLabel>
                           <FormControl>
                             <Input placeholder="https://..." {...field} data-testid="input-logo-url" />
                           </FormControl>
@@ -633,7 +633,7 @@ export default function RegisterEmployerPage() {
                       name="legalDocUrl"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Upload Dokumen Legalitas (URL)</FormLabel>
+                          <FormLabel>Upload Dokumen Legalitas (URL) *</FormLabel>
                           <FormControl>
                             <Input placeholder="https://drive.google.com/..." {...field} data-testid="input-legal-doc-url" />
                           </FormControl>
