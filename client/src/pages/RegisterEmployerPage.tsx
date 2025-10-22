@@ -20,7 +20,11 @@ import { apiRequest } from "@/lib/queryClient";
 // Form schemas
 const step1Schema = z.object({
   email: z.string().email("Format email tidak valid"),
-  password: z.string().min(8, "Password minimal 8 karakter").regex(/^(?=.*[A-Za-z])(?=.*\d)/, "Password harus kombinasi huruf dan angka"),
+  password: z.string()
+    .min(8, "Password minimal 8 karakter")
+    .regex(/[A-Z]/, "Password harus mengandung minimal 1 huruf besar")
+    .regex(/[a-z]/, "Password harus mengandung minimal 1 huruf kecil")
+    .regex(/[0-9]/, "Password harus mengandung minimal 1 angka"),
   confirmPassword: z.string(),
   agreeToTerms: z.boolean().refine((val) => val === true, "Anda harus menyetujui syarat dan ketentuan"),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -165,7 +169,7 @@ export default function RegisterEmployerPage() {
                       <FormItem>
                         <FormLabel>Email Perusahaan *</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="hr@perusahaan.com" {...field} data-testid="input-email" />
+                          <Input type="email" placeholder="hr@perusahaan.com" autoComplete="email" {...field} data-testid="input-email" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -179,8 +183,9 @@ export default function RegisterEmployerPage() {
                       <FormItem>
                         <FormLabel>Password *</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Minimal 8 karakter" {...field} data-testid="input-password" />
+                          <Input type="password" placeholder="Minimal 8 karakter" autoComplete="new-password" {...field} data-testid="input-password" />
                         </FormControl>
+                        <p className="text-xs text-muted-foreground">Minimal 8 karakter, harus ada huruf besar, huruf kecil, dan angka</p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -193,7 +198,7 @@ export default function RegisterEmployerPage() {
                       <FormItem>
                         <FormLabel>Konfirmasi Password *</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Ulangi password" {...field} data-testid="input-confirm-password" />
+                          <Input type="password" placeholder="Ulangi password" autoComplete="new-password" {...field} data-testid="input-confirm-password" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

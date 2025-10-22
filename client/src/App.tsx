@@ -19,7 +19,6 @@ import CommunityPage from "@/pages/CommunityPage";
 import FAQPage from "@/pages/FAQPage";
 import JobDetailPage from "@/pages/JobDetailPage";
 import NotificationsPage from "@/pages/NotificationsPage";
-import RegisterPage from "@/pages/RegisterPage";
 import RegisterRoleSelectionPage from "@/pages/RegisterRoleSelectionPage";
 import RegisterJobSeekerPage from "@/pages/RegisterJobSeekerPage";
 import RegisterEmployerPage from "@/pages/RegisterEmployerPage";
