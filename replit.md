@@ -5,6 +5,42 @@ Pintu Kerja is a freemium job classifieds platform designed for UMKM (small-medi
 
 ## Recent Changes
 
+### Database Seeding System (October 22, 2025)
+**Comprehensive database seeding system implemented** for testing and development:
+
+**Features:**
+- **3 Permanent Test Accounts**: Admin, Employer, and Job Seeker with consistent credentials
+- **30 Diverse Companies**: From startups to corporations across 20+ industries
+- **90 Job Listings**: Realistic positions with varied locations, types, salaries, and levels
+- **Sample Data**: 15 applications, 10 wishlists, 10 notifications for testing user journeys
+
+**Files Created:**
+- `db/seeders/01-users.seed.ts` - Test user accounts
+- `db/seeders/02-companies.seed.ts` - Company data
+- `db/seeders/03-jobs.seed.ts` - Job listings
+- `db/seeders/04-applications.seed.ts` - Job applications
+- `db/seeders/05-wishlists.seed.ts` - Saved jobs
+- `db/seeders/06-notifications.seed.ts` - User notifications
+- `db/seeders/index.ts` - Main orchestrator
+- `SEEDING.md` - Complete documentation
+
+**Usage:**
+- `npm run seed` - Run all seeders
+- `npm run seed:users` - Users only
+- `npm run seed:companies` - Companies only
+- `npm run seed:jobs` - Jobs only
+
+**Test Credentials:**
+- Admin: admin@pintuloker.com / Admin123!
+- Employer: employer@company.com / Employer123!
+- Job Seeker: pekerja@email.com / Pekerja123!
+
+**Key Features:**
+- Idempotent (safe to run multiple times)
+- Realistic data distribution
+- Follows database schema constraints
+- See `SEEDING.md` for complete guide
+
 ### Security Hardening (October 22, 2025)
 **Comprehensive security audit and fixes implemented** - 15/16 vulnerabilities addressed:
 

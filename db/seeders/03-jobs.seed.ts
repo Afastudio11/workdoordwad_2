@@ -197,21 +197,13 @@ export async function seedJobs() {
   }
 
   // Insert jobs in batches
+  // Note: We allow duplicate titles from different companies (realistic scenario)
   let createdCount = 0;
   for (const job of jobsData) {
-    // Check if similar job already exists
-    const existing = await db
-      .select()
-      .from(jobs)
-      .where(eq(jobs.title, job.title))
-      .limit(1);
-
-    if (existing.length === 0) {
-      await db.insert(jobs).values(job);
-      createdCount++;
-      if (createdCount % 10 === 0) {
-        console.log(`  ✓ Created ${createdCount} jobs...`);
-      }
+    await db.insert(jobs).values(job);
+    createdCount++;
+    if (createdCount % 10 === 0) {
+      console.log(`  ✓ Created ${createdCount} jobs...`);
     }
   }
 
