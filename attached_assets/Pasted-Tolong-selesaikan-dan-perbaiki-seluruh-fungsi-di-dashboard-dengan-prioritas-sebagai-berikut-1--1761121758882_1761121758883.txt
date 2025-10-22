@@ -1,0 +1,67 @@
+Tolong selesaikan dan perbaiki seluruh fungsi di dashboard dengan prioritas sebagai berikut:
+
+## 1. Build Fungsi Dashboard yang Belum Terbangun
+### Dashboard Pekerja (Job Seeker)
+- Lengkapi semua fitur yang belum berfungsi: apply job, save job, view application status, edit profile, upload CV/resume, job recommendations, notification settings
+- Pastikan semua tombol dan link mengarah ke fungsi yang benar (tidak ada error 404/405)
+- Implementasikan filter dan search lowongan kerja dengan benar
+
+### Dashboard Pemberi Kerja (Employer)
+- Lengkapi semua fitur: post job, edit job, delete job, view applicants, manage applications (approve/reject), company profile management, subscription/payment (jika ada)
+- Pastikan statistik dan analytics dashboard berfungsi (jumlah aplikasi, views, dll)
+- Implementasikan sistem notifikasi untuk aplikasi baru
+
+### Dashboard Admin
+- Lengkapi semua fitur: user management (CRUD users), job moderation (approve/reject/edit), report management, analytics overview, system settings
+- Implementasikan role-based access control dengan benar
+- Pastikan semua data ditampilkan dengan pagination yang benar
+
+## 2. Perbaikan Card Statistik Dashboard Pekerja (PRIORITAS TINGGI)
+**PERBAIKI card statistik berikut agar bisa diklik dan menampilkan detail:**
+- **Total Lamaran (15)**: Harus bisa diklik untuk melihat daftar semua lamaran yang dikirim dengan status masing-masing
+- **Sedang Diproses (6)**: Harus bisa diklik untuk melihat detail lamaran yang sedang menunggu review dari perusahaan
+- **Diundang Interview (3)**: Harus bisa diklik untuk melihat daftar lamaran yang di-shortlist beserta jadwal/info interview
+- **Pekerjaan Favorit (10)**: Harus bisa diklik untuk melihat daftar lowongan yang disimpan/difavoritkan
+
+Setiap card ketika diklik harus:
+- Redirect ke halaman detail atau membuka modal dengan daftar lengkap
+- Menampilkan informasi: nama perusahaan, posisi, tanggal apply, status, action buttons (lihat detail, batalkan, dll)
+- Implementasikan sorting dan filtering jika data banyak
+
+## 3. Perbaikan Icon & Visual
+### Icon Uang
+- **GANTI SEMUA icon dollar ($) menjadi icon uang generik** (gunakan icon seperti coins, money-bill, atau wallet dari library icon yang digunakan)
+- Pastikan perubahan ini diterapkan di semua halaman: dashboard, job listing, salary display, payment, dll
+
+### Perbaikan Warna Icon
+- **GANTI SEMUA icon berwarna lime/hijau terang menjadi hitam (#000000 atau #1a1a1a)** ketika background putih/terang
+- Pastikan kontras warna cukup baik untuk readability (minimum WCAG AA compliance)
+- Terapkan perubahan ini secara konsisten di seluruh aplikasi
+
+## 4. Perbaikan Fungsi Logout
+- **PERBAIKI tombol logout di bagian bawah profile yang tidak berfungsi**
+- Pastikan logout benar-benar:
+  - Menghapus session/token dari server
+  - Menghapus cookies/localStorage di client
+  - Redirect ke halaman login atau homepage
+  - Tidak bisa back ke dashboard setelah logout
+- Test logout dari semua role (pekerja, pemberi kerja, admin)
+
+## 5. Testing & Validation
+Setelah perbaikan, test semua fungsi:
+- Login/logout dari semua role
+- Setiap tombol dan link di dashboard
+- Klik pada semua card statistik dan pastikan menampilkan data yang benar
+- Form submission (create, edit, delete)
+- File upload (CV, logo perusahaan)
+- Filter dan search
+- Responsive design di mobile
+
+## 6. Output yang Diharapkan
+Untuk setiap perbaikan, berikan:
+- Lokasi file yang diubah
+- Deskripsi fungsi yang ditambahkan/diperbaiki
+- Kode yang dimodifikasi
+- Screenshot atau penjelasan hasil akhir
+
+Prioritaskan menyelesaikan fungsi-fungsi critical terlebih dahulu: logout, card statistik dashboard, apply job, post job, baru kemudian fitur-fitur tambahan.
