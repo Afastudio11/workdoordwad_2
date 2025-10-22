@@ -166,12 +166,12 @@ export default function PricingPage() {
       starter: {
         "1_month": { price: 199000, discount: "" },
         "3_months": { price: 549000, discount: "Hemat 8%" },
-        "12_months": { price: 1999000, discount: "Hemat 16%" },
+        "12_months": { price: 2150400, discount: "Hemat 10%" },
       },
       professional: {
         "1_month": { price: 399000, discount: "" },
         "3_months": { price: 1099000, discount: "Hemat 8%" },
-        "12_months": { price: 3999000, discount: "Hemat 16%" },
+        "12_months": { price: 4310400, discount: "Hemat 10%" },
       },
     };
     return prices[planId]?.[duration] || { price: 0, discount: "" };
@@ -353,7 +353,7 @@ export default function PricingPage() {
                           </TabsTrigger>
                           <TabsTrigger value="12_months" className="text-xs py-2">
                             12 Bulan
-                            <Badge variant="secondary" className="ml-1 text-[10px] bg-primary/20 text-black dark:text-black">-16%</Badge>
+                            <Badge variant="secondary" className="ml-1 text-[10px] bg-primary/20 text-black dark:text-black">-10%</Badge>
                           </TabsTrigger>
                         </TabsList>
                         <TabsContent value="1_month" className="mt-2">
