@@ -49,7 +49,7 @@ export default function JobCard({
 
   return (
     <>
-      <div className="card-interactive card-padding" data-testid={`card-job-${id}`}>
+      <div className="card-interactive card-padding bg-gray-50" data-testid={`card-job-${id}`}>
         <div className="flex items-start gap-3 mb-4">
           {companyLogo ? (
             <img 

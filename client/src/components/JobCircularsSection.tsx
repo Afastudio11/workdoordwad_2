@@ -23,8 +23,6 @@ interface Job {
   };
 }
 
-const categories = ["Desainer", "Pengembang Web", "Insinyur Perangkat Lunak", "Dokter", "Pemasaran"];
-
 export default function JobCircularsSection() {
   const [keyword, setKeyword] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -36,6 +34,12 @@ export default function JobCircularsSection() {
   const { data: jobsData, isLoading } = useQuery<{ jobs: Job[], total: number }>({
     queryKey: ["/api/jobs/trending", { limit: 6 }],
   });
+
+  // Get unique industries from jobs data for dynamic categories
+  const categories = jobsData?.jobs 
+    ? Array.from(new Set(jobsData.jobs.map(job => job.industry).filter(Boolean)))
+        .slice(0, 5) as string[]
+    : [];
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -110,7 +114,7 @@ export default function JobCircularsSection() {
             <button 
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 !activeCategory 
-                  ? 'bg-black text-white' 
+                  ? 'bg-primary text-primary-foreground' 
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
               data-testid="button-category-all"
@@ -123,7 +127,7 @@ export default function JobCircularsSection() {
                 key={index}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   activeCategory === cat 
-                    ? 'bg-black text-white' 
+                    ? 'bg-primary text-primary-foreground' 
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
                 data-testid={`button-category-${index}`}
@@ -200,7 +204,7 @@ export default function JobCircularsSection() {
                     setSelectedJob(job);
                     setShowApplyDialog(true);
                   }}
-                  className="block w-full py-2.5 bg-black text-white font-medium text-sm rounded-md hover:bg-gray-800 transition-colors text-center"
+                  className="block w-full py-2.5 bg-primary text-primary-foreground font-medium text-sm rounded-full hover:opacity-90 transition-colors text-center"
                   data-testid={`button-apply-${index}`}
                 >
                   Lamar Sekarang

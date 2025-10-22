@@ -112,7 +112,7 @@ export default function BlogDetailPage() {
         <div className="mt-12 pt-8 border-t border-gray-200">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full hover:bg-black/90 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full hover:opacity-90 transition-colors"
             data-testid="button-back-to-blog"
           >
             <ArrowLeft className="h-4 w-4" />

@@ -128,12 +128,6 @@ export default function BlogPage() {
                     
                     <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
                       <span>{publishedDate}</span>
-                      {post.readTime && (
-                        <>
-                          <span>•</span>
-                          <span>{post.readTime}</span>
-                        </>
-                      )}
                     </div>
                     
                     <h3 className="text-xl font-bold text-black mb-3 line-clamp-2 group-hover:text-primary transition-colors">
