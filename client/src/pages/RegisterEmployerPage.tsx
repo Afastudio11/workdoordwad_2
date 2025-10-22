@@ -48,8 +48,6 @@ const step3Schema = z.object({
   whatsappNumber: z.string().min(10, "Nomor WhatsApp tidak valid"),
   city: z.string().min(1, "Kota harus dipilih"),
   address: z.string().min(10, "Alamat minimal 10 karakter"),
-  logo: z.string().url("Format URL tidak valid").min(1, "Logo perusahaan wajib diisi"),
-  legalDocUrl: z.string().url("Format URL tidak valid").min(1, "Dokumen legalitas wajib diisi"),
 });
 
 type Step1Data = z.infer<typeof step1Schema>;
@@ -154,6 +152,9 @@ export default function RegisterEmployerPage() {
   const [formData, setFormData] = useState<Partial<Step1Data & Step2Data & Step3Data>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string>("free");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [legalDocFile, setLegalDocFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const steps = ["Informasi Akun", "Data Perusahaan", "Kontak & Alamat", "Pilih Paket"];
 
@@ -188,8 +189,6 @@ export default function RegisterEmployerPage() {
       whatsappNumber: formData.whatsappNumber || "",
       city: formData.city || "",
       address: formData.address || "",
-      logo: formData.logo || "",
-      legalDocUrl: formData.legalDocUrl || "",
     },
   });
 
@@ -203,9 +202,61 @@ export default function RegisterEmployerPage() {
     setCurrentStep(3);
   };
 
-  const handleStep3Submit = (data: Step3Data) => {
-    setFormData({ ...formData, ...data });
-    setCurrentStep(4);
+  const handleStep3Submit = async (data: Step3Data) => {
+    // Validate files
+    if (!logoFile) {
+      toast({
+        title: "Error",
+        description: "Logo perusahaan wajib diupload",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!legalDocFile) {
+      toast({
+        title: "Error",
+        description: "Dokumen legalitas wajib diupload",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Upload files
+    setIsUploading(true);
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append('logo', logoFile);
+      uploadFormData.append('legalDoc', legalDocFile);
+
+      const response = await fetch('/api/upload/company-docs', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Gagal mengupload dokumen');
+      }
+
+      const result = await response.json();
+      
+      setFormData({ 
+        ...formData, 
+        ...data,
+        logo: result.logoUrl,
+        legalDocUrl: result.legalDocUrl,
+      });
+      setCurrentStep(4);
+    } catch (error: any) {
+      toast({
+        title: "Gagal Upload",
+        description: error.message || "Terjadi kesalahan saat mengupload dokumen",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleFinalSubmit = async () => {
@@ -613,35 +664,112 @@ export default function RegisterEmployerPage() {
                   <div className="space-y-4 pt-4 border-t border-border">
                     <Label className="text-base font-semibold">Dokumen Perusahaan (Wajib)</Label>
                     
-                    <FormField
-                      control={form3.control}
-                      name="logo"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Upload Logo Perusahaan (URL) *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://..." {...field} data-testid="input-logo-url" />
-                          </FormControl>
-                          <p className="text-xs text-muted-foreground">JPG/PNG, max 1MB</p>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="space-y-4">
+                      <div>
+                        <FormLabel>Upload Logo Perusahaan *</FormLabel>
+                        <div className="mt-2">
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1">
+                              <Input
+                                type="file"
+                                accept="image/jpeg,image/png,image/jpg"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    // Validate file size (max 1MB)
+                                    if (file.size > 1024 * 1024) {
+                                      toast({
+                                        title: "File terlalu besar",
+                                        description: "Ukuran logo maksimal 1MB",
+                                        variant: "destructive",
+                                      });
+                                      e.target.value = "";
+                                      return;
+                                    }
+                                    // Validate file type
+                                    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+                                      toast({
+                                        title: "Format file tidak valid",
+                                        description: "Hanya file JPG/PNG yang diperbolehkan",
+                                        variant: "destructive",
+                                      });
+                                      e.target.value = "";
+                                      return;
+                                    }
+                                    setLogoFile(file);
+                                  }
+                                }}
+                                data-testid="input-logo-file"
+                                className="cursor-pointer"
+                              />
+                            </div>
+                            {logoFile && (
+                              <div className="flex-shrink-0 w-16 h-16 border-2 border-border rounded-lg overflow-hidden bg-muted">
+                                <img 
+                                  src={URL.createObjectURL(logoFile)} 
+                                  alt="Logo preview" 
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Format: JPG/PNG, Ukuran maksimal: 1MB
+                            {logoFile && (
+                              <span className="text-foreground font-medium ml-2">
+                                ✓ {logoFile.name} ({(logoFile.size / 1024).toFixed(0)} KB)
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
 
-                    <FormField
-                      control={form3.control}
-                      name="legalDocUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Upload Dokumen Legalitas (URL) *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://drive.google.com/..." {...field} data-testid="input-legal-doc-url" />
-                          </FormControl>
-                          <p className="text-xs text-muted-foreground">SIUP/NIB/TDP (PDF, max 2MB)</p>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <div>
+                        <FormLabel>Upload Dokumen Legalitas *</FormLabel>
+                        <div className="mt-2">
+                          <Input
+                            type="file"
+                            accept="application/pdf"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                // Validate file size (max 2MB)
+                                if (file.size > 2 * 1024 * 1024) {
+                                  toast({
+                                    title: "File terlalu besar",
+                                    description: "Ukuran dokumen maksimal 2MB",
+                                    variant: "destructive",
+                                  });
+                                  e.target.value = "";
+                                  return;
+                                }
+                                // Validate file type
+                                if (file.type !== 'application/pdf') {
+                                  toast({
+                                    title: "Format file tidak valid",
+                                    description: "Hanya file PDF yang diperbolehkan",
+                                    variant: "destructive",
+                                  });
+                                  e.target.value = "";
+                                  return;
+                                }
+                                setLegalDocFile(file);
+                              }
+                            }}
+                            data-testid="input-legal-doc-file"
+                            className="cursor-pointer"
+                          />
+                          <p className="text-xs text-muted-foreground mt-2">
+                            SIUP/NIB/TDP, Format: PDF, Ukuran maksimal: 2MB
+                            {legalDocFile && (
+                              <span className="text-foreground font-medium ml-2">
+                                ✓ {legalDocFile.name} ({(legalDocFile.size / 1024).toFixed(0)} KB)
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex gap-3 pt-4">
@@ -650,14 +778,29 @@ export default function RegisterEmployerPage() {
                       variant="outline"
                       onClick={() => setCurrentStep(2)}
                       className="w-full"
+                      disabled={isUploading}
                       data-testid="button-back-step-3"
                     >
                       <ArrowLeft className="mr-2 h-4 w-4" />
                       Kembali
                     </Button>
-                    <Button type="submit" className="w-full btn-cta-primary" data-testid="button-next-step-3">
-                      Lanjutkan ke Pilih Paket
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                    <Button 
+                      type="submit" 
+                      className="w-full btn-cta-primary" 
+                      disabled={isUploading}
+                      data-testid="button-next-step-3"
+                    >
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Mengupload dokumen...
+                        </>
+                      ) : (
+                        <>
+                          Lanjutkan ke Pilih Paket
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </>
+                      )}
                     </Button>
                   </div>
                 </form>
