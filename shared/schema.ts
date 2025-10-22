@@ -28,11 +28,24 @@ export const users = pgTable("users", {
   experience: text("experience"), // JSON array
   skills: text("skills").array(),
   
+  // Pendidikan detail (untuk registrasi)
+  lastEducation: text("last_education"), // SMA/SMK | D3 | S1 | S2 | S3
+  major: text("major"),
+  institution: text("institution"),
+  graduationYear: text("graduation_year"),
+  employmentStatus: text("employment_status"), // Belum Bekerja | Bekerja - Mencari Peluang Baru | Fresh Graduate
+  yearsOfExperience: text("years_of_experience"), // 0 tahun | <1 tahun | 1-3 tahun | 3-5 tahun | >5 tahun
+  
   // Job preferences untuk rekomendasi
   preferredIndustries: text("preferred_industries").array(),
   preferredLocations: text("preferred_locations").array(),
   preferredJobTypes: text("preferred_job_types").array(),
   expectedSalaryMin: integer("expected_salary_min"),
+  
+  // Registration tracking
+  registrationStep: integer("registration_step").default(0),
+  emailVerified: boolean("email_verified").default(false),
+  emailVerificationToken: text("email_verification_token"),
   
   // Fields untuk pemberi_kerja
   isVerified: boolean("is_verified").default(false),
@@ -54,9 +67,23 @@ export const companies = pgTable("companies", {
   website: text("website"),
   contactEmail: text("contact_email"),
   contactPhone: text("contact_phone"),
+  whatsappNumber: text("whatsapp_number"),
   logo: text("logo"),
+  legalDocUrl: text("legal_doc_url"),
   employeeCount: text("employee_count"),
-  subscriptionPlan: text("subscription_plan").default("free"), // free | standard | basic | medium | professional
+  foundedYear: text("founded_year"),
+  
+  // PIC (Person In Charge) info
+  picName: text("pic_name"),
+  picPosition: text("pic_position"),
+  
+  // Subscription info
+  subscriptionPlan: text("subscription_plan").default("free"), // free | starter | professional | enterprise
+  subscriptionStartDate: timestamp("subscription_start_date"),
+  subscriptionEndDate: timestamp("subscription_end_date"),
+  subscriptionDuration: text("subscription_duration"), // 1_month | 3_months | 12_months
+  paymentStatus: text("payment_status").default("pending"), // pending | completed | failed
+  
   isVerified: boolean("is_verified").default(false),
   verifiedAt: timestamp("verified_at"),
   createdBy: varchar("created_by").references(() => users.id),

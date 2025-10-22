@@ -20,6 +20,10 @@ import FAQPage from "@/pages/FAQPage";
 import JobDetailPage from "@/pages/JobDetailPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import RegisterPage from "@/pages/RegisterPage";
+import RegisterRoleSelectionPage from "@/pages/RegisterRoleSelectionPage";
+import RegisterJobSeekerPage from "@/pages/RegisterJobSeekerPage";
+import RegisterEmployerPage from "@/pages/RegisterEmployerPage";
+import PricingPage from "@/pages/PricingPage";
 import LoginPage from "@/pages/LoginPage";
 import JobCardsDemo from "@/pages/JobCardsDemo";
 import BlogPage from "@/pages/BlogPage";
@@ -46,7 +50,10 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/demo" component={JobCardsDemo} />
-      <Route path="/register" component={RegisterPage} />
+      <Route path="/register" component={RegisterRoleSelectionPage} />
+      <Route path="/register/job-seeker" component={RegisterJobSeekerPage} />
+      <Route path="/register/employer" component={RegisterEmployerPage} />
+      <Route path="/pricing" component={PricingPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogDetailPage} />

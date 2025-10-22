@@ -1,0 +1,404 @@
+Buatkan sistem registrasi multi-step untuk Pekerja dan Pemberi Kerja dengan form lengkap dan alur yang jelas:
+
+## 1. Halaman Pemilihan Role (Landing Registrasi)
+Buat halaman awal registrasi dengan 2 pilihan besar:
+- **Card "Daftar sebagai Pencari Kerja"** (dengan icon dan deskripsi singkat)
+- **Card "Daftar sebagai Pemberi Kerja"** (dengan icon dan deskripsi singkat)
+
+User harus memilih role terlebih dahulu sebelum ke form registrasi.
+
+---
+
+## 2. Registrasi PEKERJA (Job Seeker) - Multi-Step Form
+
+### Step 1: Informasi Akun (Halaman 1)
+**Field yang wajib diisi:**
+- Email (validasi format email)
+- Password (minimal 8 karakter, kombinasi huruf & angka)
+- Konfirmasi Password
+- Checkbox: Setuju dengan Syarat & Ketentuan
+
+**Tombol:** "Lanjutkan ke Step 2"
+
+### Step 2: Data Pribadi (Halaman 2)
+**Field yang wajib diisi:**
+- Nama Lengkap
+- Nomor Telepon (validasi format Indonesia)
+- Tanggal Lahir (date picker)
+- Jenis Kelamin (dropdown: Laki-laki/Perempuan)
+- Kota Domisili (dropdown atau autocomplete kota-kota Indonesia)
+- Alamat Lengkap (textarea)
+
+**Tombol:** "Kembali" dan "Lanjutkan ke Step 3"
+
+### Step 3: Informasi Pendidikan & Profesional (Halaman 3)
+**Field yang wajib diisi:**
+- Pendidikan Terakhir (dropdown: SMA/SMK, D3, S1, S2, S3)
+- Jurusan/Bidang Studi
+- Nama Institusi/Universitas
+- Tahun Lulus
+- Status Pekerjaan Saat Ini (dropdown: Belum Bekerja, Bekerja - Mencari Peluang Baru, Fresh Graduate)
+- Pengalaman Kerja (dropdown: 0 tahun, <1 tahun, 1-3 tahun, 3-5 tahun, >5 tahun)
+
+**Field opsional:**
+- Upload CV/Resume (PDF, max 2MB)
+- Upload Foto Profil (JPG/PNG, max 1MB)
+
+**Tombol:** "Kembali" dan "Selesaikan Registrasi"
+
+### Step 4: Verifikasi Email (Halaman 4)
+- Kirim email verifikasi otomatis ke email yang didaftarkan
+- Tampilkan pesan: "Silakan cek email Anda untuk verifikasi akun"
+- Tombol: "Kirim Ulang Email" dan "Sudah Verifikasi, Login Sekarang"
+
+---
+
+## 3. Registrasi PEMBERI KERJA (Employer) - Multi-Step Form
+
+### Step 1: Informasi Akun (Halaman 1)
+**Field yang wajib diisi:**
+- Email Perusahaan (validasi format email)
+- Password (minimal 8 karakter, kombinasi huruf & angka)
+- Konfirmasi Password
+- Checkbox: Setuju dengan Syarat & Ketentuan
+
+**Tombol:** "Lanjutkan ke Step 2"
+
+### Step 2: Data Perusahaan (Halaman 2)
+**Field yang wajib diisi:**
+- Nama Perusahaan
+- Bidang Industri (dropdown: Teknologi, Manufaktur, Jasa, Retail, Pendidikan, Kesehatan, F&B, Konstruksi, dll)
+- Jumlah Karyawan (dropdown: 1-10, 11-50, 51-200, 201-500, >500)
+- Tahun Berdiri
+- Website Perusahaan (validasi URL, opsional)
+- Deskripsi Perusahaan (textarea, minimal 100 karakter)
+
+**Tombol:** "Kembali" dan "Lanjutkan ke Step 3"
+
+### Step 3: Informasi Kontak & Alamat (Halaman 3)
+**Field yang wajib diisi:**
+- Nama Lengkap PIC (Person In Charge)
+- Jabatan PIC
+- Nomor Telepon Perusahaan (validasi format Indonesia)
+- Nomor WhatsApp (untuk notifikasi, bisa sama dengan telepon)
+- Kota Kantor Pusat (dropdown atau autocomplete)
+- Alamat Lengkap Kantor (textarea)
+
+**Field opsional:**
+- Upload Logo Perusahaan (JPG/PNG, max 1MB)
+- Upload Dokumen Legalitas (SIUP/NIB/TDP, PDF, max 2MB)
+
+**Tombol:** "Kembali" dan "Lanjutkan ke Step 4"
+
+---
+
+### Step 4: Pilih Paket Layanan (Halaman 4) - **DENGAN SKEMA WARNA LIME & PUTIH**
+
+**Design Requirements:**
+- Background halaman: Putih (#ffffff)
+- Background cards: Putih (#ffffff) dengan border dan shadow
+- Accent color: Lime/Hijau Neon (#c0ff00 atau #d4ff00) - sesuai dengan brand website
+- Text utama: Hitam (#000000 atau #1a1a1a)
+- Text secondary: Dark gray (#666666)
+- Border cards: Light gray (#e0e0e0) untuk paket biasa, Lime untuk paket recommended
+- CTA Buttons: Background lime (#c0ff00) dengan text hitam (#000000)
+- Hover effects: Lime glow atau scale up
+- Badge: Background lime dengan text hitam
+
+Tampilkan 4 pilihan paket dalam bentuk pricing cards yang menarik (layout grid 4 kolom di desktop, stack vertical di mobile):
+
+---
+
+#### **PAKET 1: GRATIS**
+**Card Design:**
+- Background: Putih (#ffffff)
+- Border: 2px solid #e0e0e0 (light gray)
+- Shadow: Subtle gray shadow (0 2px 8px rgba(0,0,0,0.1))
+- No special glow effects
+- Icon: Outline style, warna hitam
+
+**Header Card:**
+- Nama paket: "GRATIS" (font bold, hitam)
+- Tagline: "Untuk Memulai" (font regular, gray)
+
+**Fitur yang didapat:**
+- Posting 3 lowongan kerja per bulan
+- Lowongan tampil di halaman pencarian standar (tanpa highlight)
+- Akses ke dashboard pemberi kerja dasar
+- Notifikasi email untuk aplikasi masuk (max 50 notifikasi/bulan)
+- Tampilan profil perusahaan standar
+- Durasi lowongan aktif: 30 hari
+- Support via email (response 2-3 hari kerja)
+
+**Harga:** 
+- Rp 0 (font size besar, hitam, bold)
+- "/bulan" (font size kecil, gray)
+
+**Tombol:** "Pilih Gratis" 
+- Style: Outline button dengan border hitam (2px), text hitam, background putih
+- Hover: Background hitam, text putih
+- Border-radius: 8px
+- Padding: 12px 32px
+
+**Badge (optional):** "Cocok untuk UMKM"
+- Position: Top right corner card
+- Background: Light gray (#f5f5f5), text hitam
+- Border-radius: 4px
+
+---
+
+#### **PAKET 2: STARTER** 
+**Card Design:**
+- Background: Putih (#ffffff)
+- Border: 2px solid #d0d0d0 (medium gray)
+- Shadow: Medium shadow (0 4px 12px rgba(0,0,0,0.12))
+- Subtle scale on hover (transform: scale(1.02))
+- Icon: Filled style, warna hitam
+
+**Header Card:**
+- Nama paket: "STARTER" (font bold, hitam)
+- Tagline: "Untuk Bisnis Berkembang" (font regular, gray)
+
+**Fitur yang didapat:**
+- Posting 10 lowongan kerja per bulan
+- Badge "Featured" di 3 lowongan pilihan
+- Lowongan tampil lebih tinggi di hasil pencarian
+- Logo perusahaan ditampilkan di listing
+- Akses analytics dasar (views, aplikasi)
+- Notifikasi email unlimited
+- Tampilan profil perusahaan enhanced
+- Durasi lowongan aktif: 45 hari
+- Support via email & chat (response 1 hari kerja)
+
+**Harga:**
+- Rp 199.000 (font size besar, hitam, bold)
+- "/bulan" (font size kecil, gray)
+- Pilihan durasi:
+  - 1 bulan: Rp 199.000
+  - 3 bulan: Rp 549.000 (tampilkan badge kecil "Hemat 8%")
+  - 12 bulan: Rp 1.999.000 (tampilkan badge kecil "Hemat 16%")
+
+**Tombol:** "Pilih Starter"
+- Style: Outline button dengan border lime (#c0ff00, 2px), text hitam, background putih
+- Hover: Background lime (#c0ff00), text hitam
+- Border-radius: 8px
+- Padding: 12px 32px
+
+**Badge:** "Populer"
+- Position: Top right corner card
+- Background: Lime (#c0ff00), text hitam, font bold
+- Border-radius: 4px
+
+---
+
+#### **PAKET 3: PROFESSIONAL** 🏆 **MOST POPULAR & RECOMMENDED**
+**Card Design:**
+- Background: Putih (#ffffff)
+- Border: 3px solid Lime (#c0ff00) ← border lebih tebal untuk highlight
+- Shadow: Strong shadow dengan lime glow (0 8px 24px rgba(192, 255, 0, 0.3))
+- Scale up on hover (transform: scale(1.05))
+- Icon: Filled style, warna lime
+- **Ribbon badge "PALING POPULER" di pojok kanan atas** (background lime, text hitam)
+
+**Header Card:**
+- Nama paket: "PROFESSIONAL" (font bold, hitam)
+- Tagline: "Solusi Terbaik untuk Perekrutan" (font regular, gray)
+
+**Fitur yang didapat:**
+- Posting 30 lowongan kerja per bulan
+- Badge "Featured" & "Urgent" unlimited
+- Prioritas TOP 3 di hasil pencarian
+- Logo perusahaan size besar & highlight
+- Akses analytics lengkap (views, aplikasi, demografi kandidat, conversion rate)
+- Notifikasi email & WhatsApp unlimited
+- Boost lowongan ke media sosial otomatis (LinkedIn, Instagram, Facebook)
+- Profil perusahaan premium dengan video & gallery
+- Durasi lowongan aktif: 60 hari
+- Support prioritas via email, chat, & telepon (response <6 jam)
+- Akses database CV kandidat (max 100 CV/bulan)
+
+**Harga:**
+- Rp 399.000 (font size besar, hitam, bold)
+- "/bulan" (font size kecil, gray)
+- Pilihan durasi:
+  - 1 bulan: Rp 399.000
+  - 3 bulan: Rp 1.099.000 (tampilkan badge "Hemat 8%")
+  - 12 bulan: Rp 3.999.000 (tampilkan badge "Hemat 16%")
+
+**Tombol:** "Pilih Professional" ← **TOMBOL PALING MENONJOL**
+- Style: Solid button dengan background lime (#c0ff00), text hitam bold, NO border
+- Hover: Background darker lime (#b0ef00), shadow lebih besar
+- Border-radius: 8px
+- Padding: 14px 40px (lebih besar dari yang lain)
+- Box-shadow: 0 4px 12px rgba(192, 255, 0, 0.4)
+
+**Badge:** "RECOMMENDED" + "Hemat 16% untuk paket tahunan"
+- Position: Top dengan ribbon style yang lebih besar
+- Background: Lime (#c0ff00), text hitam, font bold
+- Triangle ribbon di pojok kanan atas
+
+---
+
+#### **PAKET 4: ENTERPRISE** 💼
+**Card Design:**
+- Background: Putih (#ffffff)
+- Border: 2px solid #d0d0d0 (medium gray)
+- Shadow: Medium shadow (0 4px 12px rgba(0,0,0,0.12))
+- Icon: Filled style, warna hitam
+
+**Header Card:**
+- Nama paket: "ENTERPRISE" (font bold, hitam)
+- Tagline: "Untuk Korporasi & Perusahaan Besar" (font regular, gray)
+
+**Fitur yang didapat:**
+- Posting UNLIMITED lowongan kerja
+- Semua fitur Professional +
+- Dedicated Account Manager
+- Custom branding di halaman perusahaan
+- API integration untuk ATS (Applicant Tracking System)
+- White-label career page
+- Akses database CV kandidat UNLIMITED
+- Banner iklan eksklusif di homepage (top position, 7 hari)
+- Laporan analytics bulanan (PDF report)
+- Training gratis untuk HR team (online/offline)
+- Support 24/7 via semua channel + prioritas tertinggi
+- Custom contract & invoice
+
+**Harga:**
+- "Hubungi Kami" (font size besar, hitam, bold)
+- "Harga custom sesuai kebutuhan" (font size kecil, gray)
+
+**Tombol:** "Hubungi Sales"
+- Style: Outline button dengan border hitam (2px), text hitam, background putih
+- Hover: Background hitam, text putih
+- Border-radius: 8px
+- Padding: 12px 32px
+
+**Badge:** "Custom Solution"
+- Position: Top right corner card
+- Background: Hitam (#000000), text putih
+- Border-radius: 4px
+
+---
+
+### Comparison Table (Optional - Toggle)
+Tambahkan tombol "Bandingkan Semua Paket" di bawah cards yang ketika diklik menampilkan tabel perbandingan lengkap:
+
+| Fitur | Gratis | Starter | Professional | Enterprise |
+|-------|--------|---------|--------------|------------|
+| Posting Lowongan/Bulan | 3 | 10 | 30 | Unlimited |
+| Badge Featured | ✗ | 3 | Unlimited | Unlimited |
+| Prioritas Pencarian | ✗ | Medium | Top 3 | Top 1 |
+| Analytics | Basic | Basic | Advanced | Advanced + Custom Report |
+| Support | Email (2-3 hari) | Email & Chat (1 hari) | Prioritas (<6 jam) | 24/7 Dedicated |
+| Database CV | ✗ | ✗ | 100/bulan | Unlimited |
+| Social Media Boost | ✗ | ✗ | ✓ | ✓ + Custom |
+| Durasi Aktif Lowongan | 30 hari | 45 hari | 60 hari | Custom |
+
+---
+
+### Additional Elements di Halaman Pricing:
+
+**1. Testimonial Section (di bawah pricing cards):**
+- 2-3 testimonial singkat dari pemberi kerja yang sudah menggunakan paket premium
+- Format: Foto logo perusahaan, nama PIC, quote singkat, rating bintang
+- Background: Light gray (#f9f9f9) dengan border radius
+
+**2. FAQ Section:**
+- "Apakah bisa upgrade paket nanti?" → Ya, bisa upgrade kapan saja
+- "Bagaimana cara pembayaran?" → Transfer bank, e-wallet, VA, QRIS
+- "Apakah ada refund?" → Refund available dalam 7 hari jika tidak puas (khusus paket berbayar)
+- "Bagaimana cara kerja paket tahunan?" → Bayar sekali untuk 12 bulan, hemat lebih banyak
+
+**3. Guarantee Badge:**
+- Tampilkan badge "Garansi Uang Kembali 7 Hari" di bawah pricing cards
+- Icon shield dengan checkmark, warna lime
+
+**4. Payment Methods:**
+- Tampilkan logo payment methods yang diterima (BCA, Mandiri, GoPay, OVO, Dana, QRIS)
+- Text: "Pembayaran Aman & Terpercaya"
+
+---
+
+### Step 5A: Jika Pilih GRATIS
+- Tampilkan konfirmasi: "Anda telah memilih Paket Gratis"
+- Kirim email verifikasi
+- Tampilkan pesan: "Akun Anda sedang dalam proses verifikasi oleh admin. Kami akan mengirim email dalam 1x24 jam."
+- Status akun: "Pending Approval - Free Plan"
+- Tombol: "Kembali ke Beranda" (outline) atau "Lihat Dashboard" (solid lime)
+
+### Step 5B: Jika Pilih STARTER / PROFESSIONAL / ENTERPRISE
+**Halaman Pembayaran:**
+- Tampilkan ringkasan paket yang dipilih (nama paket, durasi, harga total)
+- Breakdown harga jika ada diskon
+- Pilihan metode pembayaran (dengan icon):
+  - Transfer Bank (BCA, Mandiri, BNI, BRI)
+  - E-Wallet (GoPay, OVO, Dana, ShopeePay)
+  - Virtual Account
+  - QRIS
+
+**Setelah pembayaran:**
+- Kirim email verifikasi + instruksi pembayaran (jika belum lunas)
+- Tampilkan pesan: "Terima kasih! Akun Anda akan diaktifkan setelah pembayaran dikonfirmasi (maksimal 1x24 jam)"
+- Status akun: "Pending Payment" atau "Active - [Nama Paket]"
+- Tombol: "Lihat Status Pembayaran" (solid lime) atau "Kembali ke Beranda" (outline)
+
+---
+
+## 4. UI/UX Requirements
+
+### Progress Indicator
+- Tampilkan progress bar di atas form
+- Untuk pemberi kerja: "Step 1 dari 5"
+- Warna progress bar: Lime (#c0ff00)
+- Background progress bar: Light gray (#e0e0e0)
+
+### Pricing Cards Responsive Behavior:
+- Desktop (>1200px): 4 kolom
+- Tablet (768-1199px): 2 kolom (2 baris)
+- Mobile (<768px): 1 kolom (stack vertical), Professional card tetap paling menonjol
+
+### Button States:
+- Normal: Sesuai design per paket
+- Hover: Transform + shadow/background change
+- Active/Pressed: Slight scale down (0.98)
+- Disabled: Opacity 0.5, cursor not-allowed
+
+### Animations:
+- Cards: Fade in from bottom saat load halaman (stagger animation 100ms per card)
+- Hover: Smooth transition 0.3s
+- Toggle comparison table: Slide down animation
+
+---
+
+## 5. Database Schema Update
+
+**employers table tambahan fields:**
+- subscription_plan (enum: 'free', 'starter', 'professional', 'enterprise')
+- subscription_duration (enum: 'monthly', 'quarterly', 'yearly')
+- subscription_start_date
+- subscription_end_date
+- job_post_quota (3 untuk free, 10 untuk starter, 30 untuk professional, -1 untuk unlimited)
+- job_post_used (tracking berapa lowongan yang sudah diposting bulan ini)
+- featured_quota (0 untuk free, 3 untuk starter, -1 untuk unlimited)
+- featured_used
+
+**subscriptions table:**
+- id, employer_id, plan_type, duration, original_price, discount_amount, final_price, payment_status, payment_method, transaction_id, invoice_number, started_at, expired_at, auto_renew (boolean), created_at, updated_at
+
+**payments table:**
+- id, subscription_id, amount, payment_method, payment_proof (jika manual), status (pending/success/failed/refunded), paid_at, refunded_at, refund_reason, created_at
+
+---
+
+## 6. Output yang Diharapkan
+
+- File HTML/view untuk pricing page dengan 4 cards responsive
+- CSS dengan color scheme lime & putih, shadow effects, animations
+- JavaScript untuk toggle comparison table, duration selector, smooth scroll
+- Payment gateway integration (Midtrans/Xendit recommended)
+- Email templates untuk invoice, payment confirmation, subscription reminder
+- Admin dashboard untuk manage subscriptions & approvals
+- Dokumentasi lengkap setup dan testing
+
+Prioritaskan design yang clean, professional, dan persuasive dengan color scheme lime (#c0ff00) dan putih yang konsisten dengan brand website.
