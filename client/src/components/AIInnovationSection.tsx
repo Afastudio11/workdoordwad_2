@@ -113,12 +113,6 @@ export default function AIInnovationSection() {
                     </h3>
                     <div className="flex items-center gap-2 sm:gap-3 caption">
                       <span>{publishedDate}</span>
-                      {article.readTime && (
-                        <>
-                          <span>•</span>
-                          <span>{article.readTime} baca</span>
-                        </>
-                      )}
                     </div>
                   </div>
                 </Link>
