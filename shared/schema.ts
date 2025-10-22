@@ -444,6 +444,8 @@ export const registerPekerjaSchema = insertUserSchema.extend({
 export const registerPemberiKerjaSchema = insertUserSchema.extend({
   password: strongPasswordSchema,
   companyName: z.string().min(1, "Nama perusahaan harus diisi"),
+  logo: z.string().optional(),
+  legalDocUrl: z.string().optional(),
 }).omit({
   role: true, // Backend akan set role secara otomatis
   isVerified: true,

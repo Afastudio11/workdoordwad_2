@@ -22,7 +22,10 @@ import {
   Download,
   CheckCircle,
   XCircle,
-  CreditCard
+  CreditCard,
+  FileText,
+  Image as ImageIcon,
+  ExternalLink
 } from "lucide-react";
 import { useState } from "react";
 import type { Company } from "@shared/schema";
@@ -332,6 +335,41 @@ export default function AdminCompaniesPage() {
                     </div>
                   )}
                 </div>
+
+                {/* Document Links */}
+                {(company.logo || company.legalDocUrl) && (
+                  <div className="pt-3 border-t border-gray-200">
+                    <p className="text-xs font-semibold text-gray-700 mb-2">Dokumen:</p>
+                    <div className="flex gap-2">
+                      {company.logo && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1 flex-1"
+                          onClick={() => window.open(company.logo!, '_blank')}
+                          data-testid={`button-view-logo-${company.id}`}
+                        >
+                          <ImageIcon className="w-3 h-3" />
+                          Logo
+                          <ExternalLink className="w-3 h-3 ml-1" />
+                        </Button>
+                      )}
+                      {company.legalDocUrl && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1 flex-1"
+                          onClick={() => window.open(company.legalDocUrl!, '_blank')}
+                          data-testid={`button-view-legal-doc-${company.id}`}
+                        >
+                          <FileText className="w-3 h-3" />
+                          Legal Doc
+                          <ExternalLink className="w-3 h-3 ml-1" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-3 gap-2 pt-2">
                   <Button

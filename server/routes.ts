@@ -239,33 +239,48 @@ const uploadLegalDoc = multer({
   },
 });
 
-// Combined upload middleware for company documents
+// Custom storage to track in-flight file paths for cleanup on error
+const trackingStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    if (file.fieldname === 'logo') {
+      cb(null, "uploads/logos");
+    } else if (file.fieldname === 'legalDoc') {
+      cb(null, "uploads/documents");
+    } else {
+      cb(new Error("Invalid field name"), '');
+    }
+  },
+  filename: (req, file, cb) => {
+    let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+    if (file.fieldname === 'logo') {
+      const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+      if (!allowedExtensions.includes(ext)) ext = '.png';
+    } else if (file.fieldname === 'legalDoc') {
+      const allowedExtensions = ['.pdf'];
+      if (!allowedExtensions.includes(ext)) ext = '.pdf';
+    }
+    const uniqueName = `${randomUUID()}${ext}`;
+    
+    // Track in-flight file paths on request object for cleanup
+    if (!(req as any).uploadedFilePaths) {
+      (req as any).uploadedFilePaths = [];
+    }
+    const fullPath = path.join(
+      file.fieldname === 'logo' ? 'uploads/logos' : 'uploads/documents',
+      uniqueName
+    );
+    (req as any).uploadedFilePaths.push(fullPath);
+    
+    cb(null, uniqueName);
+  },
+});
+
+// Combined upload middleware for company documents with per-field size limits
+// Using largest allowed size (2MB) and validate per-field in endpoint
 const uploadCompanyDocs = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      if (file.fieldname === 'logo') {
-        cb(null, "uploads/logos");
-      } else if (file.fieldname === 'legalDoc') {
-        cb(null, "uploads/documents");
-      } else {
-        cb(new Error("Invalid field name"), '');
-      }
-    },
-    filename: (req, file, cb) => {
-      let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
-      if (file.fieldname === 'logo') {
-        const allowedExtensions = ['.jpg', '.jpeg', '.png'];
-        if (!allowedExtensions.includes(ext)) ext = '.png';
-      } else if (file.fieldname === 'legalDoc') {
-        const allowedExtensions = ['.pdf'];
-        if (!allowedExtensions.includes(ext)) ext = '.pdf';
-      }
-      const uniqueName = `${randomUUID()}${ext}`;
-      cb(null, uniqueName);
-    },
-  }),
+  storage: trackingStorage,
   limits: {
-    fileSize: 2 * 1024 * 1024, // Max 2MB
+    fileSize: 2 * 1024 * 1024, // Max 2MB (largest of the two)
     files: 2
   },
   fileFilter: (req, file, cb) => {
@@ -333,14 +348,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // File upload endpoint for company documents (logo and legal doc)
   app.post("/api/upload/company-docs", uploadCompanyDocs, (req, res) => {
+    const fs = require('fs');
+    
     try {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       const response: { logoUrl?: string; legalDocUrl?: string } = {};
 
+      // Validate logo size (max 1MB)
       if (files.logo && files.logo[0]) {
+        if (files.logo[0].size > 1 * 1024 * 1024) {
+          // Clean up all uploaded files on validation failure
+          if (files.logo && files.logo[0]) {
+            fs.unlinkSync(files.logo[0].path);
+          }
+          if (files.legalDoc && files.legalDoc[0]) {
+            fs.unlinkSync(files.legalDoc[0].path);
+          }
+          return res.status(400).json({ error: "Ukuran logo maksimal 1MB" });
+        }
         response.logoUrl = `/uploads/logos/${files.logo[0].filename}`;
       }
 
+      // Legal doc already limited to 2MB by multer config
       if (files.legalDoc && files.legalDoc[0]) {
         response.legalDocUrl = `/uploads/documents/${files.legalDoc[0].filename}`;
       }
@@ -348,8 +377,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(response);
     } catch (error: any) {
       console.error("Error uploading company documents:", error);
+      // Clean up any uploaded files on error
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      if (files) {
+        if (files.logo && files.logo[0]) {
+          try { fs.unlinkSync(files.logo[0].path); } catch (e) {}
+        }
+        if (files.legalDoc && files.legalDoc[0]) {
+          try { fs.unlinkSync(files.legalDoc[0].path); } catch (e) {}
+        }
+      }
       res.status(500).json({ error: error.message || "Gagal mengupload dokumen perusahaan" });
     }
+  });
+
+  // Error handler middleware for multer errors (must be defined after route)
+  app.use("/api/upload/company-docs", (err: any, req: Request, res: Response, next: any) => {
+    const fs = require('fs');
+    
+    // Clean up tracked in-flight files (works even when Multer aborts pre-handler)
+    const uploadedFilePaths = (req as any).uploadedFilePaths;
+    if (uploadedFilePaths && Array.isArray(uploadedFilePaths)) {
+      for (const filePath of uploadedFilePaths) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch (e) {
+          // File might not exist or already deleted
+        }
+      }
+    }
+    
+    // Also clean up any files in req.files (if available)
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    if (files) {
+      if (files.logo && files.logo[0]) {
+        try { fs.unlinkSync(files.logo[0].path); } catch (e) {}
+      }
+      if (files.legalDoc && files.legalDoc[0]) {
+        try { fs.unlinkSync(files.legalDoc[0].path); } catch (e) {}
+      }
+    }
+
+    // Handle multer-specific errors
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: "Ukuran file terlalu besar. Logo max 1MB, Dokumen legal max 2MB" });
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({ error: "Field file tidak valid" });
+    }
+    
+    // Return the error message
+    res.status(400).json({ error: err.message || "Gagal mengupload dokumen" });
   });
 
   // Authentication API - Register Pekerja
@@ -425,10 +503,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         role: "pemberi_kerja",
       });
 
-      // Create company with the user as creator
+      // Create company with the user as creator, including uploaded documents
       const company = await storage.createCompany({
         name: validatedData.companyName,
         createdBy: user.id,
+        logo: validatedData.logo,
+        legalDocUrl: validatedData.legalDocUrl,
       });
 
       // Set session

@@ -127,14 +127,6 @@ export default function RegisterRoleSelectionPage() {
           </Card>
         </div>
 
-        <div className="text-center mt-8">
-          <p className="body-small text-muted-foreground">
-            Sudah punya akun?{" "}
-            <Link href="/login" className="text-primary hover:underline font-medium" data-testid="link-login">
-              Masuk di sini
-            </Link>
-          </p>
-        </div>
       </div>
     </div>
   );

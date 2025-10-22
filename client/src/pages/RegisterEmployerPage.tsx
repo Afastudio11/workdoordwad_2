@@ -149,7 +149,7 @@ export default function RegisterEmployerPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<Step1Data & Step2Data & Step3Data>>({});
+  const [formData, setFormData] = useState<Partial<Step1Data & Step2Data & Step3Data> & { logo?: string; legalDocUrl?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string>("free");
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -272,6 +272,8 @@ export default function RegisterEmployerPage() {
         fullName: completeData.picName,
         phone: completeData.contactPhone,
         companyName: completeData.companyName,
+        logo: completeData.logo,
+        legalDocUrl: completeData.legalDocUrl,
       });
 
       if (response.ok) {
