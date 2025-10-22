@@ -90,20 +90,46 @@ export default function CompanyProfilePage() {
       <Card className="p-6 border-gray-200">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full bg-[#D4FF00] flex items-center justify-center">
-              <Building2 className="w-12 h-12 text-gray-900" />
-            </div>
-            {isEditing && (
-              <div className="flex-1">
-                <Label htmlFor="logo">URL Logo Perusahaan</Label>
-                <Input
-                  id="logo"
-                  type="text"
-                  value={formData.logo || ""}
-                  onChange={(e) => handleChange("logo", e.target.value)}
-                  placeholder="https://example.com/logo.png"
-                  data-testid="input-logo"
-                />
+            {isEditing ? (
+              <>
+                <div className="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
+                  {formData.logo || company?.logo ? (
+                    <img 
+                      src={formData.logo || company?.logo || ""} 
+                      alt="Company Logo" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Building2 className="w-12 h-12 text-gray-400" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="logo">URL Logo Perusahaan</Label>
+                  <Input
+                    id="logo"
+                    type="text"
+                    value={formData.logo || ""}
+                    onChange={(e) => handleChange("logo", e.target.value)}
+                    placeholder="https://example.com/logo.png"
+                    data-testid="input-logo"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Masukkan URL gambar logo perusahaan Anda (format: PNG, JPG, atau SVG)
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div className="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
+                {company?.logo ? (
+                  <img 
+                    src={company.logo} 
+                    alt="Company Logo" 
+                    className="w-full h-full object-cover"
+                    data-testid="img-company-logo"
+                  />
+                ) : (
+                  <Building2 className="w-12 h-12 text-gray-400" />
+                )}
               </div>
             )}
           </div>

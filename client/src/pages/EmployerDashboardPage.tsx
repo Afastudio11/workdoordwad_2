@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import EmployerDashboardHeader from "@/components/EmployerDashboardHeader";
 import OverviewPage from "./employer/OverviewPage";
 import EmployerProfilePage from "./employer/EmployerProfilePage";
+import CompanyProfilePage from "./employer/CompanyProfilePage";
 import PostJobPage from "./employer/PostJobPage";
 import MyJobsPage from "./employer/MyJobsPage";
 import SavedCandidatesPage from "./employer/SavedCandidatesPage";
@@ -47,6 +48,7 @@ export default function EmployerDashboardPage() {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'profile', label: 'Employers Profile', icon: User },
+    { id: 'company-profile', label: 'Company Profile', icon: Building2 },
     { id: 'post-job', label: 'Post a Job', icon: PlusCircle },
     { id: 'my-jobs', label: 'My Jobs', icon: Briefcase },
     { id: 'saved-candidates', label: 'Saved Candidate', icon: Bookmark },
@@ -60,6 +62,8 @@ export default function EmployerDashboardPage() {
         return <OverviewPage />;
       case 'profile':
         return <EmployerProfilePage />;
+      case 'company-profile':
+        return <CompanyProfilePage />;
       case 'post-job':
         return <PostJobPage />;
       case 'my-jobs':
