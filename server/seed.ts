@@ -1,5 +1,6 @@
 import { db } from "./db";
 import { users, companies, jobs, blogPosts, applications, wishlists, messages, notifications } from "@shared/schema";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 const locations = [
@@ -103,7 +104,8 @@ async function seed() {
   const hashedPasswordAdmin = await bcrypt.hash("Admin123!", 10);
   const hashedPasswordEmployer = await bcrypt.hash("Pemberi123!", 10);
 
-  const [worker] = await db
+  // Try to insert, if conflict then fetch existing users
+  let worker = (await db
     .insert(users)
     .values({
       username: "pekerja",
@@ -126,9 +128,13 @@ async function seed() {
       isActive: true,
     })
     .returning()
-    .onConflictDoNothing();
+    .onConflictDoNothing())[0];
 
-  const [admin] = await db
+  if (!worker) {
+    [worker] = await db.select().from(users).where(eq(users.username, "pekerja"));
+  }
+
+  let admin = (await db
     .insert(users)
     .values({
       username: "admin",
@@ -143,9 +149,13 @@ async function seed() {
       isActive: true,
     })
     .returning()
-    .onConflictDoNothing();
+    .onConflictDoNothing())[0];
 
-  const [employer] = await db
+  if (!admin) {
+    [admin] = await db.select().from(users).where(eq(users.username, "admin"));
+  }
+
+  let employer = (await db
     .insert(users)
     .values({
       username: "pemberi_kerja",
@@ -161,7 +171,11 @@ async function seed() {
       isActive: true,
     })
     .returning()
-    .onConflictDoNothing();
+    .onConflictDoNothing())[0];
+
+  if (!employer) {
+    [employer] = await db.select().from(users).where(eq(users.username, "pemberi_kerja"));
+  }
 
   console.log("✓ Main development accounts created:");
   console.log(`  - Pekerja: username=pekerja, password=Pekerja123!`);
@@ -172,7 +186,7 @@ async function seed() {
   console.log("\nCreating test users...");
   const hashedPassword = await bcrypt.hash("password123", 10);
 
-  const [testPekerja] = await db
+  let testPekerja = (await db
     .insert(users)
     .values({
       username: "pekerja_test",
@@ -191,9 +205,13 @@ async function seed() {
       expectedSalaryMin: 5000000,
     })
     .returning()
-    .onConflictDoNothing();
+    .onConflictDoNothing())[0];
 
-  const [testEmployer] = await db
+  if (!testPekerja) {
+    [testPekerja] = await db.select().from(users).where(eq(users.username, "pekerja_test"));
+  }
+
+  let testEmployer = (await db
     .insert(users)
     .values({
       username: "employer_test",
@@ -204,13 +222,17 @@ async function seed() {
       role: "pemberi_kerja",
     })
     .returning()
-    .onConflictDoNothing();
+    .onConflictDoNothing())[0];
+
+  if (!testEmployer) {
+    [testEmployer] = await db.select().from(users).where(eq(users.username, "employer_test"));
+  }
 
   console.log("✓ Test users created");
   
   // Create companies for main employer
   console.log("\n🏢 Creating companies for main employer...");
-  const [company1] = await db
+  let company1 = (await db
     .insert(companies)
     .values({
       name: "TechStartup Indonesia",
@@ -226,9 +248,13 @@ async function seed() {
       createdBy: employer.id,
     })
     .returning()
-    .onConflictDoNothing();
+    .onConflictDoNothing())[0];
 
-  const [company2] = await db
+  if (!company1) {
+    [company1] = await db.select().from(companies).where(eq(companies.name, "TechStartup Indonesia"));
+  }
+
+  let company2 = (await db
     .insert(companies)
     .values({
       name: "Digital Marketing Pro",
@@ -244,9 +270,13 @@ async function seed() {
       createdBy: employer.id,
     })
     .returning()
-    .onConflictDoNothing();
+    .onConflictDoNothing())[0];
 
-  const [company3] = await db
+  if (!company2) {
+    [company2] = await db.select().from(companies).where(eq(companies.name, "Digital Marketing Pro"));
+  }
+
+  let company3 = (await db
     .insert(companies)
     .values({
       name: "E-Commerce Solutions",
@@ -262,7 +292,11 @@ async function seed() {
       createdBy: employer.id,
     })
     .returning()
-    .onConflictDoNothing();
+    .onConflictDoNothing())[0];
+
+  if (!company3) {
+    [company3] = await db.select().from(companies).where(eq(companies.name, "E-Commerce Solutions"));
+  }
 
   console.log("✓ Main companies created");
   
