@@ -13,6 +13,14 @@ try {
   console.error("Failed to create upload directories:", err);
 }
 
+// CRITICAL SECURITY: Enforce SESSION_SECRET
+const SESSION_SECRET = process.env.SESSION_SECRET;
+if (!SESSION_SECRET) {
+  console.error("FATAL: SESSION_SECRET environment variable must be set!");
+  console.error("Generate one with: openssl rand -base64 32");
+  process.exit(1);
+}
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -28,7 +36,7 @@ export const sessionStore = new MemoryStoreSession({
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "pintukerja-secret-key-change-in-production",
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
@@ -36,7 +44,7 @@ app.use(
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "strict",
     },
   })
 );
@@ -76,10 +84,22 @@ app.use((req, res, next) => {
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
+    
+    // Log full error server-side for debugging
+    console.error("Error caught by global handler:", err);
+    
+    // Send sanitized error to client
+    if (process.env.NODE_ENV === "production") {
+      res.status(status).json({ 
+        error: status === 500 ? "Internal Server Error" : err.message 
+      });
+    } else {
+      // Development: more details for debugging
+      res.status(status).json({ 
+        error: err.message || "Internal Server Error",
+        ...(err.details && { details: err.details })
+      });
+    }
   });
 
   // importantly only setup vite in development and after
