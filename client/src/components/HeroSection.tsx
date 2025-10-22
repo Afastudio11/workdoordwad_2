@@ -51,7 +51,7 @@ export default function HeroSection() {
       
       <div className="relative z-10 max-w-[1600px] mx-auto px-4 md:px-8">
         <div className="text-center mb-4">
-          <h1 className="text-3xl md:text-6xl font-bold text-white mb-6 md:mb-8 tracking-tight leading-tight" data-testid="hero-title">
+          <h1 className="heading-1 text-white mb-6 md:mb-8" data-testid="hero-title">
             Wujudkan Pekerjaan Impianmu!<br />Cari di Sini Sekarang!
           </h1>
 

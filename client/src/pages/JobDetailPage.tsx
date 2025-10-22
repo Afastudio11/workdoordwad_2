@@ -312,7 +312,7 @@ export default function JobDetailPage() {
             </div>
             
             <button 
-              className="w-full sm:w-auto px-6 md:px-8 py-3 bg-blue-600 text-white text-sm md:text-base font-medium rounded-md hover:bg-blue-700 transition-colors min-h-[44px]"
+              className="w-full sm:w-auto px-6 md:px-8 py-3 bg-primary text-primary-foreground text-sm md:text-base font-medium rounded-md hover:bg-primary/90 transition-colors min-h-[44px]"
               onClick={() => setShowCompanyDialog(true)}
               data-testid="button-apply"
             >

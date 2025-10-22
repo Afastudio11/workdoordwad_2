@@ -30,11 +30,11 @@ export default function HiringPage() {
   const getStatusColor = (status: "active" | "closed") => {
     switch (status) {
       case "active":
-        return "bg-gray-900 text-white";
+        return "bg-foreground text-background";
       case "closed":
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-muted-foreground";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-muted-foreground";
     }
   };
 
@@ -47,7 +47,7 @@ export default function HiringPage() {
 
       <div className="max-w-[1600px] mx-auto px-6 md:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-semibold text-gray-900">Dashboard Rekrutmen</h1>
+          <h1 className="heading-2 text-heading">Dashboard Rekrutmen</h1>
           <Button className="flex items-center gap-2" data-testid="button-post-job">
             <Plus className="h-4 w-4" />
             Posting Lowongan Baru
@@ -55,37 +55,37 @@ export default function HiringPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="card-base card-padding">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Lowongan Aktif</h3>
-              <FileText className="h-5 w-5 text-gray-400" />
+              <h3 className="caption">Lowongan Aktif</h3>
+              <FileText className="h-5 w-5 text-muted-foreground" />
             </div>
-            <p className="text-3xl font-bold text-gray-900" data-testid="text-active-jobs">
+            <p className="heading-2 text-heading" data-testid="text-active-jobs">
               {isLoading ? "..." : activeJobsCount}
             </p>
-            <p className="text-sm text-gray-500 mt-1">Total lowongan yang dipublikasikan</p>
+            <p className="body-small text-muted-foreground mt-1">Total lowongan yang dipublikasikan</p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="card-base card-padding">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Total Pelamar</h3>
-              <Users className="h-5 w-5 text-gray-400" />
+              <h3 className="caption">Total Pelamar</h3>
+              <Users className="h-5 w-5 text-muted-foreground" />
             </div>
-            <p className="text-3xl font-bold text-gray-900" data-testid="text-total-applicants">
+            <p className="heading-2 text-heading" data-testid="text-total-applicants">
               {isLoading ? "..." : "0"}
             </p>
-            <p className="text-sm text-gray-500 mt-1">Dari semua lowongan</p>
+            <p className="body-small text-muted-foreground mt-1">Dari semua lowongan</p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="card-base card-padding">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Total Lowongan</h3>
-              <Eye className="h-5 w-5 text-gray-400" />
+              <h3 className="caption">Total Lowongan</h3>
+              <Eye className="h-5 w-5 text-muted-foreground" />
             </div>
-            <p className="text-3xl font-bold text-gray-900" data-testid="text-total-jobs">
+            <p className="heading-2 text-heading" data-testid="text-total-jobs">
               {isLoading ? "..." : jobs.length}
             </p>
-            <p className="text-sm text-gray-500 mt-1">Aktif dan tidak aktif</p>
+            <p className="body-small text-muted-foreground mt-1">Aktif dan tidak aktif</p>
           </div>
         </div>
 
@@ -107,8 +107,8 @@ export default function HiringPage() {
               onClick={() => setActiveTab("all")}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 activeTab === "all"
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background text-foreground border border-border hover:bg-muted"
               }`}
               data-testid="tab-all"
             >
@@ -118,8 +118,8 @@ export default function HiringPage() {
               onClick={() => setActiveTab("active")}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 activeTab === "active"
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background text-foreground border border-border hover:bg-muted"
               }`}
               data-testid="tab-active"
             >
@@ -129,8 +129,8 @@ export default function HiringPage() {
               onClick={() => setActiveTab("closed")}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 activeTab === "closed"
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background text-foreground border border-border hover:bg-muted"
               }`}
               data-testid="tab-closed"
             >

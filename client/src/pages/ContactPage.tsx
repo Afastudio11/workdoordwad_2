@@ -39,11 +39,11 @@ export default function ContactPage() {
           {/* Left Column - Contact Info */}
           <div className="space-y-8">
             <div>
-              <h1 className="text-5xl font-bold text-gray-900 mb-6" data-testid="page-title">
+              <h1 className="heading-1 text-heading mb-6" data-testid="page-title">
                 Hubungi Kami
               </h1>
               
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <p className="body-large text-muted-foreground">
                 Kami siap membantu! Apakah Anda memiliki pertanyaan tentang layanan kami, 
                 membutuhkan bantuan dengan akun Anda, atau ingin memberikan feedback, 
                 tim kami siap membantu Anda.
@@ -52,10 +52,10 @@ export default function ContactPage() {
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Email:</h3>
+                <h3 className="caption mb-2">Email:</h3>
                 <a 
                   href="mailto:support@pintukerja.com" 
-                  className="text-2xl font-semibold text-gray-900 hover:text-gray-700 transition-colors"
+                  className="heading-3 text-link"
                   data-testid="contact-email"
                 >
                   support@pintukerja.com
@@ -63,11 +63,11 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Telepon:</h3>
-                <p className="text-2xl font-semibold text-gray-900" data-testid="contact-phone">
+                <h3 className="caption mb-2">Telepon:</h3>
+                <p className="heading-3 text-heading" data-testid="contact-phone">
                   +62 21 1234 5678
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="body-small text-muted-foreground mt-1">
                   Tersedia Senin - Jumat, 09:00 - 18:00 WIB
                 </p>
               </div>
@@ -76,7 +76,7 @@ export default function ContactPage() {
             <Button 
               variant="default"
               size="lg"
-              className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-8 py-6 text-base font-medium"
+              className="btn-cta-large"
               data-testid="button-live-chat"
             >
               Live Chat
@@ -157,7 +157,7 @@ export default function ContactPage() {
                   type="submit"
                   size="lg"
                   disabled={isSubmitting}
-                  className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-10 py-6 text-base font-medium"
+                  className="btn-cta-large"
                   data-testid="button-send-message"
                 >
                   {isSubmitting ? "Mengirim..." : "Kirim Pesan"}

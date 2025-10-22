@@ -37,7 +37,7 @@ export default function AIInnovationSection() {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8">
         <div className="flex flex-col lg:flex-row justify-between items-start mb-8 md:mb-12">
           <div className="mb-6 md:mb-8 lg:mb-0">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 md:mb-6 leading-tight">
+            <h2 className="heading-1 text-heading mb-4 md:mb-6">
               Sumber Daya untuk Membantu<br className="hidden sm:block" />
               <span className="sm:hidden"> </span>kamu Merekrut dengan Tepat
             </h2>
@@ -47,8 +47,8 @@ export default function AIInnovationSection() {
                 onClick={() => setActiveTab("guides")}
                 className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-medium transition-colors ${
                   activeTab === "guides"
-                    ? "bg-black text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
                 data-testid="tab-guides"
               >
@@ -58,8 +58,8 @@ export default function AIInnovationSection() {
                 onClick={() => setActiveTab("articles")}
                 className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-medium transition-colors ${
                   activeTab === "articles"
-                    ? "bg-black text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
                 data-testid="tab-articles"
               >

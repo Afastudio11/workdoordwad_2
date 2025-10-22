@@ -186,7 +186,7 @@ export default function UserDashboardPage() {
                         <span className="font-medium">{item.label}</span>
                       </div>
                       {item.badge && item.badge > 0 && (
-                        <Badge className="bg-gray-900 text-white hover:bg-gray-900" data-testid={`badge-${item.id}`}>
+                        <Badge className="bg-foreground text-background hover:bg-foreground" data-testid={`badge-${item.id}`}>
                           {item.badge > 99 ? '99+' : item.badge}
                         </Badge>
                       )}
@@ -197,7 +197,7 @@ export default function UserDashboardPage() {
                 <div className="pt-4 mt-4 border-t border-gray-200">
                   <button
                     onClick={() => logout()}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
                     data-testid="button-logout"
                   >
                     <LogOut className="w-5 h-5" />
@@ -243,7 +243,7 @@ export default function UserDashboardPage() {
                         <span className="font-medium">{item.label}</span>
                       </div>
                       {item.badge && item.badge > 0 && (
-                        <Badge className="bg-gray-900 text-white hover:bg-gray-900" data-testid={`badge-mobile-${item.id}`}>
+                        <Badge className="bg-foreground text-background hover:bg-foreground" data-testid={`badge-mobile-${item.id}`}>
                           {item.badge > 99 ? '99+' : item.badge}
                         </Badge>
                       )}
@@ -254,7 +254,7 @@ export default function UserDashboardPage() {
                 <div className="pt-4 mt-4 border-t border-gray-200">
                   <button
                     onClick={() => logout()}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
                     data-testid="button-logout-mobile"
                   >
                     <LogOut className="w-5 h-5" />

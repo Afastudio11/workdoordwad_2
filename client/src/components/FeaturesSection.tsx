@@ -28,7 +28,7 @@ export default function FeaturesSection() {
     <section className="py-24 bg-gray-900">
       <div className="max-w-6xl mx-auto px-6 md:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="heading-2 text-white mb-4">
             Get things Done with Minimal Effort
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
@@ -46,7 +46,7 @@ export default function FeaturesSection() {
                 <feature.icon className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <h3 className="text-xl font-medium text-white mb-2" data-testid={`feature-title-${index}`}>
+                <h3 className="heading-4 text-white mb-2" data-testid={`feature-title-${index}`}>
                   {feature.title}
                 </h3>
                 <p className="text-gray-400 leading-relaxed" data-testid={`feature-description-${index}`}>

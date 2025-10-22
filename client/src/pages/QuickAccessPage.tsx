@@ -22,7 +22,7 @@ export default function QuickAccessPage() {
     <div className="min-h-screen bg-white flex items-center justify-center p-6">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Akses Cepat</h1>
+          <h1 className="heading-1 text-foreground mb-4">Akses Cepat</h1>
           <p className="text-muted-foreground">Pilih role untuk mengakses dashboard yang sesuai</p>
           {DEV_MODE && (
             <div className="mt-4 inline-block px-4 py-2 bg-yellow-100 border border-yellow-400 rounded-lg">
@@ -43,7 +43,7 @@ export default function QuickAccessPage() {
               <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
                 <User className="h-8 w-8 text-gray-700" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">Pekerja</h3>
+              <h3 className="heading-4 text-foreground mb-2">Pekerja</h3>
               <p className="text-sm text-muted-foreground mb-6">
                 Cari dan lamar pekerjaan yang sesuai dengan keahlian kamu
               </p>
@@ -62,7 +62,7 @@ export default function QuickAccessPage() {
               <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
                 <Briefcase className="h-8 w-8 text-gray-700" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">Pemberi Kerja</h3>
+              <h3 className="heading-4 text-foreground mb-2">Pemberi Kerja</h3>
               <p className="text-sm text-muted-foreground mb-6">
                 Posting lowongan dan kelola proses rekrutmen
               </p>
@@ -81,7 +81,7 @@ export default function QuickAccessPage() {
               <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
                 <Shield className="h-8 w-8 text-gray-700" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">Admin</h3>
+              <h3 className="heading-4 text-foreground mb-2">Admin</h3>
               <p className="text-sm text-muted-foreground mb-6">
                 Kelola platform, verifikasi lowongan, dan monitor sistem
               </p>
