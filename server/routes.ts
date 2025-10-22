@@ -2,6 +2,7 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupWebSocket, broadcastNotification } from "./websocket";
+import { csrfProtection } from "./csrf";
 import bcrypt from "bcrypt";
 import multer from "multer";
 import path from "path";

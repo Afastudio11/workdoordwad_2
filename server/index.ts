@@ -1,10 +1,12 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import MemoryStore from "memorystore";
+import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { mkdirSync } from "fs";
 import { join } from "path";
+import { attachCsrfToken } from "./csrf";
 
 // Ensure upload directories exist
 try {
@@ -48,6 +50,48 @@ app.use(
     },
   })
 );
+
+// Rate limiters for different endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 requests per IP per window
+  message: { error: "Terlalu banyak percobaan login. Coba lagi dalam 15 menit." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // 100 requests per IP per window
+  message: { error: "Terlalu banyak permintaan. Coba lagi nanti." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const viewLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10, // 10 view requests per minute
+  message: { error: "Terlalu banyak permintaan. Coba lagi nanti." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiters
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/jobs/:id/view", viewLimiter);
+app.use("/api", apiLimiter);
+
+// Attach CSRF token to all requests
+app.use(attachCsrfToken);
+
+// CSRF token endpoint
+app.get("/api/csrf-token", (req, res) => {
+  if (!req.sessionID) {
+    return res.status(401).json({ error: "No session found" });
+  }
+  res.json({ csrfToken: res.locals.csrfToken });
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
