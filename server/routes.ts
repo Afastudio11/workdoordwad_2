@@ -169,6 +169,130 @@ const uploadFields = multer({
   },
 }).fields([{ name: 'cv', maxCount: 1 }, { name: 'photo', maxCount: 1 }]);
 
+// Configure multer for company logo uploads
+const logoStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/logos");
+  },
+  filename: (req, file, cb) => {
+    let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    if (!allowedExtensions.includes(ext)) {
+      ext = '.png';
+    }
+    const uniqueName = `${randomUUID()}${ext}`;
+    cb(null, uniqueName);
+  },
+});
+
+const uploadLogo = multer({
+  storage: logoStorage,
+  limits: { 
+    fileSize: 1 * 1024 * 1024, // 1MB limit
+    files: 1
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    
+    if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Logo hanya boleh file JPG atau PNG"));
+    }
+  },
+});
+
+// Configure multer for legal document uploads
+const legalDocStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/documents");
+  },
+  filename: (req, file, cb) => {
+    let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+    const allowedExtensions = ['.pdf'];
+    if (!allowedExtensions.includes(ext)) {
+      ext = '.pdf';
+    }
+    const uniqueName = `${randomUUID()}${ext}`;
+    cb(null, uniqueName);
+  },
+});
+
+const uploadLegalDoc = multer({
+  storage: legalDocStorage,
+  limits: { 
+    fileSize: 2 * 1024 * 1024, // 2MB limit
+    files: 1
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['application/pdf'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExtensions = ['.pdf'];
+    
+    if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Dokumen legalitas hanya boleh file PDF"));
+    }
+  },
+});
+
+// Combined upload middleware for company documents
+const uploadCompanyDocs = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      if (file.fieldname === 'logo') {
+        cb(null, "uploads/logos");
+      } else if (file.fieldname === 'legalDoc') {
+        cb(null, "uploads/documents");
+      } else {
+        cb(new Error("Invalid field name"), '');
+      }
+    },
+    filename: (req, file, cb) => {
+      let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+      if (file.fieldname === 'logo') {
+        const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+        if (!allowedExtensions.includes(ext)) ext = '.png';
+      } else if (file.fieldname === 'legalDoc') {
+        const allowedExtensions = ['.pdf'];
+        if (!allowedExtensions.includes(ext)) ext = '.pdf';
+      }
+      const uniqueName = `${randomUUID()}${ext}`;
+      cb(null, uniqueName);
+    },
+  }),
+  limits: {
+    fileSize: 2 * 1024 * 1024, // Max 2MB
+    files: 2
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === 'logo') {
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      const ext = path.extname(file.originalname).toLowerCase();
+      const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+      if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+        cb(null, true);
+      } else {
+        cb(new Error("Logo hanya boleh file JPG atau PNG"));
+      }
+    } else if (file.fieldname === 'legalDoc') {
+      const allowedMimeTypes = ['application/pdf'];
+      const ext = path.extname(file.originalname).toLowerCase();
+      const allowedExtensions = ['.pdf'];
+      if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+        cb(null, true);
+      } else {
+        cb(new Error("Dokumen legalitas hanya boleh file PDF"));
+      }
+    } else {
+      cb(new Error("Field tidak valid"));
+    }
+  },
+}).fields([{ name: 'logo', maxCount: 1 }, { name: 'legalDoc', maxCount: 1 }]);
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get current user
   app.get("/api/auth/me", async (req, res) => {
@@ -204,6 +328,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error uploading files:", error);
       res.status(500).json({ error: "Gagal mengupload file" });
+    }
+  });
+
+  // File upload endpoint for company documents (logo and legal doc)
+  app.post("/api/upload/company-docs", uploadCompanyDocs, (req, res) => {
+    try {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      const response: { logoUrl?: string; legalDocUrl?: string } = {};
+
+      if (files.logo && files.logo[0]) {
+        response.logoUrl = `/uploads/logos/${files.logo[0].filename}`;
+      }
+
+      if (files.legalDoc && files.legalDoc[0]) {
+        response.legalDocUrl = `/uploads/documents/${files.legalDoc[0].filename}`;
+      }
+
+      res.json(response);
+    } catch (error: any) {
+      console.error("Error uploading company documents:", error);
+      res.status(500).json({ error: error.message || "Gagal mengupload dokumen perusahaan" });
     }
   });
 
