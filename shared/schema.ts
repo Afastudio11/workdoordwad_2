@@ -387,9 +387,17 @@ export const insertJobEventSchema = createInsertSchema(jobEvents).omit({
   createdAt: true,
 });
 
+// Strong password validation
+const strongPasswordSchema = z.string()
+  .min(8, "Password minimal 8 karakter")
+  .regex(/[A-Z]/, "Password harus mengandung minimal 1 huruf besar")
+  .regex(/[a-z]/, "Password harus mengandung minimal 1 huruf kecil")
+  .regex(/[0-9]/, "Password harus mengandung minimal 1 angka")
+  .regex(/[^A-Za-z0-9]/, "Password harus mengandung minimal 1 karakter khusus (!@#$%^&*)");
+
 // Register schemas dengan validasi tambahan
 export const registerPekerjaSchema = insertUserSchema.extend({
-  password: z.string().min(6, "Password minimal 6 karakter"),
+  password: strongPasswordSchema,
 }).omit({
   role: true, // Backend akan set role secara otomatis
   isVerified: true,
@@ -406,7 +414,7 @@ export const registerPekerjaSchema = insertUserSchema.extend({
 });
 
 export const registerPemberiKerjaSchema = insertUserSchema.extend({
-  password: z.string().min(6, "Password minimal 6 karakter"),
+  password: strongPasswordSchema,
   companyName: z.string().min(1, "Nama perusahaan harus diisi"),
 }).omit({
   role: true, // Backend akan set role secara otomatis
@@ -464,6 +472,43 @@ export const updatePreferencesSchema = z.object({
 export const quickApplySchema = z.object({
   jobId: z.string(),
   coverLetter: z.string().optional(),
+});
+
+// Update schemas for fixing SQL injection vulnerabilities
+// Use coerce to accept both numbers and numeric strings from forms
+export const updateJobSchema = z.object({
+  companyId: z.string().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  requirements: z.string().optional(),
+  location: z.string().optional(),
+  jobType: z.string().optional(),
+  industry: z.string().optional(),
+  salaryMin: z.coerce.number().optional(),
+  salaryMax: z.coerce.number().optional(),
+  education: z.string().optional(),
+  experience: z.string().optional(),
+  isFeatured: z.coerce.boolean().optional(),
+  isActive: z.coerce.boolean().optional(),
+  source: z.string().optional(),
+  sourceUrl: z.string().optional(),
+  viewCount: z.coerce.number().optional(),
+});
+
+export const updateCompanySchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  industry: z.string().optional(),
+  location: z.string().optional(),
+  website: z.string().optional(),
+  contactEmail: z.string().email().optional(),
+  contactPhone: z.string().optional(),
+  logo: z.string().optional(),
+  employeeCount: z.string().optional(),
+});
+
+export const updateApplicationStatusSchema = z.object({
+  status: z.enum(["submitted", "reviewed", "shortlisted", "rejected", "accepted", "withdrawn"]),
 });
 
 // Types

@@ -44,6 +44,7 @@ export interface IStorage {
   
   // Applications
   createApplication(application: InsertApplication): Promise<Application>;
+  getApplicationById(applicationId: string): Promise<Application | undefined>;
   getUserApplications(userId: string): Promise<(Application & { job: Job & { company: Company } })[]>;
   getEmployerApplications(userId: string): Promise<(Application & { user: User; job: Job & { company: Company } })[]>;
   updateApplicationStatus(applicationId: string, status: string): Promise<Application | undefined>;
@@ -515,6 +516,14 @@ export class DbStorage implements IStorage {
 
   async createApplication(insertApplication: InsertApplication): Promise<Application> {
     const [application] = await db.insert(applicationsTable).values(insertApplication).returning();
+    return application;
+  }
+
+  async getApplicationById(applicationId: string): Promise<Application | undefined> {
+    const [application] = await db
+      .select()
+      .from(applicationsTable)
+      .where(eq(applicationsTable.id, applicationId));
     return application;
   }
 

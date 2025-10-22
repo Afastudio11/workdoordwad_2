@@ -18,6 +18,9 @@ import {
   updatePreferencesSchema,
   quickApplySchema,
   insertJobSchema,
+  updateJobSchema,
+  updateCompanySchema,
+  updateApplicationStatusSchema,
   type User 
 } from "@shared/schema";
 
@@ -513,10 +516,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Job not found or access denied" });
       }
 
-      const updatedJob = await storage.updateJob(req.params.id, req.body);
+      // Validate input to prevent SQL injection
+      const validatedData = updateJobSchema.parse(req.body);
+      
+      const updatedJob = await storage.updateJob(req.params.id, validatedData);
       res.json(updatedJob);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating job:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to update job" });
     }
   });
@@ -1073,10 +1082,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Company not found" });
       }
 
-      const updatedCompany = await storage.updateCompany(company.id, req.body);
+      // Validate input to prevent SQL injection
+      const validatedData = updateCompanySchema.parse(req.body);
+      
+      const updatedCompany = await storage.updateCompany(company.id, validatedData);
       res.json(updatedCompany);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating company:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to update company" });
     }
   });
@@ -1882,42 +1897,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Not authenticated" });
       }
 
-      const { status } = req.body;
+      // Validate status input to prevent injection
+      const { status } = updateApplicationStatusSchema.parse(req.body);
       
-      if (!status) {
-        return res.status(400).json({ error: "Status is required" });
-      }
-
-      const application = await storage.updateApplicationStatus(req.params.id, status);
-      
+      // Get application to verify ownership
+      const application = await storage.getApplicationById(req.params.id);
       if (!application) {
         return res.status(404).json({ error: "Application not found" });
       }
 
-      res.json(application);
-    } catch (error) {
+      // Verify authorization: only applicant or job poster can update
+      const job = await storage.getJobById(application.jobId);
+      if (application.applicantId !== req.session.userId && 
+          job?.postedBy !== req.session.userId) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      // Applicants can only withdraw their application
+      if (application.applicantId === req.session.userId && status !== 'withdrawn') {
+        return res.status(403).json({ error: "Applicants can only withdraw applications. Contact employer to update status." });
+      }
+
+      const updatedApplication = await storage.updateApplicationStatus(req.params.id, status);
+      res.json(updatedApplication);
+    } catch (error: any) {
       console.error("Error updating application status:", error);
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to update application status" });
-    }
-  });
-
-  // Update Job
-  app.patch("/api/jobs/:id", async (req, res) => {
-    try {
-      if (!req.session.userId) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-
-      const job = await storage.updateJob(req.params.id, req.body);
-      
-      if (!job) {
-        return res.status(404).json({ error: "Job not found" });
-      }
-
-      res.json(job);
-    } catch (error) {
-      console.error("Error updating job:", error);
-      res.status(500).json({ error: "Failed to update job" });
     }
   });
 
