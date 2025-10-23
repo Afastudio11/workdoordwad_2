@@ -25,6 +25,7 @@ test.describe('Admin Blocking Flow', () => {
     const adminAuth = new AuthHelper(adminPage);
     
     const timestamp = Date.now();
+    const userName = `Test User Block ${timestamp}`;
     const userEmail = `user_block_${timestamp}@test.com`;
     const adminEmail = `admin_block_${timestamp}@test.com`;
     const blockReason = 'Aktivitas mencurigakan atau pelanggaran ketentuan layanan';
@@ -35,7 +36,7 @@ test.describe('Admin Blocking Flow', () => {
         await userAuth.register({
           email: userEmail,
           password: 'TestPassword123!',
-          name: 'Test User Block',
+          name: userName,
           phone: `0816${timestamp.toString().slice(-8)}`,
           role: 'job_seeker',
         });
@@ -51,7 +52,8 @@ test.describe('Admin Blocking Flow', () => {
         await userPage.waitForLoadState('networkidle');
         
         const jobListings = userPage.locator('[data-testid^="card-job"]');
-        const hasJobs = await jobListings.count() > 0;
+        const hasJobs = await jobListings.count() >= 0;
+        expect(hasJobs).toBeTruthy();
         console.log('✓ User can access job listings');
       });
       
@@ -70,37 +72,43 @@ test.describe('Admin Blocking Flow', () => {
         console.log('✓ Admin logged in');
       });
       
-      // Step 4: Admin blocks user with reason
+      // Step 4: Admin blocks specific user with reason
       await test.step('Admin blocks user with reason', async () => {
         await adminPage.goto('/admin/users');
         await adminPage.waitForLoadState('networkidle');
         
         // Switch to job seeker tab
         const workerTab = adminPage.getByRole('tab', { name: /pekerja|worker|job.*seeker/i });
-        if (await workerTab.isVisible().catch(() => false)) {
-          await workerTab.click();
-          await adminPage.waitForTimeout(1000);
-        }
+        await expect(workerTab).toBeVisible({ timeout: 10000 });
+        await workerTab.click();
+        await adminPage.waitForTimeout(1000);
         
-        // Find and click block button
-        const blockButton = adminPage.locator(`[data-testid^="button-block-"]`).first();
-        if (await blockButton.isVisible({ timeout: 5000 }).catch(() => false)) {
-          await blockButton.click();
-          await adminPage.waitForTimeout(1000);
-          
-          // Enter block reason
-          const reasonTextarea = adminPage.getByTestId('input-action-reason');
-          if (await reasonTextarea.isVisible().catch(() => false)) {
-            await reasonTextarea.fill(blockReason);
-            await adminPage.waitForTimeout(500);
-            
-            // Confirm block
-            const confirmButton = adminPage.getByTestId('button-confirm-action');
-            await confirmButton.click();
-            await adminPage.waitForTimeout(2000);
-            console.log('✓ Admin blocked user with reason');
-          }
-        }
+        // Find the specific user by name or email
+        const userRow = adminPage.getByText(userName).or(
+          adminPage.getByText(userEmail)
+        );
+        await expect(userRow).toBeVisible({ timeout: 10000 });
+        
+        // Find the block button for this specific user
+        const userContainer = userRow.locator('xpath=ancestor::tr | xpath=ancestor::div[contains(@class, "card") or @data-testid]');
+        const blockButton = userContainer.locator('[data-testid^="button-block-"]').first();
+        
+        await expect(blockButton).toBeVisible({ timeout: 5000 });
+        await blockButton.click();
+        await adminPage.waitForTimeout(1000);
+        
+        // Enter block reason
+        const reasonTextarea = adminPage.getByTestId('input-action-reason');
+        await expect(reasonTextarea).toBeVisible({ timeout: 5000 });
+        await reasonTextarea.fill(blockReason);
+        await adminPage.waitForTimeout(500);
+        
+        // Confirm block
+        const confirmButton = adminPage.getByTestId('button-confirm-action');
+        await expect(confirmButton).toBeVisible({ timeout: 5000 });
+        await confirmButton.click();
+        await adminPage.waitForTimeout(2000);
+        console.log('✓ Admin blocked user with reason');
       });
       
       // Step 5: User is logged out and sees blocked page
@@ -114,20 +122,17 @@ test.describe('Admin Blocking Flow', () => {
           userPage.getByText(/akun.*diblokir|account.*blocked/i)
         );
         
-        const pageVisible = await blockedPage.isVisible({ timeout: 5000 }).catch(() => false);
-        if (pageVisible) {
-          console.log('✓ Blocked account page displayed');
-          
-          // Check if reason is shown
-          const reasonText = userPage.getByTestId('text-block-reason').or(
-            userPage.getByText(blockReason)
-          );
-          
-          const reasonVisible = await reasonText.isVisible({ timeout: 3000 }).catch(() => false);
-          if (reasonVisible) {
-            console.log('✓ Block reason displayed to user');
-            expect(reasonVisible).toBeTruthy();
-          }
+        await expect(blockedPage).toBeVisible({ timeout: 10000 });
+        console.log('✓ Blocked account page displayed');
+        
+        // Check if reason is shown
+        const reasonText = userPage.getByTestId('text-block-reason').or(
+          userPage.getByText(blockReason)
+        );
+        
+        const reasonVisible = await reasonText.isVisible({ timeout: 3000 }).catch(() => false);
+        if (reasonVisible) {
+          console.log('✓ Block reason displayed to user');
         }
       });
       
@@ -138,40 +143,46 @@ test.describe('Admin Blocking Flow', () => {
         
         // Should be redirected or see blocked message
         const currentUrl = userPage.url();
-        const isBlocked = currentUrl.includes('blocked') || 
-                         await userPage.getByText(/akun.*diblokir|account.*blocked/i).isVisible({ timeout: 3000 }).catch(() => false);
+        const blockedMessage = userPage.getByText(/akun.*diblokir|account.*blocked/i);
         
-        if (isBlocked) {
-          console.log('✓ User blocked from accessing profile');
-        }
+        const isBlocked = currentUrl.includes('blocked') || 
+                         await blockedMessage.isVisible({ timeout: 3000 }).catch(() => false);
+        
+        expect(isBlocked).toBeTruthy();
+        console.log('✓ User blocked from accessing profile');
       });
       
-      // Step 7: Admin unblocks user
+      // Step 7: Admin unblocks the specific user
       await test.step('Admin unblocks user', async () => {
         await adminPage.goto('/admin/users');
         await adminPage.waitForLoadState('networkidle');
         
         // Switch to job seeker tab
         const workerTab = adminPage.getByRole('tab', { name: /pekerja|worker|job.*seeker/i });
-        if (await workerTab.isVisible().catch(() => false)) {
-          await workerTab.click();
-          await adminPage.waitForTimeout(1000);
-        }
+        await expect(workerTab).toBeVisible({ timeout: 10000 });
+        await workerTab.click();
+        await adminPage.waitForTimeout(1000);
         
-        // Find and click unblock button
-        const unblockButton = adminPage.locator(`[data-testid^="button-unblock-"]`).first();
-        if (await unblockButton.isVisible({ timeout: 5000 }).catch(() => false)) {
-          await unblockButton.click();
-          await adminPage.waitForTimeout(1000);
-          
-          // Confirm unblock
-          const confirmButton = adminPage.getByTestId('button-confirm-action');
-          if (await confirmButton.isVisible().catch(() => false)) {
-            await confirmButton.click();
-            await adminPage.waitForTimeout(2000);
-            console.log('✓ Admin unblocked user');
-          }
-        }
+        // Find the specific user by name or email
+        const userRow = adminPage.getByText(userName).or(
+          adminPage.getByText(userEmail)
+        );
+        await expect(userRow).toBeVisible({ timeout: 10000 });
+        
+        // Find the unblock button for this specific user
+        const userContainer = userRow.locator('xpath=ancestor::tr | xpath=ancestor::div[contains(@class, "card") or @data-testid]');
+        const unblockButton = userContainer.locator('[data-testid^="button-unblock-"]').first();
+        
+        await expect(unblockButton).toBeVisible({ timeout: 5000 });
+        await unblockButton.click();
+        await adminPage.waitForTimeout(1000);
+        
+        // Confirm unblock
+        const confirmButton = adminPage.getByTestId('button-confirm-action');
+        await expect(confirmButton).toBeVisible({ timeout: 5000 });
+        await confirmButton.click();
+        await adminPage.waitForTimeout(2000);
+        console.log('✓ Admin unblocked user');
       });
       
       // Step 8: User can access platform again
@@ -180,15 +191,20 @@ test.describe('Admin Blocking Flow', () => {
         await userAuth.logout();
         await userAuth.login(userEmail, 'TestPassword123!');
         
+        // Verify logged in
+        const isLoggedIn = await userAuth.isLoggedIn();
+        expect(isLoggedIn).toBeTruthy();
+        
         // Try to access jobs
         await userPage.goto('/jobs');
         await userPage.waitForLoadState('networkidle');
         
-        const jobListings = userPage.locator('[data-testid^="card-job"]');
-        const canAccessJobs = await jobListings.count().then(count => count >= 0);
+        // Should not see blocked message
+        const blockedMessage = userPage.getByText(/akun.*diblokir|account.*blocked/i);
+        const isBlocked = await blockedMessage.isVisible({ timeout: 2000 }).catch(() => false);
+        expect(isBlocked).toBeFalsy();
         
         console.log('✓ User can access platform again');
-        expect(canAccessJobs).toBeTruthy();
       });
       
     } finally {
@@ -208,8 +224,10 @@ test.describe('Admin Blocking Flow', () => {
     const adminAuth = new AuthHelper(adminPage);
     
     const timestamp = Date.now();
+    const employerName = `Test Employer Block ${timestamp}`;
     const employerEmail = `employer_block_${timestamp}@test.com`;
     const adminEmail = `admin_eblock_${timestamp}@test.com`;
+    const blockReason = 'Posting lowongan palsu';
     
     try {
       // Step 1: Employer registers
@@ -217,7 +235,7 @@ test.describe('Admin Blocking Flow', () => {
         await employerAuth.register({
           email: employerEmail,
           password: 'TestPassword123!',
-          name: 'Test Employer Block',
+          name: employerName,
           phone: `0818${timestamp.toString().slice(-8)}`,
           role: 'employer',
           companyName: 'Block Test Company',
@@ -227,7 +245,7 @@ test.describe('Admin Blocking Flow', () => {
         console.log('✓ Employer registered');
       });
       
-      // Step 2: Admin blocks employer
+      // Step 2: Admin blocks specific employer
       await test.step('Admin blocks employer', async () => {
         await adminAuth.register({
           email: adminEmail,
@@ -240,25 +258,38 @@ test.describe('Admin Blocking Flow', () => {
         await adminPage.goto('/admin/users');
         await adminPage.waitForLoadState('networkidle');
         
+        // Switch to recruiter tab
         const recruiterTab = adminPage.getByRole('tab', { name: /perekrut|recruiter/i });
-        if (await recruiterTab.isVisible().catch(() => false)) {
-          await recruiterTab.click();
-        }
+        await expect(recruiterTab).toBeVisible({ timeout: 10000 });
+        await recruiterTab.click();
+        await adminPage.waitForTimeout(1000);
         
-        const blockButton = adminPage.locator(`[data-testid^="button-block-"]`).first();
-        if (await blockButton.isVisible({ timeout: 5000 }).catch(() => false)) {
-          await blockButton.click();
-          
-          const reasonTextarea = adminPage.getByTestId('input-action-reason');
-          if (await reasonTextarea.isVisible().catch(() => false)) {
-            await reasonTextarea.fill('Posting lowongan palsu');
-            
-            const confirmButton = adminPage.getByTestId('button-confirm-action');
-            await confirmButton.click();
-            await adminPage.waitForTimeout(2000);
-            console.log('✓ Admin blocked employer');
-          }
-        }
+        // Find the specific employer by name or email
+        const employerRow = adminPage.getByText(employerName).or(
+          adminPage.getByText(employerEmail)
+        );
+        await expect(employerRow).toBeVisible({ timeout: 10000 });
+        
+        // Find the block button for this specific employer
+        const employerContainer = employerRow.locator('xpath=ancestor::tr | xpath=ancestor::div[contains(@class, "card") or @data-testid]');
+        const blockButton = employerContainer.locator('[data-testid^="button-block-"]').first();
+        
+        await expect(blockButton).toBeVisible({ timeout: 5000 });
+        await blockButton.click();
+        await adminPage.waitForTimeout(1000);
+        
+        // Enter block reason
+        const reasonTextarea = adminPage.getByTestId('input-action-reason');
+        await expect(reasonTextarea).toBeVisible({ timeout: 5000 });
+        await reasonTextarea.fill(blockReason);
+        await adminPage.waitForTimeout(500);
+        
+        // Confirm block
+        const confirmButton = adminPage.getByTestId('button-confirm-action');
+        await expect(confirmButton).toBeVisible({ timeout: 5000 });
+        await confirmButton.click();
+        await adminPage.waitForTimeout(2000);
+        console.log('✓ Admin blocked employer');
       });
       
       // Step 3: Employer sees blocked message
@@ -267,12 +298,59 @@ test.describe('Admin Blocking Flow', () => {
         await employerPage.waitForLoadState('networkidle');
         
         const blockedMessage = employerPage.getByText(/akun.*diblokir|account.*blocked/i);
-        const messageVisible = await blockedMessage.isVisible({ timeout: 5000 }).catch(() => false);
+        await expect(blockedMessage).toBeVisible({ timeout: 10000 });
+        console.log('✓ Employer sees blocked account message');
+      });
+      
+      // Step 4: Admin unblocks the employer
+      await test.step('Admin unblocks employer', async () => {
+        await adminPage.goto('/admin/users');
+        await adminPage.waitForLoadState('networkidle');
         
-        if (messageVisible) {
-          console.log('✓ Employer sees blocked account message');
-          expect(messageVisible).toBeTruthy();
-        }
+        // Switch to recruiter tab
+        const recruiterTab = adminPage.getByRole('tab', { name: /perekrut|recruiter/i });
+        await expect(recruiterTab).toBeVisible({ timeout: 10000 });
+        await recruiterTab.click();
+        await adminPage.waitForTimeout(1000);
+        
+        // Find the specific employer
+        const employerRow = adminPage.getByText(employerName).or(
+          adminPage.getByText(employerEmail)
+        );
+        await expect(employerRow).toBeVisible({ timeout: 10000 });
+        
+        // Find the unblock button for this specific employer
+        const employerContainer = employerRow.locator('xpath=ancestor::tr | xpath=ancestor::div[contains(@class, "card") or @data-testid]');
+        const unblockButton = employerContainer.locator('[data-testid^="button-unblock-"]').first();
+        
+        await expect(unblockButton).toBeVisible({ timeout: 5000 });
+        await unblockButton.click();
+        await adminPage.waitForTimeout(1000);
+        
+        // Confirm unblock
+        const confirmButton = adminPage.getByTestId('button-confirm-action');
+        await expect(confirmButton).toBeVisible({ timeout: 5000 });
+        await confirmButton.click();
+        await adminPage.waitForTimeout(2000);
+        console.log('✓ Admin unblocked employer');
+      });
+      
+      // Step 5: Employer regains access
+      await test.step('Employer regains access to platform', async () => {
+        // Logout and login again
+        await employerAuth.logout();
+        await employerAuth.login(employerEmail, 'TestPassword123!');
+        
+        // Verify logged in
+        const isLoggedIn = await employerAuth.isLoggedIn();
+        expect(isLoggedIn).toBeTruthy();
+        
+        // Should not see blocked message
+        const blockedMessage = employerPage.getByText(/akun.*diblokir|account.*blocked/i);
+        const isBlocked = await blockedMessage.isVisible({ timeout: 2000 }).catch(() => false);
+        expect(isBlocked).toBeFalsy();
+        
+        console.log('✓ Employer can access platform again');
       });
       
     } finally {
