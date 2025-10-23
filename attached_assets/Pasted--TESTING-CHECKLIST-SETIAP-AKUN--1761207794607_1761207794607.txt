@@ -1,0 +1,150 @@
+
+═══════════════════════════════════════════════════════════
+TESTING CHECKLIST SETIAP AKUN
+═══════════════════════════════════════════════════════════
+
+## TEST FREE PLAN (free@testcompany.com)
+
+**Dashboard:**
+✅ Badge "GRATIS" tampil dengan icon ⚡
+✅ Tagline: "Untuk Memulai"
+✅ Quota display: "Job Posting: 0 / 3"
+❌ NO verified badge ✓ di company name
+❌ NO menu Analytics
+❌ NO menu CV Database
+
+**Post Job:**
+✅ Bisa post 3 jobs normal
+✅ Durasi otomatis: 30 hari dari posting
+❌ Checkbox "Featured" DISABLED & grayed
+❌ Checkbox "Urgent" TIDAK ADA
+❌ Post job ke-4 BLOCKED dengan prompt:
+   "Quota habis! Upgrade ke Starter (Rp 199k)"
+
+**Public Listing:**
+✅ Job tampil TANPA verified badge
+✅ Job posisi normal (tidak priority)
+✅ Expire otomatis setelah 30 hari
+
+---
+
+## TEST STARTER PLAN (starter@testcompany.com)
+
+**Dashboard:**
+✅ Badge "STARTER" dengan checkmark lime
+✅ Badge "Populer" di corner
+✅ Verified badge ✓ BIRU tampil di nama
+✅ Quota: "Job: 0/10, Featured: 0/3"
+✅ Menu Analytics ADA (basic)
+❌ Menu CV Database TIDAK ADA
+
+**Post Job:**
+✅ Bisa post 10 jobs
+✅ Durasi: 30 hari (bukan 45)
+✅ Checkbox "Featured" ENABLED
+✅ Bisa featured 3 jobs
+❌ Featured ke-4 BLOCKED:
+   "Quota habis! Upgrade ke Professional"
+❌ Checkbox "Urgent" TIDAK ADA
+
+**Analytics:**
+✅ Akses /analytics works
+✅ Tampil: Views count + Apps count
+✅ Simple chart (7 hari)
+❌ NO demografi/conversion/source
+
+**Public Listing:**
+✅ Verified badge ✓ BIRU tampil
+✅ Job featured badge "⭐ Featured"
+✅ Priority lebih tinggi di search
+
+---
+
+## TEST PROFESSIONAL PLAN (professional@testcompany.com)
+
+**Dashboard:**
+✅ Badge "PROFESSIONAL" + RECOMMENDED
+✅ Verified badge ✓ BIRU tampil
+✅ Quota: "Job: 0/30, Featured: ∞, Urgent: ∞, CV: 0/100"
+✅ Menu Analytics (advanced)
+✅ Menu CV Database ADA
+
+**Post Job:**
+✅ Bisa post 30 jobs
+✅ Durasi: 30 hari
+✅ Featured unlimited works
+✅ Urgent unlimited works
+
+**Analytics Advanced:**
+✅ Views, apps, demografi
+✅ Conversion rate, source tracking
+✅ Export CSV/Excel
+
+**CV Database:**
+✅ Akses /cv-database works
+✅ Search & filter kandidat
+✅ Download max 100 CV
+❌ Download ke-101 BLOCKED:
+   "Quota habis! Upgrade Enterprise"
+
+**Public Listing:**
+✅ Badge "⭐ Featured 🔥 Urgent"
+✅ TOP 3 priority
+✅ Border lime + glow effect
+
+---
+
+## TEST ENTERPRISE PLAN (enterprise@testcompany.com)
+
+**Dashboard:**
+✅ Badge "ENTERPRISE" + Custom Solution
+✅ Verified badge ✓ BIRU tampil
+✅ All quotas: Unlimited ∞
+✅ Dedicated Manager info tampil
+✅ All features enabled
+
+**Post Job:**
+✅ Post unlimited (test 50 jobs OK)
+✅ Durasi: 30 hari
+✅ Featured & Urgent unlimited
+
+**CV Database:**
+✅ Download unlimited (test 200 CVs OK)
+
+**No Restrictions:**
+✅ All features accessible
+✅ No quota limits
+
+═══════════════════════════════════════════════════════════
+CRITICAL CHECKS (WAJIB)
+═══════════════════════════════════════════════════════════
+
+✅ **Durasi Lowongan:** SEMUA paket 30 hari (no exception)
+✅ **Verified Badge:** Warna BIRU #1DA1F2 (bukan hijau/lime)
+✅ **Text Color:** HITAM (bukan lime)
+✅ **Quota Enforcement:** Works untuk semua paket
+✅ **Auto Expire:** Job expire setelah 30 hari
+✅ **Upgrade Prompt:** Muncul saat quota habis
+✅ **Feature Gating:** Sesuai paket
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+✅ **4 Akun Created & Verified:**
+1. free@testcompany.com / Test123!
+2. starter@testcompany.com / Test123!
+3. professional@testcompany.com / Test123!
+4. enterprise@testcompany.com / Test123!
+
+✅ **Fitur Sesuai Paket:**
+- Free: Minimal features, 3 jobs
+- Starter: Verified + Featured (3), 10 jobs
+- Professional: Advanced features, 30 jobs
+- Enterprise: Unlimited everything
+
+✅ **Semua Durasi:** 30 hari (konsisten)
+
+✅ **Testing Report:** Lengkap dengan hasil semua test
+
+**CREDENTIALS PERMANENT - Jangan dihapus atau diubah**
