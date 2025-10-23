@@ -217,39 +217,32 @@ export function getQuotaInfo(company: Company) {
 
   return {
     plan,
-    jobPosting: {
-      current: company.jobPostingCount || 0,
-      limit: limits.jobPostingLimit,
-      percentage: limits.jobPostingLimit === "unlimited" 
-        ? 0 
-        : Math.round(((company.jobPostingCount || 0) / limits.jobPostingLimit) * 100),
+    jobPosts: {
+      used: company.jobPostingCount || 0,
+      limit: limits.jobPostingLimit === "unlimited" ? null : limits.jobPostingLimit,
+      unlimited: limits.jobPostingLimit === "unlimited",
     },
     featuredJobs: {
-      current: company.featuredJobCount || 0,
-      limit: limits.featuredJobLimit,
-      percentage: limits.featuredJobLimit === "unlimited" 
-        ? 0 
-        : limits.featuredJobLimit === 0 
-          ? 0 
-          : Math.round(((company.featuredJobCount || 0) / limits.featuredJobLimit) * 100),
+      used: company.featuredJobCount || 0,
+      limit: limits.featuredJobLimit === "unlimited" ? null : (limits.featuredJobLimit === 0 ? null : limits.featuredJobLimit),
+      unlimited: limits.featuredJobLimit === "unlimited",
+      available: limits.featuredJobLimit !== 0,
     },
     urgentJobs: {
-      current: company.urgentJobCount || 0,
-      limit: limits.urgentJobLimit,
-      percentage: limits.urgentJobLimit === "unlimited" 
-        ? 0 
-        : limits.urgentJobLimit === 0 
-          ? 0 
-          : Math.round(((company.urgentJobCount || 0) / limits.urgentJobLimit) * 100),
+      used: company.urgentJobCount || 0,
+      limit: limits.urgentJobLimit === "unlimited" ? null : (limits.urgentJobLimit === 0 ? null : limits.urgentJobLimit),
+      unlimited: limits.urgentJobLimit === "unlimited",
+      available: limits.urgentJobLimit !== 0,
     },
     cvDownloads: {
-      current: company.cvDownloadCount || 0,
-      limit: limits.cvDownloadLimit,
-      percentage: limits.cvDownloadLimit === "unlimited" 
-        ? 0 
-        : limits.cvDownloadLimit === 0 
-          ? 0 
-          : Math.round(((company.cvDownloadCount || 0) / limits.cvDownloadLimit) * 100),
+      used: company.cvDownloadCount || 0,
+      limit: limits.cvDownloadLimit === "unlimited" ? null : (limits.cvDownloadLimit === 0 ? null : limits.cvDownloadLimit),
+      unlimited: limits.cvDownloadLimit === "unlimited",
+      available: limits.cvDownloadLimit !== 0,
+    },
+    analytics: {
+      available: limits.hasAnalytics,
+      level: limits.analyticsLevel,
     },
     quotaResetDate: company.quotaResetDate,
     features: {
