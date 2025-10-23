@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Crown, Award, Zap } from "lucide-react";
+import { CheckCircle2, Crown, Award, Shield } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type SubscriptionPlan = "free" | "starter" | "professional" | "enterprise" | null;
@@ -13,10 +13,10 @@ interface VerifiedBadgeProps {
 
 const planConfig = {
   free: {
-    icon: null,
-    label: null,
-    color: "",
-    tooltip: null,
+    icon: Shield,
+    label: "Free",
+    color: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+    tooltip: "Free Plan",
   },
   starter: {
     icon: CheckCircle2,
@@ -62,15 +62,15 @@ export function VerifiedBadge({
   showText = true,
   className = "" 
 }: VerifiedBadgeProps) {
-  // Don't show badge for free plan
-  if (!plan || plan === "free") {
+  // Don't show badge if no plan
+  if (!plan) {
     return null;
   }
 
   const config = planConfig[plan];
   const sizeConf = sizeConfig[size];
   
-  if (!config.icon) return null;
+  if (!config || !config.icon) return null;
 
   const Icon = config.icon;
 
@@ -106,16 +106,17 @@ export function VerifiedBadge({
 
 // Standalone icon version for smaller spaces
 export function VerifiedIcon({ plan, size = 16 }: { plan: SubscriptionPlan; size?: number }) {
-  if (!plan || plan === "free") {
+  if (!plan) {
     return null;
   }
 
   const config = planConfig[plan];
-  if (!config.icon) return null;
+  if (!config || !config.icon) return null;
 
   const Icon = config.icon;
   
-  const colorMap = {
+  const colorMap: Record<string, string> = {
+    free: "text-gray-500",
     starter: "text-blue-500",
     professional: "text-purple-500",
     enterprise: "text-amber-500",

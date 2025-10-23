@@ -94,20 +94,16 @@ export default function CVDatabasePage() {
 
   const downloadMutation = useMutation({
     mutationFn: async (candidateId: string) => {
-      return await apiRequest(`/api/employer/download-cv/${candidateId}`, "POST");
+      const response = await apiRequest(`/api/employer/cv-database/${candidateId}/download`, "POST");
+      return await response.json();
     },
     onSuccess: (data: any) => {
       toast({
         title: "CV Downloaded",
-        description: "The CV has been downloaded successfully.",
+        description: data?.message || "The CV has been downloaded successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/employer/cv-database"] });
       queryClient.invalidateQueries({ queryKey: ["/api/employer/quota"] });
-      
-      // Trigger download if URL is provided
-      if (data?.downloadUrl) {
-        window.open(data.downloadUrl, '_blank');
-      }
     },
     onError: (error: any) => {
       toast({
