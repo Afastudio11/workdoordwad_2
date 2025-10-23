@@ -5,7 +5,7 @@
  * - ROUTE: /employer/post-job
  * - DO NOT import admin or worker components
  */
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useForm } from "react-hook-form";
@@ -14,6 +14,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -21,6 +22,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import {
   Select,
@@ -31,10 +33,13 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle, Zap, Clock, AlertCircle } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { insertJobSchema, type Company } from "@shared/schema";
 import VerificationBanner from "@/components/VerificationBanner";
+import { QuotaDisplay } from "@/components/ui/quota-display";
+import { UpgradePrompt } from "@/components/ui/upgrade-prompt";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const postJobFormSchema = z.object({
   companyId: z.string().min(1, "Company is required"),
@@ -48,6 +53,8 @@ const postJobFormSchema = z.object({
   salaryMax: z.string().optional(),
   education: z.string().optional(),
   experience: z.string().optional(),
+  isFeatured: z.boolean().optional(),
+  isUrgent: z.boolean().optional(),
 });
 
 type PostJobFormData = z.infer<typeof postJobFormSchema>;
@@ -55,6 +62,8 @@ type PostJobFormData = z.infer<typeof postJobFormSchema>;
 export default function PostJobPage() {
   const { toast } = useToast();
   const { user } = useAuth();
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [upgradeFeature, setUpgradeFeature] = useState<"job_posting" | "featured" | "urgent">("job_posting");
 
   const { data: companies, isLoading: loadingCompanies } = useQuery<Company[]>({
     queryKey: ["/api/companies/my-companies"],
@@ -74,8 +83,42 @@ export default function PostJobPage() {
       salaryMax: "",
       education: "",
       experience: "",
+      isFeatured: false,
+      isUrgent: false,
     },
   });
+
+  const selectedCompanyId = form.watch("companyId");
+  const selectedCompany = useMemo(() => {
+    return companies?.find((c) => c.id === selectedCompanyId);
+  }, [companies, selectedCompanyId]);
+
+  const plan = (selectedCompany?.subscriptionPlan || "free") as "free" | "starter" | "professional" | "enterprise";
+  
+  const canUseFeatured = useMemo(() => {
+    if (!selectedCompany) return false;
+    if (plan === "free") return false;
+    if (plan === "starter") return (selectedCompany.featuredJobCount || 0) < 3;
+    return true; // professional and enterprise have unlimited
+  }, [selectedCompany, plan]);
+
+  const canUseUrgent = useMemo(() => {
+    if (!selectedCompany) return false;
+    return plan === "professional" || plan === "enterprise";
+  }, [selectedCompany, plan]);
+
+  const canPostJob = useMemo(() => {
+    if (!selectedCompany) return false;
+    const quotaLimits: Record<string, number | "unlimited"> = {
+      free: 3,
+      starter: 10,
+      professional: 30,
+      enterprise: "unlimited",
+    };
+    const limit = quotaLimits[plan];
+    if (limit === "unlimited") return true;
+    return (selectedCompany.jobPostingCount || 0) < limit;
+  }, [selectedCompany, plan]);
 
   const createJobMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -88,17 +131,25 @@ export default function PostJobPage() {
       });
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["/api/jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/companies/my-companies"] });
     },
-    onError: () => {
+    onError: (error: any) => {
+      const errorMessage = error?.message || "Failed to post job. Please try again.";
       toast({
         title: "Error",
-        description: "Failed to post job. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     },
   });
 
   const onSubmit = (data: PostJobFormData) => {
+    if (!canPostJob) {
+      setUpgradeFeature("job_posting");
+      setShowUpgradePrompt(true);
+      return;
+    }
+
     const payload = {
       ...data,
       salaryMin: data.salaryMin && data.salaryMin !== "" ? Number(data.salaryMin) : null,
@@ -107,6 +158,8 @@ export default function PostJobPage() {
       industry: data.industry || undefined,
       education: data.education || undefined,
       experience: data.experience || undefined,
+      isFeatured: data.isFeatured || false,
+      isUrgent: data.isUrgent || false,
     };
     createJobMutation.mutate(payload);
   };
@@ -114,6 +167,34 @@ export default function PostJobPage() {
   const isBlocked = user?.isBlocked || false;
   const isUnverified = user?.verificationStatus !== "verified";
   const isFormDisabled = isBlocked || isUnverified;
+
+  const getQuotaLimits = () => {
+    if (!selectedCompany) return null;
+    const quotaLimits: Record<string, number | "unlimited"> = {
+      free: 3,
+      starter: 10,
+      professional: 30,
+      enterprise: "unlimited",
+    };
+    const featuredLimits: Record<string, number | "unlimited"> = {
+      free: 0,
+      starter: 3,
+      professional: "unlimited",
+      enterprise: "unlimited",
+    };
+    const urgentLimits: Record<string, number | "unlimited"> = {
+      free: 0,
+      starter: 0,
+      professional: "unlimited",
+      enterprise: "unlimited",
+    };
+
+    return {
+      jobPosting: { current: selectedCompany.jobPostingCount || 0, limit: quotaLimits[plan] },
+      featured: { current: selectedCompany.featuredJobCount || 0, limit: featuredLimits[plan] },
+      urgent: { current: selectedCompany.urgentJobCount || 0, limit: urgentLimits[plan] },
+    };
+  };
 
   return (
     <div className="space-y-6">
@@ -135,6 +216,48 @@ export default function PostJobPage() {
           Create a new job posting to attract qualified candidates
         </p>
       </div>
+
+      {/* Quota Display */}
+      {selectedCompany && (
+        <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 border-blue-200 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-lg">Quota Subscription Anda</CardTitle>
+            <CardDescription>
+              Paket: <strong>{plan.toUpperCase()}</strong>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <QuotaDisplay
+              plan={plan}
+              quotas={{
+                jobPosting: getQuotaLimits()!.jobPosting,
+                featured: getQuotaLimits()!.featured,
+                urgent: getQuotaLimits()!.urgent,
+              }}
+              variant="compact"
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Quota Warning */}
+      {!canPostJob && selectedCompany && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Anda telah mencapai limit posting pekerjaan untuk plan {plan.toUpperCase()}.{" "}
+            <button
+              onClick={() => {
+                setUpgradeFeature("job_posting");
+                setShowUpgradePrompt(true);
+              }}
+              className="underline font-semibold"
+            >
+              Upgrade sekarang
+            </button>
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Card>
         <CardHeader>
@@ -366,21 +489,115 @@ export default function PostJobPage() {
                 />
               </div>
 
+              {/* Premium Features */}
+              <div className="space-y-4 pt-4 border-t">
+                <h3 className="text-sm font-semibold text-gray-900">Premium Features</h3>
+                
+                {/* Featured Job */}
+                <FormField
+                  control={form.control}
+                  name="isFeatured"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => {
+                            if (checked && !canUseFeatured) {
+                              setUpgradeFeature("featured");
+                              setShowUpgradePrompt(true);
+                              return;
+                            }
+                            field.onChange(checked);
+                          }}
+                          disabled={!selectedCompany || !canUseFeatured}
+                          data-testid="checkbox-featured"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-yellow-600" />
+                          Featured Job
+                          {plan === "free" && (
+                            <Badge variant="secondary" className="text-xs">Starter+</Badge>
+                          )}
+                        </FormLabel>
+                        <FormDescription>
+                          Highlight this job in search results (Available on Starter plan and above)
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                {/* Urgent Job */}
+                <FormField
+                  control={form.control}
+                  name="isUrgent"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => {
+                            if (checked && !canUseUrgent) {
+                              setUpgradeFeature("urgent");
+                              setShowUpgradePrompt(true);
+                              return;
+                            }
+                            field.onChange(checked);
+                          }}
+                          disabled={!selectedCompany || !canUseUrgent}
+                          data-testid="checkbox-urgent"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-red-600" />
+                          Urgent Hiring
+                          {(plan === "free" || plan === "starter") && (
+                            <Badge variant="secondary" className="text-xs">Professional+</Badge>
+                          )}
+                        </FormLabel>
+                        <FormDescription>
+                          Mark as urgent to attract quick applications (Available on Professional plan and above)
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <Button
                 type="submit"
-                disabled={createJobMutation.isPending || isFormDisabled}
+                disabled={createJobMutation.isPending || isFormDisabled || !canPostJob}
                 className="w-full md:w-auto"
                 data-testid="button-post-job"
               >
                 {createJobMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {isFormDisabled ? "Verifikasi Diperlukan" : "Post Job"}
+                {isFormDisabled ? "Verifikasi Diperlukan" : !canPostJob ? "Quota Habis - Upgrade" : "Post Job"}
               </Button>
             </form>
           </Form>
         </CardContent>
       </Card>
+
+      {/* Upgrade Prompt Modal */}
+      <UpgradePrompt
+        open={showUpgradePrompt}
+        onOpenChange={setShowUpgradePrompt}
+        currentPlan={plan}
+        feature={upgradeFeature}
+        quotaInfo={
+          upgradeFeature === "job_posting" && selectedCompany
+            ? { current: selectedCompany.jobPostingCount || 0, limit: getQuotaLimits()!.jobPosting.limit as number }
+            : upgradeFeature === "featured" && selectedCompany
+            ? { current: selectedCompany.featuredJobCount || 0, limit: getQuotaLimits()!.featured.limit as number }
+            : undefined
+        }
+      />
     </div>
   );
 }
