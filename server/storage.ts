@@ -162,6 +162,7 @@ export interface IStorage {
   rejectEmployer(userId: string, adminId: string, rejectionReason: string): Promise<User | undefined>;
   verifyCompany(companyId: string, adminId: string): Promise<Company | undefined>;
   rejectCompany(companyId: string, adminId: string, rejectionReason: string): Promise<Company | undefined>;
+  reuploadCompanyDocuments(userId: string, logoUrl: string, legalDocUrl: string, notes: string): Promise<{ success: boolean; message: string }>;
   
   // Financial Management
   getAllTransactions(filters?: { status?: string; type?: string; limit?: number; offset?: number }): Promise<{ transactions: any[]; total: number }>;
@@ -1390,6 +1391,28 @@ export class DbStorage implements IStorage {
     
     await this.createAdminActivityLog(adminId, 'company_rejected', 'company', companyId, `Rejected company: ${company?.name}. Reason: ${rejectionReason}`);
     return company;
+  }
+
+  async reuploadCompanyDocuments(userId: string, logoUrl: string, legalDocUrl: string, notes: string): Promise<{ success: boolean; message: string }> {
+    const company = await this.getCompanyByUserId(userId);
+    if (!company) {
+      throw new Error("Company not found");
+    }
+
+    await db
+      .update(companiesTable)
+      .set({
+        reuploadLogoUrl: logoUrl || null,
+        reuploadLegalDocUrl: legalDocUrl || null,
+        reuploadNotes: notes || null,
+        reuploadDate: new Date()
+      })
+      .where(eq(companiesTable.id, company.id));
+
+    return {
+      success: true,
+      message: "Documents uploaded successfully. Admin will review within 1-2 business days."
+    };
   }
 
   async getAllTransactions(filters?: { status?: string; type?: string; limit?: number; offset?: number }): Promise<{ transactions: any[]; total: number }> {

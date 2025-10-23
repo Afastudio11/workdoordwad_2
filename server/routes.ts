@@ -1579,6 +1579,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/employer/reupload-docs", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      if (!user.isBlocked || !user.canReuploadDocuments) {
+        return res.status(403).json({ error: "You do not have permission to reupload documents" });
+      }
+
+      const { logoUrl, legalDocUrl, notes } = req.body;
+
+      const result = await storage.reuploadCompanyDocuments(
+        req.session.userId,
+        logoUrl,
+        legalDocUrl,
+        notes
+      );
+
+      res.json(result);
+    } catch (error) {
+      console.error("Error reuploading documents:", error);
+      res.status(500).json({ error: "Failed to reupload documents" });
+    }
+  });
+
   // Profile API
   app.get("/api/profile", async (req, res) => {
     if (!req.session.userId) {
