@@ -73,7 +73,7 @@ export default function AdminUsersPage() {
             return;
           }
           await apiRequest(`/api/admin/users/${selectedUser.id}/reject`, "POST", {
-            reason: reason.trim(),
+            rejectionReason: reason.trim(),
           });
           toast({
             title: "Verifikasi Ditolak",

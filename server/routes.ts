@@ -2622,9 +2622,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/admin/jobs/:id", requireAdmin, async (req, res) => {
     try {
-      const job = await storage.updateJob(req.params.id, req.body);
+      const validatedData = updateJobSchema.parse(req.body);
+      const job = await storage.updateJob(req.params.id, validatedData);
       res.json(job);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid job data", details: error.errors });
+      }
       console.error("Error updating job:", error);
       res.status(500).json({ error: "Failed to update job" });
     }
