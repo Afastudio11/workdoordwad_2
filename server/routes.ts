@@ -447,7 +447,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Hash password
       const hashedPassword = await bcrypt.hash(validatedData.password, 10);
       
-      // Create user
+      // Create user with all validated data from registration form
       const user = await storage.createUser({
         ...validatedData,
         password: hashedPassword,
@@ -500,22 +500,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         role: "pemberi_kerja",
       });
 
-      // Create company with all data from registration form
+      // Create company with all validated data from registration form
       const company = await storage.createCompany({
         name: validatedData.companyName,
         createdBy: user.id,
         logo: validatedData.logo,
         legalDocUrl: validatedData.legalDocUrl,
-        industry: req.body.industry,
-        employeeCount: req.body.employeeCount,
-        foundedYear: req.body.foundedYear,
-        website: req.body.website,
-        description: req.body.description,
-        picName: req.body.picName || validatedData.fullName,
-        picPosition: req.body.picPosition,
-        contactPhone: req.body.contactPhone || validatedData.phone,
-        whatsappNumber: req.body.whatsappNumber,
-        location: req.body.city,
+        industry: validatedData.industry,
+        employeeCount: validatedData.employeeCount,
+        foundedYear: validatedData.foundedYear,
+        website: validatedData.website,
+        description: validatedData.description,
+        picName: validatedData.fullName,
+        picPosition: validatedData.picPosition,
+        contactPhone: validatedData.phone,
+        whatsappNumber: validatedData.whatsappNumber,
+        location: validatedData.city,
       });
 
       // Set session

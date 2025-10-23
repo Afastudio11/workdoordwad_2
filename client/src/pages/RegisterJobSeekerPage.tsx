@@ -163,6 +163,18 @@ export default function RegisterJobSeekerPage() {
         password: completeData.password,
         fullName: completeData.fullName,
         phone: completeData.phone,
+        dateOfBirth: completeData.dateOfBirth,
+        gender: completeData.gender,
+        city: completeData.city,
+        address: completeData.address,
+        lastEducation: completeData.lastEducation,
+        major: completeData.major,
+        institution: completeData.institution,
+        graduationYear: completeData.graduationYear,
+        employmentStatus: completeData.employmentStatus,
+        yearsOfExperience: completeData.yearsOfExperience,
+        cvUrl: cvUrl,
+        photoUrl: photoUrl,
       });
 
       if (response.ok) {

@@ -56,11 +56,12 @@ app.use(
 
 // Rate limiters for different endpoints
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 requests per IP per window
-  message: { error: "Terlalu banyak percobaan login. Coba lagi dalam 15 menit." },
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 20, // 20 requests per IP per window
+  message: { error: "Terlalu banyak percobaan login. Coba lagi dalam 5 menit." },
   standardHeaders: true,
   legacyHeaders: false,
+  skipSuccessfulRequests: true, // Don't count successful requests
 });
 
 const apiLimiter = rateLimit({

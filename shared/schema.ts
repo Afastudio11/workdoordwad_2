@@ -426,10 +426,21 @@ const strongPasswordSchema = z.string()
 // Register schemas dengan validasi tambahan
 export const registerPekerjaSchema = insertUserSchema.extend({
   password: strongPasswordSchema,
+  dateOfBirth: z.string().optional(),
+  gender: z.enum(["male", "female", "other"]).optional(),
+  city: z.string().optional(),
+  address: z.string().optional(),
+  lastEducation: z.string().optional(),
+  major: z.string().optional(),
+  institution: z.string().optional(),
+  graduationYear: z.string().optional(),
+  employmentStatus: z.string().optional(),
+  yearsOfExperience: z.string().optional(),
+  cvUrl: z.string().optional(),
+  photoUrl: z.string().optional(),
 }).omit({
   role: true, // Backend akan set role secara otomatis
   isVerified: true,
-  cvUrl: true,
   cvFileName: true,
   education: true,
   experience: true,
@@ -446,6 +457,15 @@ export const registerPemberiKerjaSchema = insertUserSchema.extend({
   companyName: z.string().min(1, "Nama perusahaan harus diisi"),
   logo: z.string().optional(),
   legalDocUrl: z.string().optional(),
+  industry: z.string().optional(),
+  employeeCount: z.string().optional(),
+  foundedYear: z.string().optional(),
+  website: z.string().optional(),
+  description: z.string().optional(),
+  picPosition: z.string().optional(),
+  whatsappNumber: z.string().optional(),
+  city: z.string().optional(),
+  address: z.string().optional(),
 }).omit({
   role: true, // Backend akan set role secara otomatis
   isVerified: true,
