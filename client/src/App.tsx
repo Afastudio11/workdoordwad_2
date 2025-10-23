@@ -11,6 +11,8 @@ import EmployerDashboardPage from "@/pages/EmployerDashboardPage";
 import FindCandidatePage from "@/pages/FindCandidatePage";
 import FindEmployersPage from "@/pages/FindEmployersPage";
 import EmployerApplicationsPage from "@/pages/EmployerApplicationsPage";
+import AnalyticsDashboardPage from "@/pages/employer/AnalyticsDashboardPage";
+import CVDatabasePage from "@/pages/employer/CVDatabasePage";
 import NewJobDashboardPage from "@/pages/NewJobDashboardPage";
 import QuickAccessPage from "@/pages/QuickAccessPage";
 import MessagesPage from "@/pages/MessagesPage";
@@ -107,6 +109,18 @@ function Router() {
       <Route path="/employer/applications">
         <ProtectedRoute allowedRoles={["pemberi_kerja"]}>
           <EmployerApplicationsPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/employer/analytics">
+        <ProtectedRoute allowedRoles={["pemberi_kerja"]}>
+          <AnalyticsDashboardPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/employer/cv-database">
+        <ProtectedRoute allowedRoles={["pemberi_kerja"]}>
+          <CVDatabasePage />
         </ProtectedRoute>
       </Route>
       
