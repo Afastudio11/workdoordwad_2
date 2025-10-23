@@ -2145,6 +2145,164 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Job Alert API - Get recommended jobs for job alert page
+  app.get("/api/job-alert", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      // Get unread job match notifications count
+      const notifications = await storage.getUserNotifications(req.session.userId);
+      const jobNotifications = notifications.filter((n: any) => 
+        (n.type === "job_match" || n.type === "new_job_alert") && !n.isRead
+      );
+      const notificationCount = jobNotifications.length;
+
+      // Get recommended jobs (limit 5 for job alert page)
+      const recommendations = await storage.getRecommendedJobs(req.session.userId, 5);
+      
+      res.json({
+        notificationCount,
+        recommendations,
+      });
+    } catch (error) {
+      console.error("Error fetching job alert data:", error);
+      res.status(500).json({ error: "Failed to fetch job alert data" });
+    }
+  });
+
+  // Quick Apply Check - Check if user can apply to a job
+  app.post("/api/jobs/:id/quick-apply", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const jobId = req.params.id;
+      
+      // Check if user already applied
+      const alreadyApplied = await storage.checkApplicationExists(req.session.userId, jobId);
+      if (alreadyApplied) {
+        return res.status(400).json({ 
+          canApply: false,
+          error: "Anda sudah melamar ke lowongan ini" 
+        });
+      }
+
+      // Get user profile
+      const user = await storage.getUser(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Check if user has CV
+      if (!user.cvUrl) {
+        return res.status(400).json({ 
+          canApply: false,
+          error: "Silakan upload CV terlebih dahulu di halaman profil" 
+        });
+      }
+
+      // Get job details
+      const job = await storage.getJobById(jobId);
+      if (!job) {
+        return res.status(404).json({ error: "Lowongan tidak ditemukan" });
+      }
+
+      // Return user profile data for review
+      res.json({
+        canApply: true,
+        userProfile: {
+          name: user.fullName,
+          email: user.email,
+          phone: user.phone || "-",
+          resume: user.cvFileName || "CV tersimpan",
+          resumeUrl: user.cvUrl,
+        },
+        job: {
+          id: job.id,
+          title: job.title,
+          company: job.company,
+        },
+      });
+    } catch (error: any) {
+      console.error("Error checking quick apply:", error);
+      res.status(500).json({ error: "Failed to check application status" });
+    }
+  });
+
+  // Apply to Job - Final submission after user confirmation
+  app.post("/api/jobs/:id/apply", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const jobId = req.params.id;
+      const { coverLetter } = req.body;
+      
+      // Check if user already applied
+      const alreadyApplied = await storage.checkApplicationExists(req.session.userId, jobId);
+      if (alreadyApplied) {
+        return res.status(400).json({ error: "Anda sudah melamar ke lowongan ini" });
+      }
+
+      // Get user's CV
+      const user = await storage.getUser(req.session.userId);
+      if (!user?.cvUrl) {
+        return res.status(400).json({ error: "Silakan upload CV terlebih dahulu" });
+      }
+
+      // Create application
+      const application = await storage.createApplication({
+        jobId,
+        applicantId: req.session.userId,
+        cvUrl: user.cvUrl,
+        coverLetter: coverLetter ? sanitizeHtml(coverLetter) : null,
+      });
+
+      // Get job and company details for notification
+      const job = await storage.getJobById(jobId);
+      
+      // Send notification to employer if job exists
+      if (job && job.postedBy) {
+        await storage.createNotification(
+          job.postedBy,
+          "new_applicant",
+          "Pelamar Baru",
+          `${user.fullName} telah melamar untuk posisi ${job.title}`,
+          `/employer/applications`
+        );
+
+        // Broadcast to employer via WebSocket
+        broadcastNotification(job.postedBy, {
+          type: "new_applicant",
+          title: "Pelamar Baru",
+          message: `${user.fullName} telah melamar untuk posisi ${job.title}`,
+        });
+      }
+
+      // Send confirmation notification to job seeker
+      await storage.createNotification(
+        req.session.userId,
+        "application_status",
+        "Lamaran Terkirim",
+        `Lamaran Anda untuk posisi ${job?.title} telah berhasil dikirim`,
+        `/user/dashboard#applications`
+      );
+
+      res.status(201).json({
+        success: true,
+        application,
+        message: "Lamaran berhasil dikirim",
+      });
+    } catch (error: any) {
+      console.error("Error submitting application:", error);
+      res.status(500).json({ error: "Failed to submit application" });
+    }
+  });
+
   // Wishlist API
   app.get("/api/wishlists", async (req, res) => {
     if (!req.session.userId) {

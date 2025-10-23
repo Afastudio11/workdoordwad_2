@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatSalary } from "@/lib/formatters";
+import { useLocation } from "wouter";
 
 interface Application {
   id: string;
@@ -42,13 +43,18 @@ const statusConfig = {
 };
 
 export default function ApplicationsPage() {
+  const [, setLocation] = useLocation();
   const { data: applications, isLoading, isError, error } = useQuery<Application[]>({
     queryKey: ["/api/applications"],
   });
 
+  const handleViewDetail = (jobId: string) => {
+    setLocation(`/jobs/${jobId}`);
+  };
+
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 pb-20 md:pb-20">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="h-32 bg-muted rounded-lg animate-pulse"></div>
         ))}
@@ -61,7 +67,7 @@ export default function ApplicationsPage() {
     const isAuthError = errorMessage.includes("401") || errorMessage.includes("authenticated");
     
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 pb-20 md:pb-20">
         <div>
           <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
             Lamaran Saya
@@ -96,20 +102,20 @@ export default function ApplicationsPage() {
 
   if (!applications || applications.length === 0) {
     return (
-      <div className="text-center py-16">
+      <div className="text-center py-16 pb-20 md:pb-20">
         <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
           Belum Ada Lamaran
         </h3>
         <p className="text-gray-900 mb-6">
-          kamu belum melamar ke lowongan manapun. Lihat halaman rekomendasi untuk menemukan lowongan yang sesuai
+          Kamu belum melamar ke lowongan manapun. Lihat halaman rekomendasi untuk menemukan lowongan yang sesuai
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-20 md:pb-20">
       <div>
         <h1 className="text-3xl font-bold text-gray-900" data-testid="text-page-title">
           Lamaran Saya
@@ -119,7 +125,7 @@ export default function ApplicationsPage() {
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 mb-12">
         {applications.map((application, index) => {
           const status = statusConfig[application.status as keyof typeof statusConfig] || statusConfig.submitted;
           const StatusIcon = status.icon;
@@ -169,7 +175,11 @@ export default function ApplicationsPage() {
                       <StatusIcon className="w-3 h-3 mr-1" />
                       {status.label}
                     </Badge>
-                    <Button variant="outline" size="sm" data-testid={`button-view-${index}`}>
+                    <Button 
+                      onClick={() => handleViewDetail(application.job.id)}
+                      className="bg-primary text-black hover:bg-primary/90 font-bold"
+                      data-testid={`button-view-${index}`}
+                    >
                       Lihat Detail
                     </Button>
                   </div>

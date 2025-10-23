@@ -363,6 +363,18 @@
   }
 }
 
+/* Ensure lime/primary buttons always have black text for readability */
+.btn-primary,
+button.bg-primary,
+.bg-primary.text-black {
+  color: #000000 !important;
+  font-weight: 600;
+}
+
+.bg-primary:hover {
+  background-color: hsl(from hsl(var(--primary)) h s calc(l - 5) / alpha);
+}
+
 /* Marquee Animation */
 @keyframes marquee {
   0% {
