@@ -22,13 +22,17 @@ Database seeding adalah proses mengisi database dengan data awal untuk keperluan
 
 ## 📊 Data Yang Tersedia
 
-### 1. Users (3 akun test)
+### 1. Users (7 akun test)
 
-| Role | Email | Password | Nama |
-|------|-------|----------|------|
-| Admin | admin@pintuloker.com | Admin123! | Admin Pintu Loker |
-| Employer | employer@company.com | Employer123! | Budi Santoso |
-| Job Seeker | pekerja@email.com | Pekerja123! | Siti Nurhaliza |
+| Role | Email | Password | Nama | Subscription Plan |
+|------|-------|----------|------|-------------------|
+| Admin | admin@pintuloker.com | Admin123! | Admin Pintu Loker | - |
+| Employer (Legacy) | employer@company.com | Employer123! | Budi Santoso | Free |
+| **Employer Free** | **free@company.com** | **Employer123!** | **Ahmad Fauzi** | **Free** |
+| **Employer Starter Monthly** | **starter.monthly@company.com** | **Employer123!** | **Dewi Lestari** | **Starter (Monthly)** |
+| **Employer Starter Yearly** | **starter.yearly@company.com** | **Employer123!** | **Rizki Pratama** | **Starter (Yearly)** |
+| **Employer Professional** | **professional@company.com** | **Employer123!** | **Andi Wijaya** | **Professional (Yearly)** |
+| Job Seeker | pekerja@email.com | Pekerja123! | Siti Nurhaliza | - |
 
 ### 2. Companies (30 perusahaan)
 

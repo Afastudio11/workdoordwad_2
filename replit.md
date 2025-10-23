@@ -5,6 +5,47 @@ Pintu Kerja is a freemium job classifieds platform designed for UMKM (small-medi
 
 ## Recent Changes
 
+### Database Seeding - 4 Employer Accounts by Subscription Plan (October 23, 2025)
+**Successfully created 4 employer test accounts with different subscription plans:**
+
+**Accounts Created:**
+1. **Free Plan** - free@company.com
+   - Name: Ahmad Fauzi, HRD Manager
+   - Company: CV Maju Sejahtera
+   - Features: 3 free job slots, no verified badge
+
+2. **Starter Monthly** - starter.monthly@company.com
+   - Name: Dewi Lestari, Talent Acquisition Lead
+   - Company: PT Digital Sukses
+   - Plan: Rp 199,000/month (30 days active)
+   - Features: 20 job slots, verified badge
+
+3. **Starter Yearly** - starter.yearly@company.com
+   - Name: Rizki Pratama, CEO
+   - Companies: Startup Inovasi Indonesia + CV Kreatif Digital Yogya
+   - Plan: Rp 1,990,000/year (365 days active, save Rp 398,000)
+   - Features: 20 job slots, verified badge
+
+4. **Professional Yearly** - professional@company.com
+   - Name: Andi Wijaya, HR Director
+   - Companies: PT Perusahaan Besar Indonesia + PT Teknologi Masa Depan + PT Bank Digital Indonesia
+   - Plan: Rp 3,990,000/year (365 days active, save Rp 798,000)
+   - Features: 100 job slots, verified badge, priority support, featured jobs
+
+**Files Updated:**
+- `db/seeders/01-users.seed.ts` - Added 4 employer accounts with subscription details
+- `db/seeders/02-companies.seed.ts` - Assigned companies to each employer
+- `AKUN_EMPLOYER.md` - Complete documentation of all employer accounts
+- `SEEDING.md` - Updated with new employer accounts
+
+**Database Status:**
+- ✅ 7 test accounts (1 admin, 5 employers, 1 job seeker)
+- ✅ 37 companies total
+- ✅ 90 job listings
+- ✅ All employers have proper subscription plan configuration
+
+## Previous Updates
+
 ### Pricing Plans Update & Migration Completed (October 23, 2025)
 **Successfully migrated from Replit Agent to Replit environment:**
 

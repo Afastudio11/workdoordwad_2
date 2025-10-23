@@ -1,25 +1,134 @@
 import { db } from "../../server/db";
 import { companies, users } from "../../shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export async function seedCompanies() {
   console.log("🌱 Seeding companies...");
 
-  // Get employer user ID
-  const employer = await db
+  // Get all employer users
+  const employers = await db
     .select()
     .from(users)
-    .where(eq(users.email, "employer@company.com"))
-    .limit(1);
+    .where(inArray(users.email, [
+      "employer@company.com",
+      "free@company.com", 
+      "starter.monthly@company.com",
+      "starter.yearly@company.com",
+      "professional@company.com"
+    ]));
 
-  if (employer.length === 0) {
-    console.log("  ⚠️  Employer user not found. Skipping company seeding.");
+  if (employers.length === 0) {
+    console.log("  ⚠️  Employer users not found. Skipping company seeding.");
     return;
   }
 
-  const employerId = employer[0].id;
+  // Map employers by email for easy lookup
+  const employerMap = new Map(employers.map(e => [e.email, e.id]));
 
   const companyData = [
+    // =============================================
+    // COMPANIES FOR EMPLOYER FREE PLAN (free@company.com)
+    // =============================================
+    {
+      name: "CV Maju Sejahtera",
+      description: "UMKM yang bergerak di bidang perdagangan umum dan jasa",
+      industry: "Retail",
+      location: "Bandung, Jawa Barat",
+      contactEmail: "hr@majusejahtera.com",
+      contactPhone: "022-12345678",
+      employeeCount: "11-50",
+      isVerified: false,
+      createdBy: employerMap.get("free@company.com"),
+    },
+    
+    // =============================================
+    // COMPANIES FOR EMPLOYER STARTER MONTHLY (starter.monthly@company.com)
+    // =============================================
+    {
+      name: "PT Digital Sukses",
+      description: "Perusahaan teknologi yang fokus pada pengembangan aplikasi mobile dan web",
+      industry: "Technology",
+      location: "Surabaya, Jawa Timur",
+      website: "https://digitalsukses.com",
+      contactEmail: "careers@digitalsukses.com",
+      contactPhone: "031-12345678",
+      employeeCount: "51-200",
+      isVerified: true,
+      createdBy: employerMap.get("starter.monthly@company.com"),
+    },
+    
+    // =============================================
+    // COMPANIES FOR EMPLOYER STARTER YEARLY (starter.yearly@company.com)
+    // =============================================
+    {
+      name: "Startup Inovasi Indonesia",
+      description: "Startup teknologi yang mengembangkan solusi AI untuk industri ritel",
+      industry: "Artificial Intelligence",
+      location: "Yogyakarta, DI Yogyakarta",
+      website: "https://inovasiindonesia.id",
+      contactEmail: "jobs@inovasiindonesia.id",
+      contactPhone: "0274-987654",
+      employeeCount: "11-50",
+      isVerified: true,
+      createdBy: employerMap.get("starter.yearly@company.com"),
+    },
+    {
+      name: "CV Kreatif Digital Yogya",
+      description: "Agensi kreatif yang melayani brand lokal dan nasional",
+      industry: "Creative & Design",
+      location: "Yogyakarta, DI Yogyakarta",
+      website: "https://kreatifdigital.id",
+      contactEmail: "hello@kreatifdigital.id",
+      contactPhone: "0274-123456",
+      employeeCount: "11-50",
+      isVerified: true,
+      createdBy: employerMap.get("starter.yearly@company.com"),
+    },
+    
+    // =============================================
+    // COMPANIES FOR EMPLOYER PROFESSIONAL (professional@company.com)
+    // =============================================
+    {
+      name: "PT Perusahaan Besar Indonesia",
+      description: "Perusahaan manufaktur dan distribusi terkemuka di Indonesia dengan 20+ cabang",
+      industry: "Manufacturing",
+      location: "Jakarta Pusat, DKI Jakarta",
+      website: "https://perusahaanbesar.co.id",
+      contactEmail: "recruitment@perusahaanbesar.co.id",
+      contactPhone: "021-12345678",
+      employeeCount: "500+",
+      isVerified: true,
+      createdBy: employerMap.get("professional@company.com"),
+    },
+    {
+      name: "PT Teknologi Masa Depan",
+      description: "Perusahaan teknologi enterprise dengan klien Fortune 500",
+      industry: "Technology",
+      location: "Jakarta Selatan, DKI Jakarta",
+      website: "https://teknologimasadepan.com",
+      contactEmail: "hr@teknologimasadepan.com",
+      contactPhone: "021-87654321",
+      employeeCount: "201-500",
+      isVerified: true,
+      createdBy: employerMap.get("professional@company.com"),
+    },
+    {
+      name: "PT Bank Digital Indonesia",
+      description: "Bank digital terkemuka dengan 5 juta+ pengguna aktif",
+      industry: "Banking",
+      location: "Jakarta Pusat, DKI Jakarta",
+      website: "https://bankdigital.id",
+      contactEmail: "career@bankdigital.id",
+      contactPhone: "021-99998888",
+      employeeCount: "500+",
+      isVerified: true,
+      createdBy: employerMap.get("professional@company.com"),
+    },
+
+    // =============================================
+    // COMPANIES FOR ORIGINAL EMPLOYER (employer@company.com) 
+    // Keeping existing companies for backward compatibility
+    // =============================================
     {
       name: "PT Teknologi Maju",
       description: "Perusahaan teknologi terkemuka yang fokus pada pengembangan solusi digital untuk UMKM",
@@ -30,7 +139,7 @@ export async function seedCompanies() {
       contactPhone: "021-12345678",
       employeeCount: "51-200",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Berkah Digital",
@@ -42,7 +151,7 @@ export async function seedCompanies() {
       contactPhone: "022-87654321",
       employeeCount: "11-50",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Maju Bersama Indonesia",
@@ -53,7 +162,7 @@ export async function seedCompanies() {
       contactPhone: "031-23456789",
       employeeCount: "201-500",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "Startup Inovasi Tech",
@@ -65,7 +174,7 @@ export async function seedCompanies() {
       contactPhone: "021-98765432",
       employeeCount: "11-50",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Kreatif Nusantara",
@@ -77,7 +186,7 @@ export async function seedCompanies() {
       contactPhone: "0274-123456",
       employeeCount: "51-200",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Media Sosial Pro",
@@ -88,7 +197,7 @@ export async function seedCompanies() {
       contactPhone: "024-87654321",
       employeeCount: "1-10",
       isVerified: false,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Solusi Data Analytics",
@@ -100,7 +209,7 @@ export async function seedCompanies() {
       contactPhone: "021-55556666",
       employeeCount: "51-200",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "Warung Kopi Digital",
@@ -112,7 +221,7 @@ export async function seedCompanies() {
       contactPhone: "0361-123456",
       employeeCount: "51-200",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Edukasi Online Indonesia",
@@ -124,7 +233,7 @@ export async function seedCompanies() {
       contactPhone: "021-77778888",
       employeeCount: "201-500",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Konten Kreator Agency",
@@ -135,7 +244,7 @@ export async function seedCompanies() {
       contactPhone: "021-11112222",
       employeeCount: "11-50",
       isVerified: false,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Logistik Express",
@@ -147,7 +256,7 @@ export async function seedCompanies() {
       contactPhone: "021-33334444",
       employeeCount: "500+",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "Startup Healthtech Care",
@@ -159,7 +268,7 @@ export async function seedCompanies() {
       contactPhone: "021-99990000",
       employeeCount: "11-50",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Desain Interior Modern",
@@ -170,7 +279,7 @@ export async function seedCompanies() {
       contactPhone: "061-123456",
       employeeCount: "1-10",
       isVerified: false,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Asuransi Keluarga",
@@ -182,7 +291,7 @@ export async function seedCompanies() {
       contactPhone: "021-55554444",
       employeeCount: "500+",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "Startup Agritech Farmers",
@@ -194,7 +303,7 @@ export async function seedCompanies() {
       contactPhone: "0341-123456",
       employeeCount: "11-50",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Bank Digital Nusantara",
@@ -206,7 +315,7 @@ export async function seedCompanies() {
       contactPhone: "021-12341234",
       employeeCount: "201-500",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Fashion Online Store",
@@ -218,7 +327,7 @@ export async function seedCompanies() {
       contactPhone: "021-87658765",
       employeeCount: "11-50",
       isVerified: false,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Properti Investasi",
@@ -230,7 +339,7 @@ export async function seedCompanies() {
       contactPhone: "0251-123456",
       employeeCount: "51-200",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "Startup Gaming Indonesia",
@@ -242,7 +351,7 @@ export async function seedCompanies() {
       contactPhone: "021-44445555",
       employeeCount: "51-200",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Konsultan Bisnis Pro",
@@ -253,7 +362,7 @@ export async function seedCompanies() {
       contactPhone: "0271-123456",
       employeeCount: "1-10",
       isVerified: false,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Travel Online Indonesia",
@@ -265,7 +374,7 @@ export async function seedCompanies() {
       contactPhone: "0361-987654",
       employeeCount: "201-500",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "Startup AI Solutions",
@@ -277,7 +386,7 @@ export async function seedCompanies() {
       contactPhone: "021-66667777",
       employeeCount: "11-50",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Catering Sehat",
@@ -288,7 +397,7 @@ export async function seedCompanies() {
       contactPhone: "021-22223333",
       employeeCount: "11-50",
       isVerified: false,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Telekomunikasi Modern",
@@ -300,7 +409,7 @@ export async function seedCompanies() {
       contactPhone: "021-88889999",
       employeeCount: "500+",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "Startup Blockchain Tech",
@@ -312,7 +421,7 @@ export async function seedCompanies() {
       contactPhone: "021-33332222",
       employeeCount: "11-50",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Event Organizer Pro",
@@ -323,7 +432,7 @@ export async function seedCompanies() {
       contactPhone: "0411-123456",
       employeeCount: "11-50",
       isVerified: false,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Manufaktur Elektronik",
@@ -335,7 +444,7 @@ export async function seedCompanies() {
       contactPhone: "021-77776666",
       employeeCount: "500+",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "Startup IoT Indonesia",
@@ -347,7 +456,7 @@ export async function seedCompanies() {
       contactPhone: "021-11119999",
       employeeCount: "51-200",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "CV Fotografi Profesional",
@@ -358,7 +467,7 @@ export async function seedCompanies() {
       contactPhone: "0274-987654",
       employeeCount: "1-10",
       isVerified: false,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
     {
       name: "PT Energi Terbarukan",
@@ -370,7 +479,7 @@ export async function seedCompanies() {
       contactPhone: "021-55558888",
       employeeCount: "201-500",
       isVerified: true,
-      createdBy: employerId,
+      createdBy: employerMap.get("employer@company.com"),
     },
   ];
 
