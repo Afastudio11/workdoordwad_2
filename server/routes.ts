@@ -600,7 +600,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = loginSchema.parse(req.body);
 
-      const user = await storage.getUserByUsername(validatedData.username);
+      // Try to find user by username first, then by email
+      let user = await storage.getUserByUsername(validatedData.username);
+      if (!user) {
+        user = await storage.getUserByEmail(validatedData.username);
+      }
+      
       if (!user) {
         return res.status(401).json({ error: "Username atau password salah" });
       }
