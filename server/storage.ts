@@ -156,7 +156,7 @@ export interface IStorage {
   
   // User Management
   getAllUsers(filters?: { role?: string; isVerified?: boolean; limit?: number; offset?: number }): Promise<{ users: User[]; total: number }>;
-  blockUser(userId: string, adminId: string, reason: string): Promise<User | undefined>;
+  blockUser(userId: string, adminId: string, reason: string, category: string, canReuploadDocuments: boolean): Promise<User | undefined>;
   unblockUser(userId: string, adminId: string): Promise<User | undefined>;
   verifyEmployer(userId: string, adminId: string): Promise<User | undefined>;
   rejectEmployer(userId: string, adminId: string, rejectionReason: string): Promise<User | undefined>;
@@ -1284,7 +1284,7 @@ export class DbStorage implements IStorage {
     };
   }
 
-  async blockUser(userId: string, adminId: string, reason: string): Promise<User | undefined> {
+  async blockUser(userId: string, adminId: string, reason: string, category: string, canReuploadDocuments: boolean): Promise<User | undefined> {
     const [user] = await db
       .update(usersTable)
       .set({ 
@@ -1292,12 +1292,14 @@ export class DbStorage implements IStorage {
         isBlocked: true,
         blockedAt: new Date(),
         blockedBy: adminId,
-        blockedReason: reason
+        blockedReason: reason,
+        blockCategory: category,
+        canReuploadDocuments: canReuploadDocuments
       })
       .where(eq(usersTable.id, userId))
       .returning();
     
-    await this.createAdminActivityLog(adminId, 'user_blocked', 'user', userId, `Blocked user: ${user?.fullName} (${user?.email}). Reason: ${reason}`);
+    await this.createAdminActivityLog(adminId, 'user_blocked', 'user', userId, `Blocked user: ${user?.fullName} (${user?.email}). Category: ${category}. Reason: ${reason || 'No additional details'}`);
     return user;
   }
 
@@ -1309,7 +1311,9 @@ export class DbStorage implements IStorage {
         isBlocked: false,
         blockedAt: null,
         blockedBy: null,
-        blockedReason: null
+        blockedReason: null,
+        blockCategory: null,
+        canReuploadDocuments: false
       })
       .where(eq(usersTable.id, userId))
       .returning();

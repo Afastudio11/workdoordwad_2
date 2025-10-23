@@ -2663,12 +2663,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/users/:id/block", requireAdmin, async (req, res) => {
     try {
-      const { reason } = req.body;
-      if (!reason) {
-        return res.status(400).json({ error: "Block reason is required" });
+      const { reason, category } = req.body;
+      if (!category) {
+        return res.status(400).json({ error: "Block category is required" });
       }
       
-      const user = await storage.blockUser(req.params.id, req.session.userId!, reason);
+      // Determine if user can reupload documents based on category
+      const canReuploadDocuments = category === "DOCUMENT_INCOMPLETE" || category === "DOCUMENT_INVALID";
+      
+      const user = await storage.blockUser(
+        req.params.id, 
+        req.session.userId!, 
+        reason || "",
+        category,
+        canReuploadDocuments
+      );
       
       // TODO: Destroy all active sessions for this user
       // This requires session store access to delete sessions by userId
