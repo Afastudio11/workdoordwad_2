@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { VerifiedBadge } from "@/components/ui/verified-badge";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ interface JobCardProps {
   bgColor?: string;
   icon?: string;
   jobType?: string;
+  isVerified?: boolean;
 }
 
 export default function JobCard({
@@ -36,6 +38,7 @@ export default function JobCard({
   location,
   companyLogo,
   jobType = "Penuh Waktu",
+  isVerified = false,
 }: JobCardProps) {
   const category = tags[0] || "Umum";
   const [showDetailDialog, setShowDetailDialog] = useState(false);
@@ -75,6 +78,7 @@ export default function JobCard({
         <div className="flex items-center gap-1 text-sm text-body mb-3">
           <Building2 className="h-4 w-4" />
           <span data-testid={`text-company-${id}`}>{company}</span>
+          {isVerified && <VerifiedBadge size="sm" />}
         </div>
 
         <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
@@ -134,7 +138,12 @@ export default function JobCard({
                   </div>
                 )}
                 <div className="flex-1">
-                  <h3 className="heading-4 text-heading">{job.company?.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="heading-4 text-heading">{job.company?.name}</h3>
+                    {(job.company?.subscriptionPlan === "starter" || 
+                      job.company?.subscriptionPlan === "professional" || 
+                      job.company?.subscriptionPlan === "enterprise") && <VerifiedBadge size="md" />}
+                  </div>
                   {job.company?.industry && (
                     <p className="body-small text-muted-foreground">{job.company.industry}</p>
                   )}
