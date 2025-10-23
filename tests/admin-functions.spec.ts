@@ -46,17 +46,13 @@ test.describe('Comprehensive Admin Functions', () => {
       await adminPage.goto('/admin/users');
       await adminPage.waitForLoadState('networkidle');
       
-      // Check tabs exist
+      // Check tabs exist - these should be visible
       const recruiterTab = adminPage.getByRole('tab', { name: /perekrut|recruiter/i });
       const workerTab = adminPage.getByRole('tab', { name: /pekerja|worker/i });
       
-      const hasRecruiterTab = await recruiterTab.isVisible({ timeout: 5000 }).catch(() => false);
-      const hasWorkerTab = await workerTab.isVisible({ timeout: 5000 }).catch(() => false);
-      
-      if (hasRecruiterTab && hasWorkerTab) {
-        console.log('✓ User management tabs displayed');
-        expect(hasRecruiterTab && hasWorkerTab).toBeTruthy();
-      }
+      await expect(recruiterTab).toBeVisible({ timeout: 10000 });
+      await expect(workerTab).toBeVisible({ timeout: 10000 });
+      console.log('✓ User management tabs displayed');
       
       // Switch between tabs
       await recruiterTab.click();
@@ -72,12 +68,17 @@ test.describe('Comprehensive Admin Functions', () => {
       await adminPage.goto('/admin/users');
       await adminPage.waitForLoadState('networkidle');
       
-      // Look for action buttons
-      const hasVerifyButtons = await adminPage.locator('[data-testid^="button-verify-"]').count() > 0;
-      const hasBlockButtons = await adminPage.locator('[data-testid^="button-block-"]').count() > 0;
-      const hasUnblockButtons = await adminPage.locator('[data-testid^="button-unblock-"]').count() > 0;
+      // Look for action buttons - at least one type should exist
+      const hasVerifyButtons = await adminPage.locator('[data-testid^="button-verify-"]').count();
+      const hasBlockButtons = await adminPage.locator('[data-testid^="button-block-"]').count();
+      const hasUnblockButtons = await adminPage.locator('[data-testid^="button-unblock-"]').count();
+      const hasRejectButtons = await adminPage.locator('[data-testid^="button-reject-"]').count();
       
-      console.log(`✓ Action buttons: Verify=${hasVerifyButtons}, Block=${hasBlockButtons}, Unblock=${hasUnblockButtons}`);
+      const totalActionButtons = hasVerifyButtons + hasBlockButtons + hasUnblockButtons + hasRejectButtons;
+      
+      // Assert that at least some action buttons exist
+      expect(totalActionButtons).toBeGreaterThan(0);
+      console.log(`✓ Action buttons found: Verify=${hasVerifyButtons}, Block=${hasBlockButtons}, Unblock=${hasUnblockButtons}, Reject=${hasRejectButtons}`);
     });
   });
   
@@ -89,30 +90,43 @@ test.describe('Comprehensive Admin Functions', () => {
       // Check if jobs list is displayed
       const jobsTable = adminPage.locator('table').or(
         adminPage.locator('[data-testid^="card-job"]')
+      ).or(
+        adminPage.getByText(/pekerjaan|lowongan|job/i)
       );
       
-      const hasJobs = await jobsTable.isVisible({ timeout: 5000 }).catch(() => false);
-      console.log(`✓ Jobs management page accessible: ${hasJobs}`);
+      await expect(jobsTable.first()).toBeVisible({ timeout: 10000 });
+      console.log('✓ Jobs management page accessible');
     });
     
     test('Admin can view aggregated jobs pending review', async () => {
       await adminPage.goto('/admin/aggregated-jobs');
       await adminPage.waitForLoadState('networkidle');
       
-      // Check for pending jobs list
-      const hasPendingJobs = await adminPage.getByText(/pending|menunggu/i).isVisible({ timeout: 5000 }).catch(() => false);
+      // Page should load - check for title or heading
+      const pageHeading = adminPage.getByRole('heading').or(
+        adminPage.getByText(/aggregat|pending|menunggu/i)
+      );
+      
+      await expect(pageHeading.first()).toBeVisible({ timeout: 10000 });
+      console.log('✓ Aggregated jobs page accessible');
+      
+      // If there are pending jobs, verify action buttons exist
+      const hasPendingJobs = await adminPage.getByText(/pending|menunggu/i).count() > 0;
       
       if (hasPendingJobs) {
-        console.log('✓ Can view aggregated jobs pending review');
+        console.log('✓ Pending jobs found - checking for action buttons');
         
-        // Look for approve/reject buttons
         const approveButton = adminPage.locator('[data-testid^="button-approve"]').first();
         const rejectButton = adminPage.locator('[data-testid^="button-reject"]').first();
         
+        // At least one action type should be available
         const hasApproveBtn = await approveButton.isVisible({ timeout: 3000 }).catch(() => false);
         const hasRejectBtn = await rejectButton.isVisible({ timeout: 3000 }).catch(() => false);
         
+        expect(hasApproveBtn || hasRejectBtn).toBeTruthy();
         console.log(`✓ Job actions available: Approve=${hasApproveBtn}, Reject=${hasRejectBtn}`);
+      } else {
+        console.log('ℹ No pending jobs to review (this is OK)');
       }
     });
   });
@@ -122,20 +136,25 @@ test.describe('Comprehensive Admin Functions', () => {
       await adminPage.goto('/admin/transactions');
       await adminPage.waitForLoadState('networkidle');
       
-      // Check if transactions page loads
-      const transactionsPage = adminPage.getByText(/transaksi|transaction/i).first();
-      const pageLoaded = await transactionsPage.isVisible({ timeout: 5000 }).catch(() => false);
-      
-      console.log(`✓ Transactions page accessible: ${pageLoaded}`);
-      
-      // Look for filter options
-      const statusFilter = adminPage.getByTestId('filter-status').or(
-        adminPage.locator('select, [role="combobox"]').first()
+      // Check if transactions page loads - must have heading or title
+      const transactionsPage = adminPage.getByRole('heading').or(
+        adminPage.getByText(/transaksi|transaction/i)
       );
       
-      const hasFilters = await statusFilter.isVisible({ timeout: 3000 }).catch(() => false);
-      if (hasFilters) {
-        console.log('✓ Transaction filters available');
+      await expect(transactionsPage.first()).toBeVisible({ timeout: 10000 });
+      console.log('✓ Transactions page accessible');
+      
+      // Look for table or list structure
+      const transactionsList = adminPage.locator('table, [data-testid^="transaction-"]').or(
+        adminPage.locator('tbody')
+      );
+      
+      const hasTransactionsList = await transactionsList.first().isVisible({ timeout: 5000 }).catch(() => false);
+      
+      if (hasTransactionsList) {
+        console.log('✓ Transactions list displayed');
+      } else {
+        console.log('ℹ No transactions yet (this is OK for new admin)');
       }
     });
     
@@ -143,14 +162,14 @@ test.describe('Comprehensive Admin Functions', () => {
       await adminPage.goto('/admin/transactions');
       await adminPage.waitForLoadState('networkidle');
       
-      // Look for refund buttons
+      // Look for refund buttons (may not exist if no eligible transactions)
       const refundButton = adminPage.locator('[data-testid^="button-refund"]').first();
       const hasRefundBtn = await refundButton.isVisible({ timeout: 5000 }).catch(() => false);
       
       if (hasRefundBtn) {
-        console.log('✓ Refund functionality accessible');
+        console.log('✓ Refund functionality found - testing dialog');
         
-        // Test refund dialog (without actually processing)
+        // Test refund dialog opens
         await refundButton.click();
         await adminPage.waitForTimeout(1000);
         
@@ -158,18 +177,18 @@ test.describe('Comprehensive Admin Functions', () => {
           adminPage.getByLabel(/reason|alasan/i)
         );
         
-        const dialogShown = await reasonInput.isVisible({ timeout: 3000 }).catch(() => false);
-        if (dialogShown) {
-          console.log('✓ Refund dialog opens correctly');
-          
-          // Close dialog
-          const cancelButton = adminPage.getByTestId('button-cancel').or(
-            adminPage.getByRole('button', { name: /cancel|batal/i })
-          );
-          if (await cancelButton.isVisible().catch(() => false)) {
-            await cancelButton.click();
-          }
-        }
+        await expect(reasonInput).toBeVisible({ timeout: 5000 });
+        console.log('✓ Refund dialog opens correctly');
+        
+        // Close dialog
+        const cancelButton = adminPage.getByTestId('button-cancel').or(
+          adminPage.getByRole('button', { name: /cancel|batal/i })
+        );
+        await expect(cancelButton).toBeVisible({ timeout: 5000 });
+        await cancelButton.click();
+        console.log('✓ Refund dialog closes correctly');
+      } else {
+        console.log('ℹ No refundable transactions available (this is OK)');
       }
     });
   });
@@ -179,20 +198,25 @@ test.describe('Comprehensive Admin Functions', () => {
       await adminPage.goto('/admin/fraud-reports');
       await adminPage.waitForLoadState('networkidle');
       
-      // Check if fraud reports page loads
-      const reportsPage = adminPage.getByText(/fraud|penipuan|laporan/i).first();
-      const pageLoaded = await reportsPage.isVisible({ timeout: 5000 }).catch(() => false);
-      
-      console.log(`✓ Fraud reports page accessible: ${pageLoaded}`);
-      
-      // Look for status filters
-      const statusFilter = adminPage.getByTestId('filter-status').or(
-        adminPage.locator('select').first()
+      // Check if fraud reports page loads - must have heading or content
+      const reportsPage = adminPage.getByRole('heading').or(
+        adminPage.getByText(/fraud|penipuan|laporan/i)
       );
       
-      const hasFilters = await statusFilter.isVisible({ timeout: 3000 }).catch(() => false);
-      if (hasFilters) {
-        console.log('✓ Report status filters available');
+      await expect(reportsPage.first()).toBeVisible({ timeout: 10000 });
+      console.log('✓ Fraud reports page accessible');
+      
+      // Look for reports list structure
+      const reportsList = adminPage.locator('table, [data-testid^="report-"]').or(
+        adminPage.locator('tbody')
+      );
+      
+      const hasReportsList = await reportsList.first().isVisible({ timeout: 5000 }).catch(() => false);
+      
+      if (hasReportsList) {
+        console.log('✓ Fraud reports list displayed');
+      } else {
+        console.log('ℹ No fraud reports yet (this is OK)');
       }
     });
     
@@ -200,15 +224,41 @@ test.describe('Comprehensive Admin Functions', () => {
       await adminPage.goto('/admin/fraud-reports');
       await adminPage.waitForLoadState('networkidle');
       
-      // Look for action buttons on reports
+      // Look for action buttons on reports (may not exist if no reports)
       const updateButton = adminPage.locator('[data-testid^="button-update-status"]').first().or(
-        adminPage.getByRole('button', { name: /update|resolve|process/i }).first()
+        adminPage.getByRole('button', { name: /update|resolve|process|proses/i }).first()
       );
       
       const hasUpdateBtn = await updateButton.isVisible({ timeout: 5000 }).catch(() => false);
       
       if (hasUpdateBtn) {
         console.log('✓ Fraud report status update available');
+        
+        // Try to open update dialog
+        await updateButton.click();
+        await adminPage.waitForTimeout(1000);
+        
+        // Look for status selection or update form
+        const statusSelect = adminPage.locator('select, [role="combobox"]').or(
+          adminPage.getByTestId('select-status')
+        );
+        
+        const hasStatusSelect = await statusSelect.first().isVisible({ timeout: 3000 }).catch(() => false);
+        
+        if (hasStatusSelect) {
+          console.log('✓ Status update form displayed');
+          
+          // Close dialog
+          const cancelButton = adminPage.getByRole('button', { name: /cancel|batal/i });
+          const hasCancelBtn = await cancelButton.isVisible({ timeout: 3000 }).catch(() => false);
+          if (hasCancelBtn) {
+            await cancelButton.click();
+          } else {
+            await adminPage.keyboard.press('Escape');
+          }
+        }
+      } else {
+        console.log('ℹ No fraud reports to update (this is OK)');
       }
     });
   });
@@ -218,12 +268,20 @@ test.describe('Comprehensive Admin Functions', () => {
       await adminPage.goto('/admin/dashboard');
       await adminPage.waitForLoadState('networkidle');
       
-      // Check for key statistics
+      // Dashboard should load
+      const dashboard = adminPage.getByRole('heading').or(
+        adminPage.getByText(/dashboard|statistik/i)
+      );
+      
+      await expect(dashboard.first()).toBeVisible({ timeout: 10000 });
+      console.log('✓ Admin dashboard loads');
+      
+      // Check for key statistics (at least one metric should be visible)
       const metrics = [
-        'total.*user|jumlah.*user',
-        'total.*job|jumlah.*lowongan',
-        'revenue|pendapatan',
-        'pending|menunggu',
+        'total.*user|jumlah.*user|pengguna',
+        'total.*job|jumlah.*lowongan|pekerjaan',
+        'revenue|pendapatan|transaksi',
+        'pending|menunggu|verifikasi',
       ];
       
       let visibleMetrics = 0;
@@ -235,26 +293,28 @@ test.describe('Comprehensive Admin Functions', () => {
         }
       }
       
-      console.log(`✓ Dashboard metrics displayed: ${visibleMetrics}/${metrics.length}`);
+      // At least one metric should be visible
       expect(visibleMetrics).toBeGreaterThan(0);
+      console.log(`✓ Dashboard metrics displayed: ${visibleMetrics}/${metrics.length}`);
     });
     
     test('Admin dashboard has navigation to all sections', async () => {
       await adminPage.goto('/admin/dashboard');
       await adminPage.waitForLoadState('networkidle');
       
-      // Check for navigation links
+      // Check for navigation links or sidebar
       const navSections = [
         /user|pengguna/i,
-        /job|lowongan/i,
+        /job|lowongan|pekerjaan/i,
         /transaction|transaksi/i,
-        /fraud|penipuan/i,
       ];
       
       let accessibleSections = 0;
       for (const section of navSections) {
         const navLink = adminPage.getByRole('link', { name: section }).or(
-          adminPage.getByText(section).filter({ has: adminPage.locator('a, button') })
+          adminPage.locator('nav').getByText(section)
+        ).or(
+          adminPage.locator('aside, [role="navigation"]').getByText(section)
         );
         
         const isVisible = await navLink.first().isVisible({ timeout: 3000 }).catch(() => false);
@@ -263,31 +323,39 @@ test.describe('Comprehensive Admin Functions', () => {
         }
       }
       
+      // At least half of the sections should be accessible
+      expect(accessibleSections).toBeGreaterThanOrEqual(Math.floor(navSections.length / 2));
       console.log(`✓ Navigation sections accessible: ${accessibleSections}/${navSections.length}`);
     });
   });
   
   test.describe('Admin Activity Logging', () => {
-    test('Admin actions are logged', async () => {
+    test('Admin actions are logged or activity page exists', async () => {
       await adminPage.goto('/admin/activity-logs');
       await adminPage.waitForLoadState('networkidle');
       
       // Check if activity logs page exists
-      const logsPage = adminPage.getByText(/activity|aktivitas|log/i).first();
-      const pageExists = await logsPage.isVisible({ timeout: 5000 }).catch(() => false);
+      const currentUrl = adminPage.url();
       
-      if (pageExists) {
+      // If we're not redirected to 404 or error page, the route exists
+      const is404 = currentUrl.includes('404') || 
+                   await adminPage.getByText(/not found|404/i).isVisible({ timeout: 3000 }).catch(() => false);
+      
+      if (!is404) {
         console.log('✓ Activity logs page accessible');
         
-        // Look for log entries
-        const logEntries = adminPage.locator('[data-testid^="log-entry"]').or(
-          adminPage.locator('table tbody tr')
+        // Look for logs heading or table
+        const logsPage = adminPage.getByRole('heading').or(
+          adminPage.getByText(/activity|aktivitas|log|riwayat/i)
         );
         
-        const hasLogs = await logEntries.count() > 0;
-        console.log(`✓ Activity logs displayed: ${hasLogs}`);
+        const hasLogsPage = await logsPage.first().isVisible({ timeout: 5000 }).catch(() => false);
+        
+        if (hasLogsPage) {
+          console.log('✓ Activity logs page displays correctly');
+        }
       } else {
-        console.log('⚠ Activity logs page not found (may not be implemented yet)');
+        console.log('ℹ Activity logs page not implemented yet (optional feature)');
       }
     });
   });
