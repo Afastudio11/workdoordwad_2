@@ -309,7 +309,75 @@ const uploadCompanyDocs = multer({
   },
 }).fields([{ name: 'logo', maxCount: 1 }, { name: 'legalDoc', maxCount: 1 }]);
 
+// Middleware to check if user is blocked
+async function checkBlockedUser(req: Request, res: Response, next: any) {
+  if (!req.session.userId) {
+    return next();
+  }
+
+  const user = await storage.getUser(req.session.userId);
+  if (!user) {
+    return next();
+  }
+
+  if (user.isBlocked) {
+    // Destroy session for blocked user
+    req.session.destroy(() => {});
+    return res.status(403).json({ 
+      error: "Akun Anda telah diblokir oleh administrator",
+      reason: user.blockedReason,
+      isBlocked: true
+    });
+  }
+
+  next();
+}
+
+// Middleware to check if employer is verified
+async function checkEmployerVerified(req: Request, res: Response, next: any) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: "Not authenticated" });
+  }
+
+  const user = await storage.getUser(req.session.userId);
+  if (!user) {
+    return res.status(401).json({ error: "User not found" });
+  }
+
+  if (user.role !== 'pemberi_kerja') {
+    return res.status(403).json({ error: "Access denied. Employer role required." });
+  }
+
+  if (user.verificationStatus !== 'verified') {
+    return res.status(403).json({ 
+      error: "Akun Anda belum diverifikasi",
+      verificationStatus: user.verificationStatus,
+      rejectionReason: user.rejectionReason,
+      message: "Anda harus menunggu verifikasi admin sebelum dapat mengakses fitur ini"
+    });
+  }
+
+  next();
+}
+
+// Middleware to require admin role
+async function requireAdmin(req: Request, res: Response, next: any) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: "Not authenticated" });
+  }
+
+  const user = await storage.getUser(req.session.userId);
+  if (!user || user.role !== 'admin') {
+    return res.status(403).json({ error: "Access denied. Admin role required." });
+  }
+
+  next();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Apply global middleware to check if user is blocked
+  app.use("/api", checkBlockedUser);
+  
   // Get current user
   app.get("/api/auth/me", async (req, res) => {
     if (!req.session.userId) {
@@ -625,6 +693,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Username atau password salah" });
       }
 
+      // Check if user is blocked
+      if (user.isBlocked) {
+        return res.status(403).json({ 
+          error: "Akun Anda telah diblokir oleh administrator",
+          reason: user.blockedReason,
+          isBlocked: true
+        });
+      }
+
       // Store user ID in session
       req.session.userId = user.id;
 
@@ -839,7 +916,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Employer job management API
-  app.get("/api/employer/jobs", async (req, res) => {
+  app.get("/api/employer/jobs", checkEmployerVerified, async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -858,7 +935,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/jobs", async (req, res) => {
+  app.post("/api/jobs", checkEmployerVerified, async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -890,7 +967,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/jobs/:id", async (req, res) => {
+  app.put("/api/jobs/:id", checkEmployerVerified, async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -928,7 +1005,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/jobs/:id", async (req, res) => {
+  app.delete("/api/jobs/:id", checkEmployerVerified, async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -952,7 +1029,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/jobs/bulk-delete", async (req, res) => {
+  app.post("/api/jobs/bulk-delete", checkEmployerVerified, async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -991,7 +1068,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/jobs/bulk-update", async (req, res) => {
+  app.post("/api/jobs/bulk-update", checkEmployerVerified, async (req, res) => {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -2582,7 +2659,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/users/:id/block", requireAdmin, async (req, res) => {
     try {
-      const user = await storage.blockUser(req.params.id, req.session.userId!);
+      const { reason } = req.body;
+      if (!reason) {
+        return res.status(400).json({ error: "Block reason is required" });
+      }
+      
+      const user = await storage.blockUser(req.params.id, req.session.userId!, reason);
+      
+      // TODO: Destroy all active sessions for this user
+      // This requires session store access to delete sessions by userId
+      
       res.json(user);
     } catch (error) {
       console.error("Error blocking user:", error);
@@ -2602,11 +2688,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/users/:id/verify", requireAdmin, async (req, res) => {
     try {
-      const user = await storage.verifyRecruiter(req.params.id, req.session.userId!);
+      const user = await storage.verifyEmployer(req.params.id, req.session.userId!);
+      // TODO: Send email notification to employer
       res.json(user);
     } catch (error) {
-      console.error("Error verifying user:", error);
-      res.status(500).json({ error: "Failed to verify user" });
+      console.error("Error verifying employer:", error);
+      res.status(500).json({ error: "Failed to verify employer" });
+    }
+  });
+
+  app.post("/api/admin/users/:id/reject", requireAdmin, async (req, res) => {
+    try {
+      const { rejectionReason } = req.body;
+      if (!rejectionReason) {
+        return res.status(400).json({ error: "Rejection reason is required" });
+      }
+      
+      const user = await storage.rejectEmployer(req.params.id, req.session.userId!, rejectionReason);
+      // TODO: Send email notification to employer
+      res.json(user);
+    } catch (error) {
+      console.error("Error rejecting employer:", error);
+      res.status(500).json({ error: "Failed to reject employer" });
     }
   });
 

@@ -1,0 +1,320 @@
+PERBAIKAN URGENT: SISTEM VERIFIKASI, BLOKIR USER, DAN AUDIT FUNGSI ADMIN
+
+Perbaiki 3 masalah kritis berikut dan lakukan audit menyeluruh pada semua fungsi admin:
+
+═══════════════════════════════════════════════════════════
+MASALAH 1: EMPLOYER BELUM TERVERIFIKASI MASIH BISA POSTING LOWONGAN
+═══════════════════════════════════════════════════════════
+
+**Problem:** User dengan status "Belum Verifikasi" masih bisa mengakses halaman Post Job dan memposting lowongan. Ini harus diblokir total.
+
+**Solusi yang harus diimplementasikan:**
+
+1. **Update Database Schema**
+   - Tambahkan field verification_status (pending/verified/rejected) di tabel employers
+   - Tambahkan field verified_at, verified_by, rejection_reason
+   - Set default value = 'pending' untuk registrasi baru
+
+2. **Server-Side Protection (CRITICAL)**
+   - Buat middleware yang CEK status verifikasi SEBELUM akses semua fitur employer
+   - Terapkan middleware ke SEMUA route employer yang memerlukan verifikasi:
+     - Post job
+     - Edit job
+     - Delete job
+     - View applicants
+     - Change subscription plan
+     - Upload files
+   - Jika verification_status != 'verified', BLOCK akses dan redirect dengan error message
+
+3. **Dashboard Employer - Banner Warning**
+   - Tampilkan banner besar di atas dashboard jika status = 'pending':
+     - Icon: ⏳
+     - Pesan: "Akun Anda Sedang Dalam Proses Verifikasi"
+     - Detail: "Admin kami sedang memverifikasi akun perusahaan Anda. Anda akan menerima email notifikasi dalam 1x24 jam. **Anda belum dapat memposting lowongan hingga akun terverifikasi.**"
+     - Tampilkan checklist status verifikasi
+   - Jika status = 'rejected':
+     - Icon: ❌
+     - Pesan: "Verifikasi Akun Ditolak"
+     - Tampilkan alasan penolakan
+     - Button: "Update & Kirim Ulang"
+
+4. **Halaman Post Job - Blocked State**
+   - Jika user belum verified, JANGAN tampilkan form
+   - Tampilkan halaman blocked dengan:
+     - Icon kunci besar 🔒
+     - Heading: "Fitur Posting Lowongan Terkunci"
+     - Pesan: "Akun perusahaan Anda masih dalam proses verifikasi oleh admin. Anda dapat memposting lowongan kerja setelah akun terverifikasi."
+     - Card info dengan status verifikasi terkini
+     - Button: "Kembali ke Dashboard" dan "Hubungi Admin"
+
+5. **Client-Side Check (Additional Protection)**
+   - Tambahkan AJAX check sebelum submit form apapun
+   - Jika response status != 'verified', tampilkan modal error
+   - Disable semua button yang terkait posting job jika belum verified
+
+6. **Admin Side - Fungsi Verifikasi**
+   - Admin bisa klik button "Verifikasi" di halaman employers
+   - Update verification_status = 'verified'
+   - Catat verified_at dan verified_by (admin ID)
+   - Kirim email notifikasi ke employer
+   - Employer langsung bisa posting job setelah verified
+
+**Test Case:**
+- Registrasi employer baru → status harus 'pending'
+- Coba akses /employer/post-job → harus redirect/block
+- Coba submit POST request ke /employer/post-job → harus return error 403
+- Admin verify employer → status berubah 'verified'
+- Employer coba akses /employer/post-job lagi → sekarang harus bisa
+
+═══════════════════════════════════════════════════════════
+MASALAH 2: TOMBOL BLOKIR USER TIDAK BERFUNGSI
+═══════════════════════════════════════════════════════════
+
+**Problem:** Admin klik tombol "Blokir" tapi user yang diblokir masih bisa login dan mengakses akun seperti biasa.
+
+**Solusi yang harus diimplementasikan:**
+
+1. **Update Database Schema**
+   - Tambahkan field is_blocked (BOOLEAN, default FALSE) di tabel employers DAN job_seekers
+   - Tambahkan field blocked_at, blocked_by, block_reason
+
+2. **Admin: Fungsi Blokir User (Server-Side)**
+   - Route POST /admin/users/block/:id
+   - Update is_blocked = TRUE di database
+   - Catat blocked_at (timestamp), blocked_by (admin ID), block_reason
+   - **PENTING:** HAPUS semua session aktif user tersebut dari tabel sessions
+   - Kirim email notifikasi ke user yang diblokir
+   - Log aktivitas admin ke admin_activity_logs
+   - Return success response
+
+3. **Admin: Fungsi Buka Blokir User**
+   - Route POST /admin/users/unblock/:id
+   - Update is_blocked = FALSE
+   - Clear blocked_at, blocked_by, block_reason
+   - Kirim email notifikasi bahwa akun dibuka
+   - Log aktivitas admin
+
+4. **Middleware: Cek Status Blokir di SETIAP Request**
+   - Buat middleware checkBlockedUser
+   - Jalankan di SETIAP request dari employer/job_seeker
+   - Query database untuk cek is_blocked
+   - Jika is_blocked = TRUE:
+     - Destroy session user
+     - Redirect ke halaman "Akun Diblokir"
+     - Jangan biarkan user akses apapun
+
+5. **Login Process: Cek Blokir Saat Login**
+   - Saat user input email + password untuk login
+   - Setelah password match, CEK is_blocked dari database
+   - Jika is_blocked = TRUE:
+     - TOLAK login
+     - Return error: "Akun Anda telah diblokir oleh admin"
+     - Tampilkan alasan blokir
+   - Jangan buat session jika user diblokir
+
+6. **Halaman Khusus: Akun Diblokir**
+   - URL: /blocked
+   - Tampilan:
+     - Icon besar: 🚫
+     - Heading: "Akun Anda Telah Diblokir"
+     - Pesan: "Akses ke akun Anda telah diblokir oleh administrator Pintu Kerja"
+     - Box alasan pemblokiran (jika ada)
+     - Info kontak support
+     - Button: "Hubungi Support"
+   - User TIDAK bisa kembali ke dashboard atau halaman lain
+
+7. **Admin UI: Button Blokir/Buka Blokir**
+   - Pastikan button ini benar-benar trigger POST request ke /admin/users/block/:id
+   - Tambahkan konfirmasi: "Apakah Anda yakin ingin memblokir [Nama User]?"
+   - Modal input untuk alasan blokir (wajib diisi)
+   - Setelah berhasil, reload halaman atau update UI
+   - Button berubah dari "Blokir" menjadi "Buka Blokir" setelah user diblokir
+
+**Test Case:**
+- Admin klik "Blokir" pada user ID 123
+- Database updated: is_blocked = TRUE untuk user 123
+- User 123 yang sedang login → session destroyed, redirect ke /blocked
+- User 123 coba login lagi → login ditolak dengan error message
+- User 123 coba akses URL dashboard langsung → redirect ke /blocked
+- Admin klik "Buka Blokir" → is_blocked = FALSE
+- User 123 sekarang bisa login dan akses normal
+
+═══════════════════════════════════════════════════════════
+MASALAH 3: AUDIT SEMUA FUNGSI ADMIN
+═══════════════════════════════════════════════════════════
+
+**Lakukan pengecekan menyeluruh dan pastikan SEMUA fungsi admin berikut bekerja dengan baik:**
+
+## A. USER MANAGEMENT - EMPLOYER
+
+**Checklist yang harus berfungsi:**
+- ✅ View list all employers dengan pagination (20 per page)
+- ✅ Search employers by name, email, company name
+- ✅ Filter employers by: verification status, subscription plan, industry, city
+- ✅ Sort by: registration date, company name, plan type
+- ✅ View employer detail (full profile, company info, documents)
+- ✅ **Verify employer** → Update status ke 'verified', kirim email
+- ✅ **Reject employer** → Update status ke 'rejected', input reason, kirim email
+- ✅ **Block employer** → Set is_blocked = TRUE, destroy session, kirim email
+- ✅ **Unblock employer** → Set is_blocked = FALSE, kirim email
+- ✅ **Delete employer** → Soft delete atau hard delete dengan konfirmasi
+- ✅ **Change subscription plan manually** → Upgrade/downgrade plan employer
+- ✅ **View employer's posted jobs** → List semua lowongan yang dipost employer ini
+- ✅ **View employer's payment history** → List semua transaksi pembayaran
+- ✅ **Manually extend subscription** → Tambah durasi subscription
+
+**Test setiap fungsi:**
+- Klik "Verify" pada employer pending → Status berubah, email terkirim
+- Klik "Block" → User tidak bisa login lagi
+- Klik "Delete" → Data terhapus atau soft deleted
+- Search "PT Teknologi" → Hasil filter yang sesuai
+- Filter "Verified + Premium" → Hanya tampil employer verified dengan plan premium
+
+## B. USER MANAGEMENT - JOB SEEKER
+
+**Checklist yang harus berfungsi:**
+- ✅ View list all job seekers dengan pagination
+- ✅ Search job seekers by name, email, skills
+- ✅ Filter by: city, education level, experience level, join date
+- ✅ View job seeker profile (CV, personal info, aplikasi yang dikirim)
+- ✅ **Block job seeker** → Set is_blocked = TRUE
+- ✅ **Unblock job seeker** → Set is_blocked = FALSE
+- ✅ **Delete job seeker** → Hapus akun
+- ✅ **View job seeker's applications** → List semua lowongan yang dilamar
+- ✅ **Download job seeker's CV**
+
+**Test:**
+- Klik view profile job seeker → Bisa lihat CV dan aplikasi
+- Klik "Block" → Job seeker tidak bisa login
+- Search berdasarkan skills → Filter berfungsi
+
+## C. USER MANAGEMENT - ADMIN
+
+**Checklist yang harus berfungsi:**
+- ✅ View list all admins dengan role (super_admin, moderator, finance)
+- ✅ **Add new admin** → Input email, name, password, pilih role
+- ✅ **Edit admin role** → Ubah permission
+- ✅ **Delete admin** → Hapus admin (TIDAK bisa delete diri sendiri)
+- ✅ **View admin activity logs** → List semua aktivitas admin (who did what when)
+
+**Test:**
+- Tambah admin baru role "Moderator" → Berhasil create
+- Login dengan admin baru → Permissions sesuai role
+- Coba delete diri sendiri → Harus error/blocked
+
+## D. JOB MANAGEMENT
+
+**Checklist yang harus berfungsi:**
+- ✅ View all jobs (active, closed, expired) dengan pagination
+- ✅ Search jobs by title, company, location
+- ✅ Filter by: status, category, job type, salary range, posting date
+- ✅ **View job detail** → Full description, applicants
+- ✅ **Edit job** → Admin bisa edit informasi lowongan
+- ✅ **Delete job** → Hapus lowongan
+- ✅ **Change job status** → Set active/closed/expired manually
+- ✅ **Feature job** → Set featured = TRUE (premium feature)
+- ✅ **View job applicants** → List semua yang melamar ke job ini
+- ✅ **AI Moderation Queue** → Approve/reject lowongan dari AI scraping
+
+**Test:**
+- Filter "Technology + Jakarta + Active" → Hasil sesuai
+- Edit job title → Perubahan tersimpan
+- Feature job → Job muncul di top search dengan badge
+
+## E. FINANCIAL MANAGEMENT
+
+**Checklist yang harus berfungsi:**
+- ✅ View all transactions dengan pagination
+- ✅ Filter by: payment status (pending/success/failed), date range, amount
+- ✅ **Approve manual payment** → Update status dari pending ke success
+- ✅ **Reject payment** → Update status ke failed, input reason
+- ✅ **View invoice detail** → Download invoice PDF
+- ✅ **Process refund** → Approve refund request, update balance
+- ✅ **View revenue reports** → Chart dan statistik (daily, weekly, monthly)
+- ✅ **Export transactions** → Download CSV/Excel
+
+**Test:**
+- Approve payment → Subscription employer aktif
+- Process refund → Status berubah, email terkirim
+- Export transactions bulan ini → File CSV berhasil didownload
+
+## F. FRAUD & REPORT MANAGEMENT
+
+**Checklist yang harus berfungsi:**
+- ✅ View all fraud reports dari users
+- ✅ **View report detail** → Lihat job/company yang dilaporkan + reason
+- ✅ **Investigate report** → Mark as "under investigation"
+- ✅ **Block reported job/company** → Blokir jika terbukti fraud
+- ✅ **Mark as false report** → Close report jika tidak valid
+- ✅ **Resolve report** → Mark as resolved dengan action taken
+
+**Test:**
+- Buka report "Scam job posting" → Lihat detail
+- Block job yang dilaporkan → Job tidak tampil lagi di public
+
+## G. SYSTEM SETTINGS & LOGS
+
+**Checklist yang harus berfungsi:**
+- ✅ **View error logs** → List semua error backend dengan timestamp
+- ✅ **Clear old logs** → Hapus logs >30 hari
+- ✅ **View activity logs** → Track semua aksi admin (siapa, kapan, apa)
+- ✅ **Configure AI scraper** → Enable/disable per platform, set schedule
+- ✅ **Email templates management** → Edit template email notifikasi
+- ✅ **Site maintenance mode** → Enable/disable maintenance
+
+**Test:**
+- View error logs → Tampil list error
+- Enable maintenance mode → Website tampil halaman maintenance
+
+## H. DASHBOARD STATISTICS
+
+**Pastikan semua card di dashboard admin menampilkan data REAL dari database:**
+- ✅ Total Pendapatan (bulan ini) → Query SUM dari transactions
+- ✅ Total Lowongan Premium Aktif → Query COUNT dari jobs WHERE featured=TRUE
+- ✅ Antrean Moderasi AI → Query COUNT dari ai_scraped_jobs WHERE status='pending'
+- ✅ Total User → Query COUNT dari employers + job_seekers
+- ✅ Users Diblokir → Query COUNT WHERE is_blocked=TRUE
+- ✅ Verifikasi Tertunda → Query COUNT WHERE verification_status='pending'
+- ✅ Error Log Backend → Query COUNT dari error_logs WHERE resolved=FALSE
+
+**Test:**
+- Verify 1 employer → Card "Verifikasi Tertunda" berkurang 1
+- Block 1 user → Card "Users Diblokir" bertambah 1
+- Payment berhasil → Card "Total Pendapatan" bertambah sesuai amount
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+Setelah perbaikan selesai, lakukan testing dan berikan laporan:
+
+1. ✅ **Verifikasi akun employer benar-benar berfungsi**
+   - User pending tidak bisa posting job
+   - Halaman post job menampilkan blocked message
+   - Setelah admin verify, user bisa posting
+
+2. ✅ **Blokir user benar-benar berfungsi**
+   - User yang diblokir tidak bisa login
+   - User yang sedang login langsung logout paksa
+   - Button blokir/unblock bekerja dengan sempurna
+
+3. ✅ **Semua fungsi admin tested dan berfungsi**
+   - Tidak ada button yang tidak berfungsi
+   - Semua CRUD operations (Create, Read, Update, Delete) bekerja
+   - Semua filter, search, pagination bekerja
+   - Email notifications terkirim untuk setiap aksi penting
+
+4. ✅ **Dashboard statistics menampilkan data real-time**
+   - Semua angka di card dashboard akurat
+   - Click card redirect ke halaman detail yang benar
+
+5. ✅ **Error handling yang baik**
+   - Jika terjadi error, tampilkan pesan yang jelas
+   - Log error ke database untuk debugging
+
+**Dokumentasikan semua perbaikan yang dilakukan dan bug yang ditemukan selama testing.**
+
+**PRIORITAS TERTINGGI:**
+1. Fix verifikasi employer (CRITICAL - revenue blocking issue)
+2. Fix blokir user (CRITICAL - security issue)
+3. Test semua fungsi admin (HIGH - operational issue)

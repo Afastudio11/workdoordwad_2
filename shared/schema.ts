@@ -47,12 +47,17 @@ export const users = pgTable("users", {
   emailVerified: boolean("email_verified").default(false),
   emailVerificationToken: text("email_verification_token"),
   
-  // Fields untuk pemberi_kerja
-  isVerified: boolean("is_verified").default(false),
+  // Fields untuk pemberi_kerja - Verification
+  verificationStatus: text("verification_status").default("pending"), // pending | verified | rejected
+  verifiedAt: timestamp("verified_at"),
+  verifiedBy: varchar("verified_by"), // Admin user ID who verified
+  rejectionReason: text("rejection_reason"),
   
-  // Admin fields
+  // Admin fields - Blocking
   isActive: boolean("is_active").default(true).notNull(),
-  blockedUntil: timestamp("blocked_until"),
+  isBlocked: boolean("is_blocked").default(false).notNull(),
+  blockedAt: timestamp("blocked_at"),
+  blockedBy: varchar("blocked_by"), // Admin user ID who blocked
   blockedReason: text("blocked_reason"),
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -84,8 +89,12 @@ export const companies = pgTable("companies", {
   subscriptionDuration: text("subscription_duration"), // 1_month | 3_months | 12_months
   paymentStatus: text("payment_status").default("pending"), // pending | completed | failed
   
-  isVerified: boolean("is_verified").default(false),
+  // Verification
+  verificationStatus: text("verification_status").default("pending"), // pending | verified | rejected
   verifiedAt: timestamp("verified_at"),
+  verifiedBy: varchar("verified_by"), // Admin user ID who verified
+  rejectionReason: text("rejection_reason"),
+  
   createdBy: varchar("created_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

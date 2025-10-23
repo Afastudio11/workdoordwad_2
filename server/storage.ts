@@ -156,9 +156,12 @@ export interface IStorage {
   
   // User Management
   getAllUsers(filters?: { role?: string; isVerified?: boolean; limit?: number; offset?: number }): Promise<{ users: User[]; total: number }>;
-  blockUser(userId: string, adminId: string): Promise<any>;
-  unblockUser(userId: string, adminId: string): Promise<any>;
-  verifyRecruiter(userId: string, adminId: string): Promise<any>;
+  blockUser(userId: string, adminId: string, reason: string): Promise<User | undefined>;
+  unblockUser(userId: string, adminId: string): Promise<User | undefined>;
+  verifyEmployer(userId: string, adminId: string): Promise<User | undefined>;
+  rejectEmployer(userId: string, adminId: string, rejectionReason: string): Promise<User | undefined>;
+  verifyCompany(companyId: string, adminId: string): Promise<Company | undefined>;
+  rejectCompany(companyId: string, adminId: string, rejectionReason: string): Promise<Company | undefined>;
   
   // Financial Management
   getAllTransactions(filters?: { status?: string; type?: string; limit?: number; offset?: number }): Promise<{ transactions: any[]; total: number }>;
@@ -1281,21 +1284,33 @@ export class DbStorage implements IStorage {
     };
   }
 
-  async blockUser(userId: string, adminId: string): Promise<any> {
+  async blockUser(userId: string, adminId: string, reason: string): Promise<User | undefined> {
     const [user] = await db
       .update(usersTable)
-      .set({ isActive: false })
+      .set({ 
+        isActive: false, 
+        isBlocked: true,
+        blockedAt: new Date(),
+        blockedBy: adminId,
+        blockedReason: reason
+      })
       .where(eq(usersTable.id, userId))
       .returning();
     
-    await this.createAdminActivityLog(adminId, 'user_blocked', 'user', userId, `Blocked user: ${user?.fullName} (${user?.email})`);
+    await this.createAdminActivityLog(adminId, 'user_blocked', 'user', userId, `Blocked user: ${user?.fullName} (${user?.email}). Reason: ${reason}`);
     return user;
   }
 
-  async unblockUser(userId: string, adminId: string): Promise<any> {
+  async unblockUser(userId: string, adminId: string): Promise<User | undefined> {
     const [user] = await db
       .update(usersTable)
-      .set({ isActive: true })
+      .set({ 
+        isActive: true,
+        isBlocked: false,
+        blockedAt: null,
+        blockedBy: null,
+        blockedReason: null
+      })
       .where(eq(usersTable.id, userId))
       .returning();
     
@@ -1303,15 +1318,74 @@ export class DbStorage implements IStorage {
     return user;
   }
 
-  async verifyRecruiter(userId: string, adminId: string): Promise<any> {
+  async verifyEmployer(userId: string, adminId: string): Promise<User | undefined> {
     const [user] = await db
       .update(usersTable)
-      .set({ isVerified: true })
+      .set({ 
+        verificationStatus: 'verified',
+        verifiedAt: new Date(),
+        verifiedBy: adminId
+      })
       .where(eq(usersTable.id, userId))
       .returning();
     
-    await this.createAdminActivityLog(adminId, 'recruiter_verified', 'user', userId, `Verified recruiter: ${user?.fullName} (${user?.email})`);
+    // Also verify the company
+    const company = await this.getCompanyByUserId(userId);
+    if (company) {
+      await this.verifyCompany(company.id, adminId);
+    }
+    
+    await this.createAdminActivityLog(adminId, 'employer_verified', 'user', userId, `Verified employer: ${user?.fullName} (${user?.email})`);
     return user;
+  }
+
+  async rejectEmployer(userId: string, adminId: string, rejectionReason: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(usersTable)
+      .set({ 
+        verificationStatus: 'rejected',
+        rejectionReason
+      })
+      .where(eq(usersTable.id, userId))
+      .returning();
+    
+    // Also reject the company
+    const company = await this.getCompanyByUserId(userId);
+    if (company) {
+      await this.rejectCompany(company.id, adminId, rejectionReason);
+    }
+    
+    await this.createAdminActivityLog(adminId, 'employer_rejected', 'user', userId, `Rejected employer: ${user?.fullName} (${user?.email}). Reason: ${rejectionReason}`);
+    return user;
+  }
+
+  async verifyCompany(companyId: string, adminId: string): Promise<Company | undefined> {
+    const [company] = await db
+      .update(companiesTable)
+      .set({ 
+        verificationStatus: 'verified',
+        verifiedAt: new Date(),
+        verifiedBy: adminId
+      })
+      .where(eq(companiesTable.id, companyId))
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'company_verified', 'company', companyId, `Verified company: ${company?.name}`);
+    return company;
+  }
+
+  async rejectCompany(companyId: string, adminId: string, rejectionReason: string): Promise<Company | undefined> {
+    const [company] = await db
+      .update(companiesTable)
+      .set({ 
+        verificationStatus: 'rejected',
+        rejectionReason
+      })
+      .where(eq(companiesTable.id, companyId))
+      .returning();
+    
+    await this.createAdminActivityLog(adminId, 'company_rejected', 'company', companyId, `Rejected company: ${company?.name}. Reason: ${rejectionReason}`);
+    return company;
   }
 
   async getAllTransactions(filters?: { status?: string; type?: string; limit?: number; offset?: number }): Promise<{ transactions: any[]; total: number }> {
