@@ -948,17 +948,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = insertJobSchema.parse(req.body);
       
+      if (!validatedData.companyId) {
+        return res.status(400).json({ error: "Company ID is required" });
+      }
+      
       const company = await storage.getCompanyById(validatedData.companyId);
+      
       if (!company) {
         return res.status(404).json({ error: "Company not found" });
       }
       
       if (company.createdBy !== req.session.userId) {
-        return res.status(403).json({ error: "You don't have access to this company" });
+        return res.status(403).json({ error: "Access denied" });
       }
       
       const plan = company.subscriptionPlan || "free";
-
       const { canPostJob, canUseFeatured, canUseUrgent } = await import("../shared/subscription-plans");
       
       const jobCheck = canPostJob(plan as any, company.jobPostingCount || 0);
