@@ -449,7 +449,6 @@ export const registerPekerjaSchema = insertUserSchema.extend({
   photoUrl: z.string().optional(),
 }).omit({
   role: true, // Backend akan set role secara otomatis
-  isVerified: true,
   cvFileName: true,
   education: true,
   experience: true,
@@ -459,6 +458,17 @@ export const registerPekerjaSchema = insertUserSchema.extend({
   preferredJobTypes: true,
   expectedSalaryMin: true,
   isActive: true,
+  verificationStatus: true,
+  verifiedAt: true,
+  verifiedBy: true,
+  rejectionReason: true,
+  isBlocked: true,
+  blockedAt: true,
+  blockedBy: true,
+  blockedReason: true,
+  registrationStep: true,
+  emailVerified: true,
+  emailVerificationToken: true,
 });
 
 export const registerPemberiKerjaSchema = insertUserSchema.extend({
@@ -477,7 +487,6 @@ export const registerPemberiKerjaSchema = insertUserSchema.extend({
   address: z.string().optional(),
 }).omit({
   role: true, // Backend akan set role secara otomatis
-  isVerified: true,
   cvUrl: true,
   cvFileName: true,
   education: true,
@@ -488,6 +497,26 @@ export const registerPemberiKerjaSchema = insertUserSchema.extend({
   preferredJobTypes: true,
   expectedSalaryMin: true,
   isActive: true,
+  verificationStatus: true,
+  verifiedAt: true,
+  verifiedBy: true,
+  rejectionReason: true,
+  isBlocked: true,
+  blockedAt: true,
+  blockedBy: true,
+  blockedReason: true,
+  registrationStep: true,
+  emailVerified: true,
+  emailVerificationToken: true,
+  dateOfBirth: true,
+  gender: true,
+  lastEducation: true,
+  major: true,
+  institution: true,
+  graduationYear: true,
+  employmentStatus: true,
+  yearsOfExperience: true,
+  photoUrl: true,
 });
 
 export const loginSchema = z.object({

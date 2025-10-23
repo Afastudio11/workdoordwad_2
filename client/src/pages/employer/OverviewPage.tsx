@@ -13,6 +13,8 @@ import { Link } from "wouter";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { useAuth } from "@/hooks/use-auth";
+import VerificationBanner from "@/components/VerificationBanner";
 
 interface EmployerStats {
   totalJobs: number;
@@ -36,6 +38,7 @@ interface Activity {
 }
 
 export default function OverviewPage() {
+  const { user } = useAuth();
   const { data: stats, isLoading: statsLoading } = useQuery<EmployerStats>({
     queryKey: ["/api/employer/stats"],
   });
@@ -63,6 +66,16 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-6">
+      {/* Verification Banner */}
+      {user && (
+        <VerificationBanner
+          verificationStatus={user.verificationStatus as "pending" | "verified" | "rejected"}
+          rejectionReason={user.rejectionReason}
+          isBlocked={user.isBlocked}
+          blockedReason={user.blockedReason}
+        />
+      )}
+
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Ringkasan Dashboard</h1>
         <Link href="/employer/dashboard#post-job">

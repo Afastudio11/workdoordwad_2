@@ -34,6 +34,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, PlusCircle } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { insertJobSchema, type Company } from "@shared/schema";
+import VerificationBanner from "@/components/VerificationBanner";
 
 const postJobFormSchema = z.object({
   companyId: z.string().min(1, "Company is required"),
@@ -53,6 +54,7 @@ type PostJobFormData = z.infer<typeof postJobFormSchema>;
 
 export default function PostJobPage() {
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const { data: companies, isLoading: loadingCompanies } = useQuery<Company[]>({
     queryKey: ["/api/companies/my-companies"],
@@ -109,8 +111,22 @@ export default function PostJobPage() {
     createJobMutation.mutate(payload);
   };
 
+  const isBlocked = user?.isBlocked || false;
+  const isUnverified = user?.verificationStatus !== "verified";
+  const isFormDisabled = isBlocked || isUnverified;
+
   return (
     <div className="space-y-6">
+      {/* Verification Banner */}
+      {user && (
+        <VerificationBanner
+          verificationStatus={user.verificationStatus as "pending" | "verified" | "rejected"}
+          rejectionReason={user.rejectionReason}
+          isBlocked={user.isBlocked}
+          blockedReason={user.blockedReason}
+        />
+      )}
+
       <div>
         <h1 className="text-2xl font-bold text-gray-900" data-testid="text-page-title">
           Post a Job
@@ -352,14 +368,14 @@ export default function PostJobPage() {
 
               <Button
                 type="submit"
-                disabled={createJobMutation.isPending}
+                disabled={createJobMutation.isPending || isFormDisabled}
                 className="w-full md:w-auto"
                 data-testid="button-post-job"
               >
                 {createJobMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Post Job
+                {isFormDisabled ? "Verifikasi Diperlukan" : "Post Job"}
               </Button>
             </form>
           </Form>

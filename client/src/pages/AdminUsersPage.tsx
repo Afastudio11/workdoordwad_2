@@ -12,14 +12,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Ban, LockOpen } from "lucide-react";
+import { Check, Ban, LockOpen, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function AdminUsersPage() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("recruiter");
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [actionType, setActionType] = useState<"block" | "unblock" | "verify" | "reject">("block");
+  const [actionDialogOpen, setActionDialogOpen] = useState(false);
+  const [reason, setReason] = useState("");
 
   const { data: recruiters, isLoading: loadingRecruiters } = useQuery({
     queryKey: ["/api/admin/users", { role: "pemberi_kerja" }],
@@ -31,53 +44,77 @@ export default function AdminUsersPage() {
     enabled: activeTab === "worker",
   });
 
-  const handleVerify = async (userId: string) => {
-    try {
-      await apiRequest(`/api/admin/users/${userId}/verify`, "POST");
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      toast({
-        title: "Perekrut Diverifikasi",
-        description: "Akun perekrut berhasil diverifikasi",
-      });
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Gagal Verifikasi",
-        description: error.message || "Terjadi kesalahan saat verifikasi",
-      });
-    }
+  const handleOpenActionDialog = (user: any, action: "block" | "unblock" | "verify" | "reject") => {
+    setSelectedUser(user);
+    setActionType(action);
+    setReason("");
+    setActionDialogOpen(true);
   };
 
-  const handleBlock = async (userId: string, userName: string) => {
-    try {
-      await apiRequest(`/api/admin/users/${userId}/block`, "POST");
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      toast({
-        title: "User Diblokir",
-        description: `${userName} telah diblokir`,
-      });
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Gagal Memblokir",
-        description: error.message || "Terjadi kesalahan saat memblokir user",
-      });
-    }
-  };
+  const handleConfirmAction = async () => {
+    if (!selectedUser) return;
 
-  const handleUnblock = async (userId: string, userName: string) => {
     try {
-      await apiRequest(`/api/admin/users/${userId}/unblock`, "POST");
+      switch (actionType) {
+        case "verify":
+          await apiRequest(`/api/admin/users/${selectedUser.id}/verify`, "POST");
+          toast({
+            title: "User Diverifikasi",
+            description: `${selectedUser.fullName} berhasil diverifikasi`,
+          });
+          break;
+        case "reject":
+          if (!reason.trim()) {
+            toast({
+              variant: "destructive",
+              title: "Alasan Diperlukan",
+              description: "Harap masukkan alasan penolakan",
+            });
+            return;
+          }
+          await apiRequest(`/api/admin/users/${selectedUser.id}/reject`, "POST", {
+            reason: reason.trim(),
+          });
+          toast({
+            title: "Verifikasi Ditolak",
+            description: `Verifikasi ${selectedUser.fullName} telah ditolak`,
+          });
+          break;
+        case "block":
+          if (!reason.trim()) {
+            toast({
+              variant: "destructive",
+              title: "Alasan Diperlukan",
+              description: "Harap masukkan alasan pemblokiran",
+            });
+            return;
+          }
+          await apiRequest(`/api/admin/users/${selectedUser.id}/block`, "POST", {
+            reason: reason.trim(),
+          });
+          toast({
+            title: "User Diblokir",
+            description: `${selectedUser.fullName} telah diblokir`,
+          });
+          break;
+        case "unblock":
+          await apiRequest(`/api/admin/users/${selectedUser.id}/unblock`, "POST");
+          toast({
+            title: "User Dibuka Blokirnya",
+            description: `${selectedUser.fullName} telah dibuka blokirnya`,
+          });
+          break;
+      }
+
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      toast({
-        title: "User Dibuka Blokirnya",
-        description: `${userName} telah dibuka blokirnya`,
-      });
+      setActionDialogOpen(false);
+      setSelectedUser(null);
+      setReason("");
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Gagal Membuka Blokir",
-        description: error.message || "Terjadi kesalahan saat membuka blokir user",
+        title: "Gagal Memproses",
+        description: error.message || "Terjadi kesalahan",
       });
     }
   };
@@ -186,23 +223,35 @@ export default function AdminUsersPage() {
                                 {new Date(user.createdAt).toLocaleDateString('id-ID')}
                               </TableCell>
                               <TableCell>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   {!user.isVerified && user.isActive && (
-                                    <Button
-                                      size="sm"
-                                      className="bg-primary text-black hover:bg-primary/90"
-                                      onClick={() => handleVerify(user.id)}
-                                      data-testid={`button-verify-${user.id}`}
-                                    >
-                                      <Check className="w-4 h-4 mr-1" />
-                                      Verifikasi
-                                    </Button>
+                                    <>
+                                      <Button
+                                        size="sm"
+                                        className="bg-primary text-black hover:bg-primary/90"
+                                        onClick={() => handleOpenActionDialog(user, "verify")}
+                                        data-testid={`button-verify-${user.id}`}
+                                      >
+                                        <Check className="w-4 h-4 mr-1" />
+                                        Verifikasi
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="border-red-600 text-red-600 hover:bg-red-50"
+                                        onClick={() => handleOpenActionDialog(user, "reject")}
+                                        data-testid={`button-reject-${user.id}`}
+                                      >
+                                        <X className="w-4 h-4 mr-1" />
+                                        Tolak
+                                      </Button>
+                                    </>
                                   )}
                                   {user.isActive ? (
                                     <Button
                                       size="sm"
                                       variant="destructive"
-                                      onClick={() => handleBlock(user.id, user.fullName)}
+                                      onClick={() => handleOpenActionDialog(user, "block")}
                                       data-testid={`button-block-${user.id}`}
                                     >
                                       <Ban className="w-4 h-4 mr-1" />
@@ -212,7 +261,7 @@ export default function AdminUsersPage() {
                                     <Button
                                       size="sm"
                                       className="bg-primary text-black hover:bg-primary/90"
-                                      onClick={() => handleUnblock(user.id, user.fullName)}
+                                      onClick={() => handleOpenActionDialog(user, "unblock")}
                                       data-testid={`button-unblock-${user.id}`}
                                     >
                                       <LockOpen className="w-4 h-4 mr-1" />
@@ -303,7 +352,7 @@ export default function AdminUsersPage() {
                                   <Button
                                     size="sm"
                                     variant="destructive"
-                                    onClick={() => handleBlock(user.id, user.fullName)}
+                                    onClick={() => handleOpenActionDialog(user, "block")}
                                     data-testid={`button-block-${user.id}`}
                                   >
                                     <Ban className="w-4 h-4 mr-1" />
@@ -313,7 +362,7 @@ export default function AdminUsersPage() {
                                   <Button
                                     size="sm"
                                     className="bg-primary text-black hover:bg-primary/90"
-                                    onClick={() => handleUnblock(user.id, user.fullName)}
+                                    onClick={() => handleOpenActionDialog(user, "unblock")}
                                     data-testid={`button-unblock-${user.id}`}
                                   >
                                     <LockOpen className="w-4 h-4 mr-1" />
@@ -342,6 +391,106 @@ export default function AdminUsersPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Action Confirmation Dialog */}
+      <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
+        <DialogContent className="bg-white dark:bg-black border-gray-200 dark:border-gray-800">
+          <DialogHeader>
+            <DialogTitle className="text-black dark:text-white">
+              {actionType === "verify" && "Verifikasi User"}
+              {actionType === "reject" && "Tolak Verifikasi User"}
+              {actionType === "block" && "Blokir User"}
+              {actionType === "unblock" && "Buka Blokir User"}
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
+              {selectedUser && (
+                <>
+                  {actionType === "verify" &&
+                    `Apakah Anda yakin ingin memverifikasi ${selectedUser.fullName}?`}
+                  {actionType === "reject" &&
+                    `Apakah Anda yakin ingin menolak verifikasi ${selectedUser.fullName}?`}
+                  {actionType === "block" &&
+                    `Apakah Anda yakin ingin memblokir ${selectedUser.fullName}?`}
+                  {actionType === "unblock" &&
+                    `Apakah Anda yakin ingin membuka blokir ${selectedUser.fullName}?`}
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {(actionType === "block" || actionType === "reject") && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-black dark:text-white">
+                  Alasan {actionType === "block" ? "Pemblokiran" : "Penolakan"}{" "}
+                  <span className="text-red-500">*</span>
+                </label>
+                <Textarea
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder={`Masukkan alasan ${
+                    actionType === "block" ? "pemblokiran" : "penolakan"
+                  }...`}
+                  className="bg-white dark:bg-black border-gray-200 dark:border-gray-800"
+                  rows={3}
+                  data-testid="input-action-reason"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Alasan ini akan ditampilkan kepada user
+                </p>
+              </div>
+            )}
+            {actionType === "unblock" && (
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                User akan dapat mengakses platform kembali setelah dibuka blokirnya.
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setActionDialogOpen(false)}
+              className="border-gray-200 dark:border-gray-800"
+              data-testid="button-cancel-action"
+            >
+              Batal
+            </Button>
+            <Button
+              onClick={handleConfirmAction}
+              className={
+                actionType === "verify" || actionType === "unblock"
+                  ? "bg-primary text-black hover:bg-primary/90"
+                  : "bg-destructive text-white hover:bg-destructive/90"
+              }
+              data-testid="button-confirm-action"
+            >
+              {actionType === "verify" && (
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  Verifikasi
+                </>
+              )}
+              {actionType === "reject" && (
+                <>
+                  <X className="w-4 h-4 mr-2" />
+                  Tolak
+                </>
+              )}
+              {actionType === "block" && (
+                <>
+                  <Ban className="w-4 h-4 mr-2" />
+                  Blokir
+                </>
+              )}
+              {actionType === "unblock" && (
+                <>
+                  <LockOpen className="w-4 h-4 mr-2" />
+                  Buka Blokir
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
