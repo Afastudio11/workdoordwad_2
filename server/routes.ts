@@ -500,12 +500,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         role: "pemberi_kerja",
       });
 
-      // Create company with the user as creator, including uploaded documents
+      // Create company with all data from registration form
       const company = await storage.createCompany({
         name: validatedData.companyName,
         createdBy: user.id,
         logo: validatedData.logo,
         legalDocUrl: validatedData.legalDocUrl,
+        industry: req.body.industry,
+        employeeCount: req.body.employeeCount,
+        foundedYear: req.body.foundedYear,
+        website: req.body.website,
+        description: req.body.description,
+        picName: req.body.picName || validatedData.fullName,
+        picPosition: req.body.picPosition,
+        contactPhone: req.body.contactPhone || validatedData.phone,
+        whatsappNumber: req.body.whatsappNumber,
+        location: req.body.city,
       });
 
       // Set session

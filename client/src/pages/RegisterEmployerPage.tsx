@@ -289,6 +289,15 @@ export default function RegisterEmployerPage() {
         companyName: completeData.companyName,
         logo: completeData.logo,
         legalDocUrl: completeData.legalDocUrl,
+        industry: completeData.industry,
+        employeeCount: completeData.employeeCount,
+        foundedYear: completeData.foundedYear,
+        website: completeData.website,
+        description: completeData.description,
+        picPosition: completeData.picPosition,
+        whatsappNumber: completeData.whatsappNumber,
+        city: completeData.city,
+        address: completeData.address,
       });
 
       if (response.ok) {
