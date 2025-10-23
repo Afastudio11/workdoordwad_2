@@ -52,7 +52,7 @@ export default function OverviewPage() {
     queryKey: ["/api/employer/activities"],
   });
 
-  const { data: quotaInfo, isLoading: quotaLoading } = useQuery({
+  const { data: quotaInfo, isLoading: quotaLoading } = useQuery<any>({
     queryKey: ["/api/employer/quota"],
   });
 
