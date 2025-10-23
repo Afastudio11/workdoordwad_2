@@ -208,7 +208,7 @@ export function QuotaIndicator({ quotaInfo, compact = false }: QuotaIndicatorPro
             <AlertDescription>
               You've reached your quota limit for some features. 
               <Link href="/employer/plans">
-                <Button variant="link" className="h-auto p-0 ml-1 text-red-600 dark:text-red-400 underline font-semibold" data-testid="button-upgrade">
+                <Button variant="ghost" className="h-auto p-0 ml-1 text-red-600 dark:text-red-400 underline font-semibold" data-testid="button-upgrade">
                   Upgrade your plan
                 </Button>
               </Link>
@@ -222,7 +222,7 @@ export function QuotaIndicator({ quotaInfo, compact = false }: QuotaIndicatorPro
             <AlertDescription>
               Unlock more features with a paid plan. 
               <Link href="/employer/plans">
-                <Button variant="link" className="h-auto p-0 ml-1 underline font-semibold" data-testid="button-view-plans">
+                <Button variant="ghost" className="h-auto p-0 ml-1 underline font-semibold" data-testid="button-view-plans">
                   View plans
                 </Button>
               </Link>

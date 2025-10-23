@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import type { Company } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { VerifiedBadge } from "@/components/VerifiedBadge";
 
 export default function CompanyProfilePage() {
   const { toast } = useToast();
@@ -146,9 +147,12 @@ export default function CompanyProfilePage() {
                 data-testid="input-company-name"
               />
             ) : (
-              <p className="text-gray-900 mt-2" data-testid="text-company-name">
-                {company?.name || "-"}
-              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <p className="text-gray-900 text-lg font-semibold" data-testid="text-company-name">
+                  {company?.name || "-"}
+                </p>
+                <VerifiedBadge plan={company?.subscriptionPlan as any} size="md" />
+              </div>
             )}
           </div>
 

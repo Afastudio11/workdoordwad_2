@@ -15,6 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { useAuth } from "@/hooks/use-auth";
 import VerificationBanner from "@/components/VerificationBanner";
+import { QuotaIndicator } from "@/components/QuotaIndicator";
 
 interface EmployerStats {
   totalJobs: number;
@@ -49,6 +50,10 @@ export default function OverviewPage() {
 
   const { data: activities = [], isLoading: activitiesLoading } = useQuery<Activity[]>({
     queryKey: ["/api/employer/activities"],
+  });
+
+  const { data: quotaInfo, isLoading: quotaLoading } = useQuery({
+    queryKey: ["/api/employer/quota"],
   });
 
   const getActivityIcon = (type: string) => {
@@ -131,6 +136,11 @@ export default function OverviewPage() {
           <p className="text-sm text-gray-500 mt-1">Aktif dan tidak aktif</p>
         </Card>
       </div>
+
+      {/* Quota Usage */}
+      {quotaInfo && !quotaLoading && (
+        <QuotaIndicator quotaInfo={quotaInfo} />
+      )}
 
       {/* Analytics Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
