@@ -921,7 +921,7 @@ export default function RegisterEmployerPage() {
                         <CardTitle className="text-2xl font-bold text-foreground inline-flex items-center gap-2">
                           {plan.name}
                           {plan.hasVerifiedBadge && (
-                            <BadgeCheck className="w-6 h-6 text-[#1DA1F2]" />
+                            <BadgeCheck className="w-6 h-6 text-[hsl(var(--verified-badge))]" />
                           )}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground mt-1">{plan.tagline}</p>
