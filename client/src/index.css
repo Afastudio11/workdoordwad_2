@@ -71,6 +71,8 @@
 
   --destructive-foreground: 0 0% 98%;
 
+  --verified-badge: 203 89% 53%;
+
   --input: 0 0% 88%;
   --ring: 75 100% 50%;
   --chart-1: 75 100% 40%;
@@ -188,6 +190,8 @@
   --destructive: 0 75% 42%;
 
   --destructive-foreground: 0 75% 98%;
+
+  --verified-badge: 203 89% 53%;
 
   --input: 220 12% 35%;
   --ring: 210 80% 60%;

@@ -365,13 +365,13 @@ export default function PricingPage() {
                           <div className="text-sm font-semibold text-heading">
                             Rp {getPricing(plan.id, "3_months").price.toLocaleString("id-ID")}
                           </div>
-                          <div className="text-xs text-primary">{getPricing(plan.id, "3_months").discount}</div>
+                          <div className="text-xs text-heading font-semibold">{getPricing(plan.id, "3_months").discount}</div>
                         </TabsContent>
                         <TabsContent value="12_months" className="mt-2">
                           <div className="text-sm font-semibold text-heading">
                             Rp {getPricing(plan.id, "12_months").price.toLocaleString("id-ID")}
                           </div>
-                          <div className="text-xs text-primary">{getPricing(plan.id, "12_months").discount}</div>
+                          <div className="text-xs text-heading font-semibold">{getPricing(plan.id, "12_months").discount}</div>
                         </TabsContent>
                       </Tabs>
                     )}
@@ -383,7 +383,7 @@ export default function PricingPage() {
                       {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm">
                           {feature.included ? (
-                            <Check className={`h-5 w-5 flex-shrink-0 ${isRecommended ? "text-primary" : "text-green-500"}`} />
+                            <Check className="h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
                           ) : (
                             <span className="h-5 w-5 flex-shrink-0 text-gray-300 dark:text-gray-600">—</span>
                           )}
@@ -461,7 +461,7 @@ export default function PricingPage() {
                   <th className="p-4 text-left font-semibold text-heading">Fitur</th>
                   <th className="p-4 text-center font-semibold text-heading">Gratis</th>
                   <th className="p-4 text-center font-semibold text-heading">Starter</th>
-                  <th className="p-4 text-center font-semibold text-primary">Professional</th>
+                  <th className="p-4 text-center font-semibold text-heading">Professional</th>
                   <th className="p-4 text-center font-semibold text-heading">Enterprise</th>
                 </tr>
               </thead>
@@ -512,8 +512,8 @@ export default function PricingPage() {
                   <td className="p-4 font-medium">Social Media Boost</td>
                   <td className="p-4 text-center">—</td>
                   <td className="p-4 text-center">—</td>
-                  <td className="p-4 text-center"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                  <td className="p-4 text-center"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                  <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 dark:text-green-500 mx-auto" /></td>
+                  <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 dark:text-green-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                   <td className="p-4 font-medium">Durasi Aktif Lowongan</td>

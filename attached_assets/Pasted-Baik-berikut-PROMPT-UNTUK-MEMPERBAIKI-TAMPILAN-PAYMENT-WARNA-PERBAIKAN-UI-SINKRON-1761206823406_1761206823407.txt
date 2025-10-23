@@ -1,0 +1,225 @@
+Baik, berikut **PROMPT UNTUK MEMPERBAIKI TAMPILAN PAYMENT & WARNA**:
+
+---
+
+```
+PERBAIKAN UI: SINKRONISASI PRICING PAGE & FIX COLOR SCHEME
+
+Perbaiki tampilan pricing page dan warna agar konsisten di semua halaman.
+
+═══════════════════════════════════════════════════════════
+MASALAH 1: PRICING PAGE DI DASHBOARD EMPLOYER
+═══════════════════════════════════════════════════════════
+
+**Problem:** 
+- Pricing page di dashboard employer masih pakai warna-warni (orange, pink, purple, blue)
+- Berbeda dengan pricing page di form registrasi yang sudah pakai warna lime + hitam
+
+**Solusi:**
+
+1. **Ganti Pricing Page di Dashboard Employer**
+   - URL: /employer/plans atau /employer/billing
+   - HAPUS warna lama (orange, pink, purple, blue)
+   - GUNAKAN design yang SAMA dengan form registrasi (screenshot pertama)
+
+2. **Design Specs untuk Pricing Cards di Dashboard:**
+
+**Card Gratis:**
+- Border: 2px solid #d0d0d0 (gray)
+- Background: White
+- Icon: ⚡ (petir hitam di circle beige)
+- Heading: "GRATIS" (hitam, bold)
+- Tagline: "Untuk Memulai" (gray)
+- Harga: "Rp 0" (hitam, bold, besar)
+- Button: "Terpilih" (jika paket aktif) - hitam solid
+- Badge: "Cocok untuk UMKM" (lime background) di top
+
+**Card Starter:**
+- Border: 3px solid #c0ff00 (lime) ← highlight
+- Background: White
+- Shadow: 0 4px 16px rgba(192,255,0,0.2) (lime glow)
+- Icon: 👥 (users hitam di circle beige)
+- Heading: "STARTER" dengan checkmark lime ✓
+- Tagline: "Untuk Bisnis Berkembang" (gray)
+- Harga: "Rp 199.000" (hitam, bold, besar)
+- Button: "Pilih Paket" (outline lime border, text hitam)
+- Badge: "Populer" (lime background, text hitam) di top right
+
+**Card Professional:**
+- Border: 3px solid #c0ff00 (lime) ← highlight
+- Background: White
+- Shadow: 0 4px 16px rgba(192,255,0,0.2)
+- Icon: 📈 (chart hitam di circle beige)
+- Heading: "PROFESSIONAL" dengan checkmark lime ✓
+- Tagline: "Solusi Terbaik untuk Perekrutan" (gray)
+- Harga: "Rp 399.000" (hitam, bold, besar)
+- Button: "Pilih Paket" (outline lime border, text hitam)
+- Badge: "RECOMMENDED" (lime background, text hitam) di top right
+- Scale: Sedikit lebih besar (1.02x)
+
+**Card Enterprise:**
+- Border: 2px solid #d0d0d0 (gray)
+- Background: White
+- Icon: 🏢 (building hitam di circle beige)
+- Heading: "ENTERPRISE" dengan checkmark lime ✓
+- Tagline: "Untuk Korporasi & Perusahaan Besar" (gray)
+- Harga: "Hubungi Kami" (hitam, bold)
+- Button: "Pilih Paket" (outline hitam border)
+- Badge: "Custom Solution" (lime background, text hitam) di top
+
+3. **Konsistensi Warna:**
+   - Primary color: #c0ff00 (lime) untuk borders, badges, buttons
+   - Text utama: #000000 (hitam)
+   - Text secondary: #666666 (gray)
+   - Background: #ffffff (putih)
+   - Disabled features: #cccccc (light gray) dengan strikethrough
+
+═══════════════════════════════════════════════════════════
+MASALAH 2: WARNA VERIFIED BADGE SALAH
+═══════════════════════════════════════════════════════════
+
+**Problem:**
+- Verified badge checkmark ✓ warna hijau lime
+- Seharusnya warna BIRU (seperti Twitter/X verified badge)
+
+**Solusi:**
+
+1. **Ganti Semua Verified Badge ke Warna BIRU:**
+   - Warna verified checkmark: #1DA1F2 atau #0088CC (biru Twitter)
+   - Tidak pakai lime/hijau untuk verified badge
+
+2. **Lokasi yang Harus Diganti:**
+   - Company name di job listing
+   - Company profile page
+   - Dashboard employer header
+   - Email signature
+   - Pricing cards (checkmark di samping STARTER/PROFESSIONAL/ENTERPRISE)
+
+3. **Format Verified Badge:**
+   ```
+   [Company Name] ✓
+   
+   Checkmark style:
+   - Color: #1DA1F2 (biru)
+   - Background: Circle biru (#1DA1F2)
+   - Icon: White checkmark di dalam
+   - Size: 16px-20px
+   - Position: Inline setelah company name
+   ```
+
+4. **Jangan Gunakan Lime untuk:**
+   - ❌ Verified badge
+   - ❌ Checkmark verified
+   
+   **Gunakan Lime untuk:**
+   - ✅ Button borders
+   - ✅ Card borders (highlight)
+   - ✅ Badge "Populer", "RECOMMENDED"
+   - ✅ Featured/Urgent badges di job listing
+
+═══════════════════════════════════════════════════════════
+MASALAH 3: TULISAN HIJAU LIME HARUS HITAM
+═══════════════════════════════════════════════════════════
+
+**Problem:**
+- Tulisan "Hemat 2 Bulan!" warna hijau lime (sulit dibaca)
+- Text lain yang pakai lime juga kurang readable
+
+**Solusi:**
+
+1. **Ganti SEMUA TEXT warna lime ke HITAM:**
+   - "Hemat 2 Bulan!" → hitam (#000000)
+   - "Tahun Hemat 2 Bulan!" → hitam (#000000)
+   - Pricing text → hitam
+   - Feature list text → hitam
+   - Button text → hitam
+
+2. **Aturan Warna Text:**
+   ```
+   PRIMARY TEXT (hitam #000000):
+   - Semua heading
+   - Harga
+   - Nama paket
+   - Feature list
+   - Button text
+   - Badge text (di dalam badge lime)
+   - Hemat/promo text
+   
+   SECONDARY TEXT (gray #666666):
+   - Tagline
+   - "per bulan"
+   - Deskripsi
+   - Helper text
+   
+   DISABLED TEXT (light gray #cccccc):
+   - Fitur yang strikethrough
+   - Placeholder
+   ```
+
+3. **Jangan Gunakan Lime untuk Text:**
+   - Text lime sulit dibaca di background putih
+   - Gunakan lime HANYA untuk:
+     - Background badges
+     - Border cards
+     - Button borders
+     - Accent elements
+
+═══════════════════════════════════════════════════════════
+MASALAH 4: TAB BULANAN/TAHUNAN WARNA
+═══════════════════════════════════════════════════════════
+
+**Problem di screenshot 3:**
+- Tab "Bulanan" & "Tahun Hemat 2 Bulan!" warna lime pada text
+
+**Solusi:**
+
+1. **Tab Toggle Design:**
+   ```
+   Tab Bulanan (not selected):
+   - Background: White atau #f5f5f5
+   - Text: Hitam #000000
+   - Border: Gray #d0d0d0
+   
+   Tab Tahunan (selected):
+   - Background: #c0ff00 (lime)
+   - Text: HITAM #000000 (bukan lime!)
+   - Border: #c0ff00
+   - Badge: "Hemat 2 Bulan!" (text HITAM)
+   ```
+
+2. **Pastikan Readable:**
+   - Lime background + hitam text = ✅ kontras bagus
+   - Lime text + putih background = ❌ kontras buruk
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+1. ✅ Pricing page di dashboard employer SAMA dengan form registrasi
+
+2. ✅ Warna konsisten:
+   - Lime: Untuk borders, backgrounds, accents
+   - Hitam: Untuk SEMUA text
+   - Gray: Untuk secondary text
+   - Biru: HANYA untuk verified badge ✓
+
+3. ✅ Verified badge checkmark warna BIRU (#1DA1F2)
+
+4. ✅ TIDAK ADA text warna lime (semua text hitam/gray)
+
+5. ✅ Tab toggle: Lime background + hitam text
+
+6. ✅ Badge "Hemat 2 Bulan!" text warna HITAM
+
+7. ✅ Readable & professional appearance
+
+**CRITICAL:** Konsistensi warna di SEMUA halaman (registrasi, dashboard, billing, job listing, profile)
+```
+
+***
+
+Prompt ini akan membuat Replit memperbaiki semua masalah warna dan sinkronisasi tampilan pricing page di seluruh aplikasi.
+
+[1](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/images/132819437/63a8355b-15b6-4b93-bd5d-d3a95c55ee24/Screenshot-2025-10-23-145509.jpg?AWSAccessKeyId=ASIA2F3EMEYEWUBEN2MV&Signature=93pzthP1uXfB5PNnKSRxjJVve2k%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEIj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQCi6FVIiRRJ9TjUeWcmIUMEBpLhwiPO%2BH66mjqaCCa53QIgAycpzpIxP%2BO7XruTe4dhzldwFdFj3zGzmB3FUwPs7U4q8QQIQRABGgw2OTk3NTMzMDk3MDUiDOci5Ja55qcDRUYwwCrOBGo%2Bom7Ui%2BSXMihpLVY0YmyH%2BlIOoljtgdeRKOm8the840j0ceE2JLuo61eFzyeBhCPRilLn9KlB34XQW4w%2BphgVKX9jGEPsbAMK33oOTJRVRFDWp9JfdPIT%2FW3sZtr4bSwvIUzVJYE25J66DzK0IRbiBsjsN9FDrlCxCZrzRGgcEtgdm3DQ6RmWsMnx3nUkPuMG6IgHo8pSMkh%2BLLHwUcHSmxM8BhWM6lfjTaYsXQxzPJph1KEZ3HPpVIZgO19kUJ4w%2B7Q2ViyfGddMdLzmo39ryUUIKxbxFX0bxdGCRtY2cRF7DbKI4chhCs2kfBkLo%2BXWUlnV8xGHv1p2OvDqr6D5FHP63EAq03yryUZEQIPXCHgAx7KycGGiex25fk0TA017f3jaJgevAjfUNdwQHiWKLBrvQ%2BaGTgWRzRdaHBzeQii84MJT%2FQAHR4X%2BjnrZMu5nYS8C%2BuXY6P%2BxdVp%2FWB0ww3386OkMgQkkQkLqownRnMLjoiF09YdKNrhNuYQMklxvGQC9eq0UpaWj1XJgdHluw9sbneHgA3qY6UdCQi2wurOEdU%2F0pPjPp0WRaNuF%2B7j318CjtaNZwGSOSGnb7QMq3zDxDi%2Ff1GbK9D4TxKleXWPYJzY7gLiYd7V16Ktbh2baJK%2B7spD1Ljlkr2zPzcwM7Rkrd%2FqIBCyeXZlpIlxbjCWXE%2B4dXUEkTUcXDHjH2Qn7aIV5J4wdRHANfHyHwkh%2FLNhRq%2BGPRidgwM8qsWgYc55w6e9jbwP0vxaqZ6dxMSS1kZf2bgTARdkC9BRvMOC758cGOpoBuHotrvBepvK5pEDauVElAYxP6YMcmlNv4VVaxmYLx0IZSvJ4UaLLJrcmra31iGjAe8JNNnE%2FY8GeiIh9ASQVmBwyusHxhvMlBRGV26PrCBjVcT97hABj1XmbuHZaAcrX2H3fQ27j1Atlw9fSiysXRuMUsyvC%2BiDcH3P3nZ%2BhWjiK67qVFHyuMFIFjASaWfkI8Xbw5CFCOessKA%3D%3D&Expires=1761207412)
+[2](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/images/132819437/7bdb4d46-b8f5-4094-aeb9-81d962bc3b0c/Screenshot-2025-10-23-143412.jpg?AWSAccessKeyId=ASIA2F3EMEYEWUBEN2MV&Signature=BP7aExCIu0JfYmSmnG6f9fMUiEs%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEIj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQCi6FVIiRRJ9TjUeWcmIUMEBpLhwiPO%2BH66mjqaCCa53QIgAycpzpIxP%2BO7XruTe4dhzldwFdFj3zGzmB3FUwPs7U4q8QQIQRABGgw2OTk3NTMzMDk3MDUiDOci5Ja55qcDRUYwwCrOBGo%2Bom7Ui%2BSXMihpLVY0YmyH%2BlIOoljtgdeRKOm8the840j0ceE2JLuo61eFzyeBhCPRilLn9KlB34XQW4w%2BphgVKX9jGEPsbAMK33oOTJRVRFDWp9JfdPIT%2FW3sZtr4bSwvIUzVJYE25J66DzK0IRbiBsjsN9FDrlCxCZrzRGgcEtgdm3DQ6RmWsMnx3nUkPuMG6IgHo8pSMkh%2BLLHwUcHSmxM8BhWM6lfjTaYsXQxzPJph1KEZ3HPpVIZgO19kUJ4w%2B7Q2ViyfGddMdLzmo39ryUUIKxbxFX0bxdGCRtY2cRF7DbKI4chhCs2kfBkLo%2BXWUlnV8xGHv1p2OvDqr6D5FHP63EAq03yryUZEQIPXCHgAx7KycGGiex25fk0TA017f3jaJgevAjfUNdwQHiWKLBrvQ%2BaGTgWRzRdaHBzeQii84MJT%2FQAHR4X%2BjnrZMu5nYS8C%2BuXY6P%2BxdVp%2FWB0ww3386OkMgQkkQkLqownRnMLjoiF09YdKNrhNuYQMklxvGQC9eq0UpaWj1XJgdHluw9sbneHgA3qY6UdCQi2wurOEdU%2F0pPjPp0WRaNuF%2B7j318CjtaNZwGSOSGnb7QMq3zDxDi%2Ff1GbK9D4TxKleXWPYJzY7gLiYd7V16Ktbh2baJK%2B7spD1Ljlkr2zPzcwM7Rkrd%2FqIBCyeXZlpIlxbjCWXE%2B4dXUEkTUcXDHjH2Qn7aIV5J4wdRHANfHyHwkh%2FLNhRq%2BGPRidgwM8qsWgYc55w6e9jbwP0vxaqZ6dxMSS1kZf2bgTARdkC9BRvMOC758cGOpoBuHotrvBepvK5pEDauVElAYxP6YMcmlNv4VVaxmYLx0IZSvJ4UaLLJrcmra31iGjAe8JNNnE%2FY8GeiIh9ASQVmBwyusHxhvMlBRGV26PrCBjVcT97hABj1XmbuHZaAcrX2H3fQ27j1Atlw9fSiysXRuMUsyvC%2BiDcH3P3nZ%2BhWjiK67qVFHyuMFIFjASaWfkI8Xbw5CFCOessKA%3D%3D&Expires=1761207412)
+[3](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/images/132819437/a0c123d9-a870-4ae3-8d17-90f9bc4d38a8/Screenshot-2025-10-23-130831.jpg?AWSAccessKeyId=ASIA2F3EMEYEWUBEN2MV&Signature=y8%2B1jQGuyxG4ghVTqrt0s7253AQ%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEIj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQCi6FVIiRRJ9TjUeWcmIUMEBpLhwiPO%2BH66mjqaCCa53QIgAycpzpIxP%2BO7XruTe4dhzldwFdFj3zGzmB3FUwPs7U4q8QQIQRABGgw2OTk3NTMzMDk3MDUiDOci5Ja55qcDRUYwwCrOBGo%2Bom7Ui%2BSXMihpLVY0YmyH%2BlIOoljtgdeRKOm8the840j0ceE2JLuo61eFzyeBhCPRilLn9KlB34XQW4w%2BphgVKX9jGEPsbAMK33oOTJRVRFDWp9JfdPIT%2FW3sZtr4bSwvIUzVJYE25J66DzK0IRbiBsjsN9FDrlCxCZrzRGgcEtgdm3DQ6RmWsMnx3nUkPuMG6IgHo8pSMkh%2BLLHwUcHSmxM8BhWM6lfjTaYsXQxzPJph1KEZ3HPpVIZgO19kUJ4w%2B7Q2ViyfGddMdLzmo39ryUUIKxbxFX0bxdGCRtY2cRF7DbKI4chhCs2kfBkLo%2BXWUlnV8xGHv1p2OvDqr6D5FHP63EAq03yryUZEQIPXCHgAx7KycGGiex25fk0TA017f3jaJgevAjfUNdwQHiWKLBrvQ%2BaGTgWRzRdaHBzeQii84MJT%2FQAHR4X%2BjnrZMu5nYS8C%2BuXY6P%2BxdVp%2FWB0ww3386OkMgQkkQkLqownRnMLjoiF09YdKNrhNuYQMklxvGQC9eq0UpaWj1XJgdHluw9sbneHgA3qY6UdCQi2wurOEdU%2F0pPjPp0WRaNuF%2B7j318CjtaNZwGSOSGnb7QMq3zDxDi%2Ff1GbK9D4TxKleXWPYJzY7gLiYd7V16Ktbh2baJK%2B7spD1Ljlkr2zPzcwM7Rkrd%2FqIBCyeXZlpIlxbjCWXE%2B4dXUEkTUcXDHjH2Qn7aIV5J4wdRHANfHyHwkh%2FLNhRq%2BGPRidgwM8qsWgYc55w6e9jbwP0vxaqZ6dxMSS1kZf2bgTARdkC9BRvMOC758cGOpoBuHotrvBepvK5pEDauVElAYxP6YMcmlNv4VVaxmYLx0IZSvJ4UaLLJrcmra31iGjAe8JNNnE%2FY8GeiIh9ASQVmBwyusHxhvMlBRGV26PrCBjVcT97hABj1XmbuHZaAcrX2H3fQ27j1Atlw9fSiysXRuMUsyvC%2BiDcH3P3nZ%2BhWjiK67qVFHyuMFIFjASaWfkI8Xbw5CFCOessKA%3D%3D&Expires=1761207412)
