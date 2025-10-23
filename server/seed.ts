@@ -167,7 +167,7 @@ async function seed() {
       bio: "HR Manager di TechStartup Indonesia",
       city: "Jakarta",
       province: "DKI Jakarta",
-      isVerified: true,
+      verificationStatus: "verified",
       isActive: true,
     })
     .returning()
@@ -243,7 +243,7 @@ async function seed() {
       contactEmail: "hr@techstartup.id",
       contactPhone: "021-12345678",
       employeeCount: "50-100",
-      isVerified: true,
+      verificationStatus: "verified",
       verifiedAt: new Date(),
       createdBy: employer.id,
     })
@@ -265,7 +265,7 @@ async function seed() {
       contactEmail: "careers@digitalmarketingpro.com",
       contactPhone: "022-87654321",
       employeeCount: "20-50",
-      isVerified: true,
+      verificationStatus: "verified",
       verifiedAt: new Date(),
       createdBy: employer.id,
     })
@@ -287,7 +287,7 @@ async function seed() {
       contactEmail: "recruitment@ecommercesolutions.id",
       contactPhone: "021-99887766",
       employeeCount: "100-500",
-      isVerified: true,
+      verificationStatus: "verified",
       verifiedAt: new Date(),
       createdBy: employer.id,
     })
