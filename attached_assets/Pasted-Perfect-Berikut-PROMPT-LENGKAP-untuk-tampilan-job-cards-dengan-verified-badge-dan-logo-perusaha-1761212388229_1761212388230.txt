@@ -1,0 +1,380 @@
+Perfect! Berikut **PROMPT LENGKAP** untuk tampilan job cards dengan verified badge dan logo perusahaan:
+
+---
+
+```
+TAMPILAN JOB CARDS - VERIFIED BADGE & LOGO PERUSAHAAN
+
+Perbaiki tampilan job cards agar menampilkan verified badge untuk paket berbayar dan menggunakan logo perusahaan (bukan emoji).
+
+═══════════════════════════════════════════════════════════
+PROBLEM DARI SCREENSHOT
+═══════════════════════════════════════════════════════════
+
+**Yang Terlihat Sekarang:**
+- Job cards tampil dengan emoji building 🏢 sebagai company logo
+- Tidak ada verified badge ✓ meskipun dari paket berbayar
+- Semua company tampil sama (pakai emoji, tidak ada differensiasi)
+
+**Yang Seharusnya:**
+- Paket berbayar (Starter, Professional, Enterprise) → tampil verified badge ✓ BIRU
+- Paket gratis → TIDAK ada verified badge
+- Semua job cards menggunakan LOGO PERUSAHAAN yang real (bukan emoji)
+- Logo perusahaan: 48x48px, rounded, border
+
+═══════════════════════════════════════════════════════════
+STRUKTUR JOB CARD BARU
+═══════════════════════════════════════════════════════════
+
+## Layout Job Card
+
+```
+┌─────────────────────────────────────────────────────┐
+│ Senior Developer 25                                 │
+│                                                     │
+│ 📍 Jakarta                                         │
+│                                                     │
+│ [Logo 48x48]  Enterprise Test Company ✓            │
+│                                                     │
+│ 🕐 2 hari yang lalu  -   💼 Waktu Penuh            │
+│ 💼 Technology & Consulting  -   💰 Rp 17-30 juta   │
+│                                                     │
+│ ⭐ Featured  🔥 Urgent                             │
+│                                                     │
+│ [Lamar Sekarang - Button Lime]                     │
+└─────────────────────────────────────────────────────┘
+```
+
+### Komponen Detail:
+
+**1. Job Title:**
+- Font: 20px, bold, #000000
+- Clickable ke job detail page
+
+**2. Location:**
+- Icon 📍 + "Jakarta"
+- Font: 14px, #666666
+
+**3. Company Section (PENTING):**
+```
+[Logo 48x48]  Company Name ✓
+```
+
+**Logo Perusahaan:**
+- Size: 48x48px
+- Border-radius: 8px (rounded corner)
+- Border: 1px solid #e0e0e0
+- Object-fit: cover
+- Fallback: Initial huruf pertama jika tidak ada logo
+
+**Company Name + Verified Badge:**
+- Font: 16px, medium, #000000
+- Clickable ke company profile
+
+**Verified Badge ✓:**
+- HANYA tampil jika employer paket BERBAYAR (Starter, Professional, Enterprise)
+- Color: #1DA1F2 (biru Twitter)
+- Icon: Circle biru dengan checkmark putih
+- Size: 18px
+- Position: Inline setelah company name
+- Margin-left: 6px
+
+**Logic:**
+```
+IF employer.subscription_plan IN ['starter', 'professional', 'enterprise']:
+   SHOW verified badge ✓
+ELSE:
+   DON'T show verified badge
+```
+
+**4. Meta Info:**
+- Time posted: 🕐 "2 hari yang lalu"
+- Job type: 💼 "Waktu Penuh"
+- Category: 💼 "Technology & Consulting"
+- Salary: 💰 "Rp 17-30 juta"
+- Font: 14px, #666666
+- Separator: • (bullet)
+
+**5. Badges (Conditional):**
+
+**Featured Badge ⭐:**
+- HANYA tampil jika job.is_featured = TRUE
+- Background: #FFE69C (kuning muda)
+- Text: "Featured" #856404
+- Padding: 4px 12px
+- Border-radius: 16px
+- Font: 12px, bold
+
+**Urgent Badge 🔥:**
+- HANYA tampil jika job.is_urgent = TRUE
+- Background: #FFE5E5 (merah muda)
+- Text: "Urgent" #D32F2F
+- Padding: 4px 12px
+- Border-radius: 16px
+- Font: 12px, bold
+
+**6. Button Lamar:**
+- Background: #c0ff00 (lime)
+- Text: "Lamar Sekarang" #000000, bold
+- Padding: 12px 24px
+- Border-radius: 8px
+- Full width
+- Hover: #b0ef00
+- Shadow: 0 2px 8px rgba(192,255,0,0.3)
+
+═══════════════════════════════════════════════════════════
+IMPLEMENTASI LOGO PERUSAHAAN
+═══════════════════════════════════════════════════════════
+
+### A. Upload Logo (Di Employer Dashboard)
+
+**Saat employer register/edit profile:**
+```
+Upload Logo Perusahaan (Opsional)
+- Format: JPG, PNG
+- Max size: 2MB
+- Recommended: 512x512px (square)
+- Akan di-resize ke 48x48px di job cards
+```
+
+**Field Database:**
+- employers.company_logo_url (VARCHAR)
+- employers.company_logo_path (VARCHAR)
+
+### B. Display Logo di Job Card
+
+**Logic:**
+```
+IF employer.company_logo_url EXISTS:
+   Display: <img src="company_logo_url" alt="Company Logo" />
+ELSE:
+   Display: Fallback (Initial letter circle)
+```
+
+**Fallback Design (Jika tidak ada logo):**
+```
+Tampilkan initial huruf pertama company name di circle:
+
+[E]  Enterprise Test Company ✓
+
+Background: #f0f0f0
+Text: Huruf pertama company name, 20px, bold, #666
+Circle: 48x48px, border-radius 50%
+```
+
+### C. Logo Display Specs
+
+```
+.company-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  object-fit: cover;
+  background: #ffffff;
+}
+
+.company-logo-fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #666666;
+  border: 1px solid #e0e0e0;
+}
+```
+
+═══════════════════════════════════════════════════════════
+VERIFIED BADGE IMPLEMENTATION
+═══════════════════════════════════════════════════════════
+
+### Logic Check
+
+**Query saat render job card:**
+```
+SELECT 
+  jobs.*,
+  employers.company_name,
+  employers.company_logo_url,
+  employers.subscription_plan,
+  employers.has_verified_badge
+FROM jobs
+JOIN employers ON jobs.employer_id = employers.id
+WHERE jobs.status = 'published'
+```
+
+**Render Logic:**
+```
+FOR each job:
+  Display job title
+  Display location
+  
+  Display company logo (real or fallback)
+  Display company name
+  
+  IF employer.subscription_plan IN ['starter', 'professional', 'enterprise']:
+    Display verified badge ✓ (blue)
+  ENDIF
+  
+  Display meta info
+  Display badges (featured, urgent) if applicable
+  Display button
+```
+
+### Verified Badge Component
+
+```
+<div class="company-info">
+  <img src="logo.jpg" class="company-logo" />
+  <span class="company-name">Enterprise Test Company</span>
+  
+  <!-- Verified Badge (Conditional) -->
+  <?php if ($employer->subscription_plan !== 'free'): ?>
+    <span class="verified-badge">
+      <svg class="verified-icon">
+        <circle fill="#1DA1F2" />
+        <path fill="#FFFFFF" d="M checkmark path" />
+      </svg>
+    </span>
+  <?php endif; ?>
+</div>
+```
+
+**CSS:**
+```
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+}
+
+.verified-icon {
+  width: 18px;
+  height: 18px;
+  fill: #1DA1F2;
+}
+```
+
+═══════════════════════════════════════════════════════════
+CONTOH TAMPILAN PER PAKET
+═══════════════════════════════════════════════════════════
+
+### 1. FREE PLAN (Tidak Ada Verified)
+
+```
+┌──────────────────────────────────────┐
+│ Admin Staff                          │
+│ 📍 Jakarta Selatan                  │
+│                                      │
+│ [Logo] PT Testing Gratis             │  ← NO verified badge
+│                                      │
+│ 🕐 5 hari lalu -  💼 Full Time       │
+│ 💼 Operations -  💰 Rp 4.5-6 juta   │
+│                                      │
+│ [Lamar Sekarang]                     │
+└──────────────────────────────────────┘
+```
+
+### 2. STARTER PLAN (Verified + Featured)
+
+```
+┌──────────────────────────────────────┐
+│ Marketing Manager                    │
+│ 📍 Bandung                          │
+│                                      │
+│ [Logo] PT Testing Starter ✓          │  ← Verified badge
+│                                      │
+│ 🕐 7 hari lalu -  💼 Full Time       │
+│ 💼 Marketing -  💰 Rp 8-12 juta     │
+│                                      │
+│ ⭐ Featured                         │  ← Featured badge
+│                                      │
+│ [Lamar Sekarang]                     │
+└──────────────────────────────────────┘
+```
+
+### 3. PROFESSIONAL PLAN (Verified + Featured + Urgent)
+
+```
+┌──────────────────────────────────────┐
+│ Senior Frontend Developer            │
+│ 📍 Surabaya                         │
+│                                      │
+│ [Logo] PT Testing Professional ✓     │  ← Verified badge
+│                                      │
+│ 🕐 3 hari lalu -  💼 Full Time       │
+│ 💼 Technology -  💰 Rp 15-22 juta   │
+│                                      │
+│ ⭐ Featured  🔥 Urgent              │  ← Both badges
+│                                      │
+│ [Lamar Sekarang]                     │
+└──────────────────────────────────────┘
+```
+
+### 4. ENTERPRISE PLAN (Same as Professional)
+
+```
+┌──────────────────────────────────────┐
+│ Product Manager                      │
+│ 📍 Jakarta                          │
+│                                      │
+│ [Logo] PT Testing Enterprise ✓       │  ← Verified badge
+│                                      │
+│ 🕐 1 hari lalu -  💼 Full Time       │
+│ 💼 Product -  💰 Rp 20-30 juta      │
+│                                      │
+│ ⭐ Featured  🔥 Urgent              │
+│                                      │
+│ [Lamar Sekarang]                     │
+└──────────────────────────────────────┘
+```
+
+═══════════════════════════════════════════════════════════
+RESPONSIVE DESIGN
+═══════════════════════════════════════════════════════════
+
+**Desktop:**
+- Card width: 360px
+- Grid: 3 columns
+- Logo: 48x48px
+- Padding: 24px
+
+**Tablet:**
+- Card width: 320px
+- Grid: 2 columns
+- Logo: 48px
+- Padding: 20px
+
+**Mobile:**
+- Card width: 100%
+- Grid: 1 column
+- Logo: 40x40px (slightly smaller)
+- Padding: 16px
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+✅ Semua job cards menggunakan LOGO PERUSAHAAN (bukan emoji)
+✅ Logo fallback (initial circle) jika tidak ada logo
+✅ Verified badge ✓ BIRU hanya untuk paket berbayar (Starter+)
+✅ Paket gratis TIDAK ada verified badge
+✅ Featured badge ⭐ tampil sesuai setting
+✅ Urgent badge 🔥 tampil sesuai setting
+✅ Button "Lamar Sekarang" warna lime
+✅ Responsive untuk semua device
+✅ Consistent design untuk semua job cards
+
+**HAPUS emoji 🏢 dan GANTI dengan logo perusahaan real atau fallback initial!**
+```
+
+***
+
+Prompt ini akan membuat Replit menampilkan verified badge hanya untuk paket berbayar dan menggunakan logo perusahaan yang real (bukan emoji) dengan fallback yang profesional.
+
+[1](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/images/132819437/b4064b4a-7099-4fa3-b882-1ac512e03516/image.jpg?AWSAccessKeyId=ASIA2F3EMEYEZTOWNWER&Signature=oPLZfgE%2FyrX4BwAOCOmYRtGPicg%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEIr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIFWeYoffJzGC74BAM48UbK%2Bg4pEEQm1HfFpqNTEVI5xMAiEAzsrjMPP3l7F%2FnOPF9Xps%2F5llp374Po4unJW2AiZ93SUq8QQIQhABGgw2OTk3NTMzMDk3MDUiDMCSb%2BC18ov5o6pEYSrOBIQBXzp3N4Uj%2Fw70F%2BbZIe8JZ3L8JD8iiv5gr4lKeXADRb3LR5Co3rW%2BXkwt428QcClaqPhdprFp87oGHHvVJX%2BZTQCauNwKvJC8CuAQSObz42jkNPb5qSvWfIIPYFj89xjXSLcNRR3V0qq6gAuZJjuwq5geQb4ji6o2Qk8smp%2FlAFaCrwHxAGGAuSB8aOUfK91CnxUxlscsQ0QzIFmVWYNryOJgUO1wfHauFsDPcjpq%2FcOPDsHF7ZqBRIydRU5gu2Za%2FgmgeZP%2BbFVdwY2q0FG%2BPtq3p1hXDqv8wyxBzjTmQUTH4rj8ysz%2FJKQEPhJFJBkLfnuNLVcB%2BP7l4WjMfiAYw1EHEGzHUcbItyzIpHNlfY97bRfLUgEnfKjhQ%2FuQyylFmJwnDNrYLKfuJH93jKLdqqL84PZV0szyCxoDuQm1F3oGHrJ3ykP7hidkKvfg%2BJQLhHRbbA94voasnO9tx0M1P%2BgS0mMBu%2FKaZP%2F6Qu%2Bn%2BJEEJqQ7pWJbomB5QWt%2BVJDNizf39eHMvkItLKNhwlrVKmTct97RJrDjbXVXehqzxo4r6otIGSs1fAYR%2FmlhLqkmqEJ9F6kqW33cLiWVcBYTqyVFo0E9GGdbZ4Qc%2Bl7kQIzIfmwEFxzWF2zs7MahTyt42RzxGXrWR1VltwcL%2FwZaraJFYBJuWHlvx7gi1AG9MdrGGtSVPNM%2Fwu8TIBaRzyhmA6JkELDBJwCfBXorNHN8EUjmYXimC1Q2QXY2HeyjxsfA0rGbbbNZuQ%2Bw98JKboQIGDSB2KTNft1EjDUZMNvh58cGOpoB07cRUsv4kStzILc1t9sqGHOG1ait2yI7gDHFUu%2FQifSZ0caZzOyb4kJwNYd%2FkZGe9zFU81BMuNPzHtAF%2BU%2FnUGUIszKx%2FVHzZPnCAsLz1KNk09AaO0m2PCscr2W7SudqzhOmTKp50ARzzLtLiJO2SX0482UVFQbQ6tv6nXmaJojipGPzQQWsmSssO2%2B0rp3KegrSFbfCcEA5ng%3D%3D&Expires=1761212970)

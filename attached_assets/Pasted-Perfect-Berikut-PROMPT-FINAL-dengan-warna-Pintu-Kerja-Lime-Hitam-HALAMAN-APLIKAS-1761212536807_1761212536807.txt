@@ -1,0 +1,348 @@
+Perfect! Berikut **PROMPT FINAL** dengan warna Pintu Kerja (Lime + Hitam):
+
+***
+
+```
+HALAMAN APLIKASI PEKERJAAN FULL PAGE - WARNA PINTU KERJA
+
+Ubah modal "Lamar Pekerjaan" menjadi full page profesional seperti JobStreet dengan warna brand Pintu Kerja (Lime + Hitam).
+
+═══════════════════════════════════════════════════════════
+BRAND COLORS PINTU KERJA
+═══════════════════════════════════════════════════════════
+
+**Primary:**
+- Lime: #c0ff00 (buttons primary, badges, accents)
+- Hitam: #000000 (text, navbar)
+- Putih: #ffffff (backgrounds)
+
+**Secondary:**
+- Gray: #666666 (text secondary)
+- Light gray: #f5f5f5 (section backgrounds)
+- Border: #e0e0e0
+
+**Special:**
+- Verified badge: #1DA1F2 (biru Twitter)
+- Warning: #FFF3CD (background kuning)
+
+═══════════════════════════════════════════════════════════
+STRUKTUR HALAMAN
+═══════════════════════════════════════════════════════════
+
+## URL: /apply/[job_id] (Full Page, bukan modal)
+
+### HEADER (Sticky, background hitam)
+
+```
+┌──────────────────────────────────────────────────────┐
+│ [Logo Pintu Kerja]  Senior Developer 22   [X Close] │
+└──────────────────────────────────────────────────────┘
+```
+
+**Styling:**
+- Background: #000000
+- Logo: Putih/Lime
+- Job title: #ffffff, 18px
+- Close button (X): Putih, hover lime
+
+---
+
+### SECTION 1: Job Header
+
+```
+[Company Logo 80x80]
+
+Senior Developer 22
+──────────────────────────────────
+
+Enterprise Test Company ✓   Lihat semua lowongan
+📍 Jakarta  -   💼 Technology & Consulting  -   ⏱️ Waktu Penuh
+💰 Rp 17-29 juta
+
+Diposting 3 hari lalu  -   15 aplikasi
+
+[Lamar Sekarang - Lime]  [Simpan - Outline]
+```
+
+**Button Styling:**
+```
+"Lamar Sekarang" (Primary):
+- Background: #c0ff00 (lime)
+- Text: #000000 (hitam, bold)
+- Padding: 14px 32px
+- Border-radius: 8px
+- Hover: #b0ef00
+- Shadow: 0 2px 8px rgba(192,255,0,0.3)
+
+"Simpan" (Secondary):
+- Background: transparent
+- Border: 2px solid #e0e0e0
+- Text: #000000
+- Hover: Border #c0ff00, Text #c0ff00
+```
+
+---
+
+### SECTION 2: Tanggung Jawab
+
+```
+Tanggung Jawab:
+─────────────────
+
+-  Entry Data from Hospital regarding Cost Estimation
+-  Do analysis that cost estimation
+-  Follow up internal user for process cost estimation
+-  Do Update Data
+-  Attend the meeting
+-  Create report of the result that have been followed up
+-  Collecting report on time
+```
+
+**Styling:**
+- Heading: 24px, bold, #000000
+- Bullet points: 16px, #666666, line-height 1.7
+- Background: #ffffff
+- Padding: 32px
+
+---
+
+### SECTION 3: Persyaratan
+
+```
+Persyaratan:
+─────────────────
+
+-  Fresh graduate from medical major (non-doctor), prefer to Nurse, Public Health, etc.
+-  Willing to do WFO (3x a week) & WFH (2x a week) in Setiabudi, South Jakarta
+-  Committed to do 3 months internship
+-  Computer literate: Excel (mandatory)
+-  Good problem solved & communication skill
+-  Good documentation skill
+-  Pleasant personality, good attitude and good team working
+-  Experience in medical service/insurance industry is advantage
+```
+
+---
+
+### SECTION 4: Pertanyaan Employer (Jika ada)
+
+```
+Pertanyaan Employer
+────────────────────
+
+Lamaran Anda akan menyertakan pertanyaan berikut:
+
+-  Kualifikasi pendidikan apa yang Anda miliki?
+-  Produk Microsoft Office mana yang Anda kuasai?
+-  Bagaimana Anda menilai kemampuan bahasa Inggris Anda?
+-  Berapa lama masa pemberitahuan yang harus Anda berikan ke employer saat ini?
+```
+
+**Styling:**
+- Background: #f5f5f5 (gray muda)
+- Border: 1px solid #e0e0e0
+- Border-radius: 8px
+- Padding: 24px
+
+---
+
+### SECTION 5: Profil Perusahaan
+
+```
+Profil Perusahaan
+──────────────────
+
+[Company Logo 60x60]
+
+Enterprise Test Company ✓
+⭐ 4.5  -   150 reviews
+
+💼 Technology & Consulting
+👥 51-200 karyawan
+
+Tagline/Moto Perusahaan
+
+Deskripsi Perusahaan...
+At Enterprise Test Company we deliver excellence by consistently innovating...
+
+[Tampilkan lebih banyak ▼]
+
+🎁 Fasilitas dan Benefit
+-  Asuransi Kesehatan
+-  Bonus Performa
+-  Makan Siang Gratis
+
+[Lihat Detail Perusahaan →]
+```
+
+**Styling:**
+- Card background: #ffffff
+- Border: 1px solid #e0e0e0
+- Border-radius: 12px
+- Padding: 24px
+- Button "Lihat Detail": Outline dengan hover lime
+
+---
+
+### SECTION 6: Hati-hati Penipuan
+
+```
+⚠️ Hati-hati dengan Penipuan
+
+Jangan berikan informasi rekening bank atau kartu kredit saat melamar pekerjaan.
+
+Pelajari cara melindungi diri Anda (link)
+```
+
+**Styling:**
+- Background: #FFF3CD (kuning muda)
+- Border: 1px solid #FFE69C
+- Border-radius: 8px
+- Padding: 16px
+- Icon: ⚠️ orange
+- Text: #856404 (coklat gelap), 14px
+
+---
+
+### SECTION 7: Laporkan Lowongan
+
+```
+Laporkan lowongan ini ▼
+```
+
+**Styling:**
+- Text: #999999, 14px
+- Collapsible
+- Hover: underline
+
+---
+
+### FIXED BOTTOM BAR (Mobile)
+
+```
+┌────────────────────────────────────────────────┐
+│  [Simpan]         [Lamar Sekarang - Lime]     │
+└────────────────────────────────────────────────┘
+```
+
+**Styling:**
+- Background: #ffffff
+- Border-top: 1px solid #e0e0e0
+- Shadow: 0 -2px 8px rgba(0,0,0,0.1)
+- Padding: 16px
+- Fixed bottom: 0
+- Z-index: 1000
+
+---
+
+═══════════════════════════════════════════════════════════
+MODAL FLOW SETELAH KLIK "LAMAR SEKARANG"
+═══════════════════════════════════════════════════════════
+
+### Scenario 1: User BELUM LOGIN
+→ Redirect ke /login?return=/apply/[job_id]
+→ Atau tampilkan modal login/register
+
+### Scenario 2: User SUDAH LOGIN
+
+**Step 1: Konfirmasi Profil**
+```
+Lamar ke Senior Developer 22
+─────────────────────────────
+
+Profil Anda
+✓ Nama: [User Name]
+✓ Email: [User Email]
+✓ Telepon: [User Phone]
+✓ Resume: resume.pdf
+
+[Edit Profil]  [Lanjutkan →]
+```
+
+**Step 2: Jawab Pertanyaan (Jika ada)**
+```
+Jawab Pertanyaan Employer
+──────────────────────────
+
+1. Kualifikasi pendidikan Anda?
+   ○ SMA/SMK
+   ○ D3
+   ○ S1
+   ○ S2
+
+2. Pengalaman Microsoft Office?
+   ☐ Word
+   ☐ Excel
+   ☐ PowerPoint
+
+[← Kembali]  [Lanjutkan →]
+```
+
+**Step 3: Surat Lamaran (Opsional)**
+```
+Surat Lamaran (opsional)
+─────────────────────────
+
+[Textarea 500 karakter]
+
+[← Kembali]  [Kirim Lamaran →]
+```
+
+**Success Screen:**
+```
+✅ Lamaran Berhasil Dikirim!
+
+Lamaran Anda untuk posisi Senior Developer 22
+di Enterprise Test Company telah terkirim.
+
+Lacak status lamaran Anda di: Lamaran Saya
+
+[Lihat Lamaran Saya]  [Lamar Pekerjaan Lain]
+```
+
+**Success Styling:**
+- Background: #f0fff4 (hijau muda)
+- Icon: ✅ besar (64px)
+- Buttons: Lime primary
+
+---
+
+═══════════════════════════════════════════════════════════
+RESPONSIVE DESIGN
+═══════════════════════════════════════════════════════════
+
+**Desktop (>1024px):**
+- Max-width: 800px, centered
+- Padding: 32px
+- Buttons inline di header
+
+**Tablet (768-1024px):**
+- Full width, padding 24px
+
+**Mobile (<768px):**
+- Full width, padding 16px
+- Buttons fixed bottom bar
+- Stack sections vertical
+- Font-size adjust
+
+═══════════════════════════════════════════════════════════
+OUTPUT
+═══════════════════════════════════════════════════════════
+
+✅ Full page aplikasi (/apply/[job_id])
+✅ Warna Lime (#c0ff00) untuk buttons primary
+✅ Text HITAM (#000000) untuk semua text
+✅ Verified badge BIRU (#1DA1F2)
+✅ Layout profesional seperti JobStreet
+✅ Sections lengkap (Tanggung Jawab, Persyaratan, Profil Perusahaan)
+✅ Warning "Hati-hati Penipuan"
+✅ Multi-step modal aplikasi
+✅ Mobile responsive dengan fixed bottom
+✅ Success screen setelah submit
+
+**HAPUS modal sederhana sekarang, ganti dengan full page profesional menggunakan warna Pintu Kerja!**
+```
+
+***
+
+Prompt ini sudah disesuaikan 100% dengan warna brand Pintu Kerja: **Lime untuk buttons dan accents, Hitam untuk text, Putih untuk backgrounds, Biru untuk verified badge**.

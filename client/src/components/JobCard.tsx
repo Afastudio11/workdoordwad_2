@@ -25,7 +25,9 @@ interface JobCardProps {
   bgColor?: string;
   icon?: string;
   jobType?: string;
-  isVerified?: boolean;
+  subscriptionPlan?: string;
+  isFeatured?: boolean;
+  isUrgent?: boolean;
 }
 
 export default function JobCard({
@@ -38,7 +40,9 @@ export default function JobCard({
   location,
   companyLogo,
   jobType = "Penuh Waktu",
-  isVerified = false,
+  subscriptionPlan = "free",
+  isFeatured = false,
+  isUrgent = false,
 }: JobCardProps) {
   const category = tags[0] || "Umum";
   const [showDetailDialog, setShowDetailDialog] = useState(false);
@@ -49,6 +53,12 @@ export default function JobCard({
   });
 
   const job = jobDetail as any;
+
+  const isVerified = subscriptionPlan && ['starter', 'professional', 'enterprise'].includes(subscriptionPlan);
+  
+  const getCompanyInitial = (companyName: string) => {
+    return companyName.charAt(0).toUpperCase();
+  };
 
   return (
     <>
@@ -62,8 +72,10 @@ export default function JobCard({
               data-testid={`img-company-logo-${id}`}
             />
           ) : (
-            <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center border border-border">
-              <Building2 className="h-6 w-6 text-muted-foreground" />
+            <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center border border-border">
+              <span className="text-xl font-bold text-gray-600 dark:text-gray-300" data-testid={`text-company-initial-${id}`}>
+                {getCompanyInitial(company)}
+              </span>
             </div>
           )}
           <div className="flex-1">
@@ -96,6 +108,22 @@ export default function JobCard({
           <span className="mx-2">•</span>
           <span className="font-semibold text-heading" data-testid={`text-salary-${id}`}>{salary}</span>
         </div>
+
+        {/* Featured and Urgent Badges */}
+        {(isFeatured || isUrgent) && (
+          <div className="flex items-center gap-2 mb-4">
+            {isFeatured && (
+              <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-xs font-bold rounded-full" data-testid={`badge-featured-${id}`}>
+                ⭐ Featured
+              </span>
+            )}
+            {isUrgent && (
+              <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-xs font-bold rounded-full" data-testid={`badge-urgent-${id}`}>
+                🔥 Urgent
+              </span>
+            )}
+          </div>
+        )}
 
         <Button 
           onClick={() => setShowDetailDialog(true)}
