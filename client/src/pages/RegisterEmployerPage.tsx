@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, ArrowRight, Loader2, Mail, CheckCircle2, Zap, Users, TrendingUp, Building2, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Mail, CheckCircle2, Zap, Users, TrendingUp, Building2, Check, X } from "lucide-react";
 import Header from "@/components/Header";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import { Button } from "@/components/ui/button";
@@ -718,8 +718,17 @@ export default function RegisterEmployerPage() {
                           <p className="text-xs text-muted-foreground mt-2">
                             Format: JPG/PNG, Ukuran maksimal: 1MB
                             {logoFile && (
-                              <span className="text-foreground font-medium ml-2">
+                              <span className="text-foreground font-medium ml-2 inline-flex items-center gap-2">
                                 ✓ {logoFile.name} ({(logoFile.size / 1024).toFixed(0)} KB)
+                                <button
+                                  type="button"
+                                  onClick={() => setLogoFile(null)}
+                                  className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
+                                  aria-label="Hapus file"
+                                  data-testid="button-remove-logo"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
                               </span>
                             )}
                           </p>
@@ -764,8 +773,17 @@ export default function RegisterEmployerPage() {
                           <p className="text-xs text-muted-foreground mt-2">
                             SIUP/NIB/TDP, Format: PDF, Ukuran maksimal: 2MB
                             {legalDocFile && (
-                              <span className="text-foreground font-medium ml-2">
+                              <span className="text-foreground font-medium ml-2 inline-flex items-center gap-2">
                                 ✓ {legalDocFile.name} ({(legalDocFile.size / 1024).toFixed(0)} KB)
+                                <button
+                                  type="button"
+                                  onClick={() => setLegalDocFile(null)}
+                                  className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
+                                  aria-label="Hapus file"
+                                  data-testid="button-remove-legal-doc"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
                               </span>
                             )}
                           </p>

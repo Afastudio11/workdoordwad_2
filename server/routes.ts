@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import multer from "multer";
 import path from "path";
 import { randomUUID } from "crypto";
+import { unlinkSync } from "fs";
 import { 
   registerPekerjaSchema, 
   registerPemberiKerjaSchema, 
@@ -348,8 +349,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // File upload endpoint for company documents (logo and legal doc)
   app.post("/api/upload/company-docs", uploadCompanyDocs, (req, res) => {
-    const fs = require('fs');
-    
     try {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       const response: { logoUrl?: string; legalDocUrl?: string } = {};
@@ -359,10 +358,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (files.logo[0].size > 1 * 1024 * 1024) {
           // Clean up all uploaded files on validation failure
           if (files.logo && files.logo[0]) {
-            fs.unlinkSync(files.logo[0].path);
+            unlinkSync(files.logo[0].path);
           }
           if (files.legalDoc && files.legalDoc[0]) {
-            fs.unlinkSync(files.legalDoc[0].path);
+            unlinkSync(files.legalDoc[0].path);
           }
           return res.status(400).json({ error: "Ukuran logo maksimal 1MB" });
         }
@@ -381,10 +380,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       if (files) {
         if (files.logo && files.logo[0]) {
-          try { fs.unlinkSync(files.logo[0].path); } catch (e) {}
+          try { unlinkSync(files.logo[0].path); } catch (e) {}
         }
         if (files.legalDoc && files.legalDoc[0]) {
-          try { fs.unlinkSync(files.legalDoc[0].path); } catch (e) {}
+          try { unlinkSync(files.legalDoc[0].path); } catch (e) {}
         }
       }
       res.status(500).json({ error: error.message || "Gagal mengupload dokumen perusahaan" });
@@ -393,14 +392,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Error handler middleware for multer errors (must be defined after route)
   app.use("/api/upload/company-docs", (err: any, req: Request, res: Response, next: any) => {
-    const fs = require('fs');
-    
     // Clean up tracked in-flight files (works even when Multer aborts pre-handler)
     const uploadedFilePaths = (req as any).uploadedFilePaths;
     if (uploadedFilePaths && Array.isArray(uploadedFilePaths)) {
       for (const filePath of uploadedFilePaths) {
         try {
-          fs.unlinkSync(filePath);
+          unlinkSync(filePath);
         } catch (e) {
           // File might not exist or already deleted
         }
@@ -411,10 +408,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     if (files) {
       if (files.logo && files.logo[0]) {
-        try { fs.unlinkSync(files.logo[0].path); } catch (e) {}
+        try { unlinkSync(files.logo[0].path); } catch (e) {}
       }
       if (files.legalDoc && files.legalDoc[0]) {
-        try { fs.unlinkSync(files.legalDoc[0].path); } catch (e) {}
+        try { unlinkSync(files.legalDoc[0].path); } catch (e) {}
       }
     }
 
