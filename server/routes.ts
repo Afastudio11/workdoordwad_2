@@ -1703,74 +1703,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { checkAnalyticsAccess, getPlanLimits } = await import("./planLimits");
-      const analyticsCheck = checkAnalyticsAccess(company);
       
+      // First check if analytics is available (checks quota and feature access)
+      const analyticsCheck = checkAnalyticsAccess(company);
       if (!analyticsCheck.allowed) {
         return res.status(403).json({ error: analyticsCheck.reason });
       }
 
+      // Then check if they have advanced analytics level
       const plan = company.subscriptionPlan || "free";
       const planLimits = getPlanLimits(plan as any);
 
-      // Basic analytics for all plans with analytics access
+      if (planLimits.analyticsLevel !== "advanced") {
+        return res.status(403).json({ 
+          error: "Fitur advanced analytics hanya tersedia untuk paket Professional dan Enterprise. Upgrade paket Anda untuk akses fitur ini." 
+        });
+      }
+
+      // Get analytics and stats
       const analytics = await storage.getEmployerAnalytics(req.session.userId);
       const stats = await storage.getEmployerStats(req.session.userId);
 
-      // For professional and enterprise, add advanced metrics
-      if (planLimits.analyticsLevel === "advanced") {
-        // Get all jobs for this employer
-        const jobs = await storage.getJobsByEmployer(req.session.userId);
-        const applications = await storage.getEmployerApplications(req.session.userId);
+      // Get all jobs for this employer
+      const jobs = await storage.getJobsByEmployer(req.session.userId);
+      const applications = await storage.getEmployerApplications(req.session.userId);
 
-        // Calculate demographics
-        const demographics = {
-          byAge: {} as Record<string, number>,
-          byLocation: {} as Record<string, number>,
-          byEducation: {} as Record<string, number>,
-        };
+      // Calculate demographics
+      const demographics = {
+        byAge: {} as Record<string, number>,
+        byLocation: {} as Record<string, number>,
+        byEducation: {} as Record<string, number>,
+      };
 
-        applications.forEach(app => {
-          if (app.user.dateOfBirth) {
-            const age = new Date().getFullYear() - parseInt(app.user.dateOfBirth.split('-')[0]);
-            const ageGroup = age < 25 ? '20-25' : age < 30 ? '26-30' : age < 35 ? '31-35' : '36+';
-            demographics.byAge[ageGroup] = (demographics.byAge[ageGroup] || 0) + 1;
-          }
-          if (app.user.city) {
-            demographics.byLocation[app.user.city] = (demographics.byLocation[app.user.city] || 0) + 1;
-          }
-          if (app.user.lastEducation) {
-            demographics.byEducation[app.user.lastEducation] = (demographics.byEducation[app.user.lastEducation] || 0) + 1;
-          }
-        });
+      applications.forEach(app => {
+        if (app.user.dateOfBirth) {
+          const age = new Date().getFullYear() - parseInt(app.user.dateOfBirth.split('-')[0]);
+          const ageGroup = age < 25 ? '20-25' : age < 30 ? '26-30' : age < 35 ? '31-35' : '36+';
+          demographics.byAge[ageGroup] = (demographics.byAge[ageGroup] || 0) + 1;
+        }
+        if (app.user.city) {
+          demographics.byLocation[app.user.city] = (demographics.byLocation[app.user.city] || 0) + 1;
+        }
+        if (app.user.lastEducation) {
+          demographics.byEducation[app.user.lastEducation] = (demographics.byEducation[app.user.lastEducation] || 0) + 1;
+        }
+      });
 
-        // Calculate conversion rate
-        const totalViews = jobs.reduce((sum, job) => sum + (job.viewCount || 0), 0);
-        const totalApplications = applications.length;
-        const conversionRate = totalViews > 0 ? ((totalApplications / totalViews) * 100).toFixed(2) : '0.00';
+      // Calculate conversion rate
+      const totalViews = jobs.reduce((sum, job) => sum + (job.viewCount || 0), 0);
+      const totalApplications = applications.length;
+      const conversionRate = totalViews > 0 ? ((totalApplications / totalViews) * 100).toFixed(2) : '0.00';
 
-        res.json({
-          ...analytics,
-          ...stats,
-          advanced: {
-            demographics,
-            conversionRate: parseFloat(conversionRate),
-            totalViews,
-            sourceTracking: {
-              organic: Math.floor(totalViews * 0.45),
-              social: Math.floor(totalViews * 0.30),
-              referral: Math.floor(totalViews * 0.15),
-              direct: Math.floor(totalViews * 0.10),
-            },
+      res.json({
+        ...analytics,
+        ...stats,
+        advanced: {
+          demographics,
+          conversionRate: parseFloat(conversionRate),
+          totalViews,
+          sourceTracking: {
+            organic: Math.floor(totalViews * 0.45),
+            social: Math.floor(totalViews * 0.30),
+            referral: Math.floor(totalViews * 0.15),
+            direct: Math.floor(totalViews * 0.10),
           },
-          analyticsLevel: planLimits.analyticsLevel,
-        });
-      } else {
-        res.json({
-          ...analytics,
-          ...stats,
-          analyticsLevel: planLimits.analyticsLevel,
-        });
-      }
+        },
+        analyticsLevel: planLimits.analyticsLevel,
+      });
     } catch (error) {
       console.error("Error fetching advanced analytics:", error);
       res.status(500).json({ error: "Failed to fetch analytics" });
