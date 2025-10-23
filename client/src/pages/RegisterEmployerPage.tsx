@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, ArrowRight, Loader2, Mail, CheckCircle2, Zap, Users, TrendingUp, Building2, Check, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Mail, CheckCircle2, Zap, Users, TrendingUp, Building2, Check, X, BadgeCheck } from "lucide-react";
 import Header from "@/components/Header";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import { Button } from "@/components/ui/button";
@@ -74,11 +74,13 @@ interface PricingPlan {
   id: string;
   name: string;
   tagline: string;
-  price: number | string;
+  priceMonthly: number | string;
+  priceYearly: number | string;
   badge?: string;
   isPopular?: boolean;
   features: PlanFeature[];
   icon: any;
+  hasVerifiedBadge?: boolean;
 }
 
 const plans: PricingPlan[] = [
@@ -86,13 +88,16 @@ const plans: PricingPlan[] = [
     id: "free",
     name: "GRATIS",
     tagline: "Untuk Memulai",
-    price: 0,
+    priceMonthly: 0,
+    priceYearly: 0,
     badge: "Cocok untuk UMKM",
     icon: Zap,
+    hasVerifiedBadge: false,
     features: [
       { text: "Posting 3 lowongan kerja per bulan", included: true },
       { text: "Dashboard pemberi kerja dasar", included: true },
       { text: "Durasi lowongan: 30 hari", included: true },
+      { text: "Verified Badge (Centang Biru)", included: false },
       { text: "Badge Featured", included: false },
       { text: "Analytics", included: false },
     ],
@@ -101,11 +106,14 @@ const plans: PricingPlan[] = [
     id: "starter",
     name: "STARTER",
     tagline: "Untuk Bisnis Berkembang",
-    price: 199000,
+    priceMonthly: 199000,
+    priceYearly: 1990000, // 10 bulan, hemat 2 bulan
     badge: "Populer",
     isPopular: true,
     icon: Users,
+    hasVerifiedBadge: true,
     features: [
+      { text: "Verified Badge (Centang Biru)", included: true },
       { text: "Posting 10 lowongan kerja per bulan", included: true },
       { text: "Badge \"Featured\" di 3 lowongan", included: true },
       { text: "Analytics dasar (views, aplikasi)", included: true },
@@ -117,10 +125,13 @@ const plans: PricingPlan[] = [
     id: "professional",
     name: "PROFESSIONAL",
     tagline: "Solusi Terbaik untuk Perekrutan",
-    price: 399000,
+    priceMonthly: 399000,
+    priceYearly: 3990000, // 10 bulan, hemat 2 bulan
     badge: "RECOMMENDED",
     icon: TrendingUp,
+    hasVerifiedBadge: true,
     features: [
+      { text: "Verified Badge (Centang Biru)", included: true },
       { text: "Posting 30 lowongan kerja per bulan", included: true },
       { text: "Badge \"Featured\" & \"Urgent\" unlimited", included: true },
       { text: "Analytics lengkap + demografi kandidat", included: true },
@@ -132,10 +143,13 @@ const plans: PricingPlan[] = [
     id: "enterprise",
     name: "ENTERPRISE",
     tagline: "Untuk Korporasi & Perusahaan Besar",
-    price: "Hubungi Kami",
+    priceMonthly: "Hubungi Kami",
+    priceYearly: "Hubungi Kami",
     badge: "Custom Solution",
     icon: Building2,
+    hasVerifiedBadge: true,
     features: [
+      { text: "Verified Badge (Centang Biru)", included: true },
       { text: "Posting UNLIMITED lowongan kerja", included: true },
       { text: "Dedicated Account Manager", included: true },
       { text: "Database CV kandidat UNLIMITED", included: true },
@@ -152,6 +166,7 @@ export default function RegisterEmployerPage() {
   const [formData, setFormData] = useState<Partial<Step1Data & Step2Data & Step3Data> & { logo?: string; legalDocUrl?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string>("free");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [legalDocFile, setLegalDocFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -832,11 +847,38 @@ export default function RegisterEmployerPage() {
         {/* Step 4: Pilih Paket */}
         {currentStep === 4 && (
           <div className="space-y-6">
-            <div className="text-center">
+            <div className="text-center space-y-4">
               <h2 className="heading-2 text-heading mb-2">Pilih Paket Layanan</h2>
               <p className="body-base text-muted-foreground">
                 Pilih paket yang sesuai dengan kebutuhan perusahaan Anda
               </p>
+              
+              {/* Billing Cycle Toggle */}
+              <div className="inline-flex items-center gap-2 bg-muted p-1 rounded-lg">
+                <button
+                  onClick={() => setBillingCycle("monthly")}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    billingCycle === "monthly"
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  data-testid="button-billing-monthly"
+                >
+                  Bulanan
+                </button>
+                <button
+                  onClick={() => setBillingCycle("yearly")}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    billingCycle === "yearly"
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  data-testid="button-billing-yearly"
+                >
+                  Tahunan
+                  <span className="ml-1 text-xs text-primary font-semibold">Hemat 2 Bulan!</span>
+                </button>
+              </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -867,19 +909,36 @@ export default function RegisterEmployerPage() {
                         <Icon className="w-6 h-6 text-foreground" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl font-bold text-foreground">{plan.name}</CardTitle>
+                        <CardTitle className="text-2xl font-bold text-foreground inline-flex items-center gap-2">
+                          {plan.name}
+                          {plan.hasVerifiedBadge && (
+                            <BadgeCheck className="w-6 h-6 text-primary" />
+                          )}
+                        </CardTitle>
                         <p className="text-sm text-muted-foreground mt-1">{plan.tagline}</p>
                       </div>
                       <div className="pt-4">
-                        {typeof plan.price === 'number' ? (
+                        {typeof (billingCycle === "monthly" ? plan.priceMonthly : plan.priceYearly) === 'number' ? (
                           <>
                             <div className="text-3xl font-bold text-foreground">
-                              {plan.price === 0 ? 'Rp 0' : `Rp ${plan.price.toLocaleString('id-ID')}`}
+                              {(billingCycle === "monthly" ? plan.priceMonthly : plan.priceYearly) === 0 
+                                ? 'Rp 0' 
+                                : `Rp ${((billingCycle === "monthly" ? plan.priceMonthly : plan.priceYearly) as number).toLocaleString('id-ID')}`
+                              }
                             </div>
-                            <div className="text-sm text-muted-foreground">per bulan</div>
+                            <div className="text-sm text-muted-foreground">
+                              per {billingCycle === "monthly" ? "bulan" : "tahun"}
+                            </div>
+                            {billingCycle === "yearly" && plan.priceYearly !== 0 && (
+                              <div className="text-xs text-primary font-medium mt-1">
+                                ~Rp {Math.floor((plan.priceYearly as number) / 12).toLocaleString('id-ID')}/bulan
+                              </div>
+                            )}
                           </>
                         ) : (
-                          <div className="text-2xl font-bold text-foreground">{plan.price}</div>
+                          <div className="text-2xl font-bold text-foreground">
+                            {billingCycle === "monthly" ? plan.priceMonthly : plan.priceYearly}
+                          </div>
                         )}
                       </div>
                     </CardHeader>

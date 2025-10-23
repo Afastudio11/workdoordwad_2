@@ -5,7 +5,7 @@ Pintu Kerja is a freemium job classifieds platform designed for UMKM (small-medi
 
 ## Recent Changes
 
-### Migration Completed & File Upload Fix (October 23, 2025)
+### Pricing Plans Update & Migration Completed (October 23, 2025)
 **Successfully migrated from Replit Agent to Replit environment:**
 
 **Completed:**
@@ -15,6 +15,19 @@ Pintu Kerja is a freemium job classifieds platform designed for UMKM (small-medi
 - ✅ Application running without errors
 - ✅ Fixed file upload error: Changed `require('fs')` to ESM import `unlinkSync` from 'fs'
 - ✅ Added X button to cancel selected files in employer registration upload form
+- ✅ Created upload directories for logos and legal documents
+
+**Pricing Plans Enhancement:**
+- ✅ **Added Yearly Billing Option**: All plans now have monthly and yearly pricing
+  - Yearly plans save 2 months (10 months price for 12 months service)
+  - Starter: Rp 199,000/month or Rp 1,990,000/year
+  - Professional: Rp 399,000/month or Rp 3,990,000/year
+- ✅ **Verified Badge Feature**: Starter and Professional plans now include verified badge (blue checkmark)
+  - Similar to Instagram/Twitter verification badge
+  - Shows trust and authenticity for premium users
+  - Icon displayed next to company name in pricing cards
+- ✅ **Billing Cycle Toggle**: User-friendly toggle to switch between monthly and yearly plans
+- ✅ **Updated Features List**: All plans now clearly show verified badge as a feature
 
 **Pending:**
 - ⏳ **Email Verification System**: UI exists but email sending not implemented yet
