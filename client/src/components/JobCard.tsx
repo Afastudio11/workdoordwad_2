@@ -62,7 +62,7 @@ export default function JobCard({
 
   return (
     <>
-      <div className="card-interactive card-padding bg-gray-100 dark:bg-gray-800" data-testid={`card-job-${id}`}>
+      <div className="card-interactive card-padding bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700" data-testid={`card-job-${id}`}>
         <div className="flex items-start gap-3 mb-4">
           {companyLogo ? (
             <img 
@@ -72,8 +72,8 @@ export default function JobCard({
               data-testid={`img-company-logo-${id}`}
             />
           ) : (
-            <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center border border-border">
-              <span className="text-xl font-bold text-gray-600 dark:text-gray-300" data-testid={`text-company-initial-${id}`}>
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center border border-border">
+              <span className="text-xl font-bold text-blue-600 dark:text-blue-300" data-testid={`text-company-initial-${id}`}>
                 {getCompanyInitial(company)}
               </span>
             </div>

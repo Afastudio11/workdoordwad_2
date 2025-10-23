@@ -152,50 +152,59 @@ export default function JobCircularsSection() {
             {filteredJobs.map((job, index) => (
               <div
                 key={job.id}
-                className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-md transition-all duration-300"
+                className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-300"
                 data-testid={`job-card-${index}`}
               >
-                {/* Position and Location */}
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-black mb-2">
-                    {job.title}
-                  </h3>
-                  <div className="flex items-center gap-1 text-sm text-gray-500">
-                    <MapPin className="h-3.5 w-3.5" />
-                    <span>{job.location}</span>
+                {/* Company Logo and Title */}
+                <div className="flex items-start gap-3 mb-4">
+                  {job.company.logo ? (
+                    <img 
+                      src={job.company.logo} 
+                      alt={`${job.company.name} logo`}
+                      className="w-12 h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                      <span className="text-xl font-bold text-blue-600 dark:text-blue-300">
+                        {job.company.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+                      {job.title}
+                    </h3>
+                    <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+                      <MapPin className="h-4 w-4" />
+                      <span>{job.location}</span>
+                    </div>
                   </div>
                 </div>
                 
                 {/* Company */}
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="text-2xl">🏢</div>
-                  <span className="text-sm font-medium text-black">{job.company.name}</span>
+                <div className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300 mb-3">
+                  <Briefcase className="h-4 w-4" />
+                  <span>{job.company.name}</span>
                 </div>
 
                 {/* Time and Type */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <Clock className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
                     <span>{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true, locale: localeId })}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <Briefcase className="h-3.5 w-3.5" />
-                    <span>{formatJobType(job.jobType)}</span>
-                  </div>
+                  <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-medium">
+                    {formatJobType(job.jobType)}
+                  </span>
                 </div>
 
                 {/* Category and Salary */}
-                <div className="flex items-center gap-2 mb-5">
-                  {job.industry && (
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <Briefcase className="h-3.5 w-3.5" />
-                      <span>{job.industry}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <Coins className="h-3.5 w-3.5" />
-                    <span>{formatSalary(job.salaryMin, job.salaryMax)}</span>
-                  </div>
+                <div className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                  {job.industry && <span>{job.industry}</span>}
+                  {job.industry && <span className="mx-2">•</span>}
+                  <span className="font-semibold text-black dark:text-white">
+                    {formatSalary(job.salaryMin, job.salaryMax)}
+                  </span>
                 </div>
 
                 {/* Apply Button */}
