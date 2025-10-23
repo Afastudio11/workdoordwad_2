@@ -25,10 +25,14 @@ interface Job {
   industry: string | null;
   salaryMin: number | null;
   salaryMax: number | null;
+  isFeatured: boolean;
+  isUrgent: boolean;
   createdAt: string;
   company: {
     id: string;
     name: string;
+    logo: string | null;
+    subscriptionPlan: string;
   };
 }
 
@@ -253,6 +257,10 @@ export default function NewJobDashboardPage() {
                         location={job.location}
                         bgColor={getJobCardColor(index)}
                         jobType={jobTypeLabel[job.jobType] || job.jobType}
+                        companyLogo={job.company.logo}
+                        subscriptionPlan={job.company.subscriptionPlan}
+                        isFeatured={job.isFeatured}
+                        isUrgent={job.isUrgent}
                       />
                     );
                   })}

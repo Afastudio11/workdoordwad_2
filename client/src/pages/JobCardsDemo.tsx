@@ -11,7 +11,10 @@ const mockJobs = [
     tags: ["Pengembangan Web"],
     salary: "Rp 8jt-Rp 12jt",
     icon: "🍎",
-    jobType: "Penuh Waktu"
+    jobType: "Penuh Waktu",
+    subscriptionPlan: "free",
+    isFeatured: false,
+    isUrgent: false
   },
   {
     id: "2",
@@ -22,7 +25,10 @@ const mockJobs = [
     tags: ["Grafis"],
     salary: "Rp 10jt-Rp 15jt",
     icon: "🎯",
-    jobType: "Penuh Waktu"
+    jobType: "Penuh Waktu",
+    subscriptionPlan: "starter",
+    isFeatured: true,
+    isUrgent: false
   },
   {
     id: "3",
@@ -33,7 +39,10 @@ const mockJobs = [
     tags: ["Teknologi"],
     salary: "Rp 12jt-Rp 18jt",
     icon: "💼",
-    jobType: "Penuh Waktu"
+    jobType: "Penuh Waktu",
+    subscriptionPlan: "professional",
+    isFeatured: true,
+    isUrgent: true
   },
   {
     id: "4",
@@ -44,7 +53,10 @@ const mockJobs = [
     tags: ["Pengembangan Web"],
     salary: "Rp 9jt-Rp 14jt",
     icon: "🎨",
-    jobType: "Penuh Waktu"
+    jobType: "Penuh Waktu",
+    subscriptionPlan: "enterprise",
+    isFeatured: true,
+    isUrgent: true
   },
   {
     id: "5",
@@ -55,7 +67,10 @@ const mockJobs = [
     tags: ["Pengembangan Web"],
     salary: "Rp 15jt-Rp 25jt",
     icon: "💻",
-    jobType: "Penuh Waktu"
+    jobType: "Penuh Waktu",
+    subscriptionPlan: "enterprise",
+    isFeatured: false,
+    isUrgent: true
   },
   {
     id: "6",
@@ -66,7 +81,10 @@ const mockJobs = [
     tags: ["Desain"],
     salary: "Rp 9jt-Rp 13jt",
     icon: "🚀",
-    jobType: "Penuh Waktu"
+    jobType: "Penuh Waktu",
+    subscriptionPlan: "starter",
+    isFeatured: true,
+    isUrgent: false
   }
 ];
 
@@ -91,6 +109,9 @@ export default function JobCardsDemo() {
               salary={job.salary}
               icon={job.icon}
               jobType={job.jobType}
+              subscriptionPlan={job.subscriptionPlan}
+              isFeatured={job.isFeatured}
+              isUrgent={job.isUrgent}
             />
           ))}
         </div>
