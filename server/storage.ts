@@ -518,6 +518,26 @@ export class DbStorage implements IStorage {
     return company;
   }
 
+  async incrementCompanyQuota(companyId: string, increments: {
+    jobPosting?: number;
+    featured?: number;
+    urgent?: number;
+    cvDownload?: number;
+  }): Promise<void> {
+    const company = await this.getCompanyById(companyId);
+    if (!company) return;
+
+    await db
+      .update(companiesTable)
+      .set({
+        jobPostingCount: (company.jobPostingCount || 0) + (increments.jobPosting || 0),
+        featuredJobCount: (company.featuredJobCount || 0) + (increments.featured || 0),
+        urgentJobCount: (company.urgentJobCount || 0) + (increments.urgent || 0),
+        cvDownloadCount: (company.cvDownloadCount || 0) + (increments.cvDownload || 0),
+      })
+      .where(eq(companiesTable.id, companyId));
+  }
+
   async createApplication(insertApplication: InsertApplication): Promise<Application> {
     const [application] = await db.insert(applicationsTable).values(insertApplication).returning();
     return application;
@@ -1263,7 +1283,8 @@ export class DbStorage implements IStorage {
     }
 
     if (filters?.isVerified !== undefined) {
-      conditions.push(eq(usersTable.isVerified, filters.isVerified));
+      const verificationStatus = filters.isVerified ? 'verified' : 'pending';
+      conditions.push(eq(usersTable.verificationStatus, verificationStatus));
     }
 
     const users = await db

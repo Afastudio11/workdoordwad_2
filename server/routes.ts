@@ -948,14 +948,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = insertJobSchema.parse(req.body);
       
+      const company = await storage.getCompanyById(validatedData.companyId);
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+      
+      if (company.createdBy !== req.session.userId) {
+        return res.status(403).json({ error: "You don't have access to this company" });
+      }
+      
+      const plan = company.subscriptionPlan || "free";
+
+      const { canPostJob, canUseFeatured, canUseUrgent } = await import("../shared/subscription-plans");
+      
+      const jobCheck = canPostJob(plan as any, company.jobPostingCount || 0);
+      if (!jobCheck.allowed) {
+        return res.status(403).json({ error: jobCheck.reason });
+      }
+      
+      if (validatedData.isFeatured) {
+        const featuredCheck = canUseFeatured(plan as any, company.featuredJobCount || 0);
+        if (!featuredCheck.allowed) {
+          return res.status(403).json({ error: featuredCheck.reason });
+        }
+      }
+      
+      if (validatedData.isUrgent) {
+        const urgentCheck = canUseUrgent(plan as any, company.urgentJobCount || 0);
+        if (!urgentCheck.allowed) {
+          return res.status(403).json({ error: urgentCheck.reason });
+        }
+      }
+      
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 30);
+      
       const sanitizedData = {
         ...validatedData,
         description: sanitizeHtml(validatedData.description),
         requirements: validatedData.requirements ? sanitizeHtml(validatedData.requirements) : null,
         postedBy: req.session.userId,
+        expiresAt: expiresAt,
       };
       
       const job = await storage.createJob(sanitizedData);
+      
+      await storage.incrementCompanyQuota(company.id, {
+        jobPosting: 1,
+        featured: validatedData.isFeatured ? 1 : 0,
+        urgent: validatedData.isUrgent ? 1 : 0,
+      });
 
       res.status(201).json(job);
     } catch (error: any) {
