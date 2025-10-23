@@ -1,0 +1,413 @@
+Baik, berikut **PROMPT LENGKAP** untuk membuat dummy data di setiap akun agar bisa melihat tampilan UI secara detail:
+
+***
+
+```
+GENERATE DUMMY DATA UNTUK SETIAP AKUN TESTING - TAMPILAN UI LENGKAP
+
+Buat data dummy lengkap untuk setiap akun agar bisa melihat tampilan dashboard, stats, dan fitur secara detail.
+
+═══════════════════════════════════════════════════════════
+OBJECTIVE: ISI DATABASE DENGAN DATA REALISTIS
+═══════════════════════════════════════════════════════════
+
+Untuk setiap akun (free, starter, professional, enterprise), buat:
+- Jobs yang sudah diposting
+- Aplikasi dari job seekers
+- Views statistics
+- Analytics data
+
+Agar dashboard TIDAK KOSONG dan bisa lihat UI lengkap.
+
+═══════════════════════════════════════════════════════════
+1. AKUN FREE (free@testcompany.com)
+═══════════════════════════════════════════════════════════
+
+### A. POST 3 JOBS (Gunakan Quota Penuh)
+
+**Job 1:**
+- Title: "Admin Staff"
+- Category: Operations
+- Type: Full Time
+- Location: Jakarta Selatan
+- Salary: Rp 4.500.000 - Rp 6.000.000
+- Posted: 5 hari lalu
+- Status: Published
+- Views: 45
+- Applications: 8
+- Featured: FALSE
+- Urgent: FALSE
+- Expires: 25 hari lagi (30 hari total)
+
+**Job 2:**
+- Title: "Customer Service"
+- Category: Customer Service
+- Type: Full Time
+- Location: Jakarta Pusat
+- Salary: Rp 4.000.000 - Rp 5.500.000
+- Posted: 3 hari lalu
+- Status: Published
+- Views: 32
+- Applications: 5
+- Featured: FALSE
+- Urgent: FALSE
+- Expires: 27 hari lagi
+
+**Job 3:**
+- Title: "Data Entry Operator"
+- Category: Operations
+- Type: Part Time
+- Location: Tangerang
+- Salary: Rp 3.000.000 - Rp 4.000.000
+- Posted: 1 hari lalu
+- Status: Published
+- Views: 18
+- Applications: 2
+- Featured: FALSE
+- Urgent: FALSE
+- Expires: 29 hari lagi
+
+### B. Dashboard Stats (FREE)
+
+```
+Lowongan Aktif: 3
+Pelamar Baru Minggu Ini: 4
+Total Pelamar (All Time): 15
+Total Lowongan: 3
+
+Job Post Quota: 3 / 3 used (FULL!)
+Warning: "Quota posting Anda sudah habis. Upgrade ke Starter untuk post lebih banyak."
+```
+
+### C. Aplikasi dari Job Seekers
+
+Generate 15 aplikasi total:
+- Job 1 (Admin): 8 pelamar
+- Job 2 (CS): 5 pelamar
+- Job 3 (Data Entry): 2 pelamar
+
+**Pelamar Detail (contoh 3):**
+1. Budi Santoso - Applied 4 hari lalu - Status: Pending
+2. Siti Nurhaliza - Applied 3 hari lalu - Status: Reviewed
+3. Ahmad Fauzi - Applied 2 hari lalu - Status: Pending
+
+═══════════════════════════════════════════════════════════
+2. AKUN STARTER (starter@testcompany.com)
+═══════════════════════════════════════════════════════════
+
+### A. POST 7 JOBS (70% Quota)
+
+**Job 1 - FEATURED:**
+- Title: "Marketing Manager"
+- Category: Marketing
+- Type: Full Time
+- Location: Bandung
+- Salary: Rp 8.000.000 - Rp 12.000.000
+- Posted: 7 hari lalu
+- Status: Published
+- Featured: TRUE ⭐
+- Urgent: FALSE
+- Views: 234
+- Applications: 28
+- Expires: 23 hari lagi
+
+**Job 2 - FEATURED:**
+- Title: "Graphic Designer"
+- Category: Design
+- Type: Full Time
+- Location: Bandung
+- Salary: Rp 6.000.000 - Rp 9.000.000
+- Posted: 5 hari lalu
+- Status: Published
+- Featured: TRUE ⭐
+- Urgent: FALSE
+- Views: 189
+- Applications: 22
+- Expires: 25 hari lagi
+
+**Job 3 - FEATURED:**
+- Title: "Social Media Specialist"
+- Category: Marketing
+- Type: Full Time
+- Location: Bandung
+- Salary: Rp 5.500.000 - Rp 8.000.000
+- Posted: 4 hari lalu
+- Status: Published
+- Featured: TRUE ⭐
+- Urgent: FALSE
+- Views: 156
+- Applications: 18
+- Expires: 26 hari lagi
+
+**Job 4-7: Regular (Not Featured)**
+- "Sales Executive" - 120 views, 15 aplikasi
+- "Content Writer" - 98 views, 12 aplikasi
+- "HR Staff" - 76 views, 9 aplikasi
+- "Accountant" - 145 views, 20 aplikasi
+
+### B. Dashboard Stats (STARTER)
+
+```
+Lowongan Aktif: 7
+Pelamar Baru Minggu Ini: 35
+Total Pelamar (All Time): 124
+Total Lowongan: 7
+
+Job Post Quota: 7 / 10 used
+Featured Quota: 3 / 3 used (FULL!)
+Next Reset: 1 November 2025
+
+Verified Badge ✓ (BIRU) TAMPIL di company name
+```
+
+### C. Analytics BASIC (Starter)
+
+```
+Total Views (7 hari): 1.234
+Total Aplikasi (7 hari): 45
+
+Chart Views per Hari:
+- Day 1: 145 views
+- Day 2: 178 views
+- Day 3: 192 views
+- Day 4: 201 views
+- Day 5: 189 views
+- Day 6: 167 views
+- Day 7: 162 views
+
+Top Performing Jobs:
+1. Marketing Manager - 234 views
+2. Accountant - 145 views
+3. Sales Executive - 120 views
+```
+
+### D. Generate 124 Aplikasi
+
+Spread across 7 jobs dengan status mix:
+- 40% Pending
+- 30% Reviewed
+- 20% Shortlisted
+- 10% Rejected
+
+═══════════════════════════════════════════════════════════
+3. AKUN PROFESSIONAL (professional@testcompany.com)
+═══════════════════════════════════════════════════════════
+
+### A. POST 18 JOBS (60% Quota)
+
+**5 Jobs FEATURED + URGENT:**
+- "Senior Frontend Developer" - 456 views, 52 aplikasi
+- "Backend Developer" - 398 views, 45 aplikasi
+- "UI/UX Designer" - 367 views, 38 aplikasi
+- "Product Manager" - 423 views, 41 aplikasi
+- "DevOps Engineer" - 334 views, 35 aplikasi
+
+**8 Jobs FEATURED Only:**
+- "Junior Developer" - 289 views, 32 aplikasi
+- "QA Engineer" - 234 views, 28 aplikasi
+- "Business Analyst" - 267 views, 30 aplikasi
+- "Project Manager" - 312 views, 34 aplikasi
+- "Data Analyst" - 256 views, 26 aplikasi
+- "Mobile Developer" - 298 views, 33 aplikasi
+- "System Analyst" - 223 views, 25 aplikasi
+- "Scrum Master" - 201 views, 22 aplikasi
+
+**5 Jobs Regular:**
+- "IT Support" - 145 views, 18 aplikasi
+- "Network Admin" - 123 views, 15 aplikasi
+- "Database Admin" - 167 views, 19 aplikasi
+- "Security Analyst" - 134 views, 16 aplikasi
+- "Technical Writer" - 112 views, 13 aplikasi
+
+### B. Dashboard Stats (PROFESSIONAL)
+
+```
+Lowongan Aktif: 18
+Pelamar Baru Minggu Ini: 87
+Total Pelamar (All Time): 542
+Total Lowongan: 18
+
+Job Post Quota: 18 / 30 used
+Featured Jobs: 13 / Unlimited ∞
+Urgent Jobs: 5 / Unlimited ∞
+CV Downloads: 35 / 100 used
+
+Verified Badge ✓ (BIRU) TAMPIL
+Badge "PROFESSIONAL" di avatar
+```
+
+### C. Analytics ADVANCED (Professional)
+
+```
+Total Views (30 hari): 8.456
+Total Aplikasi (30 hari): 542
+Conversion Rate: 6.4%
+
+Views per Hari (Chart):
+[Generate 30 hari data dengan trend naik]
+
+Demografi Kandidat:
+- Usia:
+  * 20-25: 25%
+  * 26-30: 35%
+  * 31-35: 25%
+  * 36+: 15%
+
+- Lokasi:
+  * Jakarta: 45%
+  * Bandung: 20%
+  * Surabaya: 15%
+  * Yogyakarta: 10%
+  * Lainnya: 10%
+
+- Pendidikan:
+  * S1: 65%
+  * S2: 20%
+  * D3: 10%
+  * SMA: 5%
+
+Source Tracking:
+- Organic Search: 45%
+- Social Media: 30%
+- Referral: 15%
+- Direct: 10%
+
+Top Performing Jobs:
+1. Senior Frontend Developer - 456 views
+2. Product Manager - 423 views
+3. Backend Developer - 398 views
+```
+
+### D. CV Database Access
+
+```
+Generate 35 kandidat yang sudah didownload:
+
+1. Ahmad Ridwan - Frontend Developer - 3 tahun exp - Jakarta
+2. Siti Rahma - UI/UX Designer - 2 tahun exp - Bandung
+3. Budi Prasetyo - Backend Developer - 4 tahun exp - Surabaya
+... (32 more)
+
+Quota: 35 / 100 CV downloaded
+Status: Active
+```
+
+### E. Generate 542 Aplikasi
+
+Spread across 18 jobs dengan status mix dan timeline realistis.
+
+═══════════════════════════════════════════════════════════
+4. AKUN ENTERPRISE (enterprise@testcompany.com)
+═══════════════════════════════════════════════════════════
+
+### A. POST 35 JOBS (Show Unlimited Power)
+
+**15 Jobs FEATURED + URGENT:**
+- Various tech positions
+- High views (500-800 each)
+- High aplikasi (60-100 each)
+
+**15 Jobs FEATURED Only:**
+- Mid-level positions
+- Medium views (300-500 each)
+- Medium aplikasi (40-60 each)
+
+**5 Jobs Regular:**
+- Entry level positions
+- Lower views (150-300 each)
+- Lower aplikasi (20-40 each)
+
+### B. Dashboard Stats (ENTERPRISE)
+
+```
+Lowongan Aktif: 35
+Pelamar Baru Minggu Ini: 245
+Total Pelamar (All Time): 1.823
+Total Lowongan: 35
+
+Job Post Quota: Unlimited ∞
+Featured Jobs: Unlimited ∞
+Urgent Jobs: Unlimited ∞
+CV Downloads: Unlimited ∞
+
+Verified Badge ✓ TAMPIL
+Badge "ENTERPRISE" di avatar
+Info: "Dedicated Account Manager: contact@support.com"
+```
+
+### C. Analytics ADVANCED + Custom
+
+```
+Total Views (90 hari): 45.678
+Total Aplikasi (90 hari): 1.823
+Conversion Rate: 4.0%
+
+Full analytics sama seperti Professional PLUS:
+- Custom date range picker
+- Export to PDF report
+- Custom metrics
+- Advanced filtering
+```
+
+### D. CV Database - Unlimited
+
+```
+CV Downloaded: 234 (No limit)
+Status: Unlimited Access
+```
+
+### E. Generate 1.823 Aplikasi
+
+Massive data across all jobs.
+
+═══════════════════════════════════════════════════════════
+IMPLEMENTASI DUMMY DATA
+═══════════════════════════════════════════════════════════
+
+Setelah generate semua data, pastikan:
+
+1. **Dashboard UI Terisi Lengkap:**
+   - Stats cards tampil angka real
+   - Charts tampil dengan data
+   - Recent activity tampil
+   - Quota bars tampil dengan persentase
+
+2. **My Jobs Page:**
+   - List semua jobs dengan preview
+   - Views & aplikasi count tampil
+   - Status badges (Featured, Urgent) tampil
+   - Edit/Delete buttons functional
+
+3. **Applicants Page:**
+   - List kandidat per job
+   - Status filtering works
+   - Pagination works
+
+4. **Analytics Page:**
+   - Charts render dengan data real
+   - Stats accurate
+   - Export works (Professional+)
+
+5. **CV Database Page (Professional+):**
+   - List kandidat tampil
+   - Search & filter works
+   - Download works dengan quota tracking
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+✅ Dashboard TIDAK KOSONG untuk semua akun
+✅ Bisa lihat UI lengkap dengan data realistis
+✅ Stats, charts, dan metrics tampil
+✅ Quota bars tampil dengan data real
+✅ Bisa test filter, search, pagination
+✅ Bisa lihat perbedaan fitur per paket
+✅ Screenshots untuk dokumentasi
+
+**Generate semua data sekarang agar bisa lihat tampilan UI secara lengkap!**
+```
+
+***
+
+Prompt ini akan membuat Replit mengisi database dengan data dummy yang cukup banyak dan realistis untuk masing-masing akun, sehingga dashboard dan semua fitur bisa terlihat dengan jelas dan tidak kosong.

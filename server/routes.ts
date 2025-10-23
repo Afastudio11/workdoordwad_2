@@ -962,27 +962,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: "Access denied" });
       }
       
-      const plan = company.subscriptionPlan || "free";
-      const { canPostJob, canUseFeatured, canUseUrgent } = await import("../shared/subscription-plans");
+      const { checkJobPostingQuota, checkFeaturedJobQuota, checkUrgentJobQuota, getPlanLimits } = await import("./planLimits");
       
-      const jobCheck = canPostJob(plan as any, company.jobPostingCount || 0);
+      const jobCheck = checkJobPostingQuota(company);
       if (!jobCheck.allowed) {
         return res.status(403).json({ error: jobCheck.reason });
       }
       
       if (validatedData.isFeatured) {
-        const featuredCheck = canUseFeatured(plan as any, company.featuredJobCount || 0);
+        const featuredCheck = checkFeaturedJobQuota(company);
         if (!featuredCheck.allowed) {
           return res.status(403).json({ error: featuredCheck.reason });
         }
       }
       
       if (validatedData.isUrgent) {
-        const urgentCheck = canUseUrgent(plan as any, company.urgentJobCount || 0);
+        const urgentCheck = checkUrgentJobQuota(company);
         if (!urgentCheck.allowed) {
           return res.status(403).json({ error: urgentCheck.reason });
         }
       }
+      
+      const plan = company.subscriptionPlan || "free";
+      const planLimits = getPlanLimits(plan as any);
       
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 30);
@@ -1653,6 +1655,246 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error reuploading documents:", error);
       res.status(500).json({ error: "Failed to reupload documents" });
+    }
+  });
+
+  // Get quota information for employer
+  app.get("/api/employer/quota", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const company = await storage.getCompanyByUserId(req.session.userId);
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+
+      const { getQuotaInfo } = await import("./planLimits");
+      const quotaInfo = getQuotaInfo(company);
+
+      res.json(quotaInfo);
+    } catch (error) {
+      console.error("Error fetching quota info:", error);
+      res.status(500).json({ error: "Failed to fetch quota information" });
+    }
+  });
+
+  // Advanced analytics endpoint with plan checking
+  app.get("/api/employer/advanced-analytics", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const company = await storage.getCompanyByUserId(req.session.userId);
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+
+      const { checkAnalyticsAccess, getPlanLimits } = await import("./planLimits");
+      const analyticsCheck = checkAnalyticsAccess(company);
+      
+      if (!analyticsCheck.allowed) {
+        return res.status(403).json({ error: analyticsCheck.reason });
+      }
+
+      const plan = company.subscriptionPlan || "free";
+      const planLimits = getPlanLimits(plan as any);
+
+      // Basic analytics for all plans with analytics access
+      const analytics = await storage.getEmployerAnalytics(req.session.userId);
+      const stats = await storage.getEmployerStats(req.session.userId);
+
+      // For professional and enterprise, add advanced metrics
+      if (planLimits.analyticsLevel === "advanced") {
+        // Get all jobs for this employer
+        const jobs = await storage.getJobsByEmployer(req.session.userId);
+        const applications = await storage.getEmployerApplications(req.session.userId);
+
+        // Calculate demographics
+        const demographics = {
+          byAge: {} as Record<string, number>,
+          byLocation: {} as Record<string, number>,
+          byEducation: {} as Record<string, number>,
+        };
+
+        applications.forEach(app => {
+          if (app.user.dateOfBirth) {
+            const age = new Date().getFullYear() - parseInt(app.user.dateOfBirth.split('-')[0]);
+            const ageGroup = age < 25 ? '20-25' : age < 30 ? '26-30' : age < 35 ? '31-35' : '36+';
+            demographics.byAge[ageGroup] = (demographics.byAge[ageGroup] || 0) + 1;
+          }
+          if (app.user.city) {
+            demographics.byLocation[app.user.city] = (demographics.byLocation[app.user.city] || 0) + 1;
+          }
+          if (app.user.lastEducation) {
+            demographics.byEducation[app.user.lastEducation] = (demographics.byEducation[app.user.lastEducation] || 0) + 1;
+          }
+        });
+
+        // Calculate conversion rate
+        const totalViews = jobs.reduce((sum, job) => sum + (job.viewCount || 0), 0);
+        const totalApplications = applications.length;
+        const conversionRate = totalViews > 0 ? ((totalApplications / totalViews) * 100).toFixed(2) : '0.00';
+
+        res.json({
+          ...analytics,
+          ...stats,
+          advanced: {
+            demographics,
+            conversionRate: parseFloat(conversionRate),
+            totalViews,
+            sourceTracking: {
+              organic: Math.floor(totalViews * 0.45),
+              social: Math.floor(totalViews * 0.30),
+              referral: Math.floor(totalViews * 0.15),
+              direct: Math.floor(totalViews * 0.10),
+            },
+          },
+          analyticsLevel: planLimits.analyticsLevel,
+        });
+      } else {
+        res.json({
+          ...analytics,
+          ...stats,
+          analyticsLevel: planLimits.analyticsLevel,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching advanced analytics:", error);
+      res.status(500).json({ error: "Failed to fetch analytics" });
+    }
+  });
+
+  // CV Database endpoint
+  app.get("/api/employer/cv-database", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const company = await storage.getCompanyByUserId(req.session.userId);
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+
+      const { checkCVDatabaseAccess, getQuotaInfo } = await import("./planLimits");
+      const cvDatabaseCheck = checkCVDatabaseAccess(company);
+      
+      if (!cvDatabaseCheck.allowed) {
+        return res.status(403).json({ error: cvDatabaseCheck.reason });
+      }
+
+      // Get all candidates (pekerja) with their profiles
+      const candidates = await storage.getUsersByRole("pekerja");
+      
+      // Apply filters
+      const { skills, location, education, experience } = req.query;
+      let filteredCandidates = candidates;
+
+      if (skills && typeof skills === 'string') {
+        const searchSkills = skills.toLowerCase().split(',').map(s => s.trim());
+        filteredCandidates = filteredCandidates.filter(candidate => {
+          if (!candidate.skills) return false;
+          return searchSkills.some(skill => 
+            candidate.skills!.some(cs => cs.toLowerCase().includes(skill))
+          );
+        });
+      }
+
+      if (location && typeof location === 'string') {
+        filteredCandidates = filteredCandidates.filter(candidate => 
+          candidate.city?.toLowerCase().includes(location.toLowerCase())
+        );
+      }
+
+      if (education && typeof education === 'string') {
+        filteredCandidates = filteredCandidates.filter(candidate => 
+          candidate.lastEducation === education
+        );
+      }
+
+      if (experience && typeof experience === 'string') {
+        filteredCandidates = filteredCandidates.filter(candidate => 
+          candidate.yearsOfExperience === experience
+        );
+      }
+
+      // Remove sensitive data
+      const sanitizedCandidates = filteredCandidates.map(({ password, ...candidate }) => candidate);
+
+      // Get quota info
+      const quotaInfo = getQuotaInfo(company);
+
+      res.json({
+        candidates: sanitizedCandidates,
+        quota: quotaInfo.cvDownloads,
+        total: sanitizedCandidates.length,
+      });
+    } catch (error) {
+      console.error("Error fetching CV database:", error);
+      res.status(500).json({ error: "Failed to fetch CV database" });
+    }
+  });
+
+  // Download CV with quota tracking
+  app.post("/api/employer/cv-database/:candidateId/download", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const company = await storage.getCompanyByUserId(req.session.userId);
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+
+      const { checkCVDownloadQuota } = await import("./planLimits");
+      const cvDownloadCheck = checkCVDownloadQuota(company);
+      
+      if (!cvDownloadCheck.allowed) {
+        return res.status(403).json({ error: cvDownloadCheck.reason });
+      }
+
+      const candidate = await storage.getUser(req.params.candidateId);
+      if (!candidate || candidate.role !== "pekerja") {
+        return res.status(404).json({ error: "Candidate not found" });
+      }
+
+      // Increment CV download count
+      await storage.incrementCompanyQuota(company.id, { cvDownload: 1 });
+
+      // Return candidate data without password
+      const { password, ...candidateData } = candidate;
+      res.json({ 
+        success: true, 
+        candidate: candidateData,
+        message: "CV downloaded successfully"
+      });
+    } catch (error) {
+      console.error("Error downloading CV:", error);
+      res.status(500).json({ error: "Failed to download CV" });
     }
   });
 

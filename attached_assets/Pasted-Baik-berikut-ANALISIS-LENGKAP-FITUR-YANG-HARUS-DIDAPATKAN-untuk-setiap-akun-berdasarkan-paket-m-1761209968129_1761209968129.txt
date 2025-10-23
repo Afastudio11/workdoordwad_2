@@ -1,0 +1,321 @@
+Baik, berikut **ANALISIS LENGKAP FITUR YANG HARUS DIDAPATKAN** untuk setiap akun berdasarkan paket mereka:
+
+---
+
+## **CHECKLIST FITUR PER PAKET (HARUS DITEST)**
+
+### **1. AKUN GRATIS (free@testcompany.com)**
+
+**❌ TIDAK TAMPIL DI SCREENSHOT - HARUS DIBUAT**
+
+**Fitur yang HARUS ada:**
+```
+Dashboard:
+✅ Menu Overview accessible
+✅ Menu Employers Profile accessible
+✅ Menu Company Profile accessible
+✅ Menu Post a Job accessible (tapi ada limit)
+✅ Menu My Jobs accessible
+✅ Menu Saved Candidate accessible
+✅ Menu Plans & Billing accessible
+✅ Menu Settings accessible
+❌ NO menu Analytics (harus di-hide atau redirect ke upgrade)
+❌ NO menu CV Database (harus di-hide)
+
+Posting Job:
+✅ Bisa post maksimal 3 jobs/bulan
+❌ Job ke-4 HARUS BLOCKED dengan prompt upgrade
+✅ Durasi job: 30 hari otomatis
+❌ Checkbox "Featured" DISABLED & grayed out
+❌ Checkbox "Urgent" TIDAK ADA sama sekali
+❌ NO priority di search results
+
+Dashboard Stats:
+✅ Quota display: "Job Posting: 0 / 3 used"
+❌ NO verified badge ✓
+❌ NO stats views/aplikasi (karena no analytics)
+
+Public Listing:
+❌ Job tampil TANPA verified badge
+✅ Job posisi normal (tidak priority)
+✅ Expire otomatis 30 hari
+```
+
+**Yang Harus Ditest:**
+- [ ] Post 3 jobs → berhasil
+- [ ] Post job ke-4 → BLOCKED dengan upgrade prompt
+- [ ] Klik menu Analytics → tidak ada atau redirect upgrade
+- [ ] Job expire setelah 30 hari
+
+---
+
+### **2. AKUN STARTER (starter@testcompany.com) ✅ SUDAH ADA**
+
+**Dari Screenshot - Fitur yang TERLIHAT:**
+```
+✅ Dashboard accessible
+✅ Menu lengkap tampil
+✅ Plans & Billing tampil badge "Current Plan"
+⚠️ Verified badge BELUM tampil di nama
+```
+
+**Fitur yang HARUS ada & DITEST:**
+
+**A. Dashboard:**
+```
+✅ Verified Badge ✓ BIRU di nama company (BELUM ADA - HARUS DITAMBAH)
+✅ Badge "STARTER" di avatar
+✅ Quota display:
+   - Job Posting: 0 / 10 used
+   - Featured Jobs: 0 / 3 used
+   - Next reset: [tanggal]
+❌ NO CV Database menu
+✅ Menu Analytics ADA (basic)
+```
+
+**B. Post Job:**
+```
+✅ Bisa post 10 jobs/bulan
+❌ Job ke-11 BLOCKED
+✅ Checkbox "Featured" ENABLED
+✅ Bisa mark 3 jobs as featured
+❌ Featured ke-4 BLOCKED: "Upgrade to Professional"
+❌ Checkbox "Urgent" TIDAK ADA
+✅ Durasi: 30 hari (BUKAN 45)
+```
+
+**C. Analytics (BASIC):**
+```
+✅ Menu Analytics tampil di sidebar
+✅ Halaman /analytics accessible
+✅ Tampil data:
+   - Total Views: [number]
+   - Total Aplikasi: [number]
+   - Simple line chart (7 hari terakhir)
+❌ TIDAK ADA:
+   - Demografi kandidat
+   - Conversion rate
+   - Source tracking
+   - Export CSV/Excel
+```
+
+**D. Public Listing:**
+```
+✅ Verified badge ✓ BIRU tampil di company name
+✅ Job featured badge "⭐ Featured"
+✅ Featured jobs priority lebih tinggi di search
+✅ Border lime untuk featured jobs
+```
+
+**Test Checklist Starter:**
+- [ ] Verified badge ✓ tampil di dashboard
+- [ ] Post 10 jobs → berhasil
+- [ ] Post job ke-11 → BLOCKED
+- [ ] Mark 3 jobs featured → berhasil
+- [ ] Mark job ke-4 featured → BLOCKED
+- [ ] Akses /analytics → tampil basic stats
+- [ ] Job expire 30 hari (bukan 45)
+
+***
+
+### **3. AKUN PROFESSIONAL (professional@testcompany.com) ✅ SUDAH ADA**
+
+**Dari Screenshot - Fitur yang TERLIHAT:**
+```
+✅ Dashboard accessible
+✅ Badge "Active" di Plans & Billing
+✅ Badge "Recommended" tampil
+⚠️ Verified badge perlu dicek apakah tampil
+```
+
+**Fitur yang HARUS ada & DITEST:**
+
+**A. Dashboard:**
+```
+✅ Verified Badge ✓ BIRU di nama
+✅ Badge "PROFESSIONAL" di avatar
+✅ Quota display:
+   - Job Posting: 0 / 30 used
+   - Featured Jobs: Unlimited ∞
+   - Urgent Jobs: Unlimited ∞
+   - CV Downloads: 0 / 100 used
+✅ Menu Analytics (Advanced)
+✅ Menu CV Database ADA
+```
+
+**B. Post Job:**
+```
+✅ Bisa post 30 jobs/bulan
+❌ Job ke-31 BLOCKED: "Upgrade to Enterprise or wait reset"
+✅ Checkbox "Featured" ENABLED & unlimited
+✅ Checkbox "Urgent" ENABLED & unlimited
+✅ Bisa mark semua job featured + urgent (no limit)
+✅ Durasi: 30 hari
+```
+
+**C. Analytics (ADVANCED):**
+```
+✅ Menu Analytics tampil
+✅ Halaman /analytics accessible
+✅ Tampil data lengkap:
+   - Total Views
+   - Total Aplikasi
+   - Demografi kandidat (usia, lokasi, pendidikan)
+   - Conversion rate (views → aplikasi)
+   - Source tracking (organic, social, referral)
+   - Chart views per hari/minggu/bulan
+✅ Export to CSV/Excel button
+```
+
+**D. CV Database:**
+```
+✅ Menu "CV Database" tampil di sidebar
+✅ Halaman /cv-database accessible
+✅ Features:
+   - Search kandidat by skills/location/education
+   - Filter kandidat
+   - View candidate profile
+   - Download CV (max 100/bulan)
+❌ Download CV ke-101 BLOCKED: "Quota habis"
+✅ Counter: "CV Downloaded: 0 / 100"
+```
+
+**E. Public Listing:**
+```
+✅ Verified badge ✓ BIRU
+✅ Badge "⭐ Featured 🔥 Urgent"
+✅ TOP 3 priority di search results
+✅ Border lime thick + shadow glow
+✅ Logo company size besar
+```
+
+**Test Checklist Professional:**
+- [ ] Verified badge ✓ tampil
+- [ ] Post 30 jobs → berhasil
+- [ ] Post job ke-31 → BLOCKED
+- [ ] Mark unlimited featured → works
+- [ ] Mark unlimited urgent → works
+- [ ] Akses /analytics → tampil advanced stats
+- [ ] Akses /cv-database → works
+- [ ] Download 100 CV → berhasil
+- [ ] Download CV ke-101 → BLOCKED
+
+***
+
+### **4. AKUN ENTERPRISE (enterprise@testcompany.com) ✅ SUDAH ADA**
+
+**Dari Screenshot - Fitur yang TERLIHAT:**
+```
+✅ Dashboard accessible
+✅ Plans & Billing tampil badge "Current Plan"
+```
+
+**Fitur yang HARUS ada & DITEST:**
+
+**A. Dashboard:**
+```
+✅ Verified Badge ✓ BIRU
+✅ Badge "ENTERPRISE" di avatar
+✅ Quota display:
+   - Job Posting: Unlimited ∞
+   - Featured Jobs: Unlimited ∞
+   - Urgent Jobs: Unlimited ∞
+   - CV Downloads: Unlimited ∞
+✅ Badge "Dedicated Account Manager" info
+✅ Menu Analytics (Advanced)
+✅ Menu CV Database
+```
+
+**B. Post Job:**
+```
+✅ Post UNLIMITED jobs (test 50-100 jobs)
+✅ Featured unlimited
+✅ Urgent unlimited
+✅ Durasi: 30 hari (bisa custom jika diperlukan)
+```
+
+**C. Analytics & CV Database:**
+```
+✅ Sama seperti Professional (advanced)
+✅ PLUS: Custom report (optional)
+✅ Download unlimited CV
+```
+
+**D. Enterprise Features:**
+```
+✅ Dedicated Account Manager contact info tampil
+✅ Priority support info
+❌ NO API Integration (sudah dihapus sesuai request)
+```
+
+**Test Checklist Enterprise:**
+- [ ] Post 100 jobs → berhasil (no limit)
+- [ ] Download 200 CV → berhasil (no limit)
+- [ ] All features unlimited
+- [ ] Dedicated manager info tampil
+
+***
+
+## **SUMMARY FITUR YANG HARUS DICEK:**
+
+| Fitur | Gratis | Starter | Professional | Enterprise |
+|-------|--------|---------|--------------|------------|
+| **Verified Badge ✓** | ❌ NO | ✅ YA (BIRU) | ✅ YA (BIRU) | ✅ YA (BIRU) |
+| **Job Posting** | 3/bulan | 10/bulan | 30/bulan | Unlimited |
+| **Featured Jobs** | ❌ NO | 3 jobs | Unlimited | Unlimited |
+| **Urgent Jobs** | ❌ NO | ❌ NO | Unlimited | Unlimited |
+| **Analytics** | ❌ NO | Basic | Advanced | Advanced |
+| **CV Database** | ❌ NO | ❌ NO | 100/bulan | Unlimited |
+| **Durasi Job** | 30 hari | 30 hari | 30 hari | 30 hari |
+| **Quota Enforcement** | ✅ YES | ✅ YES | ✅ YES | ❌ NO |
+
+***
+
+## **PROMPT UNTUK TEST SEMUA FITUR:**
+
+```
+TEST FITUR SETIAP AKUN SECARA MENYELURUH
+
+Lakukan testing untuk semua 4 akun dan pastikan fitur berfungsi sesuai paket:
+
+1. AKUN FREE (free@testcompany.com)
+   - Post 4 jobs → job ke-4 harus BLOCKED
+   - Coba akses /analytics → harus blocked/redirect
+   - Coba mark featured → checkbox disabled
+   - Verified badge TIDAK tampil
+
+2. AKUN STARTER (starter@testcompany.com)
+   - Verified badge ✓ BIRU harus tampil di dashboard
+   - Post 11 jobs → job ke-11 BLOCKED
+   - Mark 4 featured → featured ke-4 BLOCKED
+   - Akses /analytics → tampil basic only
+   - NO akses CV database
+   - Durasi job: 30 hari (BUKAN 45)
+
+3. AKUN PROFESSIONAL (professional@testcompany.com)
+   - Verified badge ✓ tampil
+   - Post 31 jobs → job ke-31 BLOCKED
+   - Featured & Urgent unlimited works
+   - Akses /analytics → advanced works
+   - Akses /cv-database → works
+   - Download 101 CV → CV ke-101 BLOCKED
+
+4. AKUN ENTERPRISE (enterprise@testcompany.com)
+   - Post 100 jobs → all success (no limit)
+   - Download 200 CV → all success (no limit)
+   - All features unlimited
+
+REPORT hasil testing dengan format:
+✅ Feature works correctly
+❌ Feature broken
+⚠️ Feature partially works
+```
+
+***
+
+**Kesimpulan:** Berdasarkan screenshot, sistem sudah berjalan tapi **HARUS DITEST** apakah:
+1. Quota enforcement berfungsi (post job ke-4, ke-11, ke-31 blocked?)
+2. Featured quota berfungsi (featured ke-4 blocked di starter?)
+3. Analytics accessible sesuai paket?
+4. CV database accessible & quota berfungsi?
+5. Verified badge ✓ BIRU tampil di dashboard?
