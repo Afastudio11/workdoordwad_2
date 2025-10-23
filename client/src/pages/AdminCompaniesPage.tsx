@@ -265,7 +265,7 @@ export default function AdminCompaniesPage() {
                     <CardTitle className="text-lg truncate">{company.name}</CardTitle>
                     <div className="flex items-center gap-2 mt-1">
                       {company.isVerified ? (
-                        <Badge variant="default" className="bg-green-500 text-white gap-1">
+                        <Badge variant="default" className="bg-[#1DA1F2] text-white gap-1">
                           <CheckCircle className="w-3 h-3" />
                           Verified
                         </Badge>

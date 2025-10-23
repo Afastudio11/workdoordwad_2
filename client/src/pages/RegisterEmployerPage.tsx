@@ -885,7 +885,7 @@ export default function RegisterEmployerPage() {
                   data-testid="button-billing-yearly"
                 >
                   Tahunan
-                  <span className="ml-1 text-xs text-primary font-semibold">Hemat 2 Bulan!</span>
+                  <span className="ml-1 text-xs text-foreground font-semibold">Hemat 2 Bulan!</span>
                 </button>
               </div>
             </div>
@@ -921,7 +921,7 @@ export default function RegisterEmployerPage() {
                         <CardTitle className="text-2xl font-bold text-foreground inline-flex items-center gap-2">
                           {plan.name}
                           {plan.hasVerifiedBadge && (
-                            <BadgeCheck className="w-6 h-6 text-primary" />
+                            <BadgeCheck className="w-6 h-6 text-[#1DA1F2]" />
                           )}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground mt-1">{plan.tagline}</p>
@@ -939,7 +939,7 @@ export default function RegisterEmployerPage() {
                               per {billingCycle === "monthly" ? "bulan" : "tahun"}
                             </div>
                             {billingCycle === "yearly" && plan.priceYearly !== 0 && (
-                              <div className="text-xs text-primary font-medium mt-1">
+                              <div className="text-xs text-muted-foreground font-medium mt-1">
                                 ~Rp {Math.floor((plan.priceYearly as number) / 12).toLocaleString('id-ID')}/bulan
                               </div>
                             )}

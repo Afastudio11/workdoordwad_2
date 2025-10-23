@@ -1,0 +1,435 @@
+Baik, berikut **PROMPT LENGKAP & FINAL** dengan penambahan instruksi bahwa akun-akun testing harus sesuai dengan paket yang sudah didefinisikan di screenshot:
+
+***
+
+```
+BUAT AKUN TESTING UNTUK SETIAP PAKET & TEST FITUR SECARA MENYELURUH
+
+Buat akun testing untuk setiap paket langganan dan pastikan semua fitur berfungsi sesuai dengan paket yang dipilih.
+
+**PENTING:** Akun-akun ini harus berfungsi sesuai dengan DEFINISI PAKET yang ada di pricing page (screenshot yang diberikan).
+
+═══════════════════════════════════════════════════════════
+REFERENSI PAKET (DARI PRICING PAGE SCREENSHOT)
+═══════════════════════════════════════════════════════════
+
+### PAKET GRATIS
+- Posting 3 lowongan per bulan
+- Dashboard dasar
+- Durasi: 30 hari
+- Tidak ada Verified Badge
+- Tidak ada Featured/Urgent
+- Tidak ada Analytics
+
+### PAKET STARTER (Rp 199.000)
+- Verified Badge ✓
+- Posting 10 lowongan per bulan
+- Badge "Featured" di 3 lowongan
+- Analytics dasar (views, aplikasi)
+- Durasi: 45 hari
+- Support email & chat (1 hari kerja)
+
+### PAKET PROFESSIONAL (Rp 399.000) - RECOMMENDED
+- Verified Badge ✓
+- Posting 30 lowongan per bulan
+- Badge "Featured" & "Urgent" unlimited
+- Analytics lengkap + demografi
+- Akses database CV (100 CV/bulan)
+- Support prioritas (<6 jam)
+
+### PAKET ENTERPRISE (Custom)
+- Verified Badge ✓
+- Posting UNLIMITED lowongan
+- Dedicated Account Manager
+- Database CV UNLIMITED
+- API integration
+- Support 24/7
+
+═══════════════════════════════════════════════════════════
+BAGIAN 1: BUAT 4 AKUN EMPLOYER TESTING
+═══════════════════════════════════════════════════════════
+
+**CRITICAL:** Pastikan setiap akun memiliki fitur yang PERSIS sesuai dengan paket di screenshot.
+
+### AKUN 1: FREE PLAN
+**Login Credentials:**
+- Email: free@testcompany.com
+- Password: Test123!
+- Company: PT Testing Gratis Indonesia
+- Verified: YES (untuk akses dashboard)
+
+**Set di Database:**
+- subscription_plan = 'free'
+- verification_status = 'verified'
+- job_post_quota = 3
+- job_post_used = 0
+- premium_post_quota = 0
+- featured_quota = 0
+- urgent_quota = 0
+- job_invitation_quota = 0
+- cv_download_quota = 0
+- has_verified_badge = FALSE
+- has_analytics = FALSE
+- job_duration_days = 30
+
+---
+
+### AKUN 2: STARTER PLAN
+**Login Credentials:**
+- Email: starter@testcompany.com
+- Password: Test123!
+- Company: PT Testing Starter Indonesia
+- Verified: YES
+
+**Set di Database:**
+- subscription_plan = 'starter'
+- verification_status = 'verified'
+- job_post_quota = 10
+- job_post_used = 0
+- featured_quota = 3
+- featured_used = 0
+- urgent_quota = 0 (tidak ada urgent di starter)
+- job_invitation_quota = 0 (tidak disebutkan di screenshot)
+- cv_download_quota = 0 (tidak ada akses CV database)
+- has_verified_badge = TRUE ✓
+- has_analytics = TRUE (basic only)
+- job_duration_days = 45
+- subscription_start = current date
+- subscription_end = current date + 30 days
+
+---
+
+### AKUN 3: PROFESSIONAL PLAN
+**Login Credentials:**
+- Email: professional@testcompany.com
+- Password: Test123!
+- Company: PT Testing Professional Indonesia
+- Verified: YES
+
+**Set di Database:**
+- subscription_plan = 'professional'
+- verification_status = 'verified'
+- job_post_quota = 30
+- job_post_used = 0
+- featured_quota = -1 (unlimited)
+- featured_used = 0
+- urgent_quota = -1 (unlimited)
+- urgent_used = 0
+- cv_download_quota = 100
+- cv_download_used = 0
+- has_verified_badge = TRUE ✓
+- has_analytics = TRUE (advanced)
+- job_duration_days = 30
+- subscription_start = current date
+- subscription_end = current date + 30 days
+
+---
+
+### AKUN 4: ENTERPRISE PLAN
+**Login Credentials:**
+- Email: enterprise@testcompany.com
+- Password: Test123!
+- Company: PT Testing Enterprise Indonesia
+- Verified: YES
+
+**Set di Database:**
+- subscription_plan = 'enterprise'
+- verification_status = 'verified'
+- job_post_quota = -1 (unlimited)
+- featured_quota = -1 (unlimited)
+- urgent_quota = -1 (unlimited)
+- cv_download_quota = -1 (unlimited)
+- has_verified_badge = TRUE ✓
+- has_analytics = TRUE (advanced + custom)
+- job_duration_days = 90 (custom)
+- has_dedicated_manager = TRUE
+- has_api_access = TRUE
+- subscription_start = current date
+- subscription_end = current date + 365 days
+
+═══════════════════════════════════════════════════════════
+BAGIAN 2: TEST FITUR SETIAP AKUN (SESUAI SCREENSHOT)
+═══════════════════════════════════════════════════════════
+
+## TEST AKUN FREE PLAN
+
+**Login: free@testcompany.com / Test123!**
+
+**Test 1: Dashboard Display**
+- ✅ Badge "GRATIS" tampil (icon petir ⚡)
+- ✅ Tagline: "Untuk Memulai"
+- ✅ Quota: "Job Posting: 0 / 3 used"
+- ❌ NO Verified Badge ✓ (sesuai screenshot)
+- ❌ NO menu Analytics
+- ❌ NO menu CV Database
+- ❌ NO Job Invitation feature
+
+**Test 2: Post Job**
+- ✅ Bisa post 3 jobs normal
+- ❌ Checkbox "Featured" DISABLED
+- ❌ Checkbox "Urgent" TIDAK ADA
+- ❌ Job ke-4 BLOCKED:
+  ```
+  Quota habis!
+  Upgrade ke Starter (Rp 199k) untuk 10 lowongan/bulan
+  ```
+- ✅ Durasi job: 30 hari
+
+**Test 3: Public Listing**
+- ✅ Job tampil TANPA verified badge
+- ✅ Job tampil di posisi normal (tidak priority)
+- ✅ Tidak ada badge "Featured" atau "Urgent"
+
+---
+
+## TEST AKUN STARTER PLAN
+
+**Login: starter@testcompany.com / Test123!**
+
+**Test 1: Dashboard Display**
+- ✅ Badge "STARTER" dengan checkmark (sesuai screenshot)
+- ✅ Tagline: "Untuk Bisnis Berkembang"
+- ✅ Quota display:
+  ```
+  Job Posting: 0 / 10 used
+  Featured Jobs: 0 / 3 used
+  ```
+- ✅ Verified Badge ✓ TAMPIL (warna BIRU #1DA1F2)
+- ✅ Menu "Analytics" ADA (basic)
+- ❌ Menu "CV Database" TIDAK ADA
+- ✅ Support: email & chat
+
+**Test 2: Post Job**
+- ✅ Bisa post 10 jobs
+- ✅ Checkbox "Featured" ENABLED
+- ✅ Bisa featured 3 jobs
+- ❌ Featured ke-4 BLOCKED:
+  ```
+  Quota Featured habis!
+  Upgrade ke Professional (Rp 399k) untuk unlimited
+  ```
+- ❌ Checkbox "Urgent" TIDAK ADA (tidak termasuk di Starter)
+- ✅ Durasi job: 45 hari (sesuai screenshot)
+
+**Test 3: Analytics**
+- ✅ Bisa akses /analytics
+- ✅ Tampil: Views count + Aplikasi count
+- ✅ Simple chart (7 hari)
+- ❌ TIDAK ada: demografi, conversion, source tracking
+
+**Test 4: Public Listing**
+- ✅ Verified badge ✓ (BIRU) tampil di company name
+- ✅ Job featured dengan badge "⭐ Featured"
+- ✅ Job featured priority lebih tinggi
+
+---
+
+## TEST AKUN PROFESSIONAL PLAN
+
+**Login: professional@testcompany.com / Test123!**
+
+**Test 1: Dashboard Display**
+- ✅ Badge "PROFESSIONAL" dengan checkmark & "RECOMMENDED"
+- ✅ Tagline: "Solusi Terbaik untuk Perekrutan"
+- ✅ Quota display:
+  ```
+  Job Posting: 0 / 30 used
+  Featured: Unlimited ∞
+  Urgent: Unlimited ∞
+  CV Downloads: 0 / 100 used
+  ```
+- ✅ Verified Badge ✓ TAMPIL (BIRU)
+- ✅ Menu "Analytics" (advanced)
+- ✅ Menu "CV Database" ADA
+
+**Test 2: Post Job**
+- ✅ Bisa post 30 jobs
+- ✅ Checkbox "Featured" ENABLED & unlimited
+- ✅ Checkbox "Urgent" ENABLED & unlimited
+- ✅ Durasi: 30 hari (sesuai screenshot)
+
+**Test 3: Analytics Advanced**
+- ✅ Views, aplikasi, demografi kandidat
+- ✅ Conversion rate, source tracking
+- ✅ Export CSV/Excel
+
+**Test 4: CV Database**
+- ✅ Akses /cv-database
+- ✅ Download max 100 CV/bulan
+- ❌ Download ke-101 BLOCKED:
+  ```
+  Quota download CV habis!
+  Reset: 1 Nov 2025
+  Upgrade Enterprise untuk unlimited
+  ```
+
+**Test 5: Public Listing**
+- ✅ Badge "⭐ Featured 🔥 Urgent"
+- ✅ Priority TOP 3 di search
+- ✅ Border lime + glow effect
+
+---
+
+## TEST AKUN ENTERPRISE PLAN
+
+**Login: enterprise@testcompany.com / Test123!**
+
+**Test 1: Dashboard Display**
+- ✅ Badge "ENTERPRISE" dengan checkmark
+- ✅ Tagline: "Untuk Korporasi & Perusahaan Besar"
+- ✅ ALL quotas: Unlimited ∞
+- ✅ Verified Badge ✓ TAMPIL
+- ✅ All features ENABLED
+
+**Test 2: Post Job**
+- ✅ Post unlimited (test 50 jobs)
+- ✅ Featured & Urgent unlimited
+- ✅ Custom duration (test 90 hari)
+
+**Test 3: CV Database**
+- ✅ Download unlimited (test 200 CV, no block)
+
+**Test 4: Enterprise Features**
+- ✅ Dedicated Account Manager info tampil
+- ✅ API integration available
+- ✅ Support 24/7 badge
+
+---
+
+═══════════════════════════════════════════════════════════
+BAGIAN 3: SINKRONISASI & KONSISTENSI DENGAN SCREENSHOT
+═══════════════════════════════════════════════════════════
+
+**CRITICAL CHECKS:**
+
+1. **Verified Badge Color:**
+   - ✅ HARUS BIRU (#1DA1F2) - BUKAN HIJAU/LIME
+   - ✅ Tampil di: Starter, Professional, Enterprise
+   - ❌ TIDAK tampil di: Free
+
+2. **Pricing Consistency:**
+   - ✅ Free: Rp 0
+   - ✅ Starter: Rp 199.000
+   - ✅ Professional: Rp 399.000
+   - ✅ Enterprise: "Hubungi Kami"
+
+3. **Feature Gating Sesuai Screenshot:**
+   - ✅ Free: 3 jobs, no featured, no analytics
+   - ✅ Starter: 10 jobs, 3 featured, basic analytics, 45 hari
+   - ✅ Professional: 30 jobs, unlimited featured/urgent, 100 CV
+   - ✅ Enterprise: Unlimited all
+
+4. **Duration Sesuai Screenshot:**
+   - ✅ Free: 30 hari
+   - ✅ Starter: 45 hari
+   - ✅ Professional: 30 hari
+   - ✅ Enterprise: Custom
+
+5. **UI Consistency:**
+   - ✅ Card borders: Lime untuk Starter & Professional
+   - ✅ Badge positioning: Top right
+   - ✅ Checkmark: Lime di nama paket (bukan verified badge)
+   - ✅ Text color: HITAM (bukan lime)
+
+═══════════════════════════════════════════════════════════
+BAGIAN 4: TESTING REPORT
+═══════════════════════════════════════════════════════════
+
+```
+=== TESTING REPORT PAKET LANGGANAN ===
+Date: [Current Date]
+
+AKUN TESTING CREATED:
+✅ free@testcompany.com (FREE PLAN)
+✅ starter@testcompany.com (STARTER PLAN)
+✅ professional@testcompany.com (PROFESSIONAL PLAN)
+✅ enterprise@testcompany.com (ENTERPRISE PLAN)
+
+KONSISTENSI DENGAN SCREENSHOT:
+✅ Harga sesuai (0, 199k, 399k, custom)
+✅ Fitur sesuai dengan pricing page
+✅ Verified badge BIRU (bukan hijau)
+✅ Durasi sesuai (30, 45, 30, custom)
+✅ Quota sesuai dengan screenshot
+
+TEST RESULTS:
+
+1. FREE PLAN
+   ✅ Quota 3 jobs enforced
+   ✅ No verified badge (sesuai screenshot)
+   ✅ No analytics/CV database
+   ✅ Duration 30 hari
+   ✅ Upgrade prompt works
+
+2. STARTER PLAN
+   ✅ Quota 10 jobs enforced
+   ✅ Featured quota 3 enforced
+   ✅ Verified badge BIRU shown ✓
+   ✅ Analytics basic accessible
+   ✅ Duration 45 hari (CORRECT)
+   ✅ No CV database (sesuai screenshot)
+
+3. PROFESSIONAL PLAN
+   ✅ Quota 30 jobs enforced
+   ✅ Featured & Urgent unlimited
+   ✅ CV database (100/bulan) works
+   ✅ Analytics advanced works
+   ✅ Duration 30 hari
+   ✅ Verified badge BIRU ✓
+
+4. ENTERPRISE PLAN
+   ✅ All unlimited
+   ✅ No restrictions
+   ✅ Dedicated manager info
+   ✅ API access available
+
+SINKRONISASI:
+✅ Upgrade/downgrade works
+✅ Feature access updates realtime
+✅ Quota reset monthly works
+✅ Expiry auto-downgrade works
+
+UI CONSISTENCY:
+✅ Verified badge BIRU (not lime) ✓
+✅ Text color HITAM (not lime)
+✅ Card borders lime (correct)
+✅ Badge positioning correct
+
+ISSUES FOUND:
+[List any bugs]
+
+=== END REPORT ===
+```
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+1. ✅ 4 akun permanent sesuai paket screenshot
+
+2. ✅ Fitur berfungsi PERSIS seperti di pricing page
+
+3. ✅ Verified badge BIRU (bukan hijau) untuk Starter+
+
+4. ✅ Durasi job sesuai: Free 30, Starter 45, Pro 30, Enterprise custom
+
+5. ✅ Quota enforcement sesuai screenshot
+
+6. ✅ Analytics: Free NO, Starter basic, Pro advanced
+
+7. ✅ CV Database: Free NO, Starter NO, Pro 100, Enterprise unlimited
+
+8. ✅ UI consistency: Text hitam, badge lime, verified biru
+
+9. ✅ Testing report lengkap
+
+**CREDENTIALS PERMANENT - JANGAN DIHAPUS:**
+- free@testcompany.com / Test123!
+- starter@testcompany.com / Test123!
+- professional@testcompany.com / Test123!
+- enterprise@testcompany.com / Test123!
+```
+
+***
+
+Prompt ini sudah menambahkan instruksi eksplisit bahwa semua fitur harus sesuai dengan screenshot pricing page yang Anda berikan, termasuk verified badge biru, text hitam, dan durasi yang berbeda per paket.
