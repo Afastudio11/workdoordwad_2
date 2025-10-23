@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Eye, Edit, Trash2, MapPin, Coins } from "lucide-react";
 import { Link } from "wouter";
+import { QuotaDisplay } from "@/components/ui/quota-display";
 import type { Job, Company } from "@shared/schema";
 
 type JobWithCompany = Job & { company: Company };
@@ -20,6 +21,13 @@ export default function MyJobsPage() {
     queryKey: ["/api/jobs/my-jobs"],
   });
 
+  const { data: companies } = useQuery<Company[]>({
+    queryKey: ["/api/companies/my-companies"],
+  });
+
+  const company = companies?.[0]; // Get first company (most users will have one)
+  const plan = (company?.subscriptionPlan || "free") as "free" | "starter" | "professional" | "enterprise";
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -27,6 +35,34 @@ export default function MyJobsPage() {
       </div>
     );
   }
+
+  const getQuotaLimits = () => {
+    if (!company) return null;
+    const quotaLimits: Record<string, number | "unlimited"> = {
+      free: 3,
+      starter: 10,
+      professional: 30,
+      enterprise: "unlimited",
+    };
+    const featuredLimits: Record<string, number | "unlimited"> = {
+      free: 0,
+      starter: 3,
+      professional: "unlimited",
+      enterprise: "unlimited",
+    };
+    const urgentLimits: Record<string, number | "unlimited"> = {
+      free: 0,
+      starter: 0,
+      professional: "unlimited",
+      enterprise: "unlimited",
+    };
+
+    return {
+      jobPosting: { current: company.jobPostingCount || 0, limit: quotaLimits[plan] },
+      featured: { current: company.featuredJobCount || 0, limit: featuredLimits[plan] },
+      urgent: { current: company.urgentJobCount || 0, limit: urgentLimits[plan] },
+    };
+  };
 
   return (
     <div className="space-y-6">
@@ -46,6 +82,23 @@ export default function MyJobsPage() {
           </Button>
         </Link>
       </div>
+
+      {/* Quota Display */}
+      {company && getQuotaLimits() && (
+        <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 border-blue-200 dark:border-gray-700">
+          <CardContent className="pt-6">
+            <QuotaDisplay
+              plan={plan}
+              quotas={{
+                jobPosting: getQuotaLimits()!.jobPosting,
+                featured: getQuotaLimits()!.featured,
+                urgent: getQuotaLimits()!.urgent,
+              }}
+              variant="compact"
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {!jobs || jobs.length === 0 ? (
         <Card>
