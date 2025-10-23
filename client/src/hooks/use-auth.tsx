@@ -23,17 +23,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const logoutMutation = useMutation({
-    mutationFn: () => apiRequest("/api/auth/logout", "POST"),
+    mutationFn: async () => {
+      const response = await apiRequest("/api/auth/logout", "POST");
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.clear();
+      
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      window.location.href = "/login";
+    },
     onError: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      queryClient.clear();
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      window.location.href = "/login";
     },
   });
 
   const logout = () => {
     queryClient.setQueryData(["/api/auth/me"], null);
-    queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
     logoutMutation.mutate();
-    setLocation("/");
   };
 
   return (

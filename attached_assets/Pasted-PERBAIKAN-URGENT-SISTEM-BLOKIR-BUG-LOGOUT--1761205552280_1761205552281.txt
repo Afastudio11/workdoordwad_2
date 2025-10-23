@@ -1,0 +1,147 @@
+PERBAIKAN URGENT: SISTEM BLOKIR & BUG LOGOUT
+
+═══════════════════════════════════════════════════════════
+MASALAH 1: SISTEM BLOKIR USER DENGAN KATEGORI ALASAN
+═══════════════════════════════════════════════════════════
+
+**Problem:** User diblokir tapi tidak ada opsi untuk upload ulang dokumen jika masalahnya di dokumen.
+
+**Solusi:**
+
+1. **Admin: Modal Blokir dengan Pilihan Kategori**
+   - Ketika admin klik "Blokir", tampilkan modal dengan pilihan radio:
+     - ○ Dokumen Tidak Lengkap (DOCUMENT_INCOMPLETE)
+     - ○ Dokumen Tidak Valid/Palsu (DOCUMENT_INVALID)
+     - ○ Informasi Perusahaan Tidak Sesuai (COMPANY_INFO_MISMATCH)
+     - ○ Aktivitas Mencurigakan/Spam (SUSPICIOUS_ACTIVITY)
+     - ○ Pelanggaran Ketentuan Layanan (TERMS_VIOLATION)
+     - ○ Laporan Penipuan (FRAUD_REPORT)
+     - ○ Lainnya (OTHER)
+   - Field textarea untuk detail alasan (optional)
+   - Admin WAJIB pilih kategori sebelum blokir
+
+2. **Database: Tambah Field**
+   - block_category (enum dengan kategori di atas)
+   - block_reason_detail (text untuk detail)
+   - can_reupload_documents (boolean)
+   - reupload_status (pending_review/approved/rejected)
+   - reupload_date (timestamp)
+
+3. **Logic Blokir:**
+   - Jika category = DOCUMENT_INCOMPLETE atau DOCUMENT_INVALID:
+     - Set can_reupload_documents = TRUE
+   - Jika category lain:
+     - Set can_reupload_documents = FALSE
+
+4. **Halaman User Diblokir - 2 Versi:**
+
+   **Versi A (Jika can_reupload_documents = TRUE):**
+   - Icon: ⚠️ (warning, bukan block total)
+   - Heading: "Akun Anda Sementara Diblokir"
+   - Tampilkan alasan detail dari admin
+   - **Form upload ulang dokumen:**
+     - Upload SIUP/NIB/TDP
+     - Upload Logo (optional)
+     - Textarea untuk catatan ke admin
+     - Button "Kirim Ulang Dokumen"
+   - Info: "Admin akan review dalam 1x24 jam"
+   
+   **Versi B (Jika can_reupload_documents = FALSE):**
+   - Icon: 🚫 (block permanent)
+   - Heading: "Akun Anda Telah Diblokir"
+   - Tampilkan kategori + alasan detail
+   - Tidak ada form upload
+   - Button: "Hubungi Support" untuk banding
+
+5. **Fitur Reupload:**
+   - User submit dokumen baru
+   - Status berubah: reupload_status = 'pending_review'
+   - Email notifikasi ke admin: "Ada dokumen baru yang perlu direview"
+   - Admin dapat notifikasi di dashboard
+
+6. **Admin: Review Dokumen Reupload:**
+   - Di admin dashboard, section "Dokumen Diupload Ulang" (badge count)
+   - List employer yang reupload
+   - Admin bisa:
+     - View dokumen baru
+     - Approve → Unblock otomatis + kirim email
+     - Reject → Tetap blocked + kirim email alasan
+
+═══════════════════════════════════════════════════════════
+MASALAH 2: BUG LOGOUT - HARUS KLIK 2X
+═══════════════════════════════════════════════════════════
+
+**Problem:** User klik logout 1x, masih masuk ke dashboard. Harus klik logout 2x baru benar-benar keluar.
+
+**Kemungkinan Penyebab & Solusi:**
+
+1. **Double Session/Token:**
+   - Cek apakah ada 2 jenis session (cookie session + JWT token)
+   - Pastikan logout menghapus SEMUA session & token
+
+2. **Redirect Loop:**
+   - Logout destroy session tapi redirect ke dashboard
+   - Dashboard cek session, masih ada sisa session
+   - Fix: Pastikan destroy session SEBELUM redirect
+
+3. **Cache Browser:**
+   - Browser cache halaman dashboard
+   - Fix: Set header no-cache untuk halaman setelah logout
+
+4. **Multiple Logout Routes:**
+   - Cek apakah ada 2 route logout berbeda
+   - Pastikan semua button logout menggunakan route yang sama
+
+**Solusi yang harus diimplementasikan:**
+
+1. **Route Logout - Pastikan Urutan Benar:**
+   - Destroy/clear semua session
+   - Delete semua cookies
+   - Hapus JWT token (jika pakai)
+   - Set header no-cache
+   - Redirect ke /login (BUKAN ke dashboard)
+
+2. **Frontend - Button Logout:**
+   - Pastikan button logout hanya 1x submit
+   - Disable button setelah klik (prevent double click)
+   - Clear localStorage/sessionStorage (jika ada)
+   - Redirect setelah logout success
+
+3. **Middleware - Protected Routes:**
+   - Setelah logout, session harus benar-benar hilang
+   - Coba akses dashboard → harus redirect ke login
+   - Jangan biarkan cache/session lama
+
+4. **Testing Logout:**
+   - Klik logout 1x
+   - Cek: session destroyed? cookies cleared?
+   - Try akses dashboard langsung via URL → harus redirect login
+   - Jika masih bisa akses, berarti logout belum bersih
+
+5. **Debugging Steps:**
+   - Console.log setelah destroy session
+   - Cek browser DevTools → Application → Cookies → apakah masih ada?
+   - Cek session storage & local storage
+   - Pastikan tidak ada token tersisa
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+1. ✅ Admin bisa pilih kategori alasan blokir dengan detail
+
+2. ✅ User diblokir karena dokumen bisa upload ulang dokumen
+
+3. ✅ User diblokir karena alasan lain TIDAK bisa upload, hanya bisa hubungi support
+
+4. ✅ Admin dapat notifikasi dokumen reupload dan bisa review
+
+5. ✅ Admin approve reupload → user otomatis unblocked
+
+6. ✅ Logout berfungsi 1x klik langsung keluar total
+
+7. ✅ Setelah logout, tidak bisa akses dashboard lagi (harus login ulang)
+
+**PRIORITAS:**
+- CRITICAL: Fix bug logout (ini sangat mengganggu UX)
+- HIGH: Implement kategori blokir + reupload dokumen

@@ -17,6 +17,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +28,25 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
+type BlockCategory = 
+  | "DOCUMENT_INCOMPLETE" 
+  | "DOCUMENT_INVALID" 
+  | "COMPANY_INFO_MISMATCH" 
+  | "SUSPICIOUS_ACTIVITY" 
+  | "TERMS_VIOLATION" 
+  | "FRAUD_REPORT" 
+  | "OTHER";
+
+const BLOCK_CATEGORIES = [
+  { value: "DOCUMENT_INCOMPLETE", label: "Dokumen Tidak Lengkap" },
+  { value: "DOCUMENT_INVALID", label: "Dokumen Tidak Valid/Palsu" },
+  { value: "COMPANY_INFO_MISMATCH", label: "Informasi Perusahaan Tidak Sesuai" },
+  { value: "SUSPICIOUS_ACTIVITY", label: "Aktivitas Mencurigakan/Spam" },
+  { value: "TERMS_VIOLATION", label: "Pelanggaran Ketentuan Layanan" },
+  { value: "FRAUD_REPORT", label: "Laporan Penipuan" },
+  { value: "OTHER", label: "Lainnya" },
+];
+
 export default function AdminUsersPage() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("recruiter");
@@ -33,6 +54,7 @@ export default function AdminUsersPage() {
   const [actionType, setActionType] = useState<"block" | "unblock" | "verify" | "reject">("block");
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
   const [reason, setReason] = useState("");
+  const [blockCategory, setBlockCategory] = useState<BlockCategory>("DOCUMENT_INCOMPLETE");
 
   const { data: recruiters, isLoading: loadingRecruiters } = useQuery({
     queryKey: ["/api/admin/users", { role: "pemberi_kerja" }],
@@ -48,6 +70,7 @@ export default function AdminUsersPage() {
     setSelectedUser(user);
     setActionType(action);
     setReason("");
+    setBlockCategory("DOCUMENT_INCOMPLETE");
     setActionDialogOpen(true);
   };
 
@@ -91,6 +114,7 @@ export default function AdminUsersPage() {
           }
           await apiRequest(`/api/admin/users/${selectedUser.id}/block`, "POST", {
             reason: reason.trim(),
+            category: blockCategory,
           });
           toast({
             title: "User Diblokir",
@@ -110,6 +134,7 @@ export default function AdminUsersPage() {
       setActionDialogOpen(false);
       setSelectedUser(null);
       setReason("");
+      setBlockCategory("DOCUMENT_INCOMPLETE");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -176,13 +201,13 @@ export default function AdminUsersPage() {
                             Email
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
-                            Status Akun
-                          </TableHead>
-                          <TableHead className="text-black dark:text-white font-semibold">
                             Status Verifikasi
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
-                            Tanggal Registrasi
+                            Status Akun
+                          </TableHead>
+                          <TableHead className="text-black dark:text-white font-semibold">
+                            Tanggal Bergabung
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
                             Aksi
@@ -201,30 +226,38 @@ export default function AdminUsersPage() {
                               </TableCell>
                               <TableCell>
                                 <Badge
-                                  variant={user.isActive ? "default" : "destructive"}
+                                  variant={
+                                    user.verificationStatus === "verified"
+                                      ? "default"
+                                      : user.verificationStatus === "rejected"
+                                      ? "destructive"
+                                      : "secondary"
+                                  }
                                   className={
-                                    user.isActive ? "bg-primary text-black" : ""
+                                    user.verificationStatus === "verified"
+                                      ? "bg-primary text-black"
+                                      : ""
                                   }
                                 >
-                                  {user.isActive ? "Aktif" : "Diblokir"}
+                                  {user.verificationStatus === "verified" && "Terverifikasi"}
+                                  {user.verificationStatus === "rejected" && "Ditolak"}
+                                  {user.verificationStatus === "pending" && "Menunggu"}
                                 </Badge>
                               </TableCell>
                               <TableCell>
                                 <Badge
-                                  variant={user.isVerified ? "default" : "secondary"}
-                                  className={
-                                    user.isVerified ? "bg-primary text-black" : ""
-                                  }
+                                  variant={user.isBlocked ? "destructive" : "default"}
+                                  className={!user.isBlocked ? "bg-primary text-black" : ""}
                                 >
-                                  {user.isVerified ? "Terverifikasi" : "Belum Verifikasi"}
+                                  {user.isBlocked ? "Diblokir" : "Aktif"}
                                 </Badge>
                               </TableCell>
                               <TableCell className="text-gray-600 dark:text-gray-400">
                                 {new Date(user.createdAt).toLocaleDateString('id-ID')}
                               </TableCell>
                               <TableCell>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  {!user.isVerified && user.isActive && (
+                                <div className="flex gap-2 flex-wrap">
+                                  {user.verificationStatus === "pending" && (
                                     <>
                                       <Button
                                         size="sm"
@@ -237,8 +270,7 @@ export default function AdminUsersPage() {
                                       </Button>
                                       <Button
                                         size="sm"
-                                        variant="outline"
-                                        className="border-red-600 text-red-600 hover:bg-red-50"
+                                        variant="destructive"
                                         onClick={() => handleOpenActionDialog(user, "reject")}
                                         data-testid={`button-reject-${user.id}`}
                                       >
@@ -247,7 +279,7 @@ export default function AdminUsersPage() {
                                       </Button>
                                     </>
                                   )}
-                                  {user.isActive ? (
+                                  {!user.isBlocked ? (
                                     <Button
                                       size="sm"
                                       variant="destructive"
@@ -314,10 +346,10 @@ export default function AdminUsersPage() {
                             Email
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
-                            Status Akun
+                            Status
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
-                            Tanggal Registrasi
+                            Tanggal Bergabung
                           </TableHead>
                           <TableHead className="text-black dark:text-white font-semibold">
                             Aksi
@@ -336,19 +368,17 @@ export default function AdminUsersPage() {
                               </TableCell>
                               <TableCell>
                                 <Badge
-                                  variant={user.isActive ? "default" : "destructive"}
-                                  className={
-                                    user.isActive ? "bg-primary text-black" : ""
-                                  }
+                                  variant={user.isBlocked ? "destructive" : "default"}
+                                  className={!user.isBlocked ? "bg-primary text-black" : ""}
                                 >
-                                  {user.isActive ? "Aktif" : "Diblokir"}
+                                  {user.isBlocked ? "Diblokir" : "Aktif"}
                                 </Badge>
                               </TableCell>
                               <TableCell className="text-gray-600 dark:text-gray-400">
                                 {new Date(user.createdAt).toLocaleDateString('id-ID')}
                               </TableCell>
                               <TableCell>
-                                {user.isActive ? (
+                                {!user.isBlocked ? (
                                   <Button
                                     size="sm"
                                     variant="destructive"
@@ -394,7 +424,7 @@ export default function AdminUsersPage() {
 
       {/* Action Confirmation Dialog */}
       <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
-        <DialogContent className="bg-white dark:bg-black border-gray-200 dark:border-gray-800">
+        <DialogContent className="bg-white dark:bg-black border-gray-200 dark:border-gray-800 max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-black dark:text-white">
               {actionType === "verify" && "Verifikasi User"}
@@ -410,7 +440,7 @@ export default function AdminUsersPage() {
                   {actionType === "reject" &&
                     `Apakah Anda yakin ingin menolak verifikasi ${selectedUser.fullName}?`}
                   {actionType === "block" &&
-                    `Apakah Anda yakin ingin memblokir ${selectedUser.fullName}?`}
+                    `Pilih kategori alasan pemblokiran untuk ${selectedUser.fullName}`}
                   {actionType === "unblock" &&
                     `Apakah Anda yakin ingin membuka blokir ${selectedUser.fullName}?`}
                 </>
@@ -418,18 +448,69 @@ export default function AdminUsersPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            {(actionType === "block" || actionType === "reject") && (
+            {actionType === "block" && (
+              <>
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-black dark:text-white">
+                    Kategori Alasan <span className="text-red-500">*</span>
+                  </label>
+                  <RadioGroup
+                    value={blockCategory}
+                    onValueChange={(value) => setBlockCategory(value as BlockCategory)}
+                    className="space-y-2"
+                  >
+                    {BLOCK_CATEGORIES.map((category) => (
+                      <div key={category.value} className="flex items-start space-x-3">
+                        <RadioGroupItem
+                          value={category.value}
+                          id={category.value}
+                          className="mt-1"
+                        />
+                        <Label
+                          htmlFor={category.value}
+                          className="text-sm font-normal text-gray-700 dark:text-gray-300 cursor-pointer leading-relaxed"
+                        >
+                          {category.label}
+                          {(category.value === "DOCUMENT_INCOMPLETE" || category.value === "DOCUMENT_INVALID") && (
+                            <span className="block text-xs text-green-600 dark:text-green-400 mt-0.5">
+                              ✓ User dapat upload ulang dokumen
+                            </span>
+                          )}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    💡 Jika alasan terkait dokumen, user akan mendapat opsi untuk upload ulang
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-black dark:text-white">
+                    Detail Alasan (Opsional)
+                  </label>
+                  <Textarea
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    placeholder="Tambahkan detail spesifik tentang alasan pemblokiran..."
+                    className="bg-white dark:bg-black border-gray-200 dark:border-gray-800"
+                    rows={3}
+                    data-testid="input-action-reason"
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Detail ini akan ditampilkan kepada user
+                  </p>
+                </div>
+              </>
+            )}
+            {actionType === "reject" && (
               <div className="space-y-2">
                 <label className="text-sm font-medium text-black dark:text-white">
-                  Alasan {actionType === "block" ? "Pemblokiran" : "Penolakan"}{" "}
-                  <span className="text-red-500">*</span>
+                  Alasan Penolakan <span className="text-red-500">*</span>
                 </label>
                 <Textarea
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  placeholder={`Masukkan alasan ${
-                    actionType === "block" ? "pemblokiran" : "penolakan"
-                  }...`}
+                  placeholder="Masukkan alasan penolakan..."
                   className="bg-white dark:bg-black border-gray-200 dark:border-gray-800"
                   rows={3}
                   data-testid="input-action-reason"
@@ -478,7 +559,7 @@ export default function AdminUsersPage() {
               {actionType === "block" && (
                 <>
                   <Ban className="w-4 h-4 mr-2" />
-                  Blokir
+                  Blokir User
                 </>
               )}
               {actionType === "unblock" && (

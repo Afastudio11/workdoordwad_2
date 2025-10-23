@@ -59,6 +59,11 @@ export const users = pgTable("users", {
   blockedAt: timestamp("blocked_at"),
   blockedBy: varchar("blocked_by"), // Admin user ID who blocked
   blockedReason: text("blocked_reason"),
+  blockCategory: text("block_category"), // DOCUMENT_INCOMPLETE | DOCUMENT_INVALID | COMPANY_INFO_MISMATCH | SUSPICIOUS_ACTIVITY | TERMS_VIOLATION | FRAUD_REPORT | OTHER
+  blockReasonDetail: text("block_reason_detail"),
+  canReuploadDocuments: boolean("can_reupload_documents").default(false),
+  reuploadStatus: text("reupload_status"), // pending_review | approved | rejected
+  reuploadDate: timestamp("reupload_date"),
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -94,6 +99,12 @@ export const companies = pgTable("companies", {
   verifiedAt: timestamp("verified_at"),
   verifiedBy: varchar("verified_by"), // Admin user ID who verified
   rejectionReason: text("rejection_reason"),
+  
+  // Document Reupload for blocked users
+  reuploadLegalDocUrl: text("reupload_legal_doc_url"),
+  reuploadLogoUrl: text("reupload_logo_url"),
+  reuploadNotes: text("reupload_notes"),
+  reuploadDate: timestamp("reupload_date"),
   
   createdBy: varchar("created_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
