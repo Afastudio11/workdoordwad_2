@@ -94,6 +94,13 @@ export const companies = pgTable("companies", {
   subscriptionDuration: text("subscription_duration"), // 1_month | 3_months | 12_months
   paymentStatus: text("payment_status").default("pending"), // pending | completed | failed
   
+  // Quota tracking
+  jobPostingCount: integer("job_posting_count").default(0).notNull(),
+  featuredJobCount: integer("featured_job_count").default(0).notNull(),
+  urgentJobCount: integer("urgent_job_count").default(0).notNull(),
+  cvDownloadCount: integer("cv_download_count").default(0).notNull(),
+  quotaResetDate: timestamp("quota_reset_date"),
+  
   // Verification
   verificationStatus: text("verification_status").default("pending"), // pending | verified | rejected
   verifiedAt: timestamp("verified_at"),
@@ -124,7 +131,9 @@ export const jobs = pgTable("jobs", {
   education: text("education"), // SMA | D3 | S1 | S2
   experience: text("experience"), // 0-1 tahun | 1-3 tahun | 3-5 tahun | 5+ tahun
   isFeatured: boolean("is_featured").default(false).notNull(),
+  isUrgent: boolean("is_urgent").default(false).notNull(),
   isActive: boolean("is_active").default(true).notNull(),
+  expiresAt: timestamp("expires_at"),
   source: text("source").default("direct").notNull(), // direct | instagram | aggregated
   sourceUrl: text("source_url"),
   postedBy: varchar("posted_by").references(() => users.id),
