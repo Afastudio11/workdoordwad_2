@@ -51,7 +51,7 @@ export default function PlansBillingPage() {
       tagline: "Untuk Memulai",
       price: "Rp 0",
       priceValue: 0,
-      priceColor: "text-gray-600",
+      priceColor: "text-black dark:text-white",
       features: [
         { text: "3 Job Posting", included: true },
         { text: "Featured Jobs", included: false },
@@ -68,7 +68,7 @@ export default function PlansBillingPage() {
       tagline: "Untuk Berkembang",
       price: "Rp 199.000/bulan",
       priceValue: 199000,
-      priceColor: "text-lime-600",
+      priceColor: "text-black dark:text-white",
       badge: "Populer",
       recommended: true,
       features: [
@@ -87,7 +87,7 @@ export default function PlansBillingPage() {
       tagline: "Solusi Lengkap",
       price: "Rp 399.000/bulan",
       priceValue: 399000,
-      priceColor: "text-blue-600",
+      priceColor: "text-black dark:text-white",
       badge: "Recommended",
       features: [
         { text: "30 Job Posting", included: true },
@@ -105,7 +105,7 @@ export default function PlansBillingPage() {
       tagline: "Custom Solution",
       price: "Hubungi Sales",
       priceValue: 999999,
-      priceColor: "text-purple-600",
+      priceColor: "text-black dark:text-white",
       badge: "Best Value",
       features: [
         { text: "Unlimited Job Posting", included: true },
