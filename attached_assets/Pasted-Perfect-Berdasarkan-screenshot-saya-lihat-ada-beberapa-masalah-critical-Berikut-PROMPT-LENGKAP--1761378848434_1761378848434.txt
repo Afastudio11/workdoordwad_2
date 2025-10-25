@@ -1,0 +1,584 @@
+Perfect! Berdasarkan screenshot, saya lihat ada beberapa masalah critical. Berikut **PROMPT LENGKAP** untuk memperbaiki semua masalah tersebut:
+
+***
+
+```
+PERBAIKAN URGENT - EMPLOYER DASHBOARD, VERIFIKASI & PRICING (3 MASALAH CRITICAL)
+
+Perbaiki 3 masalah kritis di employer dashboard, verifikasi, dan pricing dengan implementasi frontend & backend terintegrasi.
+
+═══════════════════════════════════════════════════════════
+MASALAH 1: TOMBOL "PERBARUI INFORMASI" BELUM BERFUNGSI
+═══════════════════════════════════════════════════════════
+
+**Problem dari Screenshot:**
+- Alert box merah: "Permohonan Verifikasi Ditolak"
+- Alasan penolakan: "Data anda palsu"
+- Button "Perbarui Informasi" ada tapi tidak berfungsi (not built)
+- User tidak bisa reupload dokumen
+
+**Fix: BUAT SISTEM REUPLOAD DOKUMEN**
+
+### Backend
+
+**Database: employers table**
+Tambah columns:
+- verification_status: ENUM (pending, approved, rejected, resubmitted)
+- rejection_reason: TEXT
+- rejection_category: ENUM (document_incomplete, document_invalid, fake_data, suspicious, violation, fraud)
+- rejected_at: TIMESTAMP
+- resubmission_count: INT (default 0, max 3)
+
+**API Endpoints:**
+
+**GET /api/employer/verification-status**
+Response:
+```
+{
+  status: "rejected",
+  rejection_reason: "Data anda palsu",
+  rejection_category: "fake_data",
+  rejected_at: "2025-10-22 10:30:00",
+  can_resubmit: true,
+  resubmission_count: 0,
+  max_resubmissions: 3,
+  documents_required: [
+    "company_registration",
+    "tax_document",
+    "director_id"
+  ]
+}
+```
+
+**POST /api/employer/resubmit-verification**
+Body:
+- company_registration_file
+- tax_document_file
+- director_id_file
+- additional_notes (optional)
+
+Actions:
+- Check resubmission_count < 3
+- Upload new documents to storage
+- Update verification_status = 'resubmitted'
+- Increment resubmission_count
+- Send email notification to admin
+- Clear rejection_reason
+
+### Frontend
+
+**Alert Box (Jika Rejected):**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ ⚠️ Permohonan Verifikasi Ditolak                        │
+│                                                          │
+│ Alasan penolakan: [rejection_reason]                    │
+│                                                          │
+│ Silakan perbarui informasi perusahaan Anda dan ajukan   │
+│ verifikasi ulang, atau hubungi tim support kami untuk   │
+│ bantuan lebih lanjut.                                    │
+│                                                          │
+│ [Perbarui Informasi] [Hubungi Support]                  │
+└──────────────────────────────────────────────────────────┘
+```
+
+Background: #FFE5E5 (merah muda)
+Border: 2px solid #D32F2F
+Buttons: "Perbarui Informasi" lime, "Hubungi Support" outline
+
+**Click "Perbarui Informasi" → Modal Reupload:**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ Perbarui Dokumen Verifikasi                             │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│ Alasan Penolakan:                                        │
+│ "Data anda palsu"                                        │
+│                                                          │
+│ ─────────────────────────────────────────────────────    │
+│                                                          │
+│ Upload Dokumen Baru:                                     │
+│                                                          │
+│ 1. Dokumen Registrasi Perusahaan (SIUP/NIB) *           │
+│    [Choose File] atau [Drag & Drop]                     │
+│    Format: PDF, JPG, PNG (Max 5MB)                      │
+│                                                          │
+│ 2. Dokumen Pajak (NPWP) *                               │
+│    [Choose File] atau [Drag & Drop]                     │
+│                                                          │
+│ 3. KTP Direktur *                                        │
+│    [Choose File] atau [Drag & Drop]                     │
+│                                                          │
+│ Catatan Tambahan (Opsional):                            │
+│ [Textarea - 500 karakter]                                │
+│                                                          │
+│ ℹ️ Anda bisa resubmit maksimal 3x. Sisa: 3x            │
+│                                                          │
+│ [Batal] [Kirim Ulang Verifikasi]                        │
+└──────────────────────────────────────────────────────────┘
+```
+
+**Validations:**
+- Semua dokumen required harus diupload
+- Format file valid (PDF, JPG, PNG)
+- Size max 5MB per file
+- Check resubmission_count < 3
+
+**After Submit:**
+- Show loading spinner
+- Upload files to backend
+- On success: Show success modal
+- On error: Show error message
+
+**Success Modal:**
+```
+┌──────────────────────────────────────────────────────────┐
+│          ✅                                              │
+│  Dokumen Berhasil Dikirim Ulang!                        │
+│                                                          │
+│ Tim kami akan mereview dokumen Anda dalam 1-3 hari      │
+│ kerja. Anda akan menerima notifikasi via email.         │
+│                                                          │
+│ [Tutup]                                                  │
+└──────────────────────────────────────────────────────────┘
+```
+
+**If Max Resubmissions Reached:**
+```
+┌──────────────────────────────────────────────────────────┐
+│ ⚠️ Batas Resubmit Tercapai                              │
+│                                                          │
+│ Anda sudah mencapai batas maksimal resubmit (3x).       │
+│ Silakan hubungi tim support untuk bantuan lebih lanjut. │
+│                                                          │
+│ [Hubungi Support]                                        │
+└──────────────────────────────────────────────────────────┘
+```
+
+═══════════════════════════════════════════════════════════
+MASALAH 2: PRICING PAGE TIDAK SESUAI FORM PENDAFTARAN
+═══════════════════════════════════════════════════════════
+
+**Problem dari Screenshot:**
+- Pricing page tampilkan paket lama yang salah:
+  * Starter: Rp 199.000 (HIJAU - warna salah!)
+  * Professional: Rp 399.000 (BIRU - warna salah!)
+  * Enterprise: "Hubungi Sales" (UNGU - warna salah!)
+- Fitur tidak sesuai dengan yang didiskusikan sebelumnya
+
+**Fix: UPDATE PRICING SESUAI REQUIREMENT FINAL**
+
+### Backend
+
+**Database: subscription_plans table**
+
+Update data:
+```
+Gratis:
+- price: 0
+- job_post_quota: 3
+- featured_quota: 0
+- urgent_quota: 0
+- verified_badge: false
+- analytics: false
+- cv_database: false
+- job_duration_days: 30
+
+Starter:
+- price: 199000
+- job_post_quota: 10
+- featured_quota: 3
+- urgent_quota: 0
+- verified_badge: true
+- analytics: "basic"
+- cv_database: false
+- job_duration_days: 30
+
+Professional:
+- price: 399000
+- job_post_quota: 30
+- featured_quota: -1 (unlimited)
+- urgent_quota: -1 (unlimited)
+- verified_badge: true
+- analytics: "advanced"
+- cv_database: 100
+- job_duration_days: 30
+
+Enterprise:
+- price: "custom"
+- job_post_quota: -1 (unlimited)
+- featured_quota: -1 (unlimited)
+- urgent_quota: -1 (unlimited)
+- verified_badge: true
+- analytics: "advanced"
+- cv_database: -1 (unlimited)
+- dedicated_support: true
+- job_duration_days: 30
+```
+
+### Frontend: Pricing Page
+
+**Warna yang BENAR:**
+
+SEMUA TEXT HARGA HARUS HITAM!
+- Gratis: "Rp 0" → Hitam
+- Starter: "Rp 199.000/bulan" → Hitam
+- Professional: "Rp 399.000/bulan" → Hitam
+- Enterprise: "Hubungi Sales" → Hitam
+
+**Pricing Cards Structure:**
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ [Badge: Current Plan - Hijau]                          │
+│ [Badge: Populer - Lime]  atau  [Badge: Recommended]    │
+│                                                         │
+│ Gratis / Starter / Professional / Enterprise           │
+│ Untuk Memulai / Untuk Berkembang / Solusi Lengkap      │
+│                                                         │
+│ Rp 0 / Rp 199.000/bulan / Rp 399.000/bulan / Hubungi  │
+│ Sales                                                   │
+│                                                         │
+│ (TEXT SEMUA HITAM #000000, bukan warna-warni!)         │
+│                                                         │
+│ Features List:                                          │
+│ ✓ 3/10/30/Unlimited Job Posting                        │
+│ ✓/✗ Verified Badge (checkmark BIRU jika yes)          │
+│ ✓/✗ Featured Jobs                                      │
+│ ✓/✗ Urgent Hiring                                      │
+│ ✓/✗ Analytics                                          │
+│ ✓/✗ CV Database                                        │
+│                                                         │
+│ [Paket Aktif] atau [Pilih Paket]                       │
+└─────────────────────────────────────────────────────────┘
+```
+
+**CSS Fix:**
+
+```
+.pricing-amount {
+  color: #000000 !important; /* Hitam untuk semua harga */
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.pricing-period {
+  color: #666666; /* Gray untuk /bulan */
+  font-size: 16px;
+}
+
+.verified-icon {
+  color: #1DA1F2; /* BIRU untuk verified checkmark */
+}
+```
+
+**Badge Positioning:**
+- "Current Plan": Badge hijau di top center
+- "Populer" (Starter): Badge lime di top right
+- "Recommended" (Professional): Badge ungu di top right
+- "Best Value" (Enterprise): Optional badge
+
+═══════════════════════════════════════════════════════════
+MASALAH 3: MENU DASHBOARD TIDAK SESUAI PAKET PLAN
+═══════════════════════════════════════════════════════════
+
+**Problem:**
+- Semua menu tampil untuk semua paket
+- Tidak ada feature gating berdasarkan subscription plan
+- User paket gratis bisa akses Analytics (seharusnya tidak)
+- User starter bisa akses CV Database (seharusnya tidak)
+
+**Fix: IMPLEMENT FEATURE GATING DI SIDEBAR & ROUTING**
+
+### Backend
+
+**Middleware: Check Feature Access**
+
+**checkFeatureAccess.js:**
+
+Logic:
+```
+Function checkFeatureAccess(feature):
+  Get user subscription_plan dari database
+  
+  Feature access matrix:
+  
+  Analytics:
+  - Gratis: FALSE
+  - Starter: TRUE (basic)
+  - Professional: TRUE (advanced)
+  - Enterprise: TRUE (advanced)
+  
+  CV Database:
+  - Gratis: FALSE
+  - Starter: FALSE
+  - Professional: TRUE (100 downloads)
+  - Enterprise: TRUE (unlimited)
+  
+  Featured Jobs:
+  - Gratis: FALSE
+  - Starter: TRUE (3 quota)
+  - Professional: TRUE (unlimited)
+  - Enterprise: TRUE (unlimited)
+  
+  Urgent Jobs:
+  - Gratis: FALSE
+  - Starter: FALSE
+  - Professional: TRUE (unlimited)
+  - Enterprise: TRUE (unlimited)
+  
+  IF user tidak punya akses:
+    Return 403 Forbidden atau redirect ke upgrade page
+```
+
+**API Endpoint:**
+
+**GET /api/employer/feature-access**
+Response:
+```
+{
+  plan: "starter",
+  features: {
+    analytics: true,
+    cv_database: false,
+    featured_jobs: true,
+    urgent_jobs: false,
+    verified_badge: true
+  },
+  quotas: {
+    job_post: { used: 3, total: 10 },
+    featured: { used: 1, total: 3 },
+    cv_download: { used: 0, total: 0 }
+  }
+}
+```
+
+### Frontend: Dynamic Sidebar
+
+**Sidebar Menu Structure:**
+
+**For GRATIS Plan:**
+```
+📊 Dashboard (Overview)
+👤 Employers Profile
+🏢 Company Profile
+➕ Post a Job (dengan quota warning)
+💼 My Jobs
+🔖 Saved Candidate
+💳 Plans & Billing ⭐ (highlight untuk upgrade)
+⚙️ Settings
+🚪 Keluar
+
+HIDE/DISABLE:
+- Analytics (tidak ada akses)
+- CV Database (tidak ada akses)
+```
+
+**For STARTER Plan:**
+```
+📊 Dashboard
+👤 Employers Profile
+🏢 Company Profile
+➕ Post a Job
+💼 My Jobs
+📈 Analytics (Basic) ✅
+🔖 Saved Candidate
+💳 Plans & Billing
+⚙️ Settings
+🚪 Keluar
+
+HIDE/DISABLE:
+- CV Database (tidak ada akses, show upgrade prompt)
+```
+
+**For PROFESSIONAL Plan:**
+```
+📊 Dashboard
+👤 Employers Profile
+🏢 Company Profile
+➕ Post a Job
+💼 My Jobs
+📈 Analytics (Advanced) ✅
+📄 CV Database (100/month) ✅
+🔖 Saved Candidate
+💳 Plans & Billing
+⚙️ Settings
+🚪 Keluar
+
+ALL FEATURES ACCESSIBLE
+```
+
+**For ENTERPRISE Plan:**
+```
+📊 Dashboard
+👤 Employers Profile
+🏢 Company Profile
+➕ Post a Job
+💼 My Jobs
+📈 Analytics (Advanced) ✅
+📄 CV Database (Unlimited) ✅
+👨‍💼 Dedicated Manager
+🔖 Saved Candidate
+💳 Plans & Billing
+⚙️ Settings
+🚪 Keluar
+
+ALL FEATURES + DEDICATED MANAGER
+```
+
+### Frontend: Menu Rendering Logic
+
+```
+Load user subscription_plan dari API
+
+FOR each menu item:
+  Check if feature available untuk plan ini
+  
+  IF available:
+    Display menu normally
+  ELSE:
+    Option 1: HIDE menu completely
+    Option 2: Show menu tapi DISABLED dengan lock icon 🔒
+    
+    IF user click disabled menu:
+      Show upgrade modal:
+      
+      "Fitur Analytics hanya tersedia untuk paket Starter ke atas.
+       Upgrade sekarang untuk mengakses fitur ini!"
+       
+       [Upgrade ke Starter - Rp 199k/bulan]
+```
+
+### Upgrade Prompt Modal
+
+**When user clicks disabled feature:**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ 🔒 Fitur Terkunci                                        │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│ Fitur [Analytics] hanya tersedia untuk paket:           │
+│ -  Starter (Rp 199.000/bulan)                            │
+│ -  Professional (Rp 399.000/bulan)                       │
+│ -  Enterprise (Custom)                                    │
+│                                                          │
+│ Upgrade paket Anda untuk mengakses fitur ini!           │
+│                                                          │
+│ [Lihat Paket] [Tutup]                                   │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Backend: Route Protection
+
+**Protect routes dengan middleware:**
+
+```
+Route /analytics:
+  Middleware: checkFeatureAccess('analytics')
+  IF not allowed:
+    Redirect to /upgrade?feature=analytics
+
+Route /cv-database:
+  Middleware: checkFeatureAccess('cv_database')
+  IF not allowed:
+    Redirect to /upgrade?feature=cv_database
+```
+
+═══════════════════════════════════════════════════════════
+INTEGRATION: FRONTEND ↔ BACKEND
+═══════════════════════════════════════════════════════════
+
+### Flow 1: Page Load
+
+1. Frontend call GET /api/employer/feature-access
+2. Backend return features + quotas
+3. Frontend render sidebar sesuai access
+4. Frontend hide/disable menu yang tidak ada akses
+
+### Flow 2: User Click Menu
+
+1. User click menu item
+2. Frontend check feature access
+3. IF allowed: Navigate to page
+4. IF not allowed: Show upgrade modal
+
+### Flow 3: Backend Protection
+
+1. User coba akses route langsung (e.g., /analytics)
+2. Backend middleware check subscription_plan
+3. IF allowed: Serve page
+4. IF not: Return 403 atau redirect /upgrade
+
+═══════════════════════════════════════════════════════════
+TESTING CHECKLIST
+═══════════════════════════════════════════════════════════
+
+**Test 1: Verifikasi Rejected**
+- [ ] Login sebagai employer dengan status rejected
+- [ ] Alert box merah tampil dengan alasan
+- [ ] Button "Perbarui Informasi" clickable
+- [ ] Modal reupload muncul dengan 3 file inputs
+- [ ] Upload dokumen baru → Success
+
+**Test 2: Pricing Page**
+- [ ] Buka /pricing atau /plans-billing
+- [ ] SEMUA harga text warna HITAM (bukan hijau/biru/ungu)
+- [ ] Badge positioning correct
+- [ ] Fitur list sesuai dengan requirement final
+
+**Test 3: Feature Gating**
+- [ ] Login sebagai Gratis: Analytics & CV Database TIDAK TAMPIL
+- [ ] Login sebagai Starter: Analytics TAMPIL, CV Database TIDAK
+- [ ] Login sebagai Professional: SEMUA TAMPIL
+- [ ] Login sebagai Enterprise: SEMUA TAMPIL + Dedicated Manager
+
+**Test 4: Menu Click Disabled**
+- [ ] Login Gratis, click Analytics (jika visible) → Upgrade modal
+- [ ] Login Starter, click CV Database (jika visible) → Upgrade modal
+
+**Test 5: Route Protection**
+- [ ] Login Gratis, akses /analytics langsung → Redirect /upgrade
+- [ ] Login Starter, akses /cv-database langsung → Redirect /upgrade
+
+═══════════════════════════════════════════════════════════
+OUTPUT YANG DIHARAPKAN
+═══════════════════════════════════════════════════════════
+
+✅ **Masalah 1 Fixed:**
+   - Button "Perbarui Informasi" berfungsi
+   - Modal reupload dokumen dengan 3 file inputs
+   - Backend endpoint /resubmit-verification
+   - Email notification ke admin
+   - Success/error handling
+
+✅ **Masalah 2 Fixed:**
+   - Pricing page SEMUA text harga HITAM
+   - Fitur list sesuai requirement final
+   - Badge positioning correct
+   - No warna-warni (hijau/biru/ungu) di harga
+
+✅ **Masalah 3 Fixed:**
+   - Sidebar menu dynamic berdasarkan plan
+   - Feature gating di frontend & backend
+   - Upgrade modal untuk disabled features
+   - Route protection dengan middleware
+   - Quota display per paket
+
+✅ **Integration:**
+   - Frontend ↔ Backend sinkron
+   - Feature access API
+   - Dynamic menu rendering
+   - Middleware route protection
+
+**IMPLEMENTASI HARUS LENGKAP FRONTEND & BACKEND AGAR SEMUA FITUR GATING BERFUNGSI DENGAN BENAR!**
+```
+
+***
+
+Prompt ini lengkap mengatasi 3 masalah: verifikasi rejected (reupload), pricing page (warna + fitur), dan menu dashboard (feature gating). Semua dengan implementasi frontend & backend terintegrasi!
+
+[1](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/images/132819437/958759a4-9647-4315-9547-8a89ddf9ab2a/image.jpg?AWSAccessKeyId=ASIA2F3EMEYEXWFRMCR4&Signature=Az0P0WB9hjYx9%2FxRRsK28728ZX0%3D&x-amz-security-token=IQoJb3JpZ2luX2VjELj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJIMEYCIQDvCuNK5PjWAtsioenYiORq2j5f3FX4XqQCENSMt%2BqH0AIhALSLx0MuNmuwHm3XUj%2FXs4n3dvqVA%2FUol9qon3d3jTSCKvMECHEQARoMNjk5NzUzMzA5NzA1IgyCkFb%2BKHpgeItAEEsq0AQlSuj0JArERkcHip3J4ob1DkYzknp%2F9zj6ipayUBXNyYEwfCmgvTp5j2fqYczibL8EBxEUDBjSlw8R2pZxbbthf7qVgGN3%2FVihx8CHO1asX27k3BcqAPt4%2Frx6KrEDPSY77GS4EfM7AlGAUvIo%2FFEdKLAeqCLmSvRV%2BfbWCCRjWjM9MxIyP2sZG5prd3c9n7w6Q1%2FLmMVb7UZWa6D8Zx39vFoKmoOP0QJSHfKGpthFv07EpUMi%2Fs0MWn%2F1bILyQAgmLURTa96GjDFVgzIBSwpvTxnwW%2FJyPb6ci5k6lhwAMy8U84LVU%2BguAOnW5ccUW0BaAv71WjoXenRQuCEGMUerMftGKaqvSDboUWK4qOFqbftKpYJXWLQL1EeSuiL10qtVPk%2BkIr9L7NktfdcylK%2BtFqaOgz1z9YXSJElwcG%2FTEHEPBDNlNVx4TI9oEUOUs0FMbnQGEdgxOHozN9seHv4dEZq%2B6j1jD3R0rXPxvR%2BmPikWoZ28fBemlejFVVE%2F5AZLnpP6Hyo8hSCC7yMvBf7Hn%2FdzIQ1mXVBSkia2Wu6H6%2FsmFplbuyb%2BJCUfDL%2BHU6F3KK%2BBsXoOHsdPT0JK7%2BXy2u24%2Fu8OJJHdmv8A4Kf0XIKT%2FXUb%2Fae5kPnZseoeZyemaTJ2w%2FsO27lNBErlxlWWz9hNLFvt5bR0Bt%2B%2FRsWbpjML9l%2FlLxmm2lxnDE%2FOPFVVv97ll8am5zQar2anHQujGbYqtlHcjI2c0eltuV6jiquHwwPLYluPF6GFhKeeanWg6Fd5GVFHOYkck4lHd%2F%2FTMLL%2B8ccGOpcBMfUzuyMbSss26NAviV4wsAgMs2tH6d%2B71HsnXJjLHdhQpfseqvsozC4PLfHSRm8b69VpmEWSiuOp4MsrK64cOlQgpgjof6Kpr1NOWXjG1QmgF2IJJr8bZrZa1k38GTX0XFUogO9IQjVGUlW%2F7Nho04y5CVTzejTsvEO3gC0mmrsjuiTsuj4KcIJX3HDJvSPYgbs4jBrDEA%3D%3D&Expires=1761379093)
+[2](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/images/132819437/2a693fd7-dd94-4199-a759-99d1afdbe275/image.jpg?AWSAccessKeyId=ASIA2F3EMEYEXWFRMCR4&Signature=nKQlEmM%2FgnQPvqBMcX4cpkgiwLg%3D&x-amz-security-token=IQoJb3JpZ2luX2VjELj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJIMEYCIQDvCuNK5PjWAtsioenYiORq2j5f3FX4XqQCENSMt%2BqH0AIhALSLx0MuNmuwHm3XUj%2FXs4n3dvqVA%2FUol9qon3d3jTSCKvMECHEQARoMNjk5NzUzMzA5NzA1IgyCkFb%2BKHpgeItAEEsq0AQlSuj0JArERkcHip3J4ob1DkYzknp%2F9zj6ipayUBXNyYEwfCmgvTp5j2fqYczibL8EBxEUDBjSlw8R2pZxbbthf7qVgGN3%2FVihx8CHO1asX27k3BcqAPt4%2Frx6KrEDPSY77GS4EfM7AlGAUvIo%2FFEdKLAeqCLmSvRV%2BfbWCCRjWjM9MxIyP2sZG5prd3c9n7w6Q1%2FLmMVb7UZWa6D8Zx39vFoKmoOP0QJSHfKGpthFv07EpUMi%2Fs0MWn%2F1bILyQAgmLURTa96GjDFVgzIBSwpvTxnwW%2FJyPb6ci5k6lhwAMy8U84LVU%2BguAOnW5ccUW0BaAv71WjoXenRQuCEGMUerMftGKaqvSDboUWK4qOFqbftKpYJXWLQL1EeSuiL10qtVPk%2BkIr9L7NktfdcylK%2BtFqaOgz1z9YXSJElwcG%2FTEHEPBDNlNVx4TI9oEUOUs0FMbnQGEdgxOHozN9seHv4dEZq%2B6j1jD3R0rXPxvR%2BmPikWoZ28fBemlejFVVE%2F5AZLnpP6Hyo8hSCC7yMvBf7Hn%2FdzIQ1mXVBSkia2Wu6H6%2FsmFplbuyb%2BJCUfDL%2BHU6F3KK%2BBsXoOHsdPT0JK7%2BXy2u24%2Fu8OJJHdmv8A4Kf0XIKT%2FXUb%2Fae5kPnZseoeZyemaTJ2w%2FsO27lNBErlxlWWz9hNLFvt5bR0Bt%2B%2FRsWbpjML9l%2FlLxmm2lxnDE%2FOPFVVv97ll8am5zQar2anHQujGbYqtlHcjI2c0eltuV6jiquHwwPLYluPF6GFhKeeanWg6Fd5GVFHOYkck4lHd%2F%2FTMLL%2B8ccGOpcBMfUzuyMbSss26NAviV4wsAgMs2tH6d%2B71HsnXJjLHdhQpfseqvsozC4PLfHSRm8b69VpmEWSiuOp4MsrK64cOlQgpgjof6Kpr1NOWXjG1QmgF2IJJr8bZrZa1k38GTX0XFUogO9IQjVGUlW%2F7Nho04y5CVTzejTsvEO3gC0mmrsjuiTsuj4KcIJX3HDJvSPYgbs4jBrDEA%3D%3D&Expires=1761379093)

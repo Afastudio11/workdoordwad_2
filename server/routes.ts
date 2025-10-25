@@ -116,6 +116,46 @@ const uploadPhoto = multer({
   },
 });
 
+// Configure multer for verification documents
+const verificationDocsStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/verification_docs");
+  },
+  filename: (req, file, cb) => {
+    let ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+    const allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png'];
+    if (!allowedExtensions.includes(ext)) {
+      ext = '.pdf';
+    }
+    const uniqueName = `${randomUUID()}${ext}`;
+    cb(null, uniqueName);
+  },
+});
+
+const uploadVerificationDocs = multer({
+  storage: verificationDocsStorage,
+  limits: { 
+    fileSize: 5 * 1024 * 1024, // 5MB limit per file
+    files: 3 // Max 3 files
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/jpg'
+    ];
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png'];
+    
+    if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Hanya file PDF, JPG, dan PNG yang diperbolehkan"));
+    }
+  },
+});
+
 // Combined upload middleware for CV and photo
 const uploadFields = multer({
   storage: multer.diskStorage({
@@ -1682,6 +1722,170 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching quota info:", error);
       res.status(500).json({ error: "Failed to fetch quota information" });
+    }
+  });
+
+  // Get verification status for employer
+  app.get("/api/employer/verification-status", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const company = await storage.getCompanyByUserId(req.session.userId);
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+
+      const maxResubmissions = 3;
+      const canResubmit = (company.resubmissionCount || 0) < maxResubmissions;
+
+      res.json({
+        status: company.verificationStatus,
+        rejectionReason: company.rejectionReason,
+        rejectionCategory: company.rejectionCategory,
+        rejectedAt: company.rejectedAt,
+        canResubmit,
+        resubmissionCount: company.resubmissionCount || 0,
+        maxResubmissions,
+        documentsRequired: [
+          "company_registration",
+          "tax_document",
+          "director_id"
+        ]
+      });
+    } catch (error) {
+      console.error("Error fetching verification status:", error);
+      res.status(500).json({ error: "Failed to fetch verification status" });
+    }
+  });
+
+  // Resubmit verification documents
+  app.post("/api/employer/resubmit-verification", 
+    uploadVerificationDocs.fields([
+      { name: 'companyRegistration', maxCount: 1 },
+      { name: 'taxDocument', maxCount: 1 },
+      { name: 'directorId', maxCount: 1 }
+    ]), 
+    async (req, res) => {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      try {
+        const user = await storage.getUser(req.session.userId);
+        if (!user || user.role !== "pemberi_kerja") {
+          return res.status(403).json({ error: "Access denied" });
+        }
+
+        const company = await storage.getCompanyByUserId(req.session.userId);
+        if (!company) {
+          return res.status(404).json({ error: "Company not found" });
+        }
+
+        // Check resubmission limit
+        const maxResubmissions = 3;
+        if ((company.resubmissionCount || 0) >= maxResubmissions) {
+          return res.status(403).json({ 
+            error: `Anda sudah mencapai batas maksimal resubmit (${maxResubmissions}x). Silakan hubungi tim support.` 
+          });
+        }
+
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        const { additionalNotes } = req.body;
+
+        // Validate that all required documents are uploaded
+        if (!files.companyRegistration || !files.taxDocument || !files.directorId) {
+          return res.status(400).json({ 
+            error: "Semua dokumen wajib diupload (Registrasi Perusahaan, NPWP, KTP Direktur)" 
+          });
+        }
+
+        // Build document URLs
+        const companyRegistrationUrl = `/uploads/verification_docs/${files.companyRegistration[0].filename}`;
+        const taxDocumentUrl = `/uploads/verification_docs/${files.taxDocument[0].filename}`;
+        const directorIdUrl = `/uploads/verification_docs/${files.directorId[0].filename}`;
+
+        // Update company with new documents
+        const updatedCompany = await storage.updateCompany(company.id, {
+          reuploadLegalDocUrl: `${companyRegistrationUrl}, ${taxDocumentUrl}, ${directorIdUrl}`,
+          reuploadNotes: additionalNotes || null,
+          reuploadDate: new Date(),
+          verificationStatus: 'resubmitted',
+          resubmissionCount: (company.resubmissionCount || 0) + 1,
+          rejectionReason: null, // Clear previous rejection reason
+        });
+
+        // TODO: Send email notification to admin
+
+        res.json({
+          message: "Dokumen berhasil dikirim ulang. Tim kami akan mereview dalam 1-3 hari kerja.",
+          company: updatedCompany
+        });
+      } catch (error) {
+        console.error("Error resubmitting verification:", error);
+        res.status(500).json({ error: "Gagal mengirim ulang dokumen verifikasi" });
+      }
+    }
+  );
+
+  // Get feature access based on subscription plan
+  app.get("/api/employer/feature-access", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== "pemberi_kerja") {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const company = await storage.getCompanyByUserId(req.session.userId);
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+
+      const plan = company.subscriptionPlan || "free";
+      const { PLAN_LIMITS } = await import("./planLimits");
+      const limits = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS];
+
+      res.json({
+        plan,
+        features: {
+          analytics: limits.hasAnalytics,
+          analyticsLevel: limits.analyticsLevel,
+          cvDatabase: limits.hasCVDatabase,
+          featuredJobs: limits.featuredJobLimit !== 0,
+          urgentJobs: limits.urgentJobLimit !== 0,
+          verifiedBadge: limits.hasVerifiedBadge,
+        },
+        quotas: {
+          jobPost: {
+            used: company.jobPostingCount || 0,
+            total: limits.jobPostingLimit === "unlimited" ? null : limits.jobPostingLimit,
+            unlimited: limits.jobPostingLimit === "unlimited"
+          },
+          featured: {
+            used: company.featuredJobCount || 0,
+            total: limits.featuredJobLimit === "unlimited" ? null : (limits.featuredJobLimit === 0 ? 0 : limits.featuredJobLimit),
+            unlimited: limits.featuredJobLimit === "unlimited"
+          },
+          cvDownload: {
+            used: company.cvDownloadCount || 0,
+            total: limits.cvDownloadLimit === "unlimited" ? null : (limits.cvDownloadLimit === 0 ? 0 : limits.cvDownloadLimit),
+            unlimited: limits.cvDownloadLimit === "unlimited"
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching feature access:", error);
+      res.status(500).json({ error: "Failed to fetch feature access" });
     }
   });
 

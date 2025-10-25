@@ -102,10 +102,13 @@ export const companies = pgTable("companies", {
   quotaResetDate: timestamp("quota_reset_date"),
   
   // Verification
-  verificationStatus: text("verification_status").default("pending"), // pending | verified | rejected
+  verificationStatus: text("verification_status").default("pending"), // pending | verified | rejected | resubmitted
   verifiedAt: timestamp("verified_at"),
   verifiedBy: varchar("verified_by"), // Admin user ID who verified
   rejectionReason: text("rejection_reason"),
+  rejectionCategory: text("rejection_category"), // document_incomplete | document_invalid | fake_data | suspicious | violation | fraud
+  rejectedAt: timestamp("rejected_at"),
+  resubmissionCount: integer("resubmission_count").default(0).notNull(),
   
   // Document Reupload for blocked users
   reuploadLegalDocUrl: text("reupload_legal_doc_url"),
