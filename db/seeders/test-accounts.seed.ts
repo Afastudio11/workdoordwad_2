@@ -145,11 +145,48 @@ export async function seedTestAccounts() {
     },
     {
       user: {
+        username: "employer_starter_yearly",
+        email: "employer.starter.yearly@company.com",
+        password: await bcrypt.hash("Employer123!", 10),
+        fullName: "Rina Kartika",
+        phone: "081234567893",
+        role: "pemberi_kerja",
+        isActive: true,
+        emailVerified: true,
+        verificationStatus: "verified",
+        bio: "Owner di perusahaan F&B",
+        city: "Yogyakarta",
+        province: "DI Yogyakarta",
+      },
+      company: {
+        name: "CV Kuliner Nusantara",
+        description: "Perusahaan F&B dengan beberapa outlet di Yogyakarta dan sekitarnya",
+        industry: "Food & Beverage",
+        location: "Yogyakarta, DI Yogyakarta",
+        website: "https://kulinernusantara.id",
+        contactEmail: "hrd@kulinernusantara.id",
+        contactPhone: "0274-33333333",
+        whatsappNumber: "6281234567893",
+        employeeCount: "51-100",
+        foundedYear: "2019",
+        picName: "Rina Kartika",
+        picPosition: "Owner",
+        subscriptionPlan: "starter",
+        subscriptionStartDate: new Date(),
+        subscriptionEndDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // +365 days (1 year)
+        subscriptionDuration: "12_months",
+        paymentStatus: "completed",
+        verificationStatus: "verified",
+        verifiedAt: new Date(),
+      },
+    },
+    {
+      user: {
         username: "employer_professional",
         email: "employer.professional@company.com",
         password: await bcrypt.hash("Employer123!", 10),
         fullName: "Eko Prasetyo",
-        phone: "081234567893",
+        phone: "081234567894",
         role: "pemberi_kerja",
         isActive: true,
         emailVerified: true,
@@ -165,52 +202,15 @@ export async function seedTestAccounts() {
         location: "Surabaya, Jawa Timur",
         website: "https://industrimajujaya.co.id",
         contactEmail: "hrd@industrimajujaya.co.id",
-        contactPhone: "031-33333333",
-        whatsappNumber: "6281234567893",
+        contactPhone: "031-44444444",
+        whatsappNumber: "6281234567894",
         employeeCount: "201-500",
         foundedYear: "1995",
         picName: "Eko Prasetyo",
         picPosition: "Head of HR",
         subscriptionPlan: "professional",
         subscriptionStartDate: new Date(),
-        subscriptionEndDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // +90 days
-        subscriptionDuration: "3_months",
-        paymentStatus: "completed",
-        verificationStatus: "verified",
-        verifiedAt: new Date(),
-      },
-    },
-    {
-      user: {
-        username: "employer_enterprise",
-        email: "employer.enterprise@company.com",
-        password: await bcrypt.hash("Employer123!", 10),
-        fullName: "Dewi Sartika",
-        phone: "081234567894",
-        role: "pemberi_kerja",
-        isActive: true,
-        emailVerified: true,
-        verificationStatus: "verified",
-        bio: "Director of HR di perusahaan multinasional",
-        city: "Jakarta",
-        province: "DKI Jakarta",
-      },
-      company: {
-        name: "PT Teknologi Global Indonesia",
-        description: "Perusahaan teknologi multinasional dengan operasi di seluruh Asia Tenggara",
-        industry: "Technology",
-        location: "Jakarta Pusat, DKI Jakarta",
-        website: "https://tekglobal.co.id",
-        contactEmail: "careers@tekglobal.co.id",
-        contactPhone: "021-44444444",
-        whatsappNumber: "6281234567894",
-        employeeCount: "500+",
-        foundedYear: "2010",
-        picName: "Dewi Sartika",
-        picPosition: "Director of HR",
-        subscriptionPlan: "enterprise",
-        subscriptionStartDate: new Date(),
-        subscriptionEndDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // +365 days
+        subscriptionEndDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // +365 days (1 year)
         subscriptionDuration: "12_months",
         paymentStatus: "completed",
         verificationStatus: "verified",
@@ -264,7 +264,7 @@ export async function seedTestAccounts() {
   console.log("│ Email: admin@pintuloker.com                                 │");
   console.log("│ Password: Admin123!                                         │");
   console.log("├─────────────────────────────────────────────────────────────┤");
-  console.log("│ JOB SEEKER                                                  │");
+  console.log("│ JOB SEEKER / PESERTA                                        │");
   console.log("│ Email: pekerja@email.com                                    │");
   console.log("│ Password: Pekerja123!                                       │");
   console.log("├─────────────────────────────────────────────────────────────┤");
@@ -272,21 +272,26 @@ export async function seedTestAccounts() {
   console.log("│ Email: employer.free@company.com                            │");
   console.log("│ Password: Employer123!                                      │");
   console.log("│ Company: PT Startup Berkembang                              │");
+  console.log("│ Quota: 3 job postings                                       │");
   console.log("├─────────────────────────────────────────────────────────────┤");
-  console.log("│ EMPLOYER - STARTER PLAN                                     │");
+  console.log("│ EMPLOYER - STARTER MONTHLY                                  │");
   console.log("│ Email: employer.starter@company.com                         │");
   console.log("│ Password: Employer123!                                      │");
   console.log("│ Company: CV Toko Modern                                     │");
+  console.log("│ Quota: 10 jobs, 3 featured (30 hari aktif)                  │");
   console.log("├─────────────────────────────────────────────────────────────┤");
-  console.log("│ EMPLOYER - PROFESSIONAL PLAN                                │");
+  console.log("│ EMPLOYER - STARTER YEARLY                                   │");
+  console.log("│ Email: employer.starter.yearly@company.com                  │");
+  console.log("│ Password: Employer123!                                      │");
+  console.log("│ Company: CV Kuliner Nusantara                               │");
+  console.log("│ Quota: 10 jobs, 3 featured (365 hari aktif)                 │");
+  console.log("├─────────────────────────────────────────────────────────────┤");
+  console.log("│ EMPLOYER - PROFESSIONAL YEARLY                              │");
   console.log("│ Email: employer.professional@company.com                    │");
   console.log("│ Password: Employer123!                                      │");
   console.log("│ Company: PT Industri Maju Jaya                              │");
-  console.log("├─────────────────────────────────────────────────────────────┤");
-  console.log("│ EMPLOYER - ENTERPRISE PLAN                                  │");
-  console.log("│ Email: employer.enterprise@company.com                      │");
-  console.log("│ Password: Employer123!                                      │");
-  console.log("│ Company: PT Teknologi Global Indonesia                      │");
+  console.log("│ Quota: 30 jobs, unlimited featured (365 hari aktif)         │");
+  console.log("│ Features: Analytics, CV Database (100/month)                │");
   console.log("└─────────────────────────────────────────────────────────────┘");
 }
 
